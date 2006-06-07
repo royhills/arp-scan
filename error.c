@@ -24,8 +24,7 @@
  * Date:	1 December 2001
  *
  */
-
-#include "ether-scan-engine.h"
+#include "arp-scan.h"
 
 static char rcsid[] = "$Id: error.c 7439 2006-06-01 11:18:42Z rsh $"; /* RCS ID for ident(1) */
 

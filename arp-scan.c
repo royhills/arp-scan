@@ -35,7 +35,6 @@
  * 
  */
 
-#include "ether-scan-engine.h"
 #include "arp-scan.h"
 
 static char const rcsid[] = "$Id: arp-scan.c 7543 2006-06-07 06:28:04Z rsh $";   /* RCS ID for ident(1) */
