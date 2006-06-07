@@ -264,7 +264,7 @@ main(int argc, char *argv[]) {
 /*
  *      Display initial message.
  */
-   printf("Starting %s with %u hosts (http://www.nta-monitor.com/arp-scan/)\n",
+   printf("Starting %s with %u hosts (http://www.nta-monitor.com/tools/arp-scan/)\n",
           PACKAGE_STRING, num_hosts);
 /*
  *      Display the lists if verbose setting is 3 or more.
@@ -891,8 +891,10 @@ usage(int status) {
    fprintf(stderr, "\n--interface=<i> or -I <i> Use network interface <i>.\n");
    fprintf(stderr, "\t\t\tIf this option is not specified, the default is the\n");
    fprintf(stderr, "\t\t\tvalue of the RMIF environment variable.  If RMIF is\n");
-   fprintf(stderr, "\t\t\tnot defined, then \"eth0\" is used as a last resort.\n");
-   fprintf(stderr, "\t\t\tThe interface specified must be an Ethernet device.\n");
+   fprintf(stderr, "\t\t\tnot defined, then arp-scan will search the system\n");
+   fprintf(stderr, "\t\t\tinterface list for the lowest numbered, configured\n");
+   fprintf(stderr, "\t\t\tup interface (excluding loopback).\n");
+   fprintf(stderr, "\t\t\tThe interface specified must support ARP.\n");
    fprintf(stderr, "\n--quiet or -q\t\tOnly display minimal output.\n");
    fprintf(stderr, "\t\t\tIf this option is specified, then only the minimum\n");
    fprintf(stderr, "\t\t\tinformation is displayed.  With this option, the\n");

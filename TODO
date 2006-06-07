@@ -8,7 +8,7 @@ e.g. 00:50:c2:00:0x:xx
 Add support for special MAC addresses e.g. VMware, WLBS Etc.
 For this, we'll probably want to use Posix pattern matching.
 
-Add option to scan locally attached network without requiring IP range.
+ML: Add option to scan locally attached network without requiring IP range.
 Get IP address and netmask of interface and generate range from that.
 
 Handle duplicate IP addresses in input in a sensible manner.
@@ -23,3 +23,8 @@ Allow changing of the local interface MAC address.
       perror ("ERROR: Can't change MAC: interface up or not permission");
       return -1;
    }
+
+ML: I'd like to be able to set the source IP to the same as the destination IP:
+
+arp-scan --arpspa same-as-dest 80.82.243.222/29
+

@@ -213,8 +213,10 @@ The default is normally sufficient.
 Use network interface <i>.
 If this option is not specified, the default is the
 value of the RMIF environment variable.  If RMIF is
-not defined, then "eth0" is used as a last resort.
-The interface specified must be an Ethernet device.
+not defined, then arp-scan will search the system
+interface list for the lowest numbered, configured
+up interface (excluding loopback).
+The interface specified must support ARP.
 .TP
 .B --quiet or -q
 Only display minimal output.
