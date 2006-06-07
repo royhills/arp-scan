@@ -202,17 +202,11 @@ void dump_list(void);
 void print_times(void);
 void initialise(void);
 void clean_up(void);
-void ether_scan_version(void);
-void local_version(void);
-void local_help(void);
-int local_add_host(const char *, unsigned);
-int local_find_host(host_entry **, host_entry **,
-                    ip_address *, const unsigned char *, int);
+void arp_scan_version(void);
 char *make_message(const char *, ...);
 char *printable(const unsigned char*, size_t);
 void callback(u_char *, const struct pcap_pkthdr *, const u_char *);
 void process_options(int, char *[]);
-int local_process_options(int, char *[]);
 ip_address *get_host_address(const char *, int, ip_address *, char **);
 const char *my_ntoa(ip_address);
 /* Wrappers */
