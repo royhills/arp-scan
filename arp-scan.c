@@ -48,8 +48,6 @@ int snaplen = SNAPLEN;			/* Pcap snap length */
 char *if_name=NULL;			/* Interface name, e.g. "eth0" */
 int quiet_flag=0;			/* Don't decode the packet */
 int ignore_dups=0;			/* Don't display duplicate packets */
-char const scanner_name[] = "arp-scan";
-char const scanner_version[] = "1.2";
 
 extern int verbose;	/* Verbose level */
 extern int debug;	/* Debug flag */

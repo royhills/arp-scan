@@ -1,5 +1,5 @@
 /*
- * The Ether Scan Engine (ether-scan-engine) is Copyright (C) 2005-2006
+ * The ARP scanner (arp-scan) is Copyright (C) 2005-2006
  * Roy Hills, NTA Monitor Ltd.
  *
  * This program is free software; you can redistribute it and/or
@@ -60,8 +60,6 @@ int ether_flag=0;			/* Ethernet addresses */
 unsigned interval=0;			/* Desired interval between packets */
 unsigned bandwidth=DEFAULT_BANDWIDTH;	/* Bandwidth in bits per sec */
 
-extern char const scanner_name[];	/* Scanner Name */
-extern char const scanner_version[];	/* Scanner Version */
 extern unsigned retry;			/* Number of retries */
 extern unsigned timeout;		/* Per-host timeout */
 extern float backoff_factor;		/* Backoff factor */
@@ -99,7 +97,7 @@ main(int argc, char *argv[]) {
  *	we use strncat and keep track of the remaining buffer space.
  */
 #ifdef SYSLOG
-   openlog(scanner_name, LOG_PID, SYSLOG_FACILITY);
+   openlog("arp-scan", LOG_PID, SYSLOG_FACILITY);
    arg_str[0] = '\0';
    arg_str_space = MAXLINE;	/* Amount of space in the arg_str buffer */
    for (arg=0; arg<argc; arg++) {
@@ -245,7 +243,7 @@ main(int argc, char *argv[]) {
 /*
  *	Display initial message.
  */
-   printf("Starting %s %s (%s) with %u hosts\n", scanner_name, scanner_version,
+   printf("Starting %s with %u hosts (http://www.nta-monitor.com/arp-scan/)\n",
           PACKAGE_STRING, num_hosts);
 /*
  *	Display the lists if verbose setting is 3 or more.
@@ -372,8 +370,8 @@ main(int argc, char *argv[]) {
                responders);
 #endif
    printf("Ending %s: %u hosts scanned in %.3f seconds (%.2f hosts/sec).  %u responded\n",
-          scanner_name, num_hosts, elapsed_seconds, num_hosts/elapsed_seconds,
-          responders);
+          PACKAGE_STRING, num_hosts, elapsed_seconds,
+          num_hosts/elapsed_seconds, responders);
    if (debug) {print_times(); printf("main: End\n");}
    return 0;
 }
@@ -881,7 +879,7 @@ dump_list(void) {
  */
 void
 usage(int status) {
-   fprintf(stderr, "Usage: %s [options] [hosts...]\n", scanner_name);
+   fprintf(stderr, "Usage: arp-scan [options] [hosts...]\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "Target hosts must be specified on the command line unless the --file option is\n");
    fprintf(stderr, "given, in which case the targets are read from the specified file instead.\n");
@@ -1260,7 +1258,7 @@ process_options(int argc, char *argv[]) {
  */
 void
 ether_scan_version (void) {
-   fprintf(stderr, "%s %s (%s)\n\n", scanner_name, scanner_version, PACKAGE_STRING);
+   fprintf(stderr, "%s\n\n", PACKAGE_STRING);
    fprintf(stderr, "Copyright (C) 2005-2006 Roy Hills, NTA Monitor Ltd.\n");
    fprintf(stderr, "\n");
 /* We use rcsid here to prevent it being optimised away */

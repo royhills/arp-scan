@@ -1,10 +1,10 @@
 dnl $Id: configure.ac 7138 2006-05-16 13:38:09Z rsh $
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([ether-scan-engine], [1.3], [ether-scan-engine@nta-monitor.com])
+AC_INIT([arp-scan], [1.3], [arp-scan@nta-monitor.com])
 AC_PREREQ(2.59)
 AC_REVISION($Revision: 7138 $)
-AC_CONFIG_SRCDIR([ether-scan-engine.c])
+AC_CONFIG_SRCDIR([arp-scan.c])
 AM_INIT_AUTOMAKE(1.9)
 
 AM_CONFIG_HEADER([config.h])

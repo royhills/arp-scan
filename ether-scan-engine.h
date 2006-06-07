@@ -1,5 +1,5 @@
 /*
- * The Ether Scan Engine (ether-scan-engine) is Copyright (C) 2005 Roy Hills,
+ * The ARP scanner (arp-scan) is Copyright (C) 2005 Roy Hills,
  * NTA Monitor Ltd.
  *
  * This program is free software; you can redistribute it and/or
