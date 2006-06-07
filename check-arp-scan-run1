@@ -1,0 +1,45 @@
+#!/bin/sh
+# $Id: check-arp-scan-run1 6194 2006-03-09 14:27:39Z rsh $
+#
+# check-arp-scan-run1 -- Shell script to test arp-scan basic functionality
+#
+# Author: Roy Hills
+# Date: 9 March 2006
+#
+# This shell script checks that "arp-scan --help" and "arp-scan --version"
+# work.  These options don't use much of the arp-scan functionallity, so if
+# they fail, then there is a fundimental problem with the program.
+#
+TMPFILE=/tmp/arp-scan-test.$$.tmp
+#
+echo "Checking arp-scan --help ..."
+$srcdir/arp-scan --help 2> $TMPFILE
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+grep '^Report bugs or send suggestions to ' $TMPFILE >/dev/null
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+#
+echo "Checking arp-scan --version ..."
+$srcdir/arp-scan --version 2> $TMPFILE
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+grep '^Copyright (C) ' $TMPFILE >/dev/null
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+#
+rm -f $TMPFILE

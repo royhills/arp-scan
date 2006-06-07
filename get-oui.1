@@ -1,0 +1,74 @@
+.\" $Id: get-oui.1 7431 2006-05-31 16:50:48Z rsh $
+.TH GET-OUI.PL 1 "May 30, 2006"
+.\" Please adjust this date whenever revising the manpage.
+.SH NAME
+get-oui.pl \- Fetch the arp-scan OUI file from the IEEE website
+.SH SYNOPSIS
+.B get-oui.pl
+.RI [ options ]
+.SH DESCRIPTION
+.B get-oui.pl
+fetches the Ethernet OUI file from the IEEE website, and saves it in the
+format used by arp-scan.
+.PP
+This script can be used to update the
+.B arp-scan
+OUI file from the latest data on the IEEE website.
+.PP
+The OUI data is fetched from the URL
+.I http://standards.ieee.org/regauth/oui/oui.txt
+and the output file is saved to the file
+.I oui.txt
+in the current directory. The URL to fetch the data from can be changed with
+the
+.B -u
+option, and the output file name can be changed with the
+.B -f
+option.
+.PP
+The
+.I oui.txt
+file that is produced by this script is used by
+.B arp-scan
+to determine the Ethernet card vendor from its hardware address.
+.PP
+The directory that
+.B arp-scan
+will look for the
+.I oui.txt
+file depends on the options used when it was built.  If it was
+built using the default options, then it will look in
+.IR /usr/local/share/arp-scan .
+.SH OPTIONS
+.TP
+.B -h
+Display a brief usage message and exit.
+.TP
+.B -f <fn>
+Write the output to the specified file instead of the default
+.I oui.txt.
+.TP
+.B -u <URL>
+Use the specified URL to fetch the raw OUI data from instead of the default
+.I http://standards.ieee.org/regauth/oui/oui.txt.
+.TP
+.B -v
+Display verbose progress messages.
+.SH FILES
+.TP
+.I oui.txt
+The default output file.
+.SH EXAMPLES
+.nf
+$ get-oui.pl -v
+Renaming oui.txt to oui.txt.bak
+Fetching OUI data from http://standards.ieee.org/regauth/oui/oui.txt
+Fetched 1467278 bytes
+Opening output file oui.txt
+9274 OUI entries written to file oui.txt
+.fi
+.SH AUTHOR
+Roy Hills <Roy.Hills@nta-monitor.com>
+.SH "SEE ALSO"
+.TP
+.BR arp-scan (1)

@@ -1,0 +1,68 @@
+$Id: README 7391 2006-05-27 14:04:24Z rsh $
+
+ARP Packet Format
+
+The ARP packet format is defined in RFC 826 "An Ethernet Address Resolution
+Protocol".  The diagram below shows the entire ARP packet, including the
+Ethernet frame header.
+
+In this diagram, each dash (-) represents one bit, with plus (+) marks every
+eight bits. The names for the ARP packet fields like "ar$hrd" are taken
+from RFC 826.
+
+Ethernet Frame Header:
+
++--------+--------+--------+--------+--------+--------+
+| Dest Address                                        |
++--------+--------+--------+--------+--------+--------+
+| Source Address                                      |
++--------+--------+--------+--------+--------+--------+
+| Protocol Type   |
++--------+--------+
+
+ARP Packet data:
+
++--------+--------+
+| ar$hrd          |
++--------+--------+
+| ar$pro          |
++--------+--------+
+|ar$hln  |
++--------+
+|ar$pln  |
++--------+--------+
+| ar$op           |
++--------+--------+--------+--------+--------+--------+
+| ar$sha                                              |
++--------+--------+--------+--------+--------+--------+
+| ar$spa                            |
++--------+--------+--------+--------+--------+--------+
+| ar$tha                                              |
++--------+--------+--------+--------+--------+--------+
+| ar$tpa                            |
++--------+--------+--------+--------+
+
+Optional Padding:
+
++--------+--------+...
+| Padding          ...
++--------+--------+...
+
+
+Field           Bits      Option        Notes
+-----           ----      ------        -----
+
+Dest Address    48        --destaddr	Default is ff:ff:ff:ff:ff:ff
+Source Address  48        None          Always uses interface h/w address
+Protocol Type   16        --prototype	Default is 0x0806
+ar$hrd          16        --arphrd	Default is 1 (ARPHRD_ETHER)
+ar$pro          16        --arppro	Default is 0x0800
+ar$hln           8        --arphln	Default is 6 (ETH_ALEN)
+ar$pln           8        --arppln	Default is 4 (IPv4)
+ar$op           16        --arpop	Default is 1 (ARPOP_REQUEST)
+ar$sha          48        --arpsha	Default is interface h/w address
+ar$spa          32        --arpspa	Default is interface IP address
+ar$tha          48        --arptha	Default is zero (00:00:00:00:00:00)
+ar$tpa          32        None          Set to the target host IP address
+Padding         variable  --padding	i/f driver will pad to min frame length
+

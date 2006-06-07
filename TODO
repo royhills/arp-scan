@@ -1,0 +1,25 @@
+$Id: TODO 7391 2006-05-27 14:04:24Z rsh $
+
+Add support for IEEE IAB listings in addition to OUI listings.
+http://standards.ieee.org/regauth/oui/iab.txt
+Each IAB defines the first 36 bits, leaving the remaining 12 free,
+e.g. 00:50:c2:00:0x:xx
+
+Add support for special MAC addresses e.g. VMware, WLBS Etc.
+For this, we'll probably want to use Posix pattern matching.
+
+Add option to scan locally attached network without requiring IP range.
+Get IP address and netmask of interface and generate range from that.
+
+Handle duplicate IP addresses in input in a sensible manner.
+Can we just ignore non-live hosts in find_host()? No, because that would hide
+duplicate packets.
+
+Allow changing of the local interface MAC address.
+   for (i=0; i<6; i++) {
+      net->dev.ifr_hwaddr.sa_data[i] = mac->byte[i];
+   }
+   if (ioctl(net->sock, SIOCSIFHWADDR, &net->dev) < 0) {
+      perror ("ERROR: Can't change MAC: interface up or not permission");
+      return -1;
+   }
