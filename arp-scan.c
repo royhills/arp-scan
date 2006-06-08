@@ -987,6 +987,7 @@ usage(int status) {
    fprintf(stderr, "\t\t\tpacket to the minimum Ethernet frame length.\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "Report bugs or send suggestions to %s\n", PACKAGE_BUGREPORT);
+   fprintf(stderr, "See the arp-scan homepage at http://www.nta-monitor.com/tools/arp-scan/\n");
    exit(status);
 }
 

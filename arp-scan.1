@@ -1,5 +1,5 @@
 .\" $Id: arp-scan.1 7543 2006-06-07 06:28:04Z rsh $
-.TH ARP-SCAN 1 "May 27, 2006"
+.TH ARP-SCAN 1 "June 8, 2006"
 .\" Please adjust this date whenever revising the manpage.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -16,10 +16,13 @@ The target hosts can be specified as IP addresses or hostnames.  You can also
 specify the target as
 .B IPnetwork/bits
 (e.g. 192.168.1.0/24) to specify all
-hosts in the given network (network and broadcast addresses included), or
+hosts in the given network (network and broadcast addresses included),
 .B IPstart-IPend
 (e.g. 192.168.1.3-192.168.1.27) to specify all hosts in the
-inclusive range.
+inclusive range, or
+.B IPnetwork:NetMask
+(e.g. 192.168.1.0:255.255.255.0) to specify all hosts in the given network
+and mask.
 .SH DESCRIPTION
 .B arp-scan
 sends ARP packets to hosts on the local network and displays any responses
@@ -33,9 +36,15 @@ Ethernet broadcast address, ff:ff:ff:ff:ff:ff, but that can be changed with the
 .B --destaddr
 option.
 .PP
+The ARP protocol is a layer-2 (datalink layer) protocol. It only operates on
+the local network, and cannot be routed. Although the ARP protocol makes use
+of IP addresses, it is not an IP-based protocol and
+.B arp-scan
+can be used on an interface which is not configured for IP.
+.PP
 One ARP packet is sent for each for each target host, with the target protocol
-address (ar$tpa) set to the IP address of this host. If a host does not
-respond, then the ARP packet will be sent up to three times.  The maximum
+address (the ar$tpa field) set to the IP address of this host. If a host does not
+respond, then the ARP packet will be re-sent once more.  The maximum
 number of retries can be changed with the
 .B --retry
 option.  Reducing the number of retries will reduce the scanning time at
@@ -126,7 +135,7 @@ file with the latest OUI list from the IEEE website.
 Almost all hosts that support IP will respond to
 .B arp-scan
 if they receive an ARP packet with the target protocol address
-(arp$tpa) set to their IP address.  This includes firewalls and
+(ar$tpa) set to their IP address.  This includes firewalls and
 other hosts with IP filtering that drop all IP traffic from
 the testing system. For this reason,
 .B arp-scan
@@ -341,7 +350,7 @@ using the network interface
 .nf
 $ arp-scan --interface=eth0 192.168.0.0/24
 Interface: eth0, datalink type: EN10MB (Ethernet)
-Starting arp-scan 1.2 (ether-scan-engine 1.3) with 256 hosts
+Starting arp-scan 1.3 with 256 hosts (http://www.nta-monitor.com/tools/arp-scan/)
 192.168.0.1     00:c0:9f:09:b8:db       QUANTA COMPUTER, INC.
 192.168.0.3     00:02:b3:bb:66:98       Intel Corporation
 192.168.0.5     00:02:a5:90:c3:e6       Compaq Computer Corporation
@@ -366,3 +375,6 @@ Roy Hills <Roy.Hills@nta-monitor.com>
 .PP
 .B RFC 826
 - An Ethernet Address Resolution Protocol
+.PP
+.I http://www.nta-monitor.com/tools/arp-scan/
+The arp-scan homepage.
