@@ -146,8 +146,12 @@ main(int argc, char *argv[]) {
 /*
  *      Create packet socket.  This socket is used to send outbound packets.
  */
-   if ((sockfd = socket(PF_PACKET, SOCK_DGRAM, 0)) < 0)
+   if ((sockfd = socket(PF_PACKET, SOCK_DGRAM, 0)) < 0) {
+      if (errno == EPERM || errno == EACCES)
+         warn_msg("You need to be root, or arp-scan must be SUID root, "
+                  "to open a packet socket.");
       err_sys("socket");
+   }
 /*
  *      Call protocol-specific initialisation routine to perform any
  *      initial setup required.
