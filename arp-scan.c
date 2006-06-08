@@ -159,6 +159,83 @@ main(int argc, char *argv[]) {
       err_sys("setuid");
    }
 /*
+ * Create OUI hash table if quiet if not in effect.
+ */
+   if (!quiet_flag) {
+      char *fn;	/* OUI filename */
+      FILE *fp;	/* OUI file handle */
+      ENTRY oui_entry;
+      static const char *oui_pat_str = "([^\t]+)\t[\t ]*([^\t\r\n]+)";
+      regex_t oui_pat;
+      int result;
+      size_t line_count;
+      regmatch_t pmatch[3];
+      size_t key_len;
+      size_t data_len;
+      char *key;
+      char *data;
+      char line[MAXLINE];
+
+      if ((result=regcomp(&oui_pat, oui_pat_str, REG_EXTENDED))) {
+         char reg_errbuf[MAXLINE];
+         size_t errlen;
+         errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
+         err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
+                 oui_pat_str, reg_errbuf);
+      }
+      if (*ouifilename == '\0')	/* If OUI filename not specified */
+         fn = make_message("%s/%s", DATADIR, OUIFILENAME);
+      else
+         fn = make_message("%s", ouifilename);
+      if ((fp = fopen(fn, "r")) == NULL) {
+         warn_sys("WARNING: Cannot open OUI file %s", fn);
+         quiet_flag = 1;	/* Don't decode OUI vendor */
+      } else {
+         line_count=0;
+         while (fgets(line, MAXLINE, fp)) {	/* Count lines in file */
+            if (line[0] != '#' && line[0] != '\n' && line[0] != '\r')
+               line_count++;
+         }
+   
+         if ((hcreate(line_count)) == 0)
+            err_sys("hcreate");
+         rewind(fp);
+         line_count=0;
+         while (fgets(line, MAXLINE, fp)) {	/* create hash table */
+            if (line[0] != '#' && line[0] != '\n' && line[0] != '\r') {
+               result = regexec(&oui_pat, line, 3, pmatch, 0);
+               if (result == REG_NOMATCH || pmatch[1].rm_so < 0 ||
+                   pmatch[2].rm_so < 0) {
+                  warn_msg("WARNING: Could not parse oui: %s", line);
+               } else if (result != 0) {
+                  char reg_errbuf[MAXLINE];
+                  size_t errlen;
+                  errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
+                  err_msg("ERROR: oui regexec failed: %s", reg_errbuf);
+               } else {
+                  key_len = pmatch[1].rm_eo - pmatch[1].rm_so;
+                  data_len = pmatch[2].rm_eo - pmatch[2].rm_so;
+                  key=Malloc(key_len+1);
+                  data=Malloc(data_len+1);
+                  strncpy(key, line+pmatch[1].rm_so, key_len);
+                  key[key_len] = '\0';
+                  strncpy(data, line+pmatch[2].rm_so, data_len);
+                  data[data_len] = '\0';
+                  oui_entry.key = key;
+                  oui_entry.data = data;
+                  if ((hsearch(oui_entry, ENTER)) == NULL)
+                     err_sys("hsearch");
+                  line_count++;
+               }
+            }
+         }
+         fclose(fp);
+         if (verbose)
+            warn_msg("DEBUG: Loaded %u OUI/Vendor entries into hash table", line_count);
+      }
+      free(fn);
+   }
+/*
  *      If we're not reading from a file, then we must have some hosts
  *      given as command line arguments.
  */
@@ -650,8 +727,7 @@ initialise(void) {
       get_addr_status = get_source_ip(if_name, &arp_spa);
       if (get_addr_status == -1) {
          warn_msg("WARNING: Could not obtain IP address for interface %s. "
-                  "Using 0.0.0.0 for",
-                  if_name);
+                  "Using 0.0.0.0 for", if_name);
          warn_msg("the source address, which is probably not what you want.");
          warn_msg("Either configure %s with an IP address, or manually specify"
                   " the address", if_name);
@@ -704,84 +780,6 @@ initialise(void) {
    free(filter_string);
    if ((pcap_setfilter(handle, &filter)) < 0)
       err_msg("pcap_setfilter: %s\n", pcap_geterr(handle));
-/*
- * Create OUI hash table if quiet if not in effect.
- */
-   if (!quiet_flag) {
-      char *fn;	/* OUI filename */
-      FILE *fp;	/* OUI file handle */
-      ENTRY oui_entry;
-      static const char *oui_pat_str = "([^\t]+)\t[\t ]*([^\t\r\n]+)";
-      regex_t oui_pat;
-      int result;
-      size_t line_count;
-      regmatch_t pmatch[3];
-      size_t key_len;
-      size_t data_len;
-      char *key;
-      char *data;
-      char line[MAXLINE];
-
-      if ((result=regcomp(&oui_pat, oui_pat_str, REG_EXTENDED))) {
-         char reg_errbuf[MAXLINE];
-         size_t errlen;
-         errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
-         err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
-                 oui_pat_str, reg_errbuf);
-      }
-      if (*ouifilename == '\0')	/* If OUI filename not specified */
-         fn = make_message("%s/%s", DATADIR, OUIFILENAME);
-      else
-         fn = make_message("%s", ouifilename);
-/* Check access before opening the OUI file in case we are SUID root */
-      if ((access(fn, R_OK)) != 0 || (fp = fopen(fn, "r")) == NULL) {
-         warn_sys("WARNING: Cannot open OUI file %s", fn);
-         quiet_flag = 1;	/* Don't decode OUI vendor */
-      } else {
-         line_count=0;
-         while (fgets(line, MAXLINE, fp)) {	/* Count lines in file */
-            if (line[0] != '#' && line[0] != '\n' && line[0] != '\r')
-               line_count++;
-         }
-   
-         if ((hcreate(line_count)) == 0)
-            err_sys("hcreate");
-         rewind(fp);
-         line_count=0;
-         while (fgets(line, MAXLINE, fp)) {	/* create hash table */
-            if (line[0] != '#' && line[0] != '\n' && line[0] != '\r') {
-               result = regexec(&oui_pat, line, 3, pmatch, 0);
-               if (result == REG_NOMATCH || pmatch[1].rm_so < 0 ||
-                   pmatch[2].rm_so < 0) {
-                  warn_msg("WARNING: Could not parse oui: %s", line);
-               } else if (result != 0) {
-                  char reg_errbuf[MAXLINE];
-                  size_t errlen;
-                  errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
-                  err_msg("ERROR: oui regexec failed: %s", reg_errbuf);
-               } else {
-                  key_len = pmatch[1].rm_eo - pmatch[1].rm_so;
-                  data_len = pmatch[2].rm_eo - pmatch[2].rm_so;
-                  key=Malloc(key_len+1);
-                  data=Malloc(data_len+1);
-                  strncpy(key, line+pmatch[1].rm_so, key_len);
-                  key[key_len] = '\0';
-                  strncpy(data, line+pmatch[2].rm_so, data_len);
-                  data[data_len] = '\0';
-                  oui_entry.key = key;
-                  oui_entry.data = data;
-                  if ((hsearch(oui_entry, ENTER)) == NULL)
-                     err_sys("hsearch");
-                  line_count++;
-               }
-            }
-         }
-         fclose(fp);
-         if (verbose)
-            warn_msg("DEBUG: Loaded %u OUI/Vendor entries into hash table", line_count);
-      }
-      free(fn);
-   }
 }
 
 /*
