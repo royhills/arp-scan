@@ -308,7 +308,9 @@ to other values as well.
 .TP
 .B --arpspa=<s> or -s <s>
 Use <s> as the source IP address.
-The address should be specified in dotted quad format.
+The address should be specified in dotted quad format;
+or the string "dest", which sets the source address
+to be the same as the target host address.
 This sets the 32-bit ar$spa field in the ARP packet.
 Some operating systems check this, and will only
 respond if the source address is within the network

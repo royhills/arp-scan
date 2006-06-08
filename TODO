@@ -11,10 +11,6 @@ For this, we'll probably want to use Posix pattern matching.
 ML: Add option to scan locally attached network without requiring IP range.
 Get IP address and netmask of interface and generate range from that.
 
-Handle duplicate IP addresses in input in a sensible manner.
-Can we just ignore non-live hosts in find_host()? No, because that would hide
-duplicate packets.
-
 Allow changing of the local interface MAC address.
    for (i=0; i<6; i++) {
       net->dev.ifr_hwaddr.sa_data[i] = mac->byte[i];
@@ -23,8 +19,3 @@ Allow changing of the local interface MAC address.
       perror ("ERROR: Can't change MAC: interface up or not permission");
       return -1;
    }
-
-ML: I'd like to be able to set the source IP to the same as the destination IP:
-
-arp-scan --arpspa same-as-dest 80.82.243.222/29
-

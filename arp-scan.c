@@ -70,6 +70,7 @@ int ignore_dups=0;			/* Don't display duplicate packets */
 
 static uint32_t arp_spa;		/* Source IP address */
 static int arp_spa_flag=0;		/* Source IP address specified */
+static int arp_spa_is_tpa=0;		/* Source IP is dest IP */
 static unsigned char arp_sha[ETH_ALEN];	/* Source Ethernet MAC Address */
 static int arp_sha_flag=0;		/* Source MAC address specified */
 static int if_index;			/* Interface index */
@@ -491,7 +492,7 @@ main(int argc, char *argv[]) {
  *
  *      None.
  *
- *      This should check the received packet and display details of what
+ *      This checks the received packet and displays details of what
  *      was received in the format: <IP-Address><TAB><Details>.
  */
 void
@@ -598,9 +599,9 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
  *
  *      The size of the packet that was sent.
  *
- *      This must construct an appropriate packet and send it to the host
- *      identified by "he" using the socket "s".
- *      It must also update the "last_send_time" field for this host entry.
+ *      This constructs an appropriate packet and sends it to the host
+ *      identified by "he" using the socket "s". It also updates the
+ *	"last_send_time" field for the host entry.
  */
 int
 send_packet(int s, host_entry *he,
@@ -621,7 +622,13 @@ send_packet(int s, host_entry *he,
    arpei.ar_op = htons(arp_op);
    memcpy(arpei.ar_sha, arp_sha, ETH_ALEN);
    memcpy(arpei.ar_tha, arp_tha, ETH_ALEN);
-   arpei.ar_sip = arp_spa;
+   if (arp_spa_is_tpa) {
+      if (he) {
+         arpei.ar_sip = he->addr.v4.s_addr;
+      }
+   } else {
+      arpei.ar_sip = arp_spa;
+   }
    if (he)
       arpei.ar_tip = he->addr.v4.s_addr;
 /*
@@ -958,7 +965,9 @@ usage(int status) {
    fprintf(stderr, "\t\t\t(ARPOP_REQUEST). However, some systems will respond\n");
    fprintf(stderr, "\t\t\tto other values as well.\n");
    fprintf(stderr, "\n--arpspa=<s> or -s <s>\tUse <s> as the source IP address.\n");
-   fprintf(stderr, "\t\t\tThe address should be specified in dotted quad format.\n");
+   fprintf(stderr, "\t\t\tThe address should be specified in dotted quad format;\n");
+   fprintf(stderr, "\t\t\tor the string \"dest\", which sets the source address\n");
+   fprintf(stderr, "\t\t\tto be the same as the target host address.\n");
    fprintf(stderr, "\t\t\tThis sets the 32-bit ar$spa field in the ARP packet.\n");
    fprintf(stderr, "\t\t\tSome operating systems check this, and will only\n");
    fprintf(stderr, "\t\t\trespond if the source address is within the network\n");
@@ -1937,9 +1946,13 @@ process_options(int argc, char *argv[]) {
             break;
          case 's':	/* --arpspa */
             arp_spa_flag = 1;
-            if ((inet_pton(AF_INET, optarg, &source_ip_address)) <= 0)
-               err_sys("inet_pton failed for %s", optarg);
-            memcpy(&arp_spa, &(source_ip_address.s_addr), sizeof(arp_spa));
+            if ((strcmp(optarg,"dest")) == 0) {
+               arp_spa_is_tpa = 1;
+            } else {
+               if ((inet_pton(AF_INET, optarg, &source_ip_address)) <= 0)
+                  err_sys("inet_pton failed for %s", optarg);
+               memcpy(&arp_spa, &(source_ip_address.s_addr), sizeof(arp_spa));
+            }
             break;
          case 'o':	/* --arpop */
             arp_op=strtol(optarg, (char **)NULL, 0);
