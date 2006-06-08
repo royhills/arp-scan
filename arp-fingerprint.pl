@@ -49,6 +49,8 @@ my %fp_hash = (
    '10110100000' => 'Win 3.11, 95, NT 3.51',
    '11110000011' => 'OpenBSD',
    '10110110000' => 'NetBSD',
+   '00010110011' => 'Unknown 1', # dwk at 7663 in June 2006, Entrada Networks
+   '01010110011' => 'Unknown 2', # dwk at 7663 in June 2006, Cisco
    );
 #
 my $usage =

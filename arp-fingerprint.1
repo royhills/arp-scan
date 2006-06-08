@@ -16,6 +16,14 @@ which types it responds to. From this, it constructs a fingerprint string
 consisting of "1" where the target responded and "0" where it did not. This
 fingerprint string is then used to lookup the likely target operating system.
 .PP
+Many of the fingerprint strings are shared by several operating systems, so
+there is not always a one-to-one mapping between fingerprint strings and
+operating systems.
+.PP
+Sometimes the fact that two different operating systems share a common ARP
+fingerprint string points to a re-use of networking code. One example of
+this is Windows NT and FreeBSD.
+.PP
 .B arp-fingerprint.pl
 uses
 .B arp-scan
