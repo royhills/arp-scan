@@ -1,0 +1,52 @@
+.\" $Id$
+.TH ARP-FINGERPRINT.PL 1 "June 8, 2006"
+.\" Please adjust this date whenever revising the manpage.
+.SH NAME
+arp-fingerprint.pl \- Fingerprint a system using ARP
+.SH SYNOPSIS
+.B arp-fingerprint.pl
+.RI [ options ]
+.I target
+.SH DESCRIPTION
+.B arp-fingerprint.pl
+fingerprints the specified target host using the ARP protocol.
+.PP
+It sends various different types of ARP request to the target, and records
+which types it responds to. From this, it constructs a fingerprint string
+consisting of "1" where the target responded and "0" where it did not. This
+fingerprint string is then used to lookup the likely target operating system.
+.PP
+.B arp-fingerprint.pl
+uses
+.B arp-scan
+to send the ARP requests and receive the replies.
+.PP
+.B arp-fingerprint.pl
+is still being developed, and the results should not be relied on. As most
+of the ARP requests that it sends are non-standard, it is possible that it
+may disrupt some systems, so caution is advised.
+.SH OPTIONS
+.TP
+.B -h
+Display a brief usage message and exit.
+.TP
+.B -v
+Display verbose progress messages.
+.SH EXAMPLES
+.nf
+$ arp-fingerprint.pl 192.168.0.1
+192.168.0.1   01000100000     Linux 2.2, 2.4, 2.6
+.fi
+.SH BUGS
+There is currently no way to pass options to
+.B arp-scan
+such as which network interface to use. The
+.B arp-scan
+command line is hard-coded in the
+.B arp-fingerprint.pl
+source code, and you may need to change this to suit your environment.
+.SH AUTHOR
+Roy Hills <Roy.Hills@nta-monitor.com>
+.SH "SEE ALSO"
+.TP
+.BR arp-scan (1)
