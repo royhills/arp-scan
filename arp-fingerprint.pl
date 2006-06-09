@@ -34,18 +34,44 @@ use Getopt::Std;
 # You might need to change this to suit your configuration
 my $arpscan="arp-scan -N -q -r 1";
 #
-# List of known fingerprints
+# Hash of known fingerprints
+#
+# These fingerprints were observed on:
+#
+# FreeBSD 4.3	FreeBSD 4.3 on VMware
+# Win98		Windows 98 SE on VMware
+# NT4		Windows NT Workstation 4.0 SP6a on Pentium
+# 2000		Windows 2000
+# XP		Windows XP Professional SP2 on Intel P4
+# 2003		Windows 2003 Server SP1 on Intel P4
+# Linux 2.0	Linux 2.0.29 on VMware (debian 1.3.1)
+# Linux 2.2	Linux 2.2.19 on VMware (debian potato)
+# Linux 2.4	Linux 2.4.29 on Intel P3 (debian sarge)
+# Linux 2.6	Linux 2.6.15.7 on Intel P3 (debian sarge)
+# Cisco IOS	IOS 12.1(27b) on Cisco 2621, IOS 12.3(15) on Cisco 2503
+# Solaris 7	Solaris 7 (x86) on VMware
+# Solaris 9	Solaris 9 (SPARC) on Sun Ultra 5
+# ScreenOS 5.0	ScreenOS 5.0.0r9 on NetScreen 5XP
+# MacOS 10.4	MacOS 10.4.6 on powerbook G4
+# MacOS 10.3	MacOS 10.3.9 on imac G3
+# IRIX 6.5	IRIX64 IRIS 6.5 05190004 IP30 on SGI Octane
+# SCO OS	SCO OpenServer 5.0.7 on VMware
+# Win 3.11	Windows for Workgroups 3.11/DOS 6.22 on VMware
+# 95		Windows 95 OSR2 on VMware
+# NT 3.51	Windows NT Server 3.51 SP0 on VMware
+# OpenBSD	OpenBSD 3.1 on VMware
+# NetBSD	NetBSD
 #
 my %fp_hash = (
    '11110100000' => 'FreeBSD, Win98, NT4, 2000, XP, 2003',
    '01000100000' => 'Linux 2.2, 2.4, 2.6',
    '01010100000' => 'Linux 2.2, 2.4, 2.6',	# If non-local IP is routed
    '00000100000' => 'Cisco IOS',
-   '11110110000' => 'Solaris 9',
+   '11110110000' => 'Solaris 7, 9',
    '01000111111' => 'ScreenOS 5.0',
    '11110000000' => 'Linux 2.0, MacOS 10.4',
-   '11110100011' => 'MacOS 10.3',
-   '10010100011' => 'SCO SVR4',
+   '11110100011' => 'MacOS 10.3, FreeBSD 4.3, IRIX 6.5',
+   '10010100011' => 'SCO OS',
    '10110100000' => 'Win 3.11, 95, NT 3.51',
    '11110000011' => 'OpenBSD',
    '10110110000' => 'NetBSD',

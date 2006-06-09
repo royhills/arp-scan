@@ -36,11 +36,16 @@ Ethernet broadcast address, ff:ff:ff:ff:ff:ff, but that can be changed with the
 .B --destaddr
 option.
 .PP
-The ARP protocol is a layer-2 (datalink layer) protocol. It only operates on
+The ARP protocol is a layer-2 (datalink layer) protocol that is used to
+determine a host's hardware address given its IP address. It only operates on
 the local network, and cannot be routed. Although the ARP protocol makes use
 of IP addresses, it is not an IP-based protocol and
 .B arp-scan
 can be used on an interface which is not configured for IP.
+.PP
+ARP is only used by IPv4 hosts. IPv6 uses NDP (neighbour discovery protocol)
+instead, which is a different protocol and is not supported by
+.BR arp-scan .
 .PP
 One ARP packet is sent for each for each target host, with the target protocol
 address (the ar$tpa field) set to the IP address of this host. If a host does not
