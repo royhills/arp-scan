@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-# $Id: get-oui.pl 7439 2006-06-01 11:18:42Z rsh $
+# $Id$
 #
 # get-oui.pl -- Fetch the OUI file from the IEEE website
 #

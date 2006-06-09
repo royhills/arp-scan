@@ -1,4 +1,4 @@
-dnl $Id: acinclude.m4 4551 2005-10-16 18:34:40Z rsh $
+dnl $Id$
 dnl arp-scan autoconf macros
 
 dnl	AC_NTA_CHECK_TYPE -- See if a type exists using reasonable includes

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: arp-scan.h 7469 2006-06-02 17:32:25Z rsh $
+ * $Id$
  *
  * arp-scan.h -- Header file for ARP scanner
  *
@@ -217,6 +217,7 @@ unsigned long int Strtoul(const char *, int);
 /* The following functions are just to prevent rcsid being optimised away */
 void wrappers_use_rcsid(void);
 void error_use_rcsid(void);
+void utils_use_rcsid(void);
 int get_source_ip(char *, uint32_t *);
 int get_hardware_address(char *, unsigned char []);
 void marshal_arp_pkt(unsigned char *, arp_ether_ipv4 *, size_t *);

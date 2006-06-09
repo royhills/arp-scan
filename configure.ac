@@ -1,9 +1,9 @@
-dnl $Id: configure.ac 7138 2006-05-16 13:38:09Z rsh $
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([arp-scan], [1.3], [arp-scan@nta-monitor.com])
 AC_PREREQ(2.59)
-AC_REVISION($Revision: 7138 $)
+AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
 AM_INIT_AUTOMAKE(1.9)
 

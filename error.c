@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: error.c 7439 2006-06-01 11:18:42Z rsh $
+ * $Id$
  *
  * error.c -- error routines for arp-scan
  *
@@ -26,7 +26,7 @@
  */
 #include "arp-scan.h"
 
-static char rcsid[] = "$Id: error.c 7439 2006-06-01 11:18:42Z rsh $"; /* RCS ID for ident(1) */
+static char rcsid[] = "$Id$"; /* RCS ID for ident(1) */
 
 int daemon_proc;	/* Non-zero if process is a daemon */
 

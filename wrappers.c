@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: wrappers.c 7439 2006-06-01 11:18:42Z rsh $
+ * $Id$
  *
  * Author: Roy Hills
  * Date: 8 November 2003
@@ -32,7 +32,7 @@
 
 #include "arp-scan.h"
 
-static char rcsid[] = "$Id: wrappers.c 7439 2006-06-01 11:18:42Z rsh $";	/* RCS ID for ident(1) */
+static char rcsid[] = "$Id$";	/* RCS ID for ident(1) */
 
 /*
  * We omit the timezone arg from this wrapper since it's obsolete and we never
@@ -83,5 +83,5 @@ unsigned long int Strtoul(const char *nptr, int base) {
 }
 
 void wrappers_use_rcsid(void) {
-   printf("%s\n", rcsid);	/* Use rcsid to stop compiler optimising away */
+   fprintf(stderr, "%s\n", rcsid);	/* Use rcsid to stop compiler optimising away */
 }
