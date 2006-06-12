@@ -145,101 +145,6 @@ hex2data(const char *string, size_t *data_len) {
 }
 
 /*
- *	hex_or_str -- Convert hex or string to binary data
- *
- *	Inputs:
- *
- *	string		The hex or string to convert
- *	data_len	(output) The length of the resultant binary data
- *
- *	Returns:
- *
- *	Pointer to the binary data, or NULL if an error occurred.
- *
- *	The input string must be in one of the following two formats:
- *
- *	0x<hex-data>	Input is in hex format
- *	string		Input is in string format
- *
- *	The returned pointer points to malloc'ed storage which should be
- *	free'ed by the caller when it's no longer needed.  If the length of
- *	the inputs string is not even, the function will return NULL and
- *	set data_len to 0.
- */
-unsigned char *
-hex_or_str(const char *string, size_t *data_len) {
-
-   if (strlen(string) < 1) {	/* Input string too short */
-      *data_len = 0;
-      return NULL;
-   }
-
-   if (string[0] == '0' && string[1] == 'x') {	/* Hex input format */
-      return hex2data((string+2), data_len);
-   } else {					/* Assume string input format */
-      unsigned char *data;
-      size_t len;
-
-      len = strlen(string);
-      data = Malloc(len);
-      memcpy(data, string, len);
-      *data_len = len;
-      return data;
-   }
-}
-
-/*
- *	hex_or_num -- Convert hex or number to binary data
- *
- *	Inputs:
- *
- *	string		The hex or string to convert
- *	data_len	(output) The length of the resultant binary data
- *
- *	Returns:
- *
- *	Pointer to the binary data, or NULL if an error occurred.
- *
- *	The input string must be in one of the following two formats:
- *
- *	0x<hex-data>	Input is in hex format
- *	decimal number	Input is in numeric format
- *
- *	For numeric input, the binary data will be a 32-bit value in
- *	big endian format.
- *
- *	The returned pointer points to malloc'ed storage which should be
- *	free'ed by the caller when it's no longer needed.  If the length of
- *	the inputs string is not even, the function will return NULL and
- *	set data_len to 0.
- */
-unsigned char *
-hex_or_num(const char *string, size_t *data_len) {
-
-   if (strlen(string) < 1) {	/* Input string too short */
-      *data_len = 0;
-      return NULL;
-   }
-
-   if (string[0] == '0' && string[1] == 'x') {	/* Hex input format */
-      return hex2data((string+2), data_len);
-   } else {					/* Assume number input format */
-      unsigned char *data;
-      size_t len = 4;	/* 32-bit value */
-      unsigned long value;
-      unsigned long value_be;
-
-      value = Strtoul(string, 10);
-      value_be = htonl(value);
-      data = Malloc(len);
-      memcpy(data, &value_be, len);
-      
-      *data_len = len;
-      return data;
-   }
-}
-
-/*
  * make_message -- allocate a sufficiently large string and print into it.
  *
  * Inputs:
@@ -276,27 +181,6 @@ make_message(const char *fmt, ...) {
          size *= 2;  /* twice the old size */
       p = Realloc (p, size);
    }
-}
-
-/*
- *	numstr -- Convert an unsigned integer to a string
- *
- *	Inputs:
- *
- *	num	The number to convert
- *
- *	Returns:
- *
- *	Pointer to the string representation of the number.
- *
- *	I'm surprised that there is not a standard library function to do this.
- */
-char *
-numstr(unsigned num) {
-   static char buf[21];	/* Large enough for biggest 64-bit integer */
-
-   snprintf(buf, sizeof(buf), "%d", num);
-   return buf;
 }
 
 /*
@@ -341,7 +225,7 @@ printable(const unsigned char *string, size_t size) {
  *	Determine required size of output string.
  */
    if (!size)
-      size = strlen((char *) string);
+      size = strlen((const char *) string);
 
    outlen = size;
    cp = string;

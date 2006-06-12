@@ -569,7 +569,7 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
    }
    if (nonzero && verbose) {
       cp = msg;
-      cp2 = hexstring(ucp, extra_data);
+      cp2 = hexstring(ucp, (unsigned)extra_data);
       msg = make_message("%s\tPadding=%s", cp, cp2);
       free(cp2);
       free(cp);
@@ -997,7 +997,7 @@ usage(int status) {
  *      Inputs:
  *
  *      pattern = The host pattern to add.
- *      timeout = Per-host timeout in ms.
+ *      host_timeout = Per-host timeout in ms.
  *
  *      Returns: None
  *
@@ -1006,10 +1006,11 @@ usage(int status) {
  *      will be added to the list, or it can specify a number of hosts with
  *      the IPnet/bits or IPstart-IPend formats.
  *
- *      The timeout and num_hosts arguments are passed unchanged to add_host().
+ *      The host_timeout and num_hosts arguments are passed unchanged to
+ *	add_host().
  */
 void
-add_host_pattern(const char *pattern, unsigned timeout) {
+add_host_pattern(const char *pattern, unsigned host_timeout) {
    char *patcopy;
    struct in_addr in_val;
    struct in_addr mask_val;
@@ -1117,7 +1118,7 @@ add_host_pattern(const char *pattern, unsigned timeout) {
          b3 = (hostip & 0x0000ff00) >> 8;
          b4 = (hostip & 0x000000ff);
          sprintf(ipstr, "%d.%d.%d.%d", b1,b2,b3,b4);
-         add_host(ipstr, timeout);
+         add_host(ipstr, host_timeout);
       }
    } else if (!(regexec(&ipmask_pat, patcopy, 0, NULL, 0))) { /* IPnet:netmask */
 /*
@@ -1167,7 +1168,7 @@ add_host_pattern(const char *pattern, unsigned timeout) {
          b3 = (hostip & 0x0000ff00) >> 8;
          b4 = (hostip & 0x000000ff);
          sprintf(ipstr, "%d.%d.%d.%d", b1,b2,b3,b4);
-         add_host(ipstr, timeout);
+         add_host(ipstr, host_timeout);
       }
    } else if (!(regexec(&iprange_pat, patcopy, 0, NULL, 0))) { /* IPstart-IPend */
 /*
@@ -1194,10 +1195,10 @@ add_host_pattern(const char *pattern, unsigned timeout) {
          b3 = (i & 0x0000ff00) >> 8;
          b4 = (i & 0x000000ff);
          sprintf(ipstr, "%d.%d.%d.%d", b1,b2,b3,b4);
-         add_host(ipstr, timeout);
+         add_host(ipstr, host_timeout);
       }
    } else {                             /* Single host or IP address */
-      add_host(patcopy, timeout);
+      add_host(patcopy, host_timeout);
    }
    free(patcopy);
 }
@@ -1339,14 +1340,14 @@ advance_cursor(void) {
  *	Inputs:
  *
  *	devname		The device name, e.g. "eth0"
- *	ip_address	(output) The IP Address associated with the device
+ *	ip_addr	(output) The IP Address associated with the device
  *
  *	Returns:
  *
  *	Zero on success, or -1 on failure.
  */
 int
-get_source_ip(char *devname, uint32_t *ip_address) {
+get_source_ip(char *devname, uint32_t *ip_addr) {
    int sockfd;
    struct ifreq ifconfig;
    struct sockaddr_in sa_addr;
@@ -1365,7 +1366,7 @@ get_source_ip(char *devname, uint32_t *ip_address) {
       return -1;
    }
    memcpy(&sa_addr, &ifconfig.ifr_ifru.ifru_addr, sizeof(sa_addr));
-   *ip_address = sa_addr.sin_addr.s_addr;
+   *ip_addr = sa_addr.sin_addr.s_addr;
 
    close(sockfd);
    return 0;

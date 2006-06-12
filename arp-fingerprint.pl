@@ -32,6 +32,8 @@ use strict;
 use Getopt::Std;
 #
 # You might need to change this to suit your configuration
+# You can change the interface by defining RMIF, e.g.
+# RMIF=eth1 arp-fingerprint.pl 192.168.0.1
 my $arpscan="arp-scan -N -q -r 1";
 #
 # Hash of known fingerprints
@@ -61,6 +63,7 @@ my $arpscan="arp-scan -N -q -r 1";
 # NT 3.51	Windows NT Server 3.51 SP0 on VMware
 # OpenBSD	OpenBSD 3.1 on VMware
 # NetBSD	NetBSD
+# IPSO		IPSO 3.2.1-fcs1 on Nokia VPN 210
 #
 my %fp_hash = (
    '11110100000' => 'FreeBSD, Win98, NT4, 2000, XP, 2003',
@@ -69,7 +72,7 @@ my %fp_hash = (
    '00000100000' => 'Cisco IOS',
    '11110110000' => 'Solaris 7, 9',
    '01000111111' => 'ScreenOS 5.0',
-   '11110000000' => 'Linux 2.0, MacOS 10.4',
+   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO',
    '11110100011' => 'MacOS 10.3, FreeBSD 4.3, IRIX 6.5',
    '10010100011' => 'SCO OS',
    '10110100000' => 'Win 3.11, 95, NT 3.51',

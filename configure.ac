@@ -13,6 +13,8 @@ dnl Checks for programs.
 AC_PROG_CC
  if test -n "$GCC"; then
       CFLAGS="$CFLAGS -Wall "
+dnl Uncomment the line below for testing with stricter warnings.
+dnl      CFLAGS="$CFLAGS -pedantic -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs "
  fi
 AC_PROG_INSTALL
 AC_PROG_LN_S
