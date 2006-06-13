@@ -40,6 +40,7 @@ my $arpscan="arp-scan -N -q -r 1";
 #
 # These fingerprints were observed on:
 #
+# FreeBSD 5.3	FreeBSD 5.3 on VMware
 # FreeBSD 4.3	FreeBSD 4.3 on VMware
 # Win98		Windows 98 SE on VMware
 # NT4		Windows NT Workstation 4.0 SP6a on Pentium
@@ -50,34 +51,34 @@ my $arpscan="arp-scan -N -q -r 1";
 # Linux 2.2	Linux 2.2.19 on VMware (debian potato)
 # Linux 2.4	Linux 2.4.29 on Intel P3 (debian sarge)
 # Linux 2.6	Linux 2.6.15.7 on Intel P3 (debian sarge)
-# Cisco IOS	IOS 12.1(27b) on Cisco 2621, IOS 12.3(15) on Cisco 2503
+# Cisco IOS	IOS 12.0(8) on Cisco 1601, IOS 12.1(27b) on Cisco 2621, IOS 12.2(32) on Cisco 1603, IOS 12.3(15) on Cisco 2503
 # Solaris 7	Solaris 7 (x86) on VMware
 # Solaris 9	Solaris 9 (SPARC) on Sun Ultra 5
 # ScreenOS 5.0	ScreenOS 5.0.0r9 on NetScreen 5XP
 # MacOS 10.4	MacOS 10.4.6 on powerbook G4
 # MacOS 10.3	MacOS 10.3.9 on imac G3
 # IRIX 6.5	IRIX64 IRIS 6.5 05190004 IP30 on SGI Octane
-# SCO OS	SCO OpenServer 5.0.7 on VMware
+# SCO OS 5.0.7	SCO OpenServer 5.0.7 on VMware
 # Win 3.11	Windows for Workgroups 3.11/DOS 6.22 on VMware
 # 95		Windows 95 OSR2 on VMware
 # NT 3.51	Windows NT Server 3.51 SP0 on VMware
-# OpenBSD	OpenBSD 3.1 on VMware
-# NetBSD	NetBSD
-# IPSO		IPSO 3.2.1-fcs1 on Nokia VPN 210
+# OpenBSD 3.1	OpenBSD 3.1 on VMware
+# NetBSD 2.0.2	NetBSD 2.0.2 on VMware
+# IPSO 3.2.1	IPSO 3.2.1-fcs1 on Nokia VPN 210
 #
 my %fp_hash = (
-   '11110100000' => 'FreeBSD, Win98, NT4, 2000, XP, 2003',
+   '11110100000' => 'FreeBSD 5.3, Win98, NT4, 2000, XP, 2003',
    '01000100000' => 'Linux 2.2, 2.4, 2.6',
    '01010100000' => 'Linux 2.2, 2.4, 2.6',	# If non-local IP is routed
-   '00000100000' => 'Cisco IOS',
+   '00000100000' => 'Cisco IOS 12.0, 12.1, 12.2, 12.3',
    '11110110000' => 'Solaris 7, 9',
    '01000111111' => 'ScreenOS 5.0',
-   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO',
+   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1',
    '11110100011' => 'MacOS 10.3, FreeBSD 4.3, IRIX 6.5',
-   '10010100011' => 'SCO OS',
+   '10010100011' => 'SCO OS 5.0.7',
    '10110100000' => 'Win 3.11, 95, NT 3.51',
-   '11110000011' => 'OpenBSD',
-   '10110110000' => 'NetBSD',
+   '11110000011' => 'OpenBSD 3.1',
+   '10110110000' => 'NetBSD 2.0.2',
    '00010110011' => 'Unknown 1', # dwk at 7663 in June 2006, Entrada Networks
    '01010110011' => 'Unknown 2', # dwk at 7663 in June 2006, Cisco
    );
@@ -113,16 +114,27 @@ my $target=shift;
 # If it does, then fingerprint the target.
 #
 if (&fp("","$target") eq "1") {
+# 1: source protocol address = localhost
    $fingerprint .= &fp("--arpspa=127.0.0.1","$target");
+# 2: source protocol address = zero
    $fingerprint .= &fp("--arpspa=0.0.0.0","$target");
+# 3: source protocol address = broadcast
    $fingerprint .= &fp("--arpspa=255.255.255.255","$target");
+# 4: source protocol address = non local (network 1 is reserved)
    $fingerprint .= &fp("--arpspa=1.0.0.1","$target");	# Non-local source IP
+# 5: invalid arp opcode
    $fingerprint .= &fp("--arpop=255","$target");
+# 6: arp hardware type = IEEE_802.2
    $fingerprint .= &fp("--arphrd=6","$target");
+# 7: invalid arp hardware type
    $fingerprint .= &fp("--arphrd=255","$target");
+# 8: invalid arp protocol type
    $fingerprint .= &fp("--arppro=0xffff","$target");
+# 9: arp prototocol type = Novell IPX
    $fingerprint .= &fp("--arppro=0x8137","$target");
+# 10: invalid protocol address length
    $fingerprint .= &fp("--arppln=6","$target");
+# 11: Invalid hardware address length
    $fingerprint .= &fp("--arphln=8","$target");
 #
    if (defined $fp_hash{$fingerprint}) {

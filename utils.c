@@ -393,6 +393,54 @@ print_times(void) {
    time_last.tv_usec = time_now.tv_usec;
 }
 
+/*
+ * get_ether_addr -- Get Ethernet hardware address from text string
+ *
+ * Inputs:
+ *
+ * address_string	The text string containing the address
+ * ether_addr		(output) The Ethernet hardware address
+ *
+ * Returns:
+ *
+ * Zero on success or -1 on failure.
+ *
+ * The address_string should contain an Ethernet hardware address in one
+ * of the following formats:
+ *
+ * 01-23-45-67-89-ab
+ * 01:23:45:67:89:ab
+ *
+ * The hax characters [a-z] may be specified in either upper or lower case.
+ */
+int
+get_ether_addr(const char *address_string, unsigned char *ether_addr) {
+   unsigned mac_b0, mac_b1, mac_b2, mac_b3, mac_b4, mac_b5;
+   int result;
+
+   result = sscanf(address_string, "%x:%x:%x:%x:%x:%x",
+                   &mac_b0, &mac_b1, &mac_b2, &mac_b3, &mac_b4, &mac_b5);
+   printf("DEBUG: x:x:x:x:x:x %d\n", result);	/* XXXX */
+   if (result !=6 ) {
+      result = sscanf(address_string, "%x-%x-%x-%x-%x-%x",
+                      &mac_b0, &mac_b1, &mac_b2, &mac_b3, &mac_b4, &mac_b5);
+      printf("DEBUG: x-x-x-x-x-x %d\n", result);	/* XXXX */
+   }
+   if (result !=6 ) {
+      return -1;
+      printf("DEBUG: FAIL\n");	/* XXXX */
+   }
+   ether_addr[0] = mac_b0;
+   ether_addr[1] = mac_b1;
+   ether_addr[2] = mac_b2;
+   ether_addr[3] = mac_b3;
+   ether_addr[4] = mac_b4;
+   ether_addr[5] = mac_b5;
+
+   printf("DEBUG: OK\n");	/* XXXX */
+   return 0;
+}
+
 void utils_use_rcsid(void) {
    fprintf(stderr, "%s\n", rcsid);	/* Use rcsid to stop compiler optimising away */
 }

@@ -55,8 +55,6 @@ char filename[MAXLINE];
 int filename_flag=0;
 int random_flag=0;                      /* Randomise the list */
 int numeric_flag=0;                     /* IP addresses only */
-int ipv6_flag=0;                        /* IPv6 */
-int ether_flag=0;                       /* Ethernet addresses */
 unsigned interval=0;                    /* Desired interval between packets */
 unsigned bandwidth=DEFAULT_BANDWIDTH;   /* Bandwidth in bits per sec */
 
@@ -920,6 +918,9 @@ usage(int status) {
    fprintf(stderr, "\t\t\tMost operating systems will also respond if the ARP\n");
    fprintf(stderr, "\t\t\trequest is sent to their MAC address, or to a\n");
    fprintf(stderr, "\t\t\tmulticast address that they are listening on.\n");
+   fprintf(stderr, "\t\t\tThe address can be specified either in the format\n");
+   fprintf(stderr, "\t\t\t01:23:45:67:89:ab, or as 01-23-45-67-89-ab. The\n");
+   fprintf(stderr, "\t\t\talphabetic hex characters may be upper or lower case.\n");
    fprintf(stderr, "\n--arpsha=<m> or -u <m>\tUse <m> as the ARP source Ethernet address\n");
    fprintf(stderr, "\t\t\tThis sets the 48-bit ar$sha field in the ARP packet\n");
    fprintf(stderr, "\t\t\tThe default is the Ethernet address of the outgoing\n");
@@ -1229,29 +1230,11 @@ add_host(const char *host_name, unsigned host_timeout) {
    char *ga_err_msg;
 
    if (numeric_flag) {
-      if (ipv6_flag) {
-         result = inet_pton(AF_INET6, host_name, &(addr.v6));
-      } else if (ether_flag) {
-         unsigned int mac_b0, mac_b1, mac_b2, mac_b3, mac_b4, mac_b5;
-         result = sscanf(host_name, "%x:%x:%x:%x:%x:%x", &mac_b0, &mac_b1,
-                         &mac_b2, &mac_b3, &mac_b4, &mac_b5);
-         addr.l2.ether_addr_octet[0] = mac_b0;
-         addr.l2.ether_addr_octet[1] = mac_b1;
-         addr.l2.ether_addr_octet[2] = mac_b2;
-         addr.l2.ether_addr_octet[3] = mac_b3;
-         addr.l2.ether_addr_octet[4] = mac_b4;
-         addr.l2.ether_addr_octet[5] = mac_b5;
-      } else {
-         result = inet_pton(AF_INET, host_name, &(addr.v4));
-      }
+      result = inet_pton(AF_INET, host_name, &(addr.v4));
       if (result <= 0)
          err_sys("inet_pton failed for \"%s\"", host_name);
    } else {
-      if (ipv6_flag) {
-         hp = get_host_address(host_name, AF_INET6, &addr, &ga_err_msg);
-      } else {
-         hp = get_host_address(host_name, AF_INET, &addr, &ga_err_msg);
-      }
+      hp = get_host_address(host_name, AF_INET, &addr, &ga_err_msg);
       if (hp == NULL)
          err_msg("get_host_address failed for \"%s\": %s", host_name,
                  ga_err_msg);
@@ -1273,13 +1256,7 @@ add_host(const char *host_name, unsigned host_timeout) {
    Gettimeofday(&now);
 
    he->n = num_hosts;
-   if (ipv6_flag) {
-      memcpy(&(he->addr.v6), &(addr.v6), sizeof(struct in6_addr));
-   } else if (ether_flag) {
-      memcpy(&(he->addr.l2), &(addr.l2), sizeof(struct ether_addr));
-   } else {
-      memcpy(&(he->addr.v4), &(addr.v4), sizeof(struct in_addr));
-   }
+   memcpy(&(he->addr.v4), &(addr.v4), sizeof(struct in_addr));
    he->live = 1;
    he->timeout = host_timeout * 1000;	/* Convert from ms to us */
    he->num_sent = 0;
@@ -1628,7 +1605,6 @@ process_options(int argc, char *argv[]) {
       {"ignoredups", no_argument, 0, 'g'},
       {"random", no_argument, 0, 'R'},
       {"numeric", no_argument, 0, 'N'},
-      {"ipv6", no_argument, 0, '6'},
       {"bandwidth", required_argument, 0, 'B'},
       {"ouifile", required_argument, 0, 'O'},
       {"arpspa", required_argument, 0, 's'},
@@ -1645,7 +1621,7 @@ process_options(int argc, char *argv[]) {
       {0, 0, 0, 0}
    };
    const char *short_options =
-      "f:hr:t:i:b:vVdn:I:qgRN6B:O:s:o:H:p:T:P:a:A:y:u:w:";
+      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:";
    int arg;
    int options_index=0;
 
@@ -1656,7 +1632,6 @@ process_options(int argc, char *argv[]) {
          char bandwidth_str[MAXLINE];   /* --bandwidth argument */
          size_t bandwidth_len;  /* --bandwidth argument length */
          struct in_addr source_ip_address;
-         unsigned mac_b0, mac_b1, mac_b2, mac_b3, mac_b4, mac_b5;
          int result;
 
          case 'f':	/* --file */
@@ -1712,9 +1687,6 @@ process_options(int argc, char *argv[]) {
          case 'N':	/* --numeric */
             numeric_flag=1;
             break;
-         case '6':	/* --ipv6 */
-            ipv6_flag=1;
-            break;
          case 'B':      /* --bandwidth */
             strncpy(bandwidth_str, optarg, MAXLINE);
             bandwidth_len=strlen(bandwidth_str);
@@ -1749,16 +1721,9 @@ process_options(int argc, char *argv[]) {
             arp_pro=strtol(optarg, (char **)NULL, 0);
             break;
          case 'T':	/* --destaddr */
-            result = sscanf(optarg, "%x:%x:%x:%x:%x:%x", &mac_b0,
-                            &mac_b1, &mac_b2, &mac_b3, &mac_b4, &mac_b5);
-            if (result !=6 )
+            result = get_ether_addr(optarg, target_mac);
+            if (result != 0)
                err_msg("Invalid target MAC address: %s", optarg);
-            target_mac[0] = mac_b0;
-            target_mac[1] = mac_b1;
-            target_mac[2] = mac_b2;
-            target_mac[3] = mac_b3;
-            target_mac[4] = mac_b4;
-            target_mac[5] = mac_b5;
             break;
          case 'P':	/* --arppln */
             arp_pln=strtol(optarg, (char **)NULL, 0);
@@ -1775,29 +1740,15 @@ process_options(int argc, char *argv[]) {
             eth_pro=strtol(optarg, (char **)NULL, 0);
             break;
          case 'u':	/* --arpsha */
-            result = sscanf(optarg, "%x:%x:%x:%x:%x:%x", &mac_b0,
-                            &mac_b1, &mac_b2, &mac_b3, &mac_b4, &mac_b5);
-            if (result !=6 )
+            result = get_ether_addr(optarg, arp_sha);
+            if (result != 0)
                err_msg("Invalid source MAC address: %s", optarg);
-            arp_sha[0] = mac_b0;
-            arp_sha[1] = mac_b1;
-            arp_sha[2] = mac_b2;
-            arp_sha[3] = mac_b3;
-            arp_sha[4] = mac_b4;
-            arp_sha[5] = mac_b5;
             arp_sha_flag = 1;
             break;
          case 'w':	/* --arptha */
-            result = sscanf(optarg, "%x:%x:%x:%x:%x:%x", &mac_b0,
-                            &mac_b1, &mac_b2, &mac_b3, &mac_b4, &mac_b5);
-            if (result !=6 )
+            result = get_ether_addr(optarg, arp_tha);
+            if (result != 0)
                err_msg("Invalid target MAC address: %s", optarg);
-            arp_tha[0] = mac_b0;
-            arp_tha[1] = mac_b1;
-            arp_tha[2] = mac_b2;
-            arp_tha[3] = mac_b3;
-            arp_tha[4] = mac_b4;
-            arp_tha[5] = mac_b5;
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE);
@@ -1903,17 +1854,7 @@ my_ntoa(ip_address addr) {
    static char ip_str[MAXLINE];
    const char *cp;
 
-   if (ipv6_flag) {
-      cp = inet_ntop(AF_INET6, &addr.v6, ip_str, MAXLINE);
-   } else if (ether_flag) {
-      sprintf(ip_str, "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x",
-              addr.l2.ether_addr_octet[0], addr.l2.ether_addr_octet[1],
-              addr.l2.ether_addr_octet[2], addr.l2.ether_addr_octet[3],
-              addr.l2.ether_addr_octet[4], addr.l2.ether_addr_octet[5]);
-      cp = ip_str;
-   } else {
-      cp = inet_ntop(AF_INET, &addr.v4, ip_str, MAXLINE);
-   }
+   cp = inet_ntop(AF_INET, &addr.v4, ip_str, MAXLINE);
 
    return cp;
 }

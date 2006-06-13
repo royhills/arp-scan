@@ -225,3 +225,4 @@ void unmarshal_arp_pkt(const unsigned char *, arp_ether_ipv4 *);
 unsigned char *hex2data(const char *, size_t *);
 unsigned int hstr_i(const char *);
 char *hexstring(const unsigned char *, size_t);
+int get_ether_addr(const char *, unsigned char *);
