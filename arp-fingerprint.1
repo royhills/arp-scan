@@ -34,6 +34,16 @@ uses
 .B arp-scan
 to send the ARP requests and receive the replies.
 .PP
+There are other methods that can be used to fingerprint a system using
+.B arp-scan
+which can be used in addition to
+.BR arp-fingerprint.pl .
+These additional methods are not included in
+.B arp-fingerprint.pl
+either because they are likely to cause disruption to the target system, or
+because they require knowledge of the target's configuration that may not
+always be available.
+.PP
 .B arp-fingerprint.pl
 is still being developed, and the results should not be relied on. As most
 of the ARP requests that it sends are non-standard, it is possible that it
