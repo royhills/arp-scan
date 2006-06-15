@@ -52,8 +52,10 @@ my $arpscan="arp-scan -N -q -r 1";
 # Linux 2.4	Linux 2.4.29 on Intel P3 (debian sarge)
 # Linux 2.6	Linux 2.6.15.7 on Intel P3 (debian sarge)
 # Cisco IOS	IOS 12.0(8) on Cisco 1601, IOS 12.1(27b) on Cisco 2621, IOS 12.2(32) on Cisco 1603, IOS 12.3(15) on Cisco 2503
+# Solaris 2.6	Solaris 2.6 (SPARC) on Sun Ultra 5
 # Solaris 7	Solaris 7 (x86) on VMware
 # Solaris 9	Solaris 9 (SPARC) on Sun Ultra 5
+# Solaris 10	Solaris 10 (x86) on VMware
 # ScreenOS 5.0	ScreenOS 5.0.0r9 on NetScreen 5XP
 # MacOS 10.4	MacOS 10.4.6 on powerbook G4
 # MacOS 10.3	MacOS 10.3.9 on imac G3
@@ -62,6 +64,7 @@ my $arpscan="arp-scan -N -q -r 1";
 # Win 3.11	Windows for Workgroups 3.11/DOS 6.22 on VMware
 # 95		Windows 95 OSR2 on VMware
 # NT 3.51	Windows NT Server 3.51 SP0 on VMware
+# 4.3 BSD	4.3 BSD (Quasijarus0c) on MicroVAX 3000 (SIMH simulated)
 # OpenBSD 3.1	OpenBSD 3.1 on VMware
 # NetBSD 2.0.2	NetBSD 2.0.2 on VMware
 # IPSO 3.2.1	IPSO 3.2.1-fcs1 on Nokia VPN 210
@@ -72,13 +75,13 @@ my %fp_hash = (
    '01000100000' => 'Linux 2.2, 2.4, 2.6',
    '01010100000' => 'Linux 2.2, 2.4, 2.6',	# If non-local IP is routed
    '00000100000' => 'Cisco IOS 12.0, 12.1, 12.2, 12.3',
-   '11110110000' => 'Solaris 7, 9',
+   '11110110000' => 'Solaris 2.6, 7, 9, 10',
    '01000111111' => 'ScreenOS 5.0',
    '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1',
    '11110100011' => 'MacOS 10.3, FreeBSD 4.3, IRIX 6.5',
    '10010100011' => 'SCO OS 5.0.7',
    '10110100000' => 'Win 3.11, 95, NT 3.51',
-   '11110000011' => 'OpenBSD 3.1',
+   '11110000011' => '4.3 BSD, OpenBSD 3.1',
    '10110110000' => 'NetBSD 2.0.2',
    '00010110011' => 'Unknown 1', # dwk at 7663 in June 2006, Entrada Networks
    '01010110011' => 'Unknown 2', # dwk at 7663 in June 2006, Cisco
