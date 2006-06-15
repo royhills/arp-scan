@@ -36,6 +36,12 @@ Ethernet broadcast address, ff:ff:ff:ff:ff:ff, but that can be changed with the
 .B --destaddr
 option.
 .PP
+.B arp-scan
+supports Ethernet and 802.11 wireless networks. It could also
+support token ring and FDDI, but they has not been tested. It does
+not support serial links such as PPP or SLIP, because ARP is not supported
+on them.
+.PP
 The ARP protocol is a layer-2 (datalink layer) protocol that is used to
 determine a host's hardware address given its IP address. It only operates on
 the local network, and cannot be routed. Although the ARP protocol makes use
