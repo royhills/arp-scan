@@ -69,6 +69,7 @@ my $arpscan="arp-scan -N -q -r 1";
 # NetBSD 2.0.2	NetBSD 2.0.2 on VMware
 # IPSO 3.2.1	IPSO 3.2.1-fcs1 on Nokia VPN 210
 # Netware 6.5	Novell NetWare 6.5 on VMware
+# PIX OS	PIX OS on PIX Firewall at 7663
 #
 my %fp_hash = (
    '11110100000' => 'FreeBSD 5.3, Win98, NT4, 2000, XP, 2003',
@@ -84,7 +85,7 @@ my %fp_hash = (
    '11110000011' => '4.3 BSD, OpenBSD 3.1',
    '10110110000' => 'NetBSD 2.0.2',
    '00010110011' => 'Unknown 1', # dwk at 7663 in June 2006, Entrada Networks
-   '01010110011' => 'Unknown 2', # dwk at 7663 in June 2006, Cisco
+   '01010110011' => 'PIX OS', # dwk at 7663 in June 2006, Cisco
    '00000110000' => 'Netware 6.5',
    );
 #
