@@ -40,31 +40,31 @@
 static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
 /* Global variables */
-host_entry *helist = NULL;              /* Array of host entries */
-host_entry **helistptr;                 /* Array of pointers to host entries */
-host_entry **cursor;                    /* Pointer to current host entry ptr */
-unsigned num_hosts = 0;                 /* Number of entries in the list */
-unsigned responders = 0;                /* Number of hosts which responded */
-unsigned live_count;                    /* Number of entries awaiting reply */
-unsigned max_iter;                      /* Max iterations in find_host() */
-int verbose=0;                          /* Verbose level */
-int debug = 0;                          /* Debug flag */
-pcap_t *handle;                         /* pcap handle */
-int pcap_fd;                            /* Pcap file descriptor */
-char filename[MAXLINE];
-int filename_flag=0;
-int random_flag=0;                      /* Randomise the list */
-int numeric_flag=0;                     /* IP addresses only */
-unsigned interval=0;                    /* Desired interval between packets */
-unsigned bandwidth=DEFAULT_BANDWIDTH;   /* Bandwidth in bits per sec */
+static host_entry *helist = NULL;	/* Array of host entries */
+static host_entry **helistptr;		/* Array of pointers to host entries */
+static host_entry **cursor;		/* Pointer to current host entry ptr */
+static unsigned num_hosts = 0;		/* Number of entries in the list */
+static unsigned responders = 0;		/* Number of hosts which responded */
+static unsigned live_count;		/* Number of entries awaiting reply */
+static unsigned max_iter;		/* Max iterations in find_host() */
+static int verbose=0;			/* Verbose level */
+static int debug = 0;			/* Debug flag */
+static pcap_t *handle;			/* pcap handle */
+static int pcap_fd;			/* Pcap file descriptor */
+static char filename[MAXLINE];		/* Target list file name */
+static int filename_flag=0;		/* Set if using target list file */
+static int random_flag=0;		/* Randomise the list */
+static int numeric_flag=0;		/* IP addresses only */
+static unsigned interval=0;		/* Desired interval between packets */
+static unsigned bandwidth=DEFAULT_BANDWIDTH; /* Bandwidth in bits per sec */
 
-unsigned retry = DEFAULT_RETRY;		/* Number of retries */
-unsigned timeout = DEFAULT_TIMEOUT;	/* Per-host timeout */
-float backoff_factor = DEFAULT_BACKOFF_FACTOR;	/* Backoff factor */
-int snaplen = SNAPLEN;			/* Pcap snap length */
-char *if_name=NULL;			/* Interface name, e.g. "eth0" */
-int quiet_flag=0;			/* Don't decode the packet */
-int ignore_dups=0;			/* Don't display duplicate packets */
+static unsigned retry = DEFAULT_RETRY;	/* Number of retries */
+static unsigned timeout = DEFAULT_TIMEOUT; /* Per-host timeout */
+static float backoff_factor = DEFAULT_BACKOFF_FACTOR;	/* Backoff factor */
+static int snaplen = SNAPLEN;		/* Pcap snap length */
+static char *if_name=NULL;		/* Interface name, e.g. "eth0" */
+static int quiet_flag=0;		/* Don't decode the packet */
+static int ignore_dups=0;		/* Don't display duplicate packets */
 
 static uint32_t arp_spa;		/* Source IP address */
 static int arp_spa_flag=0;		/* Source IP address specified */
@@ -848,8 +848,8 @@ usage(int status) {
    fprintf(stderr, "\t\t\tinstead of from the command line. One name or IP\n");
    fprintf(stderr, "\t\t\taddress per line.  Use \"-\" for standard input.\n");
    fprintf(stderr, "\n--retry=<n> or -r <n>\tSet total number of attempts per host to <n>,\n");
-   fprintf(stderr, "\t\t\tdefault=%d.\n", retry);
-   fprintf(stderr, "\n--timeout=<n> or -t <n>\tSet initial per host timeout to <n> ms, default=%d.\n", timeout);
+   fprintf(stderr, "\t\t\tdefault=%d.\n", DEFAULT_RETRY);
+   fprintf(stderr, "\n--timeout=<n> or -t <n>\tSet initial per host timeout to <n> ms, default=%d.\n", DEFAULT_TIMEOUT);
    fprintf(stderr, "\t\t\tThis timeout is for the first packet sent to each host.\n");
    fprintf(stderr, "\t\t\tsubsequent timeouts are multiplied by the backoff\n");
    fprintf(stderr, "\t\t\tfactor which is set with --backoff.\n");
@@ -871,7 +871,7 @@ usage(int status) {
    fprintf(stderr, "\t\t\tYou cannot specify both --interval and --bandwidth\n");
    fprintf(stderr, "\t\t\tbecause they are just different ways to change the\n");
    fprintf(stderr, "\t\t\tsame parameter.\n");
-   fprintf(stderr, "\n--backoff=<b> or -b <b>\tSet timeout backoff factor to <b>, default=%.2f.\n", backoff_factor);
+   fprintf(stderr, "\n--backoff=<b> or -b <b>\tSet timeout backoff factor to <b>, default=%.2f.\n", DEFAULT_BACKOFF_FACTOR);
    fprintf(stderr, "\t\t\tThe per-host timeout is multiplied by this factor\n");
    fprintf(stderr, "\t\t\tafter each timeout.  So, if the number of retrys\n");
    fprintf(stderr, "\t\t\tis 3, the initial per-host timeout is 500ms and the\n");
