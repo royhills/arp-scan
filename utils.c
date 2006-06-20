@@ -420,15 +420,12 @@ get_ether_addr(const char *address_string, unsigned char *ether_addr) {
 
    result = sscanf(address_string, "%x:%x:%x:%x:%x:%x",
                    &mac_b0, &mac_b1, &mac_b2, &mac_b3, &mac_b4, &mac_b5);
-   printf("DEBUG: x:x:x:x:x:x %d\n", result);	/* XXXX */
    if (result !=6 ) {
       result = sscanf(address_string, "%x-%x-%x-%x-%x-%x",
                       &mac_b0, &mac_b1, &mac_b2, &mac_b3, &mac_b4, &mac_b5);
-      printf("DEBUG: x-x-x-x-x-x %d\n", result);	/* XXXX */
    }
    if (result !=6 ) {
       return -1;
-      printf("DEBUG: FAIL\n");	/* XXXX */
    }
    ether_addr[0] = mac_b0;
    ether_addr[1] = mac_b1;
@@ -437,7 +434,6 @@ get_ether_addr(const char *address_string, unsigned char *ether_addr) {
    ether_addr[4] = mac_b4;
    ether_addr[5] = mac_b5;
 
-   printf("DEBUG: OK\n");	/* XXXX */
    return 0;
 }
 
