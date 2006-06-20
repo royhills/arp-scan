@@ -1,13 +1,13 @@
 .\" $Id$
-.TH GET-OUI.PL 1 "May 30, 2006"
+.TH GET-OUI 1 "May 30, 2006"
 .\" Please adjust this date whenever revising the manpage.
 .SH NAME
-get-oui.pl \- Fetch the arp-scan OUI file from the IEEE website
+get-oui \- Fetch the arp-scan OUI file from the IEEE website
 .SH SYNOPSIS
-.B get-oui.pl
+.B get-oui
 .RI [ options ]
 .SH DESCRIPTION
-.B get-oui.pl
+.B get-oui
 fetches the Ethernet OUI file from the IEEE website, and saves it in the
 format used by arp-scan.
 .PP
@@ -60,13 +60,26 @@ Display verbose progress messages.
 The default output file.
 .SH EXAMPLES
 .nf
-$ get-oui.pl -v
+$ get-oui -v
 Renaming oui.txt to oui.txt.bak
 Fetching OUI data from http://standards.ieee.org/regauth/oui/oui.txt
 Fetched 1467278 bytes
 Opening output file oui.txt
 9274 OUI entries written to file oui.txt
 .fi
+.SH NOTES
+.B get-oui
+is implemented in Perl, so you need to have the Perl interpreter installed on
+your system to use it.
+.PP
+.B get-oui
+uses the
+.I LWP::Simple
+Perl module to fetch the data from the IEEE website. You must have this module
+installed on your system for
+it to work. This module is available on most distributions, often called
+.IR libwww-perl .
+It is also available in source form from CPAN.
 .SH AUTHOR
 Roy Hills <Roy.Hills@nta-monitor.com>
 .SH "SEE ALSO"

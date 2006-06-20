@@ -5,7 +5,7 @@ AM_CPPFLAGS = -DDATADIR=\"$(pkgdatadir)\"
 #
 bin_PROGRAMS = arp-scan
 #
-dist_bin_SCRIPTS = get-oui.pl arp-fingerprint.pl
+dist_bin_SCRIPTS = get-oui arp-fingerprint
 #
 dist_check_SCRIPTS = check-arp-scan-run1
 #

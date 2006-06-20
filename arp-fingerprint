@@ -15,7 +15,8 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 # $Id$
-# arp-fingerprint.pl -- Perl script to fingerprint system with arp-scan
+#
+# arp-fingerprint -- Perl script to fingerprint system with arp-scan
 #
 # Author: Roy Hills
 # Date: 30th May 2006
@@ -33,7 +34,7 @@ use Getopt::Std;
 #
 # You might need to change this to suit your configuration
 # You can change the interface by defining RMIF, e.g.
-# RMIF=eth1 arp-fingerprint.pl 192.168.0.1
+# RMIF=eth1 arp-fingerprint 192.168.0.1
 my $arpscan="arp-scan -N -q -r 1";
 #
 # Hash of known fingerprints
@@ -93,7 +94,7 @@ my %fp_hash = (
    );
 #
 my $usage =
-qq/Usage: arp-fingerprint.pl [options] <target>
+qq/Usage: arp-fingerprint [options] <target>
 Fingerprint the target system using arp-scan.
 
 'options' is one or more of:

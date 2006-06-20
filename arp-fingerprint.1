@@ -1,14 +1,14 @@
 .\" $Id$
-.TH ARP-FINGERPRINT.PL 1 "June 8, 2006"
+.TH ARP-FINGERPRINT 1 "June 8, 2006"
 .\" Please adjust this date whenever revising the manpage.
 .SH NAME
-arp-fingerprint.pl \- Fingerprint a system using ARP
+arp-fingerprint \- Fingerprint a system using ARP
 .SH SYNOPSIS
-.B arp-fingerprint.pl
+.B arp-fingerprint
 .RI [ options ]
 .I target
 .SH DESCRIPTION
-.B arp-fingerprint.pl
+.B arp-fingerprint
 fingerprints the specified target host using the ARP protocol.
 .PP
 It sends various different types of ARP request to the target, and records
@@ -35,7 +35,7 @@ Sometimes the fact that two different operating systems share a common ARP
 fingerprint string points to a re-use of networking code. One example of
 this is Windows NT and FreeBSD.
 .PP
-.B arp-fingerprint.pl
+.B arp-fingerprint
 uses
 .B arp-scan
 to send the ARP requests and receive the replies.
@@ -43,14 +43,14 @@ to send the ARP requests and receive the replies.
 There are other methods that can be used to fingerprint a system using
 .B arp-scan
 which can be used in addition to
-.BR arp-fingerprint.pl .
+.BR arp-fingerprint .
 These additional methods are not included in
-.B arp-fingerprint.pl
+.B arp-fingerprint
 either because they are likely to cause disruption to the target system, or
 because they require knowledge of the target's configuration that may not
 always be available.
 .PP
-.B arp-fingerprint.pl
+.B arp-fingerprint
 is still being developed, and the results should not be relied on. As most
 of the ARP requests that it sends are non-standard, it is possible that it
 may disrupt some systems, so caution is advised.
@@ -63,16 +63,20 @@ Display a brief usage message and exit.
 Display verbose progress messages.
 .SH EXAMPLES
 .nf
-$ arp-fingerprint.pl 192.168.0.1
+$ arp-fingerprint 192.168.0.1
 192.168.0.1   01000100000     Linux 2.2, 2.4, 2.6
 .fi
+.SH NOTES
+.B arp-fingerprint
+is implemented in Perl, so you need to have the Perl interpreter installed on
+your system to use it.
 .SH BUGS
 There is currently no way to pass options to
 .B arp-scan
 such as which network interface to use. The
 .B arp-scan
 command line is hard-coded in the
-.B arp-fingerprint.pl
+.B arp-fingerprint
 source code, and you may need to change this to suit your environment.
 .SH AUTHOR
 Roy Hills <Roy.Hills@nta-monitor.com>
