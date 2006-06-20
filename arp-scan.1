@@ -38,16 +38,21 @@ option.
 .PP
 .B arp-scan
 supports Ethernet and 802.11 wireless networks. It could also
-support token ring and FDDI, but they has not been tested. It does
+support token ring and FDDI, but they have not been tested. It does
 not support serial links such as PPP or SLIP, because ARP is not supported
 on them.
 .PP
 The ARP protocol is a layer-2 (datalink layer) protocol that is used to
-determine a host's hardware address given its IP address. It only operates on
+determine a host's layer-2 address given its layer-3 (network
+layer) address. ARP was designed to work with any layer-2 and
+layer-3 address format, but the most common use is to map IP addresses to
+Ethernet hardware addresses, and this is what
+.B arp-scan
+supports. ARP only operates on
 the local network, and cannot be routed. Although the ARP protocol makes use
 of IP addresses, it is not an IP-based protocol and
 .B arp-scan
-can be used on an interface which is not configured for IP.
+can be used on an interface that is not configured for IP.
 .PP
 ARP is only used by IPv4 hosts. IPv6 uses NDP (neighbour discovery protocol)
 instead, which is a different protocol and is not supported by
