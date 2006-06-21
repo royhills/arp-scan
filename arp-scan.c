@@ -83,6 +83,8 @@ static int arp_pln=DEFAULT_ARP_PLN;	/* Protocol address length */
 static int eth_pro=DEFAULT_ETH_PRO;	/* Ethernet protocol type */
 static unsigned char arp_tha[6] = {0, 0, 0, 0, 0, 0};
 static unsigned char target_mac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+static unsigned char source_mac[6];
+static int source_mac_flag = 0;
 static unsigned char *padding=NULL;
 static size_t padding_len=0;
 
@@ -149,6 +151,12 @@ main(int argc, char *argv[]) {
          warn_msg("You need to be root, or arp-scan must be SUID root, "
                   "to open a packet socket.");
       err_sys("socket");
+   }
+/*
+ *	Change source mac address if required.
+ */
+   if (source_mac_flag) {
+      set_hardware_address(if_name, source_mac);
    }
 /*
  *      Call protocol-specific initialisation routine to perform any
@@ -911,6 +919,17 @@ usage(int status) {
    fprintf(stderr, "\n--ouifile=<o> or -O <o>\tUse OUI file <o>, default=%s/%s\n", DATADIR, OUIFILENAME);
    fprintf(stderr, "\t\t\tThis file provides the Ethernet OUI to vendor string\n");
    fprintf(stderr, "\t\t\tmapping.\n");
+   fprintf(stderr, "\n--srcaddr=<m> or -S <m> Set the local Ethernet MAC address to <m>\n");
+   fprintf(stderr, "\t\t\tThis sets the hardware address of the interface used\n");
+   fprintf(stderr, "\t\t\tby arp-scan to the specified value, which causes the\n");
+   fprintf(stderr, "\t\t\t48-bit source address in the Ethernet frame header of\n");
+   fprintf(stderr, "\t\t\toutgoing frames to use this value.\n");
+   fprintf(stderr, "\t\t\tThis causes the packets sent by arp-scan to use the\n");
+   fprintf(stderr, "\t\t\tspecified source address in the Ethernet frame header.\n");
+   fprintf(stderr, "\t\t\tUse this option with caution as it will change the\n");
+   fprintf(stderr, "\t\t\thardware address of the interface, which may affect\n");
+   fprintf(stderr, "\t\t\tother communications using this interface. arp-scan\n");
+   fprintf(stderr, "\t\t\tdoes not restore the original address after completion.\n");
    fprintf(stderr, "\n--destaddr=<m> or -T <m> Send the packets to Ethernet MAC address <m>\n");
    fprintf(stderr, "\t\t\tThis sets the 48-bit destination address in the\n");
    fprintf(stderr, "\t\t\tEthernet frame header.\n");
@@ -1391,6 +1410,36 @@ get_hardware_address(char *devname, unsigned char hw_address[]) {
 }
 
 /*
+ *	set_hardware_address	-- Set the Ethernet MAC address associated
+ *				   with the given device.
+ *	Inputs:
+ *
+ *	devname		The device name, e.g. "eth0"
+ *	hw_address	(output) the Ethernet MAC address
+ *
+ *	Returns:
+ *
+ *	None.
+ */
+void
+set_hardware_address(char *devname, unsigned char hw_address[]) {
+   int sockfd;
+   struct ifreq ifconfig;
+
+   strncpy(ifconfig.ifr_name, devname, IFNAMSIZ);
+   ifconfig.ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_ETHER;
+   memcpy(ifconfig.ifr_ifru.ifru_hwaddr.sa_data, hw_address, ETH_ALEN);
+
+/* Create UDP socket */
+   if ((sockfd=socket(PF_INET, SOCK_DGRAM, 0)) < 0)
+      err_sys("socket");
+
+/* Set hardware address for specified interface */
+   if ((ioctl(sockfd, SIOCSIFHWADDR, &ifconfig)) != 0)
+      err_sys("ioctl");
+}
+
+/*
  *	find_host	-- Find a host in the list
  *
  *	Inputs:
@@ -1618,10 +1667,11 @@ process_options(int argc, char *argv[]) {
       {"prototype", required_argument, 0, 'y'},
       {"arpsha", required_argument, 0, 'u'},
       {"arptha", required_argument, 0, 'w'},
+      {"srcaddr", required_argument, 0, 'S'},
       {0, 0, 0, 0}
    };
    const char *short_options =
-      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:";
+      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:";
    int arg;
    int options_index=0;
 
@@ -1749,6 +1799,12 @@ process_options(int argc, char *argv[]) {
             result = get_ether_addr(optarg, arp_tha);
             if (result != 0)
                err_msg("Invalid target MAC address: %s", optarg);
+            break;
+         case 'S':	/* --srcaddr */
+            result = get_ether_addr(optarg, source_mac);
+            if (result != 0)
+               err_msg("Invalid target MAC address: %s", optarg);
+            source_mac_flag = 1;
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE);

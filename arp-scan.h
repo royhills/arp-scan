@@ -220,6 +220,7 @@ void error_use_rcsid(void);
 void utils_use_rcsid(void);
 int get_source_ip(char *, uint32_t *);
 int get_hardware_address(char *, unsigned char []);
+void set_hardware_address(char *, unsigned char []);
 void marshal_arp_pkt(unsigned char *, arp_ether_ipv4 *, size_t *);
 void unmarshal_arp_pkt(const unsigned char *, arp_ether_ipv4 *);
 unsigned char *hex2data(const char *, size_t *);

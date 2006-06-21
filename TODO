@@ -10,17 +10,3 @@ For this, we'll probably want to use Posix pattern matching.
 
 ML: Add option to scan locally attached network without requiring IP range.
 Get IP address and netmask of interface and generate range from that.
-
-Allow changing of the local interface MAC address.
-   for (i=0; i<6; i++) {
-      net->dev.ifr_hwaddr.sa_data[i] = mac->byte[i];
-   }
-   if (ioctl(net->sock, SIOCSIFHWADDR, &net->dev) < 0) {
-      perror ("ERROR: Can't change MAC: interface up or not permission");
-      return -1;
-   }
-
-Support all three common forms of Ethernet hardware address:
-1) 01-23-45-67-89-ab
-2) 01:23:45:67:89:ab
-3) 0123.4567.89ab

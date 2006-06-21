@@ -53,7 +53,7 @@ Field           Bits      Option        Notes
 -----           ----      ------        -----
 
 Dest Address    48        --destaddr	Default is ff:ff:ff:ff:ff:ff
-Source Address  48        None          Always uses interface h/w address
+Source Address  48        --srcaddr     Default is interface h/w address
 Protocol Type   16        --prototype	Default is 0x0806
 ar$hrd          16        --arphrd	Default is 1 (ARPHRD_ETHER)
 ar$pro          16        --arppro	Default is 0x0800

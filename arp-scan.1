@@ -81,11 +81,21 @@ option, which is an alternative way to modify the same underlying parameter.
 Any part of the outgoing ARP packet may be modified through the use of the
 various
 .B --arpXXX
-options, which are summarised in the table below.  The use of some of these
-options may make the outgoing ARP packet
+options.  The use of some of these options may make the outgoing ARP packet
 non RFC compliant. Different operating systems handle the various non standard
 ARP packets in different ways, and this may be used to fingerprint these
-systems.
+systems. The table below summarises the options that change the outgoing ARP
+packet. In this table, the
+.I Field
+column gives the ARP packet field name from RFC 826,
+.I Bits
+specifies the number of bits in the field,
+.I Option
+shows the
+.B arp-scan
+option to modify this field, and
+.I Notes 
+gives the default value and any other notes.
 .TS
 box;
 cB S S S
@@ -117,6 +127,37 @@ outgoing interface address.  With this option it is possible to use
 on an interface with no IP address configured, which can be useful if
 you want to ensure that the testing host does not interact with the
 network being tested.
+.PP
+It is also possible to change the values in the Ethernet frame header
+that proceeds the ARP packet in the outgoing packets. The table below
+summarises the options that change values in the Ethernet frame header.
+.TS
+box;
+cB S S S
+LB | LB | LB | LB
+L | L | L | L.
+Outgoing Ethernet Frame Options
+=
+Field	Bits	Option	Notes
+=
+Dest Address	48	--destaddr	Default is ff:ff:ff:ff:ff:ff
+Source Address	48	--srcaddr	Default is interface address
+Protocol Type	16	--prototype	Default is 0x0806
+.TE
+.\" We need two paragraphs under the table to get the correct spacing.
+.PP
+.PP
+The most commonly used outgoing Ethernet frame option is
+.BR --destaddr ,
+which sets the destination Ethernet address for the ARP packet.
+.B --srcaddr
+should be used with caution, because it changes the hardware address
+of the interface used by
+.B arp-scan
+which may affect other communications using this interface.
+.B --prototype
+is not often used, because it will cause the packet to be interpreted
+as a different Ethernet protocol.
 .PP
 Any responses that are received are displayed in the following format:
 .TS
@@ -257,6 +298,19 @@ By default, duplicate packets are displayed.
 Use OUI file <o>, default=/usr/local/share/ether-scan-engine/oui.txt
 This file provides the Ethernet OUI to vendor string
 mapping.
+.TP
+.B --srcaddr=<m> or -S <m>
+Set the local Ethernet MAC address to <m>
+This sets the hardware address of the interface used
+by arp-scan to the specified value, which causes the
+48-bit source address in the Ethernet frame header of
+outgoing frames to use this value.
+This causes the packets sent by arp-scan to use the
+specified source address in the Ethernet frame header.
+Use this option with caution as it will change the
+hardware address of the interface, which may affect
+other communications using this interface. arp-scan
+does not restore the original address after completion.
 .TP
 .B --destaddr=<m> or -T <m>
 Send the packets to Ethernet MAC address <m>
