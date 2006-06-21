@@ -159,7 +159,7 @@ which may affect other communications using this interface.
 is not often used, because it will cause the packet to be interpreted
 as a different Ethernet protocol.
 .PP
-Any responses that are received are displayed in the following format:
+Any ARP responses that are received are displayed in the following format:
 .TS
 ;
 L L L.
@@ -174,6 +174,10 @@ is its Ethernet hardware address (also known as the MAC address) and
 .B Vendor Details
 are the vendor details, decoded from the hardware address.  The output
 fields are separated by a single tab character.
+.PP
+The responses are displayed in the order that they are received, which
+is not always the same order as the requests were sent because some
+hosts may respond faster than others.
 .PP
 The vendor decoding uses the file
 .I oui.txt

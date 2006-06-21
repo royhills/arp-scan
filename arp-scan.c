@@ -112,6 +112,7 @@ main(int argc, char *argv[]) {
    static int pass_no;
    int first_timeout=1;
    int i;
+   char errbuf[PCAP_ERRBUF_SIZE];
 /*
  *      Open syslog channel and log arguments if required.
  *      We must be careful here to avoid overflowing the arg_str buffer
@@ -151,6 +152,19 @@ main(int argc, char *argv[]) {
          warn_msg("You need to be root, or arp-scan must be SUID root, "
                   "to open a packet socket.");
       err_sys("socket");
+   }
+/*
+ *	Determine network interface to use.
+ *	If the interface was specified with the --interface option then use
+ *	that, otherwise if the environment variable "RMIF" exists then use
+ *	that, failing that use pcap_lookupdev() to pick a suitable interface.
+ */
+   if (!if_name) { /* i/f not specified with --interface */
+      if (!(if_name=getenv("RMIF"))) {	/* No RMIF env var */
+         if (!(if_name=pcap_lookupdev(errbuf))) {
+            err_msg("pcap_lookupdev: %s", errbuf);
+         }
+      }
    }
 /*
  *	Change source mac address if required.
@@ -720,19 +734,6 @@ initialise(void) {
    int datalink;
    unsigned char interface_mac[ETH_ALEN];
    int get_addr_status = 0;
-/*
- *	Determine network interface to use.
- *	If the interface was specified with the --interface option then use
- *	that, otherwise if the environment variable "RMIF" exists then use
- *	that, failing that use pcap_lookupdev() to pick a suitable interface.
- */
-   if (!if_name) { /* i/f not specified with --interface */
-      if (!(if_name=getenv("RMIF"))) {	/* No RMIF env var */
-         if (!(if_name=pcap_lookupdev(errbuf))) {
-            err_msg("pcap_lookupdev: %s", errbuf);
-         }
-      }
-   }
 /*
  *	Obtain the interface index and MAC address for the selected
  *	interface, and if possible also obtain the IP address.
