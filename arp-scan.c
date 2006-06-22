@@ -924,9 +924,11 @@ usage(int status) {
    fprintf(stderr, "\t\t\tThis sets the hardware address of the interface used\n");
    fprintf(stderr, "\t\t\tby arp-scan to the specified value, which causes the\n");
    fprintf(stderr, "\t\t\t48-bit source address in the Ethernet frame header of\n");
-   fprintf(stderr, "\t\t\toutgoing frames to use this value.\n");
-   fprintf(stderr, "\t\t\tThis causes the packets sent by arp-scan to use the\n");
-   fprintf(stderr, "\t\t\tspecified source address in the Ethernet frame header.\n");
+   fprintf(stderr, "\t\t\toutgoing frames, including the packets sent by\n");
+   fprintf(stderr, "\t\t\tarp-scan, to use this value.\n");
+   fprintf(stderr, "\t\t\tNote that this option does not allow you to set the\n");
+   fprintf(stderr, "\t\t\tsource address in the Ethernet frame header to a\n");
+   fprintf(stderr, "\t\t\tdifferent value from the interface address.\n");
    fprintf(stderr, "\t\t\tUse this option with caution as it will change the\n");
    fprintf(stderr, "\t\t\thardware address of the interface, which may affect\n");
    fprintf(stderr, "\t\t\tother communications using this interface. arp-scan\n");
