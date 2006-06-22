@@ -72,23 +72,25 @@ Display a brief usage message and exit.
 .TP
 .B -v
 Display verbose progress messages.
+.TP
+.B -o <option-string>
+Pass specified options to arp-scan. You need to enclose the options
+string in quotes if it contains spaces. e.g.
+-o "-I eth1".
 .SH EXAMPLES
 .nf
 $ arp-fingerprint 192.168.0.1
 192.168.0.1   01000100000     Linux 2.2, 2.4, 2.6
 .fi
+.PP
+.nf
+$ arp-fingerprint -o "-I eth1" 192.168.0.202
+192.168.0.202 11110100000     FreeBSD 5.3, Win98, WinME, NT4, 2000, XP, 2003
+.fi
 .SH NOTES
 .B arp-fingerprint
 is implemented in Perl, so you need to have the Perl interpreter installed on
 your system to use it.
-.SH BUGS
-There is currently no way to pass options to
-.B arp-scan
-such as which network interface to use. The
-.B arp-scan
-command line is hard-coded in the
-.B arp-fingerprint
-source code, and you may need to change this to suit your environment.
 .SH AUTHOR
 Roy Hills <Roy.Hills@nta-monitor.com>
 .SH "SEE ALSO"

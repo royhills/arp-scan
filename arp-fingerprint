@@ -32,9 +32,6 @@ use warnings;
 use strict;
 use Getopt::Std;
 #
-# You might need to change this to suit your configuration
-# You can change the interface by defining RMIF, e.g.
-# RMIF=eth1 arp-fingerprint 192.168.0.1
 my $arpscan="arp-scan -N -q -r 1";
 #
 # Hash of known fingerprints
@@ -101,20 +98,25 @@ Fingerprint the target system using arp-scan.
 'options' is one or more of:
         -h Display this usage message.
         -v Give verbose progress messages.
+	-o <option-string> Pass specified options to arp-scan
 /;
 my %opts;
+my $user_opts="";
 my $verbose;
 my $fingerprint="";
 my $fp_name;
 #
 # Process options
 #
-die "$usage\n" unless getopts('hv',\%opts);
+die "$usage\n" unless getopts('hvo:',\%opts);
 if ($opts{h}) {
    print "$usage\n";
    exit(0);
 }
 $verbose=$opts{v} ? 1 : 0;
+if ($opts{o}) {
+   $user_opts = $opts{o};
+}
 #
 if ($#ARGV != 0) {
    die "$usage\n";
@@ -167,7 +169,7 @@ sub fp ($$) {
    my $response = "0";
    ($options, $ip) = @_;
 
-   open(ARPSCAN, "$arpscan $options $ip |") || die "arp-scan failed";
+   open(ARPSCAN, "$arpscan $user_opts $options $ip |") || die "arp-scan failed";
    while (<ARPSCAN>) {
       if (/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\t/) {
          $response = "1";
