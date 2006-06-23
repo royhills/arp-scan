@@ -114,9 +114,8 @@
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
 #endif
-#ifdef HAVE_SEARCH_H
-#include <search.h>
-#endif
+
+#include "hash.h"
 
 /* Defines */
 

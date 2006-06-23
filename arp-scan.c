@@ -87,6 +87,7 @@ static unsigned char source_mac[6];
 static int source_mac_flag = 0;
 static unsigned char *padding=NULL;
 static size_t padding_len=0;
+static struct hash_control *hash_table;
 
 int
 main(int argc, char *argv[]) {
@@ -189,17 +190,17 @@ main(int argc, char *argv[]) {
    if (!quiet_flag) {
       char *fn;	/* OUI filename */
       FILE *fp;	/* OUI file handle */
-      ENTRY oui_entry;
       static const char *oui_pat_str = "([^\t]+)\t[\t ]*([^\t\r\n]+)";
       regex_t oui_pat;
       int result;
-      size_t line_count;
+      size_t line_count=0;
       regmatch_t pmatch[3];
       size_t key_len;
       size_t data_len;
       char *key;
       char *data;
       char line[MAXLINE];
+      const char *result_str;
 
       if ((result=regcomp(&oui_pat, oui_pat_str, REG_EXTENDED))) {
          char reg_errbuf[MAXLINE];
@@ -216,16 +217,9 @@ main(int argc, char *argv[]) {
          warn_sys("WARNING: Cannot open OUI file %s", fn);
          quiet_flag = 1;	/* Don't decode OUI vendor */
       } else {
-         line_count=0;
-         while (fgets(line, MAXLINE, fp)) {	/* Count lines in file */
-            if (line[0] != '#' && line[0] != '\n' && line[0] != '\r')
-               line_count++;
+         if ((hash_table = hash_new()) == NULL) {
+            err_sys("hash_new");
          }
-   
-         if ((hcreate(line_count)) == 0)
-            err_sys("hcreate");
-         rewind(fp);
-         line_count=0;
          while (fgets(line, MAXLINE, fp)) {	/* create hash table */
             if (line[0] != '#' && line[0] != '\n' && line[0] != '\r') {
                result = regexec(&oui_pat, line, 3, pmatch, 0);
@@ -246,10 +240,14 @@ main(int argc, char *argv[]) {
                   key[key_len] = '\0';
                   strncpy(data, line+pmatch[2].rm_so, data_len);
                   data[data_len] = '\0';
-                  oui_entry.key = key;
-                  oui_entry.data = data;
-                  if ((hsearch(oui_entry, ENTER)) == NULL)
-                     err_sys("hsearch");
+                  if ((result_str = hash_insert(hash_table, key, data))
+                      != NULL) {
+/* Ignore "exists" because there are a few duplicates in the IEEE list */
+                     if ((strcmp(result_str, "exists")) != 0) {
+                        warn_msg("hash_insert(%s, %s): %s", key, data,
+                                 result_str);
+                     }
+                  }
                   line_count++;
                }
             }
@@ -558,16 +556,14 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
  */
    if (!quiet_flag) {
       char *oui_string;
-      ENTRY oui_entry;
-      ENTRY *oui_result;
+      const char *vendor;
 
       oui_string = make_message("%.2X%.2X%.2X", arpei.ar_sha[0],
                                 arpei.ar_sha[1], arpei.ar_sha[2]);
-      oui_entry.key = oui_string;
-      oui_result = hsearch(oui_entry, FIND);
+      vendor = hash_find(hash_table, oui_string);
       cp = msg;
-      if (oui_result)
-         msg = make_message("%s\t%s", cp, oui_result->data);
+      if (vendor)
+         msg = make_message("%s\t%s", cp, vendor);
       else
          msg = make_message("%s\t%s", cp, "(Unknown)");
       free(cp);
@@ -757,9 +753,9 @@ initialise(void) {
  *	Prepare pcap
  */
    if (!(handle = pcap_open_live(if_name, snaplen, PROMISC, TO_MS, errbuf)))
-      err_msg("pcap_open_live: %s\n", errbuf);
+      err_msg("pcap_open_live: %s", errbuf);
    if ((datalink=pcap_datalink(handle)) < 0)
-      err_msg("pcap_datalink: %s\n", pcap_geterr(handle));
+      err_msg("pcap_datalink: %s", pcap_geterr(handle));
    printf("Interface: %s, datalink type: %s (%s)\n", if_name,
           pcap_datalink_val_to_name(datalink),
           pcap_datalink_val_to_description(datalink));
@@ -775,9 +771,9 @@ initialise(void) {
          break;
    }
    if ((pcap_fd=pcap_fileno(handle)) < 0)
-      err_msg("pcap_fileno: %s\n", pcap_geterr(handle));
+      err_msg("pcap_fileno: %s", pcap_geterr(handle));
    if ((pcap_setnonblock(handle, 1, errbuf)) < 0)
-      err_msg("pcap_setnonblock: %s\n", errbuf);
+      err_msg("pcap_setnonblock: %s", errbuf);
    if (get_addr_status == 0) {
       if (pcap_lookupnet(if_name, &localnet, &netmask, errbuf) < 0) {
          memset(&localnet, '\0', sizeof(localnet));
@@ -794,10 +790,10 @@ initialise(void) {
    if (verbose)
       warn_msg("DEBUG: pcap filter string: \"%s\"", filter_string);
    if ((pcap_compile(handle, &filter, filter_string, OPTIMISE, netmask)) < 0)
-      err_msg("pcap_geterr: %s\n", pcap_geterr(handle));
+      err_msg("pcap_geterr: %s", pcap_geterr(handle));
    free(filter_string);
    if ((pcap_setfilter(handle, &filter)) < 0)
-      err_msg("pcap_setfilter: %s\n", pcap_geterr(handle));
+      err_msg("pcap_setfilter: %s", pcap_geterr(handle));
 }
 
 /*
@@ -820,7 +816,7 @@ clean_up(void) {
    struct pcap_stat stats;
 
    if ((pcap_stats(handle, &stats)) < 0)
-      err_msg("pcap_stats: %s\n", pcap_geterr(handle));
+      err_msg("pcap_stats: %s", pcap_geterr(handle));
 
    printf("%u packets received by filter, %u packets dropped by kernel\n",
           stats.ps_recv, stats.ps_drop);
