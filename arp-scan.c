@@ -75,6 +75,7 @@ static int if_index;			/* Interface index */
 extern int pcap_fd;			/* pcap File Descriptor */
 static size_t ip_offset;		/* Offset to IP header in pcap pkt */
 static char ouifilename[MAXLINE];	/* OUI filename */
+static char iabfilename[MAXLINE];	/* IAB filename */
 static int arp_op=DEFAULT_ARP_OP;	/* ARP Operation code */
 static int arp_hrd=DEFAULT_ARP_HRD;	/* ARP hardware type */
 static int arp_pro=DEFAULT_ARP_PRO;	/* ARP protocol */
@@ -137,6 +138,11 @@ main(int argc, char *argv[]) {
    info_syslog("Starting: %s", arg_str);
 #endif
 /*
+ *      Initialise file names to the empty string.
+ */
+   ouifilename[0] = '\0';
+   iabfilename[0] = '\0';
+/*
  *      Process options.
  */
    process_options(argc, argv);
@@ -185,7 +191,7 @@ main(int argc, char *argv[]) {
       err_sys("setuid");
    }
 /*
- * Create OUI hash table if quiet if not in effect.
+ * Create OUI and IAB hash table if quiet if not in effect.
  */
    if (!quiet_flag) {
       char *fn;	/* OUI filename */
@@ -1655,6 +1661,7 @@ process_options(int argc, char *argv[]) {
       {"numeric", no_argument, 0, 'N'},
       {"bandwidth", required_argument, 0, 'B'},
       {"ouifile", required_argument, 0, 'O'},
+      {"iabfile", required_argument, 0, 'F'},
       {"arpspa", required_argument, 0, 's'},
       {"arpop", required_argument, 0, 'o'},
       {"arphrd", required_argument, 0, 'H'},
@@ -1670,7 +1677,7 @@ process_options(int argc, char *argv[]) {
       {0, 0, 0, 0}
    };
    const char *short_options =
-      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:";
+      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:";
    int arg;
    int options_index=0;
 
@@ -1749,6 +1756,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'O':	/* --ouifile */
             strncpy(ouifilename, optarg, MAXLINE);
+            break;
+         case 'F':	/* --iabfile */
+            strncpy(iabfilename, optarg, MAXLINE);
             break;
          case 's':	/* --arpspa */
             arp_spa_flag = 1;
