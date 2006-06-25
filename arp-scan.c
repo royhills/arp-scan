@@ -978,10 +978,14 @@ usage(int status) {
    fprintf(stderr, "\t\t\tinformation is displayed.  With this option, the\n");
    fprintf(stderr, "\t\t\tOUI file is not used.\n");
    fprintf(stderr, "\n--ignoredups or -g\tDon't display duplicate packets.\n");
-   fprintf(stderr, "\t\t\tBy default, duplicate packets are displayed.\n");
+   fprintf(stderr, "\t\t\tBy default, duplicate packets are displayed and are\n");
+   fprintf(stderr, "\t\t\tflagged with \"(DUP: n)\".\n");
    fprintf(stderr, "\n--ouifile=<o> or -O <o>\tUse OUI file <o>, default=%s/%s\n", DATADIR, OUIFILENAME);
-   fprintf(stderr, "\t\t\tThis file provides the Ethernet OUI to vendor string\n");
-   fprintf(stderr, "\t\t\tmapping.\n");
+   fprintf(stderr, "\t\t\tThis file provides the IEEE Ethernet OUI to vendor\n");
+   fprintf(stderr, "\t\t\tstring mapping.\n");
+   fprintf(stderr, "\n--iabfile=<i> or -F <i>\tUse IAB file <i>, default=%s/%s\n", DATADIR, IABFILENAME);
+   fprintf(stderr, "\t\t\tThis file provides the IEEE Ethernet IAB to vendor\n");
+   fprintf(stderr, "\t\t\tstring mapping.\n");
    fprintf(stderr, "\n--srcaddr=<m> or -S <m> Set the local Ethernet MAC address to <m>\n");
    fprintf(stderr, "\t\t\tThis sets the hardware address of the interface used\n");
    fprintf(stderr, "\t\t\tby arp-scan to the specified value, which causes the\n");

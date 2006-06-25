@@ -1,5 +1,5 @@
 .\" $Id$
-.TH ARP-SCAN 1 "June 8, 2006"
+.TH ARP-SCAN 1 "June 25, 2006"
 .\" Please adjust this date whenever revising the manpage.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -179,19 +179,24 @@ The responses are displayed in the order that they are received, which
 is not always the same order as the requests were sent because some
 hosts may respond faster than others.
 .PP
-The vendor decoding uses the file
+The vendor decoding uses the files
 .I oui.txt
-which is supplied with
+and
+.IR iab.txt ,
+which are supplied with
 .BR arp-scan .
-This file is generated from the OUI data on the IEEE website at
-.IR http://standards.ieee.org/regauth/oui/oui.txt .
-The Perl script
-.BR get-oui ,
-which is included in the
+These files are generated from the OUI and IAB data on the IEEE website at
+.I http://standards.ieee.org/regauth/oui/oui.txt
+and
+.IR http://standards.ieee.org/regauth/oui/iab.txt .
+The Perl scripts
+.B get-oui
+and
+.BR get-iab ,
+which are included in the
 .B arp-scan
-package, can be used to update the
-.I oui.txt
-file with the latest OUI list from the IEEE website.
+package, can be used to update these
+files with the latest data from the IEEE website.
 .PP
 Almost all hosts that support IP will respond to
 .B arp-scan
@@ -296,12 +301,18 @@ OUI file is not used.
 .TP
 .B --ignoredups or -g
 Don't display duplicate packets.
-By default, duplicate packets are displayed.
+By default, duplicate packets are displayed
+and are flagged with "(DUP: n)".
 .TP
 .B --ouifile=<o> or -O <o>
 Use OUI file <o>, default=/usr/local/share/ether-scan-engine/oui.txt
 This file provides the Ethernet OUI to vendor string
 mapping.
+.TP
+.B --iabfile=<i> or -F <i>
+Use IAB file <i>, default=/usr/local/share/arp-scan/iab.txt
+This file provides the IEEE Ethernet IAB to vendor
+string mapping.
 .TP
 .B --srcaddr=<m> or -S <m>
 Set the local Ethernet MAC address to <m>
@@ -417,7 +428,10 @@ packet to the minimum Ethernet frame length.
 .SH FILES
 .TP
 .I /usr/local/share/ether-scan-engine/oui.txt
-List of OUI to vendor mappings.
+List of IEEE OUI (Organizationally Unique Identifier) to vendor mappings.
+.TP
+.I /usr/local/share/ether-scan-engine/iab.txt
+List of IEEE IAB (Individual Address Block) to vendor mappings.
 .SH EXAMPLES
 This example shows
 .B arp-scan
@@ -451,6 +465,8 @@ Ending arp-scan: 256 hosts scanned in 3.386 seconds (75.61 hosts/sec).  13 respo
 Roy Hills <Roy.Hills@nta-monitor.com>
 .SH "SEE ALSO"
 .BR get-oui (1)
+.PP
+.BR get-iab (1)
 .PP
 .BR arp-fingerprint (1)
 .PP
