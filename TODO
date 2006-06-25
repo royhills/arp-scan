@@ -1,10 +1,5 @@
 $Id$
 
-Add support for IEEE IAB listings in addition to OUI listings.
-http://standards.ieee.org/regauth/oui/iab.txt
-Each IAB defines the first 36 bits, leaving the remaining 12 free,
-e.g. 00:50:c2:00:0x:xx
-
 Add support for special MAC addresses e.g. VRRP, WLBS Etc.
 For this, we'll probably want to use Posix pattern matching.
 We need to match before the OUI listings, because some use assigned prefixes,

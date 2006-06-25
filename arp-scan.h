@@ -138,7 +138,8 @@
 #define ARPOP_REQUEST 1			/* ARP Request */
 #define ARPOP_REPLY 2			/* ARP Reply */
 #define ARP_PKT_SIZE 28			/* Size of ARP Packet in bytes */
-#define OUIFILENAME "oui.txt"
+#define OUIFILENAME "oui.txt"		/* Default OUI filename */
+#define IABFILENAME "iab.txt"		/* Default IAB filename */
 #define DEFAULT_ARP_OP ARPOP_REQUEST	/* Default ARP operation */
 #define DEFAULT_ARP_HRD ARPHRD_ETHER	/* Default ARP hardware type */
 #define DEFAULT_ARP_PRO ETH_P_IP	/* Default ARP protocol */

@@ -199,7 +199,7 @@ main(int argc, char *argv[]) {
       static const char *oui_pat_str = "([^\t]+)\t[\t ]*([^\t\r\n]+)";
       regex_t oui_pat;
       int result;
-      size_t line_count=0;
+      size_t line_count;
       regmatch_t pmatch[3];
       size_t key_len;
       size_t data_len;
@@ -215,6 +215,9 @@ main(int argc, char *argv[]) {
          err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
                  oui_pat_str, reg_errbuf);
       }
+      if ((hash_table = hash_new()) == NULL) {
+         err_sys("hash_new");
+      }
       if (*ouifilename == '\0')	/* If OUI filename not specified */
          fn = make_message("%s/%s", DATADIR, OUIFILENAME);
       else
@@ -223,10 +226,8 @@ main(int argc, char *argv[]) {
          warn_sys("WARNING: Cannot open OUI file %s", fn);
          quiet_flag = 1;	/* Don't decode OUI vendor */
       } else {
-         if ((hash_table = hash_new()) == NULL) {
-            err_sys("hash_new");
-         }
-         while (fgets(line, MAXLINE, fp)) {	/* create hash table */
+         line_count=0;
+         while (fgets(line, MAXLINE, fp)) {
             if (line[0] != '#' && line[0] != '\n' && line[0] != '\r') {
                result = regexec(&oui_pat, line, 3, pmatch, 0);
                if (result == REG_NOMATCH || pmatch[1].rm_so < 0 ||
@@ -261,6 +262,56 @@ main(int argc, char *argv[]) {
          fclose(fp);
          if (verbose)
             warn_msg("DEBUG: Loaded %u OUI/Vendor entries into hash table", line_count);
+      }
+      free(fn);
+/*
+ *	Load the IAB list into the hash table.
+ *	This is duplicated code, and we should put it in a function.
+ */
+      if (*iabfilename == '\0')	/* If IAB filename not specified */
+         fn = make_message("%s/%s", DATADIR, IABFILENAME);
+      else
+         fn = make_message("%s", iabfilename);
+      if ((fp = fopen(fn, "r")) == NULL) {
+         warn_sys("WARNING: Cannot open IAB file %s", fn);
+      } else {
+         line_count=0;
+         while (fgets(line, MAXLINE, fp)) {
+            if (line[0] != '#' && line[0] != '\n' && line[0] != '\r') {
+               result = regexec(&oui_pat, line, 3, pmatch, 0);
+               if (result == REG_NOMATCH || pmatch[1].rm_so < 0 ||
+                   pmatch[2].rm_so < 0) {
+                  warn_msg("WARNING: Could not parse iab: %s", line);
+               } else if (result != 0) {
+                  char reg_errbuf[MAXLINE];
+                  size_t errlen;
+                  errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
+                  err_msg("ERROR: oui regexec failed: %s", reg_errbuf);
+               } else {
+                  key_len = pmatch[1].rm_eo - pmatch[1].rm_so;
+                  data_len = pmatch[2].rm_eo - pmatch[2].rm_so;
+                  key=Malloc(key_len+1);
+                  data=Malloc(data_len+1);
+                  strncpy(key, line+pmatch[1].rm_so, key_len);
+                  key[key_len] = '\0';
+                  strncpy(data, line+pmatch[2].rm_so, data_len);
+                  data[data_len] = '\0';
+                  if ((result_str = hash_insert(hash_table, key, data))
+                      != NULL) {
+/* Ignore "exists" because there are a few duplicates in the IEEE list */
+                     if ((strcmp(result_str, "exists")) != 0) {
+                        warn_msg("hash_insert(%s, %s): %s", key, data,
+                                 result_str);
+                     }
+                  }
+                  line_count++;
+               }
+            }
+         }
+         fclose(fp);
+         if (verbose)
+            warn_msg("DEBUG: Loaded %u IAB/Vendor entries into hash table",
+                     line_count);
       }
       free(fn);
    }
@@ -557,23 +608,32 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
                       arpei.ar_sha[4], arpei.ar_sha[5]);
    free(cp);
 /*
- *	Find OUI from hash table and add to message if quiet if not in
+ *	Find vendor from hash table and add to message if quiet if not in
  *	effect.
+ *
+ *	We start with more specific matches (against larger parts of the
+ *	hardware address), and work towards less specific matches until
+ *	we find a match or exhaust all possible matches.
  */
    if (!quiet_flag) {
-      char *oui_string;
+      char oui_string[13];	/* Space for full hw addr plus NULL */
       const char *vendor;
 
-      oui_string = make_message("%.2X%.2X%.2X", arpei.ar_sha[0],
-                                arpei.ar_sha[1], arpei.ar_sha[2]);
+      snprintf(oui_string, 13, "%.2X%.2X%.2X%.2X%.2X%.2X",
+               arpei.ar_sha[0], arpei.ar_sha[1], arpei.ar_sha[2],
+               arpei.ar_sha[3], arpei.ar_sha[4], arpei.ar_sha[5]);
+      oui_string[9] = '\0';	/* Truncate to 01-23-45-67-8 */
       vendor = hash_find(hash_table, oui_string);
+      if (!vendor) {	/* Vendor not found in IAB listing */
+         oui_string[6] = '\0';	/* Truncate to 01-23-45 */
+         vendor = hash_find(hash_table, oui_string);
+      }
       cp = msg;
       if (vendor)
          msg = make_message("%s\t%s", cp, vendor);
       else
          msg = make_message("%s\t%s", cp, "(Unknown)");
       free(cp);
-      free(oui_string);
 /*
  *	Check that any data after the ARP packet is zero.
  *	If it is non-zero, and verbose is selected, then print the padding.
