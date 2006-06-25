@@ -180,12 +180,17 @@ is not always the same order as the requests were sent because some
 hosts may respond faster than others.
 .PP
 The vendor decoding uses the files
-.I ieee-oui.txt
+.IR ieee-oui.txt ,
+.I ieee-iab.txt 
 and
-.IR ieee-iab.txt ,
+.I mac-vendor.txt
 which are supplied with
 .BR arp-scan .
-These files are generated from the OUI and IAB data on the IEEE website at
+The
+.I ieee-oui.txt
+and
+.I ieee-iab.txt
+files are generated from the OUI and IAB data on the IEEE website at
 .I http://standards.ieee.org/regauth/oui/ieee-oui.txt
 and
 .IR http://standards.ieee.org/regauth/oui/iab.txt .
@@ -197,6 +202,10 @@ which are included in the
 .B arp-scan
 package, can be used to update these
 files with the latest data from the IEEE website.
+The
+.I mac-vendor.txt
+file contains other MAC to Vendor mappings that are not covered by
+the IEEE OUI and IAB files.
 .PP
 Almost all hosts that support IP will respond to
 .B arp-scan
@@ -312,6 +321,11 @@ mapping.
 .B --iabfile=<i> or -F <i>
 Use IAB file <i>, default=/usr/local/share/arp-scan/ieee-iab.txt
 This file provides the IEEE Ethernet IAB to vendor
+string mapping.
+.TP
+.B --macfile=<m> or -m <m>
+Use MAC/Vendor file <m>, default=/usr/local/share/arp-scan/mac-vendor.txt
+This file provides the custom Ethernet MAC to vendor
 string mapping.
 .TP
 .B --srcaddr=<m> or -S <m>
@@ -432,6 +446,9 @@ List of IEEE OUI (Organizationally Unique Identifier) to vendor mappings.
 .TP
 .I /usr/local/share/ether-scan-engine/ieee-iab.txt
 List of IEEE IAB (Individual Address Block) to vendor mappings.
+.TP
+.I /usr/local/share/ether-scan-engine/mac-vendor.txt
+List of other Ethernet MAC to vendor mappings.
 .SH EXAMPLES
 This example shows
 .B arp-scan

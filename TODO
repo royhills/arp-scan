@@ -1,9 +1,4 @@
 $Id$
 
-Add support for special MAC addresses e.g. VRRP, WLBS Etc.
-For this, we'll probably want to use Posix pattern matching.
-We need to match before the OUI listings, because some use assigned prefixes,
-e.g. VRRP with 00:00:5e:00:01:xx
-
 ML: Add option to scan locally attached network without requiring IP range.
 Get IP address and netmask of interface and generate range from that.

@@ -76,6 +76,7 @@ extern int pcap_fd;			/* pcap File Descriptor */
 static size_t ip_offset;		/* Offset to IP header in pcap pkt */
 static char ouifilename[MAXLINE];	/* OUI filename */
 static char iabfilename[MAXLINE];	/* IAB filename */
+static char macfilename[MAXLINE];	/* MAC filename */
 static int arp_op=DEFAULT_ARP_OP;	/* ARP Operation code */
 static int arp_hrd=DEFAULT_ARP_HRD;	/* ARP hardware type */
 static int arp_pro=DEFAULT_ARP_PRO;	/* ARP protocol */
@@ -142,6 +143,7 @@ main(int argc, char *argv[]) {
  */
    ouifilename[0] = '\0';
    iabfilename[0] = '\0';
+   macfilename[0] = '\0';
 /*
  *      Process options.
  */
@@ -191,128 +193,43 @@ main(int argc, char *argv[]) {
       err_sys("setuid");
    }
 /*
- * Create OUI and IAB hash table if quiet if not in effect.
+ * Create MAC/Vendor hash table if quiet if not in effect.
  */
    if (!quiet_flag) {
-      char *fn;	/* OUI filename */
-      FILE *fp;	/* OUI file handle */
-      static const char *oui_pat_str = "([^\t]+)\t[\t ]*([^\t\r\n]+)";
-      regex_t oui_pat;
-      int result;
-      size_t line_count;
-      regmatch_t pmatch[3];
-      size_t key_len;
-      size_t data_len;
-      char *key;
-      char *data;
-      char line[MAXLINE];
-      const char *result_str;
+      char *fn;
+      int count;
 
-      if ((result=regcomp(&oui_pat, oui_pat_str, REG_EXTENDED))) {
-         char reg_errbuf[MAXLINE];
-         size_t errlen;
-         errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
-         err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
-                 oui_pat_str, reg_errbuf);
-      }
-      if ((hash_table = hash_new()) == NULL) {
+      if ((hash_table = hash_new()) == NULL)
          err_sys("hash_new");
-      }
+
       if (*ouifilename == '\0')	/* If OUI filename not specified */
          fn = make_message("%s/%s", DATADIR, OUIFILENAME);
       else
          fn = make_message("%s", ouifilename);
-      if ((fp = fopen(fn, "r")) == NULL) {
-         warn_sys("WARNING: Cannot open OUI file %s", fn);
-         quiet_flag = 1;	/* Don't decode OUI vendor */
-      } else {
-         line_count=0;
-         while (fgets(line, MAXLINE, fp)) {
-            if (line[0] != '#' && line[0] != '\n' && line[0] != '\r') {
-               result = regexec(&oui_pat, line, 3, pmatch, 0);
-               if (result == REG_NOMATCH || pmatch[1].rm_so < 0 ||
-                   pmatch[2].rm_so < 0) {
-                  warn_msg("WARNING: Could not parse oui: %s", line);
-               } else if (result != 0) {
-                  char reg_errbuf[MAXLINE];
-                  size_t errlen;
-                  errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
-                  err_msg("ERROR: oui regexec failed: %s", reg_errbuf);
-               } else {
-                  key_len = pmatch[1].rm_eo - pmatch[1].rm_so;
-                  data_len = pmatch[2].rm_eo - pmatch[2].rm_so;
-                  key=Malloc(key_len+1);
-                  data=Malloc(data_len+1);
-                  strncpy(key, line+pmatch[1].rm_so, key_len);
-                  key[key_len] = '\0';
-                  strncpy(data, line+pmatch[2].rm_so, data_len);
-                  data[data_len] = '\0';
-                  if ((result_str = hash_insert(hash_table, key, data))
-                      != NULL) {
-/* Ignore "exists" because there are a few duplicates in the IEEE list */
-                     if ((strcmp(result_str, "exists")) != 0) {
-                        warn_msg("hash_insert(%s, %s): %s", key, data,
-                                 result_str);
-                     }
-                  }
-                  line_count++;
-               }
-            }
-         }
-         fclose(fp);
-         if (verbose)
-            warn_msg("DEBUG: Loaded %u OUI/Vendor entries into hash table", line_count);
-      }
+      count = add_mac_vendor(hash_table, fn);
+      if (verbose)
+         warn_msg("DEBUG: Loaded %d IEEE OUI/Vendor entries from %s.",
+                  count, fn);
       free(fn);
-/*
- *	Load the IAB list into the hash table.
- *	This is duplicated code, and we should put it in a function.
- */
+
       if (*iabfilename == '\0')	/* If IAB filename not specified */
          fn = make_message("%s/%s", DATADIR, IABFILENAME);
       else
          fn = make_message("%s", iabfilename);
-      if ((fp = fopen(fn, "r")) == NULL) {
-         warn_sys("WARNING: Cannot open IAB file %s", fn);
-      } else {
-         line_count=0;
-         while (fgets(line, MAXLINE, fp)) {
-            if (line[0] != '#' && line[0] != '\n' && line[0] != '\r') {
-               result = regexec(&oui_pat, line, 3, pmatch, 0);
-               if (result == REG_NOMATCH || pmatch[1].rm_so < 0 ||
-                   pmatch[2].rm_so < 0) {
-                  warn_msg("WARNING: Could not parse iab: %s", line);
-               } else if (result != 0) {
-                  char reg_errbuf[MAXLINE];
-                  size_t errlen;
-                  errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
-                  err_msg("ERROR: oui regexec failed: %s", reg_errbuf);
-               } else {
-                  key_len = pmatch[1].rm_eo - pmatch[1].rm_so;
-                  data_len = pmatch[2].rm_eo - pmatch[2].rm_so;
-                  key=Malloc(key_len+1);
-                  data=Malloc(data_len+1);
-                  strncpy(key, line+pmatch[1].rm_so, key_len);
-                  key[key_len] = '\0';
-                  strncpy(data, line+pmatch[2].rm_so, data_len);
-                  data[data_len] = '\0';
-                  if ((result_str = hash_insert(hash_table, key, data))
-                      != NULL) {
-/* Ignore "exists" because there are a few duplicates in the IEEE list */
-                     if ((strcmp(result_str, "exists")) != 0) {
-                        warn_msg("hash_insert(%s, %s): %s", key, data,
-                                 result_str);
-                     }
-                  }
-                  line_count++;
-               }
-            }
-         }
-         fclose(fp);
-         if (verbose)
-            warn_msg("DEBUG: Loaded %u IAB/Vendor entries into hash table",
-                     line_count);
-      }
+      count = add_mac_vendor(hash_table, fn);
+      if (verbose)
+         warn_msg("DEBUG: Loaded %d IEEE IAB/Vendor entries from %s.",
+                  count, fn);
+      free(fn);
+
+      if (*macfilename == '\0')	/* If MAC filename not specified */
+         fn = make_message("%s/%s", DATADIR, MACFILENAME);
+      else
+         fn = make_message("%s", macfilename);
+      count = add_mac_vendor(hash_table, fn);
+      if (verbose)
+         warn_msg("DEBUG: Loaded %d MAC/Vendor entries from %s.",
+                  count, fn);
       free(fn);
    }
 /*
@@ -617,16 +534,16 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
  */
    if (!quiet_flag) {
       char oui_string[13];	/* Space for full hw addr plus NULL */
-      const char *vendor;
+      const char *vendor=NULL;
+      int oui_end=12;
 
       snprintf(oui_string, 13, "%.2X%.2X%.2X%.2X%.2X%.2X",
                arpei.ar_sha[0], arpei.ar_sha[1], arpei.ar_sha[2],
                arpei.ar_sha[3], arpei.ar_sha[4], arpei.ar_sha[5]);
-      oui_string[9] = '\0';	/* Truncate to 01-23-45-67-8 */
-      vendor = hash_find(hash_table, oui_string);
-      if (!vendor) {	/* Vendor not found in IAB listing */
-         oui_string[6] = '\0';	/* Truncate to 01-23-45 */
+      while (vendor == NULL && oui_end > 1) {
+         oui_string[oui_end] = '\0';	/* Truncate oui string */
          vendor = hash_find(hash_table, oui_string);
+         oui_end--;
       }
       cp = msg;
       if (vendor)
@@ -985,6 +902,9 @@ usage(int status) {
    fprintf(stderr, "\t\t\tstring mapping.\n");
    fprintf(stderr, "\n--iabfile=<i> or -F <i>\tUse IAB file <i>, default=%s/%s\n", DATADIR, IABFILENAME);
    fprintf(stderr, "\t\t\tThis file provides the IEEE Ethernet IAB to vendor\n");
+   fprintf(stderr, "\t\t\tstring mapping.\n");
+   fprintf(stderr, "\n--macfile=<m> or -m <m>\tUse MAC/Vendor file <m>, default=%s/%s\n", DATADIR, MACFILENAME);
+   fprintf(stderr, "\t\t\tThis file provides the custom Ethernet MAC to vendor\n");
    fprintf(stderr, "\t\t\tstring mapping.\n");
    fprintf(stderr, "\n--srcaddr=<m> or -S <m> Set the local Ethernet MAC address to <m>\n");
    fprintf(stderr, "\t\t\tThis sets the hardware address of the interface used\n");
@@ -1726,6 +1646,7 @@ process_options(int argc, char *argv[]) {
       {"bandwidth", required_argument, 0, 'B'},
       {"ouifile", required_argument, 0, 'O'},
       {"iabfile", required_argument, 0, 'F'},
+      {"macfile", required_argument, 0, 'm'},
       {"arpspa", required_argument, 0, 's'},
       {"arpop", required_argument, 0, 'o'},
       {"arphrd", required_argument, 0, 'H'},
@@ -1741,7 +1662,7 @@ process_options(int argc, char *argv[]) {
       {0, 0, 0, 0}
    };
    const char *short_options =
-      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:";
+      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:";
    int arg;
    int options_index=0;
 
@@ -1823,6 +1744,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'F':	/* --iabfile */
             strncpy(iabfilename, optarg, MAXLINE);
+            break;
+         case 'm':	/* --macfile */
+            strncpy(macfilename, optarg, MAXLINE);
             break;
          case 's':	/* --arpspa */
             arp_spa_flag = 1;
@@ -2067,4 +1991,90 @@ unmarshal_arp_pkt(const unsigned char *buffer, arp_ether_ipv4 *arp_pkt) {
    memcpy(&(arp_pkt->ar_tha), cp, sizeof(arp_pkt->ar_tha));
    cp += sizeof(arp_pkt->ar_tha);
    memcpy(&(arp_pkt->ar_tip), cp, sizeof(arp_pkt->ar_tip));
+}
+
+/*
+ *	add_mac_vendor -- Add MAC/Vendor mappings to the hash table
+ *
+ *	Inputs:
+ *
+ *	table		The handle of the hash table
+ *	filename	The name of the file containing the mappings
+ *
+ *	Returns:
+ *
+ *	The number of entries added to the hash table.
+ */
+int
+add_mac_vendor(struct hash_control *table, const char *filename) {
+   static int first_call=1;
+   FILE *fp;	/* MAC/Vendor file handle */
+   static const char *oui_pat_str = "([^\t]+)\t[\t ]*([^\t\r\n]+)";
+   static regex_t oui_pat;
+   regmatch_t pmatch[3];
+   size_t key_len;
+   size_t data_len;
+   char *key;
+   char *data;
+   char line[MAXLINE];
+   int line_count;
+   int result;
+   const char *result_str;
+/*
+ *	Complile the regex pattern if this is the first time we
+ *	have been called.
+ */
+   if (first_call) {
+      first_call=0;
+      if ((result=regcomp(&oui_pat, oui_pat_str, REG_EXTENDED))) {
+         char reg_errbuf[MAXLINE];
+         size_t errlen;
+         errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
+         err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
+                 oui_pat_str, reg_errbuf);
+      }
+   }
+/*
+ *	Open the file.
+ */
+   if ((fp = fopen(filename, "r")) == NULL) {
+      warn_sys("WARNING: Cannot open MAC/Vendor file %s", filename);
+      return 0;
+   }
+   line_count=0;
+/*
+ *
+ */
+   while (fgets(line, MAXLINE, fp)) {
+      if (line[0] == '#' || line[0] == '\n' || line[0] == '\r')
+         continue;	/* Skip blank lines and comments */
+      result = regexec(&oui_pat, line, 3, pmatch, 0);
+      if (result == REG_NOMATCH || pmatch[1].rm_so < 0 || pmatch[2].rm_so < 0) {
+         warn_msg("WARNING: Could not parse oui: %s", line);
+      } else if (result != 0) {
+         char reg_errbuf[MAXLINE];
+         size_t errlen;
+         errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
+         err_msg("ERROR: oui regexec failed: %s", reg_errbuf);
+      } else {
+         key_len = pmatch[1].rm_eo - pmatch[1].rm_so;
+         data_len = pmatch[2].rm_eo - pmatch[2].rm_so;
+         key=Malloc(key_len+1);
+         data=Malloc(data_len+1);
+         strncpy(key, line+pmatch[1].rm_so, key_len);
+         key[key_len] = '\0';
+         strncpy(data, line+pmatch[2].rm_so, data_len);
+         data[data_len] = '\0';
+         if ((result_str = hash_insert(hash_table, key, data)) != NULL) {
+/* Ignore "exists" because there are a few duplicates in the IEEE list */
+            if ((strcmp(result_str, "exists")) != 0) {
+               warn_msg("hash_insert(%s, %s): %s", key, data, result_str);
+            }
+         } else {
+            line_count++;
+         }
+      }
+   }
+   fclose(fp);
+   return line_count;
 }
