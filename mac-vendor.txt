@@ -1,0 +1,38 @@
+# $Id$
+# mac-vendor.txt -- Ethernet vendor file for arp-scan
+#
+# This file contains Ethernet vendor mappings for arp-scan.  These are used
+# to determine the vendor for a give Ethernet interface given the MAC address.
+#
+# Each line of this file contains a MAC-vendor mapping in the form:
+#
+# <MAC-Prefix><TAB><Vendor>
+#
+# Where <MAC-Prefix> is the prefix of the MAC address in hex, and <Vendor>
+# is the name of the vendor.  The prefix can be of any length, but it must
+# contain an even number of hex digits (representing an even number of bytes).
+#
+# For example:
+#
+# 010203 would match any MAC address beginning 01:02:03, and
+# 01020304 would match any address beginning 01:02:03:04.
+#
+# Do not include entries from the IEEE OUI or IAB listings, as these are
+# already in the files ieee-oui.txt and ieee-iab.txt, which are automatically
+# used by arp-scan.  This file is for MAC addresses that are not present in
+# the IEEE listings.
+#
+# The order of entries in this file are not important.
+#
+# Blank lines and lines beginning with "#" are ignored.
+#
+
+# From nmap Debian bug report #369681 dated 31 May 2006
+525400	QEMU
+B0C420	Bochs
+
+# From RFC 2338: 00-00-5E-00-01-{VRID}
+00005E0001	VRRP (last octet is VRID)
+
+# Microsoft WLBS
+02BF	Microsoft WLBS (last four octets are IP address)
