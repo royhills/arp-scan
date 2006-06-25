@@ -180,13 +180,13 @@ is not always the same order as the requests were sent because some
 hosts may respond faster than others.
 .PP
 The vendor decoding uses the files
-.I oui.txt
+.I ieee-oui.txt
 and
-.IR iab.txt ,
+.IR ieee-iab.txt ,
 which are supplied with
 .BR arp-scan .
 These files are generated from the OUI and IAB data on the IEEE website at
-.I http://standards.ieee.org/regauth/oui/oui.txt
+.I http://standards.ieee.org/regauth/oui/ieee-oui.txt
 and
 .IR http://standards.ieee.org/regauth/oui/iab.txt .
 The Perl scripts
@@ -305,12 +305,12 @@ By default, duplicate packets are displayed
 and are flagged with "(DUP: n)".
 .TP
 .B --ouifile=<o> or -O <o>
-Use OUI file <o>, default=/usr/local/share/ether-scan-engine/oui.txt
+Use OUI file <o>, default=/usr/local/share/ether-scan-engine/ieee-oui.txt
 This file provides the Ethernet OUI to vendor string
 mapping.
 .TP
 .B --iabfile=<i> or -F <i>
-Use IAB file <i>, default=/usr/local/share/arp-scan/iab.txt
+Use IAB file <i>, default=/usr/local/share/arp-scan/ieee-iab.txt
 This file provides the IEEE Ethernet IAB to vendor
 string mapping.
 .TP
@@ -427,10 +427,10 @@ Ethernet driver on the sending system may pad the
 packet to the minimum Ethernet frame length.
 .SH FILES
 .TP
-.I /usr/local/share/ether-scan-engine/oui.txt
+.I /usr/local/share/ether-scan-engine/ieee-oui.txt
 List of IEEE OUI (Organizationally Unique Identifier) to vendor mappings.
 .TP
-.I /usr/local/share/ether-scan-engine/iab.txt
+.I /usr/local/share/ether-scan-engine/ieee-iab.txt
 List of IEEE IAB (Individual Address Block) to vendor mappings.
 .SH EXAMPLES
 This example shows

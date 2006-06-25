@@ -30,7 +30,7 @@ use Getopt::Std;
 use LWP::Simple;
 #
 my $default_url = 'http://standards.ieee.org/regauth/oui/oui.txt';
-my $default_filename='oui.txt';
+my $default_filename='ieee-oui.txt';
 #
 my $usage =
 qq/Usage: get-oui [options]
@@ -99,7 +99,7 @@ $mon++;
 my $date_string = sprintf("%04d-%02d-%02d %02d:%02d:%02d", $year, $mon, $mday,
                           $hour, $min, $sec);
 my $header_comments =
-qq/# oui.txt -- Ethernet vendor OUI file for arp-scan
+qq/# ieee-oui.txt -- Ethernet vendor OUI file for arp-scan
 #
 # This file contains the Ethernet vendor OUIs for arp-scan.  These are used
 # to determine the vendor for a give Ethernet interface given the MAC address.

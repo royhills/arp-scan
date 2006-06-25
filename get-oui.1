@@ -46,7 +46,7 @@ OUI file up to date.
 The OUI data is fetched from the URL
 .I http://standards.ieee.org/regauth/oui/oui.txt
 and the output file is saved to the file
-.I oui.txt
+.I ieee-oui.txt
 in the current directory. The URL to fetch the data from can be changed with
 the
 .B -u
@@ -55,7 +55,7 @@ option, and the output file name can be changed with the
 option.
 .PP
 The
-.I oui.txt
+.I ieee-oui.txt
 file that is produced by this script is used by
 .B arp-scan
 to determine the Ethernet card vendor from its hardware address.
@@ -63,7 +63,7 @@ to determine the Ethernet card vendor from its hardware address.
 The directory that
 .B arp-scan
 will look for the
-.I oui.txt
+.I ieee-oui.txt
 file depends on the options used when it was built.  If it was
 built using the default options, then it will look in
 .IR /usr/local/share/arp-scan .
@@ -74,7 +74,7 @@ Display a brief usage message and exit.
 .TP
 .B -f <fn>
 Write the output to the specified file instead of the default
-.I oui.txt.
+.I ieee-oui.txt.
 .TP
 .B -u <URL>
 Use the specified URL to fetch the raw OUI data from instead of the default
@@ -84,16 +84,16 @@ Use the specified URL to fetch the raw OUI data from instead of the default
 Display verbose progress messages.
 .SH FILES
 .TP
-.I oui.txt
+.I ieee-oui.txt
 The default output file.
 .SH EXAMPLES
 .nf
 $ get-oui -v
-Renaming oui.txt to oui.txt.bak
+Renaming ieee-oui.txt to ieee-oui.txt.bak
 Fetching OUI data from http://standards.ieee.org/regauth/oui/oui.txt
 Fetched 1467278 bytes
-Opening output file oui.txt
-9274 OUI entries written to file oui.txt
+Opening output file ieee-oui.txt
+9274 OUI entries written to file ieee-oui.txt
 .fi
 .SH NOTES
 .B get-oui

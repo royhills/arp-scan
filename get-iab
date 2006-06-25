@@ -34,7 +34,7 @@ use Getopt::Std;
 use LWP::Simple;
 #
 my $default_url = 'http://standards.ieee.org/regauth/oui/iab.txt';
-my $default_filename='iab.txt';
+my $default_filename='ieee-iab.txt';
 #
 my $usage =
 qq/Usage: get-iab [options]
@@ -105,7 +105,7 @@ $mon++;
 my $date_string = sprintf("%04d-%02d-%02d %02d:%02d:%02d", $year, $mon, $mday,
                           $hour, $min, $sec);
 my $header_comments =
-qq/# iab.txt -- Ethernet vendor IAB file for arp-scan
+qq/# ieee-iab.txt -- Ethernet vendor IAB file for arp-scan
 #
 # This file contains the Ethernet vendor IABs for arp-scan.  These are used
 # to determine the vendor for a give Ethernet interface given the MAC address.
