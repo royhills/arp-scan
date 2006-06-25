@@ -90,6 +90,7 @@ static int source_mac_flag = 0;
 static unsigned char *padding=NULL;
 static size_t padding_len=0;
 static struct hash_control *hash_table;
+static int localnet_flag=0;		/* Scan local network */
 
 int
 main(int argc, char *argv[]) {
@@ -193,6 +194,25 @@ main(int argc, char *argv[]) {
       err_sys("setuid");
    }
 /*
+ *      Check that the combination of specified options and arguments is
+ *      valid.
+ */
+   if (interval && bandwidth != DEFAULT_BANDWIDTH)
+      err_msg("ERROR: You cannot specify both --bandwidth and --interval.");
+   if (localnet_flag) {
+      if ((argc - optind) > 0)
+         err_msg("ERROR: You can not specify targets with the --localnet option");
+      if (filename_flag)
+         err_msg("ERROR: You can not specify both --file and --localnet options");
+   }
+/*
+ *      If we're not reading from a file, and --localnet was not specified, then
+ *	we must have some hosts given as command line arguments.
+ */
+   if (!filename_flag && !localnet_flag)
+      if ((argc - optind) < 1)
+         usage(EXIT_FAILURE);
+/*
  * Create MAC/Vendor hash table if quiet if not in effect.
  */
    if (!quiet_flag) {
@@ -233,14 +253,8 @@ main(int argc, char *argv[]) {
       free(fn);
    }
 /*
- *      If we're not reading from a file, then we must have some hosts
- *      given as command line arguments.
- */
-   if (!filename_flag)
-      if ((argc - optind) < 1)
-         usage(EXIT_FAILURE);
-/*
  *      Populate the list from the specified file if --file was specified, or
+ *	from the interface address and mask if --localnet was specified, or
  *      otherwise from the remaining command line arguments.
  */
    if (filename_flag) { /* Populate list from file */
@@ -266,6 +280,8 @@ main(int argc, char *argv[]) {
          add_host_pattern(line, timeout);
       }
       fclose(fp);
+   } else if (localnet_flag) {	/* Populate list from i/f addr & mask */
+      err_msg("--localnet option used");
    } else {             /* Populate list from command line arguments */
       argv=&argv[optind];
       while (*argv) {
@@ -278,12 +294,6 @@ main(int argc, char *argv[]) {
  */
    if (!num_hosts)
       err_msg("No hosts to process.");
-/*
- *      Check that the combination of specified options and arguments is
- *      valid.
- */
-   if (interval && bandwidth != DEFAULT_BANDWIDTH)
-      err_msg("ERROR: You cannot specify both --bandwidth and --interval.");
 /*
  *      Create and initialise array of pointers to host entries.
  */
@@ -1659,10 +1669,11 @@ process_options(int argc, char *argv[]) {
       {"arpsha", required_argument, 0, 'u'},
       {"arptha", required_argument, 0, 'w'},
       {"srcaddr", required_argument, 0, 'S'},
+      {"localnet", no_argument, 0, 'l'},
       {0, 0, 0, 0}
    };
    const char *short_options =
-      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:";
+      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:l";
    int arg;
    int options_index=0;
 
@@ -1802,6 +1813,9 @@ process_options(int argc, char *argv[]) {
             if (result != 0)
                err_msg("Invalid target MAC address: %s", optarg);
             source_mac_flag = 1;
+            break;
+         case 'l':	/* --localnet */
+            localnet_flag = 1;
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE);
