@@ -25,7 +25,7 @@
 # converts it to the format needed by arp-scan.
 #
 # This script assumes that all the IAB entries start with 00-50-C2. This
-# is currently the case, and will probably be so for the forseeable
+# is currently the case, and will probably be so for the foreseeable
 # future.
 #
 use warnings;

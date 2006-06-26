@@ -411,7 +411,7 @@ print_times(void) {
  * 01-23-45-67-89-ab
  * 01:23:45:67:89:ab
  *
- * The hax characters [a-z] may be specified in either upper or lower case.
+ * The hex characters [a-z] may be specified in either upper or lower case.
  */
 int
 get_ether_addr(const char *address_string, unsigned char *ether_addr) {

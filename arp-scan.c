@@ -2042,7 +2042,7 @@ add_mac_vendor(struct hash_control *table, const char *filename) {
    int result;
    const char *result_str;
 /*
- *	Complile the regex pattern if this is the first time we
+ *	Compile the regex pattern if this is the first time we
  *	have been called.
  */
    if (first_call) {

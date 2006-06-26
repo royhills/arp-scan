@@ -3,3 +3,6 @@ $Id$
 Code tidy up: reduce the number of global variables.
 
 Additional ARP fingerprinting options, e.g. arpsha != srcaddr.
+
+Use libnet or another packet creation library to allow arp-scan to run on
+non-linux platforms.

@@ -7,7 +7,7 @@ bin_PROGRAMS = arp-scan
 #
 dist_bin_SCRIPTS = get-oui get-iab arp-fingerprint
 #
-dist_check_SCRIPTS = check-arp-scan-run1
+dist_check_SCRIPTS = check-run1
 #
 dist_man_MANS = arp-scan.1 get-oui.1 get-iab.1 arp-fingerprint.1
 #
