@@ -1,4 +1,5 @@
 $Id$
 
-ML: Add option to scan locally attached network without requiring IP range.
-Get IP address and netmask of interface and generate range from that.
+Code tidy up: reduce the number of global variables.
+
+Additional ARP fingerprinting options, e.g. arpsha != srcaddr.

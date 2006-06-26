@@ -117,6 +117,13 @@ main(int argc, char *argv[]) {
    int first_timeout=1;
    int i;
    char errbuf[PCAP_ERRBUF_SIZE];
+   struct bpf_program filter;
+   char *filter_string;
+   bpf_u_int32 netmask;
+   bpf_u_int32 localnet;
+   int datalink;
+   unsigned char interface_mac[ETH_ALEN];
+   int get_addr_status = 0;
 /*
  *      Open syslog channel and log arguments if required.
  *      We must be careful here to avoid overflowing the arg_str buffer
@@ -183,10 +190,68 @@ main(int argc, char *argv[]) {
       set_hardware_address(if_name, source_mac);
    }
 /*
- *      Call protocol-specific initialisation routine to perform any
- *      initial setup required.
+ *	Obtain the interface index and MAC address for the selected
+ *	interface, and if possible also obtain the IP address.
  */
-   initialise();
+   if_index = get_hardware_address(if_name, interface_mac);
+   if (arp_sha_flag == 0)
+      memcpy(arp_sha, interface_mac, ETH_ALEN);
+   if (arp_spa_flag == 0) {
+      get_addr_status = get_source_ip(if_name, &arp_spa);
+      if (get_addr_status == -1) {
+         warn_msg("WARNING: Could not obtain IP address for interface %s. "
+                  "Using 0.0.0.0 for", if_name);
+         warn_msg("the source address, which is probably not what you want.");
+         warn_msg("Either configure %s with an IP address, or manually specify"
+                  " the address", if_name);
+         warn_msg("with the --arpspa option.");
+         memset(&arp_spa, '\0', sizeof(arp_spa));
+      }
+   }
+/*
+ *	Prepare pcap
+ */
+   if (!(handle = pcap_open_live(if_name, snaplen, PROMISC, TO_MS, errbuf)))
+      err_msg("pcap_open_live: %s", errbuf);
+   if ((datalink=pcap_datalink(handle)) < 0)
+      err_msg("pcap_datalink: %s", pcap_geterr(handle));
+   printf("Interface: %s, datalink type: %s (%s)\n", if_name,
+          pcap_datalink_val_to_name(datalink),
+          pcap_datalink_val_to_description(datalink));
+   switch (datalink) {
+      case DLT_EN10MB:		/* Ethernet */
+         ip_offset = 14;
+         break;
+      case DLT_LINUX_SLL:	/* PPP on Linux */
+         ip_offset = 16;
+         break;
+      default:
+         err_msg("Unsupported datalink type");
+         break;
+   }
+   if ((pcap_fd=pcap_fileno(handle)) < 0)
+      err_msg("pcap_fileno: %s", pcap_geterr(handle));
+   if ((pcap_setnonblock(handle, 1, errbuf)) < 0)
+      err_msg("pcap_setnonblock: %s", errbuf);
+   if (pcap_lookupnet(if_name, &localnet, &netmask, errbuf) < 0) {
+      memset(&localnet, '\0', sizeof(localnet));
+      memset(&netmask, '\0', sizeof(netmask));
+      if (localnet_flag) {
+         warn_msg("ERROR: Could not obtain interface IP address and netmask");
+         err_msg("ERROR: pcap_lookupnet: %s", errbuf);
+      }
+   }
+   filter_string=make_message("arp and ether dst %.2x:%.2x:%.2x:%.2x:%.2x:%.2x",
+                              interface_mac[0], interface_mac[1],
+                              interface_mac[2], interface_mac[3],
+                              interface_mac[4], interface_mac[5]);
+   if (verbose)
+      warn_msg("DEBUG: pcap filter string: \"%s\"", filter_string);
+   if ((pcap_compile(handle, &filter, filter_string, OPTIMISE, netmask)) < 0)
+      err_msg("pcap_geterr: %s", pcap_geterr(handle));
+   free(filter_string);
+   if ((pcap_setfilter(handle, &filter)) < 0)
+      err_msg("pcap_setfilter: %s", pcap_geterr(handle));
 /*
  *      Drop privileges.
  */
@@ -281,7 +346,27 @@ main(int argc, char *argv[]) {
       }
       fclose(fp);
    } else if (localnet_flag) {	/* Populate list from i/f addr & mask */
-      err_msg("--localnet option used");
+      ip_address if_network;
+      ip_address if_netmask;
+      char *c_network;
+      char *c_netmask;
+      const char *cp;
+      char localnet_descr[32];
+
+      if_network.v4.s_addr = localnet;
+      if_netmask.v4.s_addr = netmask;
+      cp = my_ntoa(if_network);
+      c_network = make_message("%s", cp);
+      cp = my_ntoa(if_netmask);
+      c_netmask = make_message("%s", cp);
+      snprintf(localnet_descr, 32, "%s:%s", c_network, c_netmask);
+      free(c_network);
+      free(c_netmask);
+
+      if (verbose) {
+         warn_msg("DEBUG: Using %s for localnet", localnet_descr);
+      }
+      add_host_pattern(localnet_descr, timeout);
    } else {             /* Populate list from command line arguments */
       argv=&argv[optind];
       while (*argv) {
@@ -699,97 +784,6 @@ send_packet(int s, host_entry *he,
 }
 
 /*
- *      initialise -- Protocol-specific initialisation routine.
- *
- *      Inputs:
- *
- *      None.
- *
- *      Returns:
- *
- *      None.
- *
- *      This is called once before any packets have been sent.  It can be
- *      used to perform any required initialisation.  It does not have to
- *      do anything.
- */
-void
-initialise(void) {
-   char errbuf[PCAP_ERRBUF_SIZE];
-   struct bpf_program filter;
-   char *filter_string;
-   bpf_u_int32 netmask;
-   bpf_u_int32 localnet;
-   int datalink;
-   unsigned char interface_mac[ETH_ALEN];
-   int get_addr_status = 0;
-/*
- *	Obtain the interface index and MAC address for the selected
- *	interface, and if possible also obtain the IP address.
- */
-   if_index = get_hardware_address(if_name, interface_mac);
-   if (arp_sha_flag == 0)
-      memcpy(arp_sha, interface_mac, ETH_ALEN);
-   if (arp_spa_flag == 0) {
-      get_addr_status = get_source_ip(if_name, &arp_spa);
-      if (get_addr_status == -1) {
-         warn_msg("WARNING: Could not obtain IP address for interface %s. "
-                  "Using 0.0.0.0 for", if_name);
-         warn_msg("the source address, which is probably not what you want.");
-         warn_msg("Either configure %s with an IP address, or manually specify"
-                  " the address", if_name);
-         warn_msg("with the --arpspa option.");
-         memset(&arp_spa, '\0', sizeof(arp_spa));
-      }
-   }
-/*
- *	Prepare pcap
- */
-   if (!(handle = pcap_open_live(if_name, snaplen, PROMISC, TO_MS, errbuf)))
-      err_msg("pcap_open_live: %s", errbuf);
-   if ((datalink=pcap_datalink(handle)) < 0)
-      err_msg("pcap_datalink: %s", pcap_geterr(handle));
-   printf("Interface: %s, datalink type: %s (%s)\n", if_name,
-          pcap_datalink_val_to_name(datalink),
-          pcap_datalink_val_to_description(datalink));
-   switch (datalink) {
-      case DLT_EN10MB:		/* Ethernet */
-         ip_offset = 14;
-         break;
-      case DLT_LINUX_SLL:	/* PPP on Linux */
-         ip_offset = 16;
-         break;
-      default:
-         err_msg("Unsupported datalink type");
-         break;
-   }
-   if ((pcap_fd=pcap_fileno(handle)) < 0)
-      err_msg("pcap_fileno: %s", pcap_geterr(handle));
-   if ((pcap_setnonblock(handle, 1, errbuf)) < 0)
-      err_msg("pcap_setnonblock: %s", errbuf);
-   if (get_addr_status == 0) {
-      if (pcap_lookupnet(if_name, &localnet, &netmask, errbuf) < 0) {
-         memset(&localnet, '\0', sizeof(localnet));
-         memset(&netmask, '\0', sizeof(netmask));
-      }
-   } else {	/* get_ip_address() failed, so pcap_lookupnet probably will */
-      memset(&localnet, '\0', sizeof(localnet));
-      memset(&netmask, '\0', sizeof(netmask));
-   }
-   filter_string=make_message("arp and ether dst %.2x:%.2x:%.2x:%.2x:%.2x:%.2x",
-                              interface_mac[0], interface_mac[1],
-                              interface_mac[2], interface_mac[3],
-                              interface_mac[4], interface_mac[5]);
-   if (verbose)
-      warn_msg("DEBUG: pcap filter string: \"%s\"", filter_string);
-   if ((pcap_compile(handle, &filter, filter_string, OPTIMISE, netmask)) < 0)
-      err_msg("pcap_geterr: %s", pcap_geterr(handle));
-   free(filter_string);
-   if ((pcap_setfilter(handle, &filter)) < 0)
-      err_msg("pcap_setfilter: %s", pcap_geterr(handle));
-}
-
-/*
  *      clean_up -- Protocol-specific Clean-Up routine.
  *
  *      Inputs:
@@ -828,7 +822,9 @@ usage(int status) {
    fprintf(stderr, "Usage: arp-scan [options] [hosts...]\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "Target hosts must be specified on the command line unless the --file option is\n");
-   fprintf(stderr, "given, in which case the targets are read from the specified file instead.\n");
+   fprintf(stderr, "given, in which case the targets are read from the specified file instead, or\n");
+   fprintf(stderr, "the --localnet option is used, in which case the targets are generated from\n");
+   fprintf(stderr, "the network interface IP address and netmask.\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "The target hosts can be specified as IP addresses or hostnames.  You can also\n");
    fprintf(stderr, "specify the target as IPnetwork/bits (e.g. 192.168.1.0/24) to specify all hosts\n");
@@ -840,11 +836,22 @@ usage(int status) {
    fprintf(stderr, "command line, and also in the file specified with the --file option.\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "Options:\n");
-   fprintf(stderr, "\n");
-   fprintf(stderr, "--help or -h\t\tDisplay this usage message and exit.\n");
+   fprintf(stderr, "\n--help or -h\t\tDisplay this usage message and exit.\n");
    fprintf(stderr, "\n--file=<fn> or -f <fn>\tRead hostnames or addresses from the specified file\n");
    fprintf(stderr, "\t\t\tinstead of from the command line. One name or IP\n");
    fprintf(stderr, "\t\t\taddress per line.  Use \"-\" for standard input.\n");
+   fprintf(stderr, "\n--localnet or -l\tGenerate addresses from network interface configuration\n");
+   fprintf(stderr, "\t\t\tUse the network interface IP address and network mask\n");
+   fprintf(stderr, "\t\t\tto generate the list of target host addresses.\n");
+   fprintf(stderr, "\t\t\tThe list will include the network and broadcast\n");
+   fprintf(stderr, "\t\t\taddresses, so an interface address of 10.0.0.1 with\n");
+   fprintf(stderr, "\t\t\tnetmask 255.255.255.0 would generate 256 target\n");
+   fprintf(stderr, "\t\t\thosts from 10.0.0.0 to 10.0.0.255 inclusive.\n");
+   fprintf(stderr, "\t\t\tIf you use this option, you cannot specify the --file\n");
+   fprintf(stderr, "\t\t\toption or specify any target hosts on the command line.\n");
+   fprintf(stderr, "\t\t\tThe interface specifications are taken from the\n");
+   fprintf(stderr, "\t\t\tinterface that arp-scan will use, which can be\n");
+   fprintf(stderr, "\t\t\tchanged with the --interface option.\n");
    fprintf(stderr, "\n--retry=<n> or -r <n>\tSet total number of attempts per host to <n>,\n");
    fprintf(stderr, "\t\t\tdefault=%d.\n", DEFAULT_RETRY);
    fprintf(stderr, "\n--timeout=<n> or -t <n>\tSet initial per host timeout to <n> ms, default=%d.\n", DEFAULT_TIMEOUT);

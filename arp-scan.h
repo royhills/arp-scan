@@ -201,7 +201,6 @@ void display_packet(int, const unsigned char *, host_entry *, ip_address *);
 void advance_cursor(void);
 void dump_list(void);
 void print_times(void);
-void initialise(void);
 void clean_up(void);
 void arp_scan_version(void);
 char *make_message(const char *, ...);
@@ -210,15 +209,6 @@ void callback(u_char *, const struct pcap_pkthdr *, const u_char *);
 void process_options(int, char *[]);
 ip_address *get_host_address(const char *, int, ip_address *, char **);
 const char *my_ntoa(ip_address);
-/* Wrappers */
-int Gettimeofday(struct timeval *);
-void *Malloc(size_t);
-void *Realloc(void *, size_t);
-unsigned long int Strtoul(const char *, int);
-/* The following functions are just to prevent rcsid being optimised away */
-void wrappers_use_rcsid(void);
-void error_use_rcsid(void);
-void utils_use_rcsid(void);
 int get_source_ip(char *, uint32_t *);
 int get_hardware_address(char *, unsigned char []);
 void set_hardware_address(char *, unsigned char []);
@@ -229,3 +219,12 @@ unsigned int hstr_i(const char *);
 char *hexstring(const unsigned char *, size_t);
 int get_ether_addr(const char *, unsigned char *);
 int add_mac_vendor(struct hash_control *, const char *);
+/* Wrappers */
+int Gettimeofday(struct timeval *);
+void *Malloc(size_t);
+void *Realloc(void *, size_t);
+unsigned long int Strtoul(const char *, int);
+/* The following functions are just to prevent rcsid being optimised away */
+void wrappers_use_rcsid(void);
+void error_use_rcsid(void);
+void utils_use_rcsid(void);

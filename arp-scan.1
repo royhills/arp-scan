@@ -10,7 +10,10 @@ arp-scan \- The ARP scanner
 Target hosts must be specified on the command line unless the
 .B --file
 option is given, in which case the targets are read from the specified file
-instead.
+instead, or the
+.B --localnet
+option is used, in which case the targets are generated from the network
+interface IP address and netmask.
 .PP
 The target hosts can be specified as IP addresses or hostnames.  You can also
 specify the target as
@@ -35,6 +38,25 @@ interface (excluding loopback).  By default, the ARP packets are sent to the
 Ethernet broadcast address, ff:ff:ff:ff:ff:ff, but that can be changed with the
 .B --destaddr
 option.
+.PP
+The target hosts to scan may be specified in one of three ways: by specifying
+the targets on the command line; by specifying a file containing the targets
+with the
+.B --file
+option; or by specifying the
+.B --localnet
+option which causes all possible hosts on the network attached to the interface
+(as defined by the interface address and mask) to be scanned.  For hosts specified
+on the command line, or with the
+--file  For hosts specified
+on the command line, or with the
+.B --file
+option, you can use either IP addresses or hostnames.  You can also use network
+specifications
+.BR IPnetwork/bits ,
+.BR IPstart-IPend ,
+or
+.BR IPnetwork:NetMask .
 .PP
 .B arp-scan
 supports Ethernet and 802.11 wireless networks. It could also
@@ -225,6 +247,20 @@ Display this usage message and exit.
 Read hostnames or addresses from the specified file
 instead of from the command line. One name or IP
 address per line.  Use "-" for standard input.
+.TP
+.B --localnet or -l
+Generate addresses from network interface configuration
+Use the network interface IP address and network mask
+to generate the list of target host addresses.
+The list will include the network and broadcast
+addresses, so an interface address of 10.0.0.1 with
+netmask 255.255.255.0 would generate 256 target
+hosts from 10.0.0.0 to 10.0.0.255 inclusive.
+If you use this option, you cannot specify the --file
+option or specify any target hosts on the command line.
+The interface specifications are taken from the
+interface that arp-scan will use, which can be
+changed with the --interface option.
 .TP
 .B --retry=<n> or -r <n>
 Set total number of attempts per host to <n>,
