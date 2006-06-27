@@ -6,3 +6,5 @@ Additional ARP fingerprinting options, e.g. arpsha != srcaddr.
 
 Use libnet or another packet creation library to allow arp-scan to run on
 non-linux platforms.
+
+arp-fingerprint shouldn't accept ranges like 10.0.0.0/24.
