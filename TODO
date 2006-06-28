@@ -7,4 +7,8 @@ Additional ARP fingerprinting options, e.g. arpsha != srcaddr.
 Use libnet or another packet creation library to allow arp-scan to run on
 non-linux platforms.
 
-arp-fingerprint shouldn't accept ranges like 10.0.0.0/24.
+AC: arp-fingerprint shouldn't accept ranges like 10.0.0.0/24.
+
+ML: Reduce the amount of memory used per host.  Currently scanning a Class-A
+needs more than 600MB of RAM.  We can probably trim down the size of the
+host_entry structure.
