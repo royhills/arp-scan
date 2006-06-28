@@ -346,15 +346,15 @@ main(int argc, char *argv[]) {
       }
       fclose(fp);
    } else if (localnet_flag) {	/* Populate list from i/f addr & mask */
-      ip_address if_network;
-      ip_address if_netmask;
+      struct in_addr if_network;
+      struct in_addr if_netmask;
       char *c_network;
       char *c_netmask;
       const char *cp;
       char localnet_descr[32];
 
-      if_network.v4.s_addr = localnet;
-      if_netmask.v4.s_addr = netmask;
+      if_network.s_addr = localnet;
+      if_netmask.s_addr = netmask;
       cp = my_ntoa(if_network);
       c_network = make_message("%s", cp);
       cp = my_ntoa(if_netmask);
@@ -588,7 +588,7 @@ main(int argc, char *argv[]) {
  */
 void
 display_packet(int n, const unsigned char *packet_in, host_entry *he,
-               ip_address *recv_addr) {
+               struct in_addr *recv_addr) {
    arp_ether_ipv4 arpei;
    char *msg;
    char *cp;
@@ -601,7 +601,7 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
  *	responder if different, and a tab.
  */
    msg = make_message("%s\t", my_ntoa(he->addr));
-   if ((he->addr).v4.s_addr != recv_addr->v4.s_addr) {
+   if ((he->addr).s_addr != recv_addr->s_addr) {
       cp = msg;
       msg = make_message("%s(%s) ", cp, my_ntoa(*recv_addr));
       free(cp);
@@ -722,13 +722,13 @@ send_packet(int s, host_entry *he,
    memcpy(arpei.ar_tha, arp_tha, ETH_ALEN);
    if (arp_spa_is_tpa) {
       if (he) {
-         arpei.ar_sip = he->addr.v4.s_addr;
+         arpei.ar_sip = he->addr.s_addr;
       }
    } else {
       arpei.ar_sip = arp_spa;
    }
    if (he)
-      arpei.ar_tip = he->addr.v4.s_addr;
+      arpei.ar_tip = he->addr.s_addr;
 /*
  *	Copy the required data into the output buffer "buf" and set "buflen"
  *	to the number of bytes in this buffer.
@@ -1246,8 +1246,8 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
  */
 void
 add_host(const char *host_name, unsigned host_timeout) {
-   ip_address *hp=NULL;
-   ip_address addr;
+   struct in_addr *hp=NULL;
+   struct in_addr addr;
    host_entry *he;
    struct timeval now;
    static int num_left=0;	/* Number of free entries left */
@@ -1255,7 +1255,7 @@ add_host(const char *host_name, unsigned host_timeout) {
    char *ga_err_msg;
 
    if (numeric_flag) {
-      result = inet_pton(AF_INET, host_name, &(addr.v4));
+      result = inet_pton(AF_INET, host_name, &addr);
       if (result <= 0)
          err_sys("inet_pton failed for \"%s\"", host_name);
    } else {
@@ -1281,7 +1281,7 @@ add_host(const char *host_name, unsigned host_timeout) {
    Gettimeofday(&now);
 
    he->n = num_hosts;
-   memcpy(&(he->addr.v4), &(addr.v4), sizeof(struct in_addr));
+   memcpy(&(he->addr), &addr, sizeof(struct in_addr));
    he->live = 1;
    he->timeout = host_timeout * 1000;	/* Convert from ms to us */
    he->num_sent = 0;
@@ -1464,7 +1464,7 @@ set_hardware_address(char *devname, unsigned char hw_address[]) {
  *	"packet_in" and "n" are not used.
  */
 host_entry *
-find_host(host_entry **he, ip_address *addr,
+find_host(host_entry **he, struct in_addr *addr,
           const unsigned char *packet_in, int n) {
    host_entry **p;
    int found = 0;
@@ -1483,7 +1483,7 @@ find_host(host_entry **he, ip_address *addr,
 
    do {
       iterations++;
-      if ((*p)->addr.v4.s_addr == addr->v4.s_addr) {
+      if ((*p)->addr.s_addr == addr->s_addr) {
          found = 1;
       } else {
          if (p == helistptr) {
@@ -1576,7 +1576,7 @@ callback(u_char *args, const struct pcap_pkthdr *header,
          const u_char *packet_in) {
    arp_ether_ipv4 arpei;
    int n = header->caplen;
-   ip_address source_ip;
+   struct in_addr source_ip;
    host_entry *temp_cursor;
 /*
  *      Check that the packet is large enough to decode.
@@ -1592,7 +1592,7 @@ callback(u_char *args, const struct pcap_pkthdr *header,
 /*
  *	Determine source IP address.
  */
-   source_ip.v4.s_addr = arpei.ar_sip;
+   source_ip.s_addr = arpei.ar_sip;
 /*
  *	We've received a response.  Try to match up the packet by IP address
  *
@@ -1868,10 +1868,11 @@ arp_scan_version (void) {
  *
  *	This function is basically a wrapper for getaddrinfo().
  */
-ip_address *
-get_host_address(const char *name, int af, ip_address *addr, char **error_msg) {
+struct in_addr *
+get_host_address(const char *name, int af, struct in_addr *addr,
+                 char **error_msg) {
    static char err[MAXLINE];
-   static ip_address ipa;
+   static struct in_addr ipa;
 
    struct addrinfo *res;
    struct addrinfo hints;
@@ -1884,8 +1885,6 @@ get_host_address(const char *name, int af, ip_address *addr, char **error_msg) {
    memset(&hints, '\0', sizeof(hints));
    if (af == AF_INET) {
       hints.ai_family = AF_INET;
-   } else if (af == AF_INET6) {
-      hints.ai_family = AF_INET6;
    } else {
       err_msg("get_host_address: unknown address family: %d", af);
    }
@@ -1897,12 +1896,8 @@ get_host_address(const char *name, int af, ip_address *addr, char **error_msg) {
       return NULL;
    }
 
-   if (af == AF_INET) {
-      memcpy(&sa_in, res->ai_addr, sizeof(sa_in));
-      memcpy(&(addr->v4), &sa_in.sin_addr, sizeof(struct in_addr));
-   } else {
-      err_msg("get_host_address: address family %d not supported", af);
-   }
+   memcpy(&sa_in, res->ai_addr, sizeof(sa_in));
+   memcpy(addr, &sa_in.sin_addr, sizeof(struct in_addr));
 
    freeaddrinfo(res);
 
@@ -1924,11 +1919,11 @@ get_host_address(const char *name, int af, ip_address *addr, char **error_msg) {
  *	This currently only supports IPv4.
  */
 const char *
-my_ntoa(ip_address addr) {
+my_ntoa(struct in_addr addr) {
    static char ip_str[MAXLINE];
    const char *cp;
 
-   cp = inet_ntop(AF_INET, &addr.v4, ip_str, MAXLINE);
+   cp = inet_ntop(AF_INET, &addr, ip_str, MAXLINE);
 
    return cp;
 }

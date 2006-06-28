@@ -150,14 +150,10 @@
 
 /* Structures */
 
-typedef union {
-   struct in_addr v4;
-} ip_address;
-
 typedef struct {
    unsigned n;			/* Ordinal number for this entry */
    unsigned timeout;		/* Timeout for this host in us */
-   ip_address addr;		/* Host IP address */
+   struct in_addr addr;		/* Host IP address */
    struct timeval last_send_time; /* Time when last packet sent to this addr */
    unsigned short num_sent;	/* Number of packets sent */
    unsigned short num_recv;	/* Number of packets received */
@@ -193,9 +189,9 @@ void recvfrom_wto(int, unsigned char *, int, struct sockaddr *, int);
 void remove_host(host_entry **);
 void timeval_diff(const struct timeval *, const struct timeval *,
                   struct timeval *);
-host_entry *find_host(host_entry **, ip_address *,
+host_entry *find_host(host_entry **, struct in_addr *,
                       const unsigned char *, int);
-void display_packet(int, const unsigned char *, host_entry *, ip_address *);
+void display_packet(int, const unsigned char *, host_entry *, struct in_addr *);
 void advance_cursor(void);
 void dump_list(void);
 void print_times(void);
@@ -205,8 +201,8 @@ char *make_message(const char *, ...);
 char *printable(const unsigned char*, size_t);
 void callback(u_char *, const struct pcap_pkthdr *, const u_char *);
 void process_options(int, char *[]);
-ip_address *get_host_address(const char *, int, ip_address *, char **);
-const char *my_ntoa(ip_address);
+struct in_addr *get_host_address(const char *, int, struct in_addr *, char **);
+const char *my_ntoa(struct in_addr);
 int get_source_ip(char *, uint32_t *);
 int get_hardware_address(char *, unsigned char []);
 void set_hardware_address(char *, unsigned char []);
