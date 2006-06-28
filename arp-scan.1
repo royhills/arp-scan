@@ -58,6 +58,10 @@ specifications
 or
 .BR IPnetwork:NetMask .
 .PP
+The list of target hosts is stored in memory.  Each host in this list uses 32
+bytes of memory, so scanning a Class-B network (65,536 hosts) requires about 2MB
+of memory, and scanning a Class-A (16,777,216 hosts) requires about 512MB.
+.PP
 .B arp-scan
 supports Ethernet and 802.11 wireless networks. It could also
 support token ring and FDDI, but they have not been tested. It does

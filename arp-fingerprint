@@ -74,11 +74,12 @@ my $arpscan="arp-scan -N -q -r 1";
 # WinME		Windows ME on VMware
 # HP-UX 11	HP-UX B.11.00 A 9000/712 (PA-RISC)
 # PIX OS	PIX OS (unknown vsn) on Cisco PIX 525
+# Vista		Windows Vista Beta 2 Build 5384 on VMware
 #
 my %fp_hash = (
    '11110100000' => 'FreeBSD 5.3, Win98, WinME, NT4, 2000, XP, 2003',
    '01000100000' => 'Linux 2.2, 2.4, 2.6',
-   '01010100000' => 'Linux 2.2, 2.4, 2.6',	# If non-local IP is routed
+   '01010100000' => 'Linux 2.2, 2.4, 2.6, Vista', # Linux only if non-local IP is routed
    '00000100000' => 'Cisco IOS 12.0, 12.1, 12.2, 12.3',
    '11110110000' => 'Solaris 2.5.1, 2.6, 7, 8, 9, 10, HP-UX 11',
    '01000111111' => 'ScreenOS 5.0',
