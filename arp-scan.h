@@ -152,8 +152,6 @@
 
 typedef union {
    struct in_addr v4;
-   struct in6_addr v6;
-   struct ether_addr l2;
 } ip_address;
 
 typedef struct {

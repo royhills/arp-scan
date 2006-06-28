@@ -1858,7 +1858,7 @@ arp_scan_version (void) {
  *	Inputs:
  *
  *	name		The name to lookup
- *	af		The address family.  Either AF_INET or AF_INET6
+ *	af		The address family
  *	addr		Pointer to the IP address buffer
  *	error_msg	The error message, or NULL if no problem.
  *
@@ -1876,7 +1876,6 @@ get_host_address(const char *name, int af, ip_address *addr, char **error_msg) {
    struct addrinfo *res;
    struct addrinfo hints;
    struct sockaddr_in sa_in;
-   struct sockaddr_in6 sa_in6;
    int result;
 
    if (addr == NULL)	/* Use static storage if no buffer specified */
@@ -1901,9 +1900,8 @@ get_host_address(const char *name, int af, ip_address *addr, char **error_msg) {
    if (af == AF_INET) {
       memcpy(&sa_in, res->ai_addr, sizeof(sa_in));
       memcpy(&(addr->v4), &sa_in.sin_addr, sizeof(struct in_addr));
-   } else {	/* Must be AF_INET6 */
-      memcpy(&sa_in6, res->ai_addr, sizeof(sa_in6));
-      memcpy(&(addr->v6), &sa_in6.sin6_addr, sizeof(struct in6_addr));
+   } else {
+      err_msg("get_host_address: address family %d not supported", af);
    }
 
    freeaddrinfo(res);
@@ -1917,11 +1915,13 @@ get_host_address(const char *name, int af, ip_address *addr, char **error_msg) {
  *
  *	Inputs:
  *
- *	addr	The IP address (either IPv4 or IPv6)
+ *	addr	The IP address
  *
  *	Returns:
  *
  *	Pointer to the string representation of the IP address.
+ *
+ *	This currently only supports IPv4.
  */
 const char *
 my_ntoa(ip_address addr) {
