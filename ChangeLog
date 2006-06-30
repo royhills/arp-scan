@@ -1,5 +1,23 @@
 $Id$
 
-2005-09-16 Roy Hills <Roy.Hills@nta-monitor.com>
+2006-06-28 Roy Hills <Roy.Hills@nta-monitor.com>
 
-	* Initial version.
+	* arp-scan.c, arp-scan.h: removed the unneeded ip_address union
+	  and replaced it with "struct in_addr".  As arp-scan is only
+	  applicable to IPv4, we don't need to use the union.  This
+	  change reduces the size of an address from 16 bytes to 4, and
+	  reduces the per-host memory usage from 44 bytes/host to 32.
+
+	* arp-fingerprint: Added Windows Vista Beta 2 fingerprint.
+
+2006-06-27 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* configure.ac: Increase version number to 1.4.1 in preparation
+	  for future changes.
+
+2006-06-26 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Released version 1.4.
+	  This is the first stable version.  v1.3 was a beta, and v1.0,
+	  1.1 and 1.2 were NTA Monitor internal versions before it was
+	  released under GPL.
