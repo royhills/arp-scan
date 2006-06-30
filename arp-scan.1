@@ -104,6 +104,39 @@ specify the outgoing ARP packet rate is with the
 .B --interval
 option, which is an alternative way to modify the same underlying parameter.
 .PP
+The time taken to perform a single-pass scan (i.e. with
+.BR --retry=1 )
+is given by:
+.PP
+.nf
+time = n*i + t + o
+.fi
+.PP
+Where
+.I n
+is the number of hosts in the list,
+.I i
+is the time interval between packets (specified with
+.BR --interval ,
+or calculated from
+.BR --bandwidth ),
+.I t
+is the timeout value (specified with
+.BR --timeout )
+and
+.I o
+is the overhead time taken to load the targets into the list and read the
+MAC/Vendor mapping files.
+For small lists of hosts, the timeout value will dominate, but for large lists
+the packet interval is the most important value.
+.PP
+With 65,536 hosts, the default bandwidth of 256,000 bits/second (which results in a packet
+interval of 2ms), the default timeout of 100ms, and a single pass (
+.BR --retry=1 ),
+and assuming an overhead of 1 second, the scan would take
+65536*0.002 + 0.1 + 1 = 132.172
+seconds, or about 2 minutes 12 seconds.
+.PP
 Any part of the outgoing ARP packet may be modified through the use of the
 various
 .B --arpXXX
