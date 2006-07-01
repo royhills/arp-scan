@@ -778,6 +778,7 @@ send_packet(int s, host_entry *he,
    if (verbose > 1)
       warn_msg("---\tSending packet #%u to host entry %u (%s) tmo %d", he->num_sent, he->n, my_ntoa(he->addr), he->timeout);
    if ((sendto(s, buf, buflen, 0, (struct sockaddr *) &sa_peer, sa_peer_len)) < 0) {
+      warn_msg("ERROR: failed to send packet");
       err_sys("sendto");
    }
    return buflen;
