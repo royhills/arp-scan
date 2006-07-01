@@ -173,6 +173,9 @@ typedef struct {
    uint32_t ar_tip;		/* Target IP address */
 } arp_ether_ipv4;
 
+/* Link-layer handle structure, defined in link-xxx.c  */
+typedef struct link_handle link_t;
+
 /* Functions */
 
 void err_sys(const char *, ...);
@@ -213,6 +216,10 @@ unsigned int hstr_i(const char *);
 char *hexstring(const unsigned char *, size_t);
 int get_ether_addr(const char *, unsigned char *);
 int add_mac_vendor(struct hash_control *, const char *);
+/* Link layer send functions */
+link_t *link_open(const char *);
+ssize_t link_send(link_t *, const unsigned char *, size_t);
+void link_close(link_t *);
 /* Wrappers */
 int Gettimeofday(struct timeval *);
 void *Malloc(size_t);
@@ -222,3 +229,4 @@ unsigned long int Strtoul(const char *, int);
 void wrappers_use_rcsid(void);
 void error_use_rcsid(void);
 void utils_use_rcsid(void);
+void link_use_rcsid(void);

@@ -134,6 +134,10 @@ else
    AC_DEFINE(HAVE_REGEX_H, 1, [Define to 1 if you have posix regex support])
 fi
 
+dnl Determine which link-layer sending functions to use
+dnl Currently, we only hack packet socket
+AC_LIBOBJ([link-packet-socket])
+
 dnl GNU systems e.g. Linux have getopt_long_only, but many other systems
 dnl e.g. FreeBSD 4.3 and Solaris 8 do not.  For systems that don't have it,
 dnl use the GNU getopt sources (obtained from glibc).

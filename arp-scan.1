@@ -99,8 +99,12 @@ packets with the
 .B --bandwidth
 option.  By default, it uses a bandwidth of 256000 bits per second. Increasing
 the bandwidth will reduce the scanning time, but setting the bandwidth too high
-may result in an ARP storm which can disrupt network operation. Another way to
-specify the outgoing ARP packet rate is with the
+may result in an ARP storm which can disrupt network operation.  Also, setting
+the bandwidth too high can send packets faster than the network interface can
+transmit them, which will eventually fill the kernel's transmit buffer resulting
+in the error message:
+.IR "No buffer space available" .
+Another way to specify the outgoing ARP packet rate is with the
 .B --interval
 option, which is an alternative way to modify the same underlying parameter.
 .PP

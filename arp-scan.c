@@ -1851,6 +1851,7 @@ arp_scan_version (void) {
    error_use_rcsid();
    wrappers_use_rcsid();
    utils_use_rcsid();
+   link_use_rcsid();
 }
 
 /*
