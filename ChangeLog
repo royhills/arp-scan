@@ -1,5 +1,17 @@
 $Id$
 
+2006-07-03 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* link-packet-socket.c: New file containing all functions that
+	  use Linux packet socket link layer interface.  This moves all
+	  the packet-socket implementation dependent to this one file, which
+	  should make future porting to other operating systems easier.
+
+	* arp-scan.c, arp-scan.h: Modified to use link-layer functions in
+	  new link-packet-socket.c file.
+
+	* configure.ac: Increased version number to 1.4.2.
+
 2006-06-28 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c, arp-scan.h: removed the unneeded ip_address union

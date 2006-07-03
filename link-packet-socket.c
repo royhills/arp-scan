@@ -32,6 +32,9 @@
  */
 
 #include "arp-scan.h"
+#ifdef HAVE_NET_IF_H
+#include <net/if.h>
+#endif
 
 static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
@@ -57,8 +60,25 @@ struct link_handle {
  *	A pointer to a link handle structure.
  */
 link_t *
-link_open(const char *device) {
-   return NULL;
+link_open(const char *device, int eth_pro, const unsigned char *target_mac) {
+   link_t *handle;
+
+   handle = Malloc(sizeof(*handle));
+   memset(handle, '\0', sizeof(*handle));
+   if ((handle->fd = socket(PF_PACKET, SOCK_DGRAM, 0)) < 0) {
+      free(handle);
+      return NULL;
+   }
+   strncpy(handle->ifr.ifr_name, device, sizeof(handle->ifr.ifr_name));
+   if ((ioctl(handle->fd, SIOCGIFINDEX, &(handle->ifr))) != 0)
+      err_sys("ioctl");
+   handle->sll.sll_family = PF_PACKET;
+   handle->sll.sll_protocol = htons(eth_pro);
+   handle->sll.sll_ifindex = handle->ifr.ifr_ifindex;
+   handle->sll.sll_halen = ETH_ALEN;
+   memcpy(handle->sll.sll_addr, target_mac, ETH_ALEN);
+   
+   return handle;
 }
 
 /*
@@ -76,7 +96,11 @@ link_open(const char *device) {
  */
 ssize_t
 link_send(link_t *handle, const unsigned char *buf, size_t buflen) {
-   return 0;
+   ssize_t nbytes;
+
+   nbytes = sendto(handle->fd, buf, buflen, 0,
+                   (struct sockaddr *)&(handle->sll), sizeof(handle->sll));
+   return nbytes;
 }
 
 /*
@@ -92,7 +116,88 @@ link_send(link_t *handle, const unsigned char *buf, size_t buflen) {
  */
 void
 link_close(link_t *handle) {
+   if (handle != NULL) {
+      if (handle->fd != 0)
+         close(handle->fd);
+      free(handle);
+   }
 }
+
+/*
+ *      get_hardware_address    -- Get the Ethernet MAC address associated
+ *                                 with the given device.
+ *      Inputs:
+ *
+ *      handle		The link layer handle
+ *      hw_address	(output) the Ethernet MAC address
+ *
+ *      Returns:
+ *
+ *      None
+ */
+void
+get_hardware_address(link_t *handle, unsigned char hw_address[]) {
+
+/* Obtain hardware address for specified interface */
+   if ((ioctl(handle->fd, SIOCGIFHWADDR, &(handle->ifr))) != 0)
+      err_sys("ioctl");
+
+/* Check that device type is Ethernet */
+   if (handle->ifr.ifr_ifru.ifru_hwaddr.sa_family != ARPHRD_ETHER)
+      err_msg("Interface is not an Ethernet device");
+
+   memcpy(hw_address, handle->ifr.ifr_ifru.ifru_hwaddr.sa_data, ETH_ALEN);
+}
+
+/*
+ *      set_hardware_address    -- Set the Ethernet MAC address associated
+ *                                 with the given device.
+ *      Inputs:
+ *
+ *      handle		The link layer handle
+ *      hw_address      (output) the Ethernet MAC address
+ *
+ *      Returns:
+ *
+ *      None.
+ */
+void
+set_hardware_address(link_t *handle, unsigned char hw_address[]) {
+
+   memcpy(handle->ifr.ifr_ifru.ifru_hwaddr.sa_data, hw_address, ETH_ALEN);
+
+/* Set hardware address for specified interface */
+   if ((ioctl(handle->fd, SIOCSIFHWADDR, &(handle->ifr))) != 0)
+      err_sys("ioctl");
+}
+
+/*
+ *      get_source_ip   -- Get address and mask associated with given interface
+ *
+ *      Inputs:
+ *
+ *      handle		The link level handle
+ *      ip_addr		(output) The IP Address associated with the device
+ *
+ *      Returns:
+ *
+ *      Zero on success, or -1 on failure.
+ */
+int
+get_source_ip(link_t *handle, uint32_t *ip_addr) {
+   struct sockaddr_in sa_addr;
+
+/* Obtain IP address for specified interface */
+   if ((ioctl(handle->fd, SIOCGIFADDR, &(handle->ifr))) != 0) {
+      warn_sys("ioctl");
+      return -1;
+   }
+   memcpy(&sa_addr, &(handle->ifr.ifr_ifru.ifru_addr), sizeof(sa_addr));
+   *ip_addr = sa_addr.sin_addr.s_addr;
+
+   return 0;
+}
+
 
 /*
  *	Use rcsid to prevent the compiler optimising it away.

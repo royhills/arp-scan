@@ -1,5 +1,22 @@
 $Id$
 
+Installation
+------------
+
+arp-scan is known to compile and run on the following platforms:
+
+ 1. Linux
+
+On all platforms, you will need the make utility, and ANSI C compiler (for
+example gcc), the development header files and libraries, and libpcap version
+0.8 or later.
+
+The sections below give details on the requirements for each supported
+operating system.
+
+Linux
+
+
 ARP Packet Format
 
 The ARP packet format is defined in RFC 826 "An Ethernet Address Resolution

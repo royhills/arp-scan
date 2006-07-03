@@ -57,7 +57,6 @@ static int random_flag=0;		/* Randomise the list */
 static int numeric_flag=0;		/* IP addresses only */
 static unsigned interval=0;		/* Desired interval between packets */
 static unsigned bandwidth=DEFAULT_BANDWIDTH; /* Bandwidth in bits per sec */
-
 static unsigned retry = DEFAULT_RETRY;	/* Number of retries */
 static unsigned timeout = DEFAULT_TIMEOUT; /* Per-host timeout */
 static float backoff_factor = DEFAULT_BACKOFF_FACTOR;	/* Backoff factor */
@@ -65,14 +64,11 @@ static int snaplen = SNAPLEN;		/* Pcap snap length */
 static char *if_name=NULL;		/* Interface name, e.g. "eth0" */
 static int quiet_flag=0;		/* Don't decode the packet */
 static int ignore_dups=0;		/* Don't display duplicate packets */
-
 static uint32_t arp_spa;		/* Source IP address */
 static int arp_spa_flag=0;		/* Source IP address specified */
 static int arp_spa_is_tpa=0;		/* Source IP is dest IP */
 static unsigned char arp_sha[ETH_ALEN];	/* Source Ethernet MAC Address */
 static int arp_sha_flag=0;		/* Source MAC address specified */
-static int if_index;			/* Interface index */
-extern int pcap_fd;			/* pcap File Descriptor */
 static size_t ip_offset;		/* Offset to IP header in pcap pkt */
 static char ouifilename[MAXLINE];	/* OUI filename */
 static char iabfilename[MAXLINE];	/* IAB filename */
@@ -95,7 +91,6 @@ static int localnet_flag=0;		/* Scan local network */
 int
 main(int argc, char *argv[]) {
    char arg_str[MAXLINE];       /* Args as string for syslog */
-   int sockfd;                  /* IP socket file descriptor */
    struct sockaddr_in sa_peer;
    struct timeval now;
    unsigned char packet_in[MAXIP];      /* Received packet */
@@ -124,6 +119,7 @@ main(int argc, char *argv[]) {
    int datalink;
    unsigned char interface_mac[ETH_ALEN];
    int get_addr_status = 0;
+   link_t *link_handle;		/* Handle for link-layer functions */
 /*
  *      Open syslog channel and log arguments if required.
  *      We must be careful here to avoid overflowing the arg_str buffer
@@ -162,15 +158,6 @@ main(int argc, char *argv[]) {
    Gettimeofday(&start_time);
    if (debug) {print_times(); printf("main: Start\n");}
 /*
- *      Create packet socket.  This socket is used to send outbound packets.
- */
-   if ((sockfd = socket(PF_PACKET, SOCK_DGRAM, 0)) < 0) {
-      if (errno == EPERM || errno == EACCES)
-         warn_msg("You need to be root, or arp-scan must be SUID root, "
-                  "to open a packet socket.");
-      err_sys("socket");
-   }
-/*
  *	Determine network interface to use.
  *	If the interface was specified with the --interface option then use
  *	that, otherwise if the environment variable "RMIF" exists then use
@@ -184,20 +171,29 @@ main(int argc, char *argv[]) {
       }
    }
 /*
+ *      Open link layer socket.  This is used to send outbound packets.
+ */
+   if ((link_handle = link_open(if_name, eth_pro, target_mac)) == NULL) {
+      if (errno == EPERM || errno == EACCES)
+         warn_msg("You need to be root, or arp-scan must be SUID root, "
+                  "to open a packet socket.");
+      err_sys("link_open");
+   }
+/*
  *	Change source mac address if required.
  */
    if (source_mac_flag) {
-      set_hardware_address(if_name, source_mac);
+      set_hardware_address(link_handle, source_mac);
    }
 /*
- *	Obtain the interface index and MAC address for the selected
- *	interface, and if possible also obtain the IP address.
+ *	Obtain the MAC address for the selected interface, and if possible
+ *	also obtain the IP address.
  */
-   if_index = get_hardware_address(if_name, interface_mac);
+   get_hardware_address(link_handle, interface_mac);
    if (arp_sha_flag == 0)
       memcpy(arp_sha, interface_mac, ETH_ALEN);
    if (arp_spa_flag == 0) {
-      get_addr_status = get_source_ip(if_name, &arp_spa);
+      get_addr_status = get_source_ip(link_handle, &arp_spa);
       if (get_addr_status == -1) {
          warn_msg("WARNING: Could not obtain IP address for interface %s. "
                   "Using 0.0.0.0 for", if_name);
@@ -420,7 +416,7 @@ main(int argc, char *argv[]) {
    if (!interval) {
       size_t packet_out_len;
 
-      packet_out_len=send_packet(0, NULL, NULL); /* Get packet data size */
+      packet_out_len=send_packet(NULL, NULL, NULL); /* Get packet data size */
       if (packet_out_len < MINIMUM_FRAME_SIZE)
          packet_out_len = MINIMUM_FRAME_SIZE;   /* Adjust to minimum size */
       packet_out_len += PACKET_OVERHEAD;        /* Add layer 2 overhead */
@@ -523,7 +519,7 @@ main(int argc, char *argv[]) {
             } else {    /* Retry limit not reached for this host */
                if ((*cursor)->num_sent)
                   (*cursor)->timeout *= backoff_factor;
-               send_packet(sockfd, *cursor, &last_packet_time);
+               send_packet(link_handle, *cursor, &last_packet_time);
                advance_cursor();
             }
          } else {       /* We can't send a packet to this host yet */
@@ -546,7 +542,7 @@ main(int argc, char *argv[]) {
 
    printf("\n");        /* Ensure we have a blank line */
 
-   close(sockfd);
+   link_close(link_handle);
    clean_up();
 
    Gettimeofday(&end_time);
@@ -689,7 +685,7 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
  *
  *	Inputs:
  *
- *	s		IP socket file descriptor
+ *	handle		Link layer handle
  *	he		Host entry to send to. If NULL, then no packet is sent
  *	last_packet_time	Time when last packet was sent
  *
@@ -702,12 +698,10 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
  *	"last_send_time" field for the host entry.
  */
 int
-send_packet(int s, host_entry *he,
+send_packet(link_t *handle, host_entry *he,
             struct timeval *last_packet_time) {
-   struct sockaddr_ll sa_peer;
    unsigned char buf[MAXIP];
    size_t buflen;
-   NET_SIZE_T sa_peer_len;
    arp_ether_ipv4 arpei;
 /*
  *	Construct the ARP Header.
@@ -754,17 +748,6 @@ send_packet(int s, host_entry *he,
       return 0;
    }
 /*
- *	Set up the sockaddr_ll structure for the host.
- *	This defines the Ethernet link-layer header for the packet.
- */
-   memset(&sa_peer, '\0', sizeof(sa_peer));
-   sa_peer.sll_family = PF_PACKET;
-   sa_peer.sll_protocol = htons(eth_pro);
-   sa_peer.sll_ifindex = if_index;
-   sa_peer.sll_halen = ETH_ALEN;
-   memcpy(sa_peer.sll_addr, target_mac, sizeof(target_mac));
-   sa_peer_len = sizeof(sa_peer);
-/*
  *	Update the last send times for this host.
  */
    Gettimeofday(last_packet_time);
@@ -777,9 +760,8 @@ send_packet(int s, host_entry *he,
    if (debug) {print_times(); printf("send_packet: #%u to host entry %u (%s) tmo %d\n", he->num_sent, he->n, my_ntoa(he->addr), he->timeout);}
    if (verbose > 1)
       warn_msg("---\tSending packet #%u to host entry %u (%s) tmo %d", he->num_sent, he->n, my_ntoa(he->addr), he->timeout);
-   if ((sendto(s, buf, buflen, 0, (struct sockaddr *) &sa_peer, sa_peer_len)) < 0) {
-      warn_msg("ERROR: failed to send packet");
-      err_sys("sendto");
+   if ((link_send(handle, buf, buflen)) < 0) {
+      err_sys("ERROR: failed to send packet");
    }
    return buflen;
 }
@@ -1338,115 +1320,6 @@ advance_cursor(void) {
 }
 
 /*
- *	get_source_ip	-- Get address and mask associated with given interface
- *
- *	Inputs:
- *
- *	devname		The device name, e.g. "eth0"
- *	ip_addr	(output) The IP Address associated with the device
- *
- *	Returns:
- *
- *	Zero on success, or -1 on failure.
- */
-int
-get_source_ip(char *devname, uint32_t *ip_addr) {
-   int sockfd;
-   struct ifreq ifconfig;
-   struct sockaddr_in sa_addr;
-
-   strncpy(ifconfig.ifr_name, devname, IFNAMSIZ);
-
-/* Create UDP socket */
-   if ((sockfd=socket(PF_INET, SOCK_DGRAM, 0)) < 0) {
-      warn_sys("socket");
-      return -1;
-   }
-
-/* Obtain IP address for specified interface */
-   if ((ioctl(sockfd, SIOCGIFADDR, &ifconfig)) != 0) {
-      warn_sys("ioctl");
-      return -1;
-   }
-   memcpy(&sa_addr, &ifconfig.ifr_ifru.ifru_addr, sizeof(sa_addr));
-   *ip_addr = sa_addr.sin_addr.s_addr;
-
-   close(sockfd);
-   return 0;
-}
-
-/*
- *	get_hardware_address	-- Get the Ethernet MAC address associated
- *				   with the given device.
- *	Inputs:
- *
- *	devname		The device name, e.g. "eth0"
- *	hw_address	(output) the Ethernet MAC address
- *
- *	Returns:
- *
- *	The interface device index.
- */
-int
-get_hardware_address(char *devname, unsigned char hw_address[]) {
-   int sockfd;
-   struct ifreq ifconfig;
-
-   strncpy(ifconfig.ifr_name, devname, IFNAMSIZ);
-
-/* Create UDP socket */
-   if ((sockfd=socket(PF_INET, SOCK_DGRAM, 0)) < 0)
-      err_sys("socket");
-
-/* Obtain hardware address for specified interface */
-   if ((ioctl(sockfd, SIOCGIFHWADDR, &ifconfig)) != 0)
-      err_sys("ioctl");
-
-/* Check that device type is Ethernet */
-   if (ifconfig.ifr_ifru.ifru_hwaddr.sa_family != ARPHRD_ETHER)
-      err_msg("%s is not an Ethernet device", devname);
-
-   memcpy(hw_address, ifconfig.ifr_ifru.ifru_hwaddr.sa_data, ETH_ALEN);
-
-/* Obtain interface index for specified interface */
-   if ((ioctl(sockfd, SIOCGIFINDEX, &ifconfig)) != 0)
-      err_sys("ioctl");
-   close(sockfd);
-
-   return ifconfig.ifr_ifindex;
-}
-
-/*
- *	set_hardware_address	-- Set the Ethernet MAC address associated
- *				   with the given device.
- *	Inputs:
- *
- *	devname		The device name, e.g. "eth0"
- *	hw_address	(output) the Ethernet MAC address
- *
- *	Returns:
- *
- *	None.
- */
-void
-set_hardware_address(char *devname, unsigned char hw_address[]) {
-   int sockfd;
-   struct ifreq ifconfig;
-
-   strncpy(ifconfig.ifr_name, devname, IFNAMSIZ);
-   ifconfig.ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_ETHER;
-   memcpy(ifconfig.ifr_ifru.ifru_hwaddr.sa_data, hw_address, ETH_ALEN);
-
-/* Create UDP socket */
-   if ((sockfd=socket(PF_INET, SOCK_DGRAM, 0)) < 0)
-      err_sys("socket");
-
-/* Set hardware address for specified interface */
-   if ((ioctl(sockfd, SIOCSIFHWADDR, &ifconfig)) != 0)
-      err_sys("ioctl");
-}
-
-/*
  *	find_host	-- Find a host in the list
  *
  *	Inputs:
@@ -1845,6 +1718,10 @@ void
 arp_scan_version (void) {
    fprintf(stderr, "%s\n\n", PACKAGE_STRING);
    fprintf(stderr, "Copyright (C) 2005-2006 Roy Hills, NTA Monitor Ltd.\n");
+   fprintf(stderr, "arp-scan comes with NO WARRANTY to the extent permitted by law.\n");
+   fprintf(stderr, "You may redistribute copies of arp-scan under the terms of the GNU\n");
+   fprintf(stderr, "General Public License.\n");
+   fprintf(stderr, "For more information about these matters, see the file named COPYING.\n");
    fprintf(stderr, "\n");
 /* We use rcsid here to prevent it being optimised away */
    fprintf(stderr, "%s\n", rcsid);

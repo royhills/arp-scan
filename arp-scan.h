@@ -111,9 +111,6 @@
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
-#ifdef HAVE_NET_IF_H
-#include <net/if.h>
-#endif
 
 #include "hash.h"
 
@@ -187,7 +184,7 @@ void err_print(int, int, const char *, va_list);
 void usage(int);
 void add_host_pattern(const char *, unsigned);
 void add_host(const char *, unsigned);
-int send_packet(int, host_entry *, struct timeval *);
+int send_packet(link_t *, host_entry *, struct timeval *);
 void recvfrom_wto(int, unsigned char *, int, struct sockaddr *, int);
 void remove_host(host_entry **);
 void timeval_diff(const struct timeval *, const struct timeval *,
@@ -206,9 +203,9 @@ void callback(u_char *, const struct pcap_pkthdr *, const u_char *);
 void process_options(int, char *[]);
 struct in_addr *get_host_address(const char *, int, struct in_addr *, char **);
 const char *my_ntoa(struct in_addr);
-int get_source_ip(char *, uint32_t *);
-int get_hardware_address(char *, unsigned char []);
-void set_hardware_address(char *, unsigned char []);
+int get_source_ip(link_t *, uint32_t *);
+void get_hardware_address(link_t *, unsigned char []);
+void set_hardware_address(link_t *, unsigned char []);
 void marshal_arp_pkt(unsigned char *, arp_ether_ipv4 *, size_t *);
 void unmarshal_arp_pkt(const unsigned char *, arp_ether_ipv4 *);
 unsigned char *hex2data(const char *, size_t *);
@@ -217,7 +214,7 @@ char *hexstring(const unsigned char *, size_t);
 int get_ether_addr(const char *, unsigned char *);
 int add_mac_vendor(struct hash_control *, const char *);
 /* Link layer send functions */
-link_t *link_open(const char *);
+link_t *link_open(const char *, int, const unsigned char *);
 ssize_t link_send(link_t *, const unsigned char *, size_t);
 void link_close(link_t *);
 /* Wrappers */
