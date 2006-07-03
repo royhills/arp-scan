@@ -334,9 +334,8 @@ main(int argc, char *argv[]) {
       }
 
       while (fgets(line, MAXLINE, fp)) {
-         cp = line;
-         while (!isspace(*cp) && *cp != '\0')
-            cp++;
+         for (cp = line; !isspace((unsigned char)*cp) && *cp != '\0'; cp++)
+            ;
          *cp = '\0';
          add_host_pattern(line, timeout);
       }

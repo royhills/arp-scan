@@ -9,6 +9,8 @@ AM_INIT_AUTOMAKE(1.9)
 
 AM_CONFIG_HEADER([config.h])
 
+AC_CANONICAL_HOST
+
 dnl Checks for programs.
 AC_PROG_CC
  if test -n "$GCC"; then
@@ -46,7 +48,7 @@ AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_datalink_val_to_name])],
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h syslog.h unistd.h getopt.h pcap.h netpacket/packet.h net/ethernet.h sys/ioctl.h net/if.h])
+AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h syslog.h unistd.h getopt.h pcap.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -135,8 +137,18 @@ else
 fi
 
 dnl Determine which link-layer sending functions to use
-dnl Currently, we only hack packet socket
-AC_LIBOBJ([link-packet-socket])
+dnl We base our choice on the operating system in $host_os
+case $host_os in
+   *linux* )
+      AC_MSG_NOTICE([Host os is $host_os; using packet socket link layer implementation.]);
+      AC_CHECK_HEADERS([sys/ioctl.h netpacket/packet.h net/if.h])
+      AC_LIBOBJ([link-packet-socket])
+      ;;
+   * )
+dnl XXXX Change this to AC_MSG_ERROR
+      AC_MSG_NOTICE([Host operating system $host_os is not supported])
+      ;;
+esac
 
 dnl GNU systems e.g. Linux have getopt_long_only, but many other systems
 dnl e.g. FreeBSD 4.3 and Solaris 8 do not.  For systems that don't have it,
@@ -145,6 +157,11 @@ AC_CHECK_FUNC([getopt_long_only], ,
   [ AC_LIBOBJ(getopt)
     AC_LIBOBJ(getopt1)
     AC_LIBSOURCE(getopt.h) ])
+
+dnl Do we have inet_aton?  Most systems do, but some e.g. Solaris don't
+dnl If we don't have it, then use Russ Allbery's implementation as a
+dnl replacement function.
+AC_CHECK_FUNC(inet_aton, , [ AC_LIBOBJ(inet_aton) ])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

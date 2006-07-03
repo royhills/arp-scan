@@ -32,8 +32,17 @@
  */
 
 #include "arp-scan.h"
+
+#ifdef HAVE_NETPACKET_PACKET_H
+#include <netpacket/packet.h>
+#endif
+
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
+#endif
+
+#ifdef HAVE_SYS_IOCTL_H
+#include <sys/ioctl.h>
 #endif
 
 static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */

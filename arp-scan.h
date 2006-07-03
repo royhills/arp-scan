@@ -94,25 +94,14 @@
 #endif
 
 #ifdef HAVE_REGEX_H
-#include <regex.h>	/* Posix regular expression support */
+#include <regex.h>		/* Posix regular expression functions */
 #endif
 
 #ifdef HAVE_PCAP_H
 #include <pcap.h>
 #endif
 
-#ifdef HAVE_NETPACKET_PACKET_H
-#include <netpacket/packet.h>
-#endif
-
-#ifdef HAVE_NET_ETHERNET_H
-#include <net/ethernet.h>
-#endif
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-
-#include "hash.h"
+#include "hash.h"		/* Hash table functions */
 
 /* Defines */
 
@@ -135,6 +124,9 @@
 #define ARPOP_REQUEST 1			/* ARP Request */
 #define ARPOP_REPLY 2			/* ARP Reply */
 #define ARP_PKT_SIZE 28			/* Size of ARP Packet in bytes */
+#define ETH_ALEN 6			/* Octets in one ethernet addr */
+#define ETH_P_IP 0x0800			/* Internet Protocol packet */
+#define ETH_P_ARP 0x0806		/* Address Resolution packet */
 #define OUIFILENAME "ieee-oui.txt"	/* Default IEEE OUI filename */
 #define IABFILENAME "ieee-iab.txt"	/* Default IEEE IAB filename */
 #define MACFILENAME "mac-vendor.txt"	/* Default MAC/Vendor filename */
