@@ -15,6 +15,13 @@ instead, or the
 option is used, in which case the targets are generated from the network
 interface IP address and netmask.
 .PP
+You will need to be root, or
+.B arp-scan
+must be SUID root, in order to run
+.BR arp-scan ,
+because the functions that it uses to read and write packets require root
+privilege.
+.PP
 The target hosts can be specified as IP addresses or hostnames.  You can also
 specify the target as
 .B IPnetwork/bits
