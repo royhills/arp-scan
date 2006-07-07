@@ -92,6 +92,10 @@ my %fp_hash = (
    '00010110011' => 'PIX OS', # dwk at 7663 in June 2006, Cisco PIX 525
    '01010110011' => 'PIX OS', # dwk at 7663 in June 2006, Cisco PIX 525
    '00000110000' => 'Netware 6.5',
+   '00010100000' => 'Unknown 1', # 14805 79.253 Cisco
+   '11110111111' => 'Unknown 2', # 14805 63.1 Cisco
+   '00000110011' => 'Unknown 3', # 14805 63.2 Cisco
+   '11110110011' => 'Unknown 4', # 14805 63.11 Fujitsu Siemens
    );
 #
 my $usage =
@@ -181,7 +185,7 @@ sub fp ($$) {
    }
    close(ARPSCAN);
 
-   if ($verbose) {
+   if ($verbose && $options ne "") {
       if ($response) {
          print "$options\tYes\n";
       } else {
