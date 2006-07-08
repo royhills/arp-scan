@@ -75,6 +75,7 @@ my $arpscan="arp-scan -N -q -r 1";
 # HP-UX 11	HP-UX B.11.00 A 9000/712 (PA-RISC)
 # PIX OS	PIX OS (unknown vsn) on Cisco PIX 525
 # Vista		Windows Vista Beta 2 Build 5384 on VMware
+# Minix 3	Minix 3 1.2a on VMware
 #
 my %fp_hash = (
    '11110100000' => 'FreeBSD 5.3, Win98, WinME, NT4, 2000, XP, 2003',
@@ -83,7 +84,7 @@ my %fp_hash = (
    '00000100000' => 'Cisco IOS 12.0, 12.1, 12.2, 12.3',
    '11110110000' => 'Solaris 2.5.1, 2.6, 7, 8, 9, 10, HP-UX 11',
    '01000111111' => 'ScreenOS 5.0',
-   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1',
+   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1, Minix 3',
    '11110100011' => 'MacOS 10.3, FreeBSD 4.3, IRIX 6.5',
    '10010100011' => 'SCO OS 5.0.7',
    '10110100000' => 'Win 3.11, 95, NT 3.51',

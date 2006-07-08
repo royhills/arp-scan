@@ -33,6 +33,34 @@
 
 #include "arp-scan.h"
 
+#ifdef HAVE_SYS_IOCTL_H
+#include <sys/ioctl.h>
+#endif
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+
+#ifdef HAVE_NET_IF_H
+#include <net/if.h>
+#endif
+
+#ifdef HAVE_NET_BPF_H
+#include <net/bpf.h>
+#endif
+
+#ifdef HAVE_NET_ROUTE_H
+#include <net/route.h>
+#endif
+
+#ifdef HAVE_SYS_SYSCTL_H
+#include <sys/sysctl.h>
+#endif
+
+#ifdef HAVE_NET_IF_DL_H
+#include <net/if_dl.h>
+#endif
+
 static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
 /*
@@ -58,7 +86,7 @@ struct link_handle {
 link_t *
 link_open(const char *device, int eth_pro, const unsigned char *target_mac) {
    link_t *handle;
-   char dev_file[32];
+   char dev_file[16];	/* /dev/bpfxxx */
    struct ifreq ifr;
    int i;
 
@@ -66,8 +94,8 @@ link_open(const char *device, int eth_pro, const unsigned char *target_mac) {
    memset(handle, '\0', sizeof(*handle));
 
    for (i=0; i<32; i++) {
-      snprintf(file, sizeof(file), "/dev/bpf%d", i);
-      handle->fd = open(file, O_WRONLY);
+      snprintf(dev_file, sizeof(dev_file), "/dev/bpf%d", i);
+      handle->fd = open(dev_file, O_WRONLY);
       if (handle->fd != -1 || errno != EBUSY)
          break;
    }
@@ -85,9 +113,10 @@ link_open(const char *device, int eth_pro, const unsigned char *target_mac) {
       return NULL;
    }
 
+/* Set "header complete" flag */
 #ifdef BIOCSHDRCMPLT
-   i = 1;
-   if (ioctl(e->fd, BIOCSHDRCMPLT, &i) < 0) {
+   i = 0;
+   if (ioctl(handle->fd, BIOCSHDRCMPLT, &i) < 0) {
       free(handle);
       return NULL;
    }
@@ -153,6 +182,49 @@ link_close(link_t *handle) {
  */
 void
 get_hardware_address(link_t *handle, unsigned char hw_address[]) {
+   struct if_msghdr *ifm;
+   struct sockaddr_dl *sdl=NULL;
+   unsigned char *p;
+   unsigned char *buf;
+   size_t len;
+   int mib[] = { CTL_NET, PF_ROUTE, 0, AF_LINK, NET_RT_IFLIST, 0 };
+/*
+ *	Use sysctl to obtain interface list.
+ *	We first call sysctl with the 3rd arg set to NULL to obtain the
+ *	required length, then malloc the buffer and call sysctl again to get
+ *	the data.
+ */
+   if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
+      err_sys("sysctl");
+
+   buf = Malloc(len);
+
+   if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
+      err_sys("sysctl");
+/*
+ *	Go through all the interfaces in the list until	we find the one that
+ *	corresponds to the device we are using.
+ */
+   for (p = buf; p < buf + len; p += ifm->ifm_msglen) {
+      ifm = (struct if_msghdr *)p;
+      sdl = (struct sockaddr_dl *)(ifm + 1);
+
+      if (ifm->ifm_type != RTM_IFINFO || (ifm->ifm_addrs & RTA_IFP) == 0)
+         continue;
+
+      if (sdl->sdl_family != AF_LINK || sdl->sdl_nlen == 0)
+         continue;
+
+      if ((memcmp(sdl->sdl_data, handle->device, sdl->sdl_nlen)) == 0)
+         break;
+   }
+
+   if (p >= buf + len)
+      err_msg("Could not get hardware address for interface %s",
+              handle->device);
+
+   memcpy(hw_address, sdl->sdl_data + sdl->sdl_nlen, ETH_ALEN);
+   free(buf);
 }
 
 /*
@@ -169,6 +241,7 @@ get_hardware_address(link_t *handle, unsigned char hw_address[]) {
  */
 void
 set_hardware_address(link_t *handle, unsigned char hw_address[]) {
+   err_msg("set_hardware_address() not supported for BPF");
 }
 
 /*
@@ -185,6 +258,7 @@ set_hardware_address(link_t *handle, unsigned char hw_address[]) {
  */
 int
 get_source_ip(link_t *handle, uint32_t *ip_addr) {
+   err_msg("get_source_ip() not supported for BPF");
    return 0;
 }
 

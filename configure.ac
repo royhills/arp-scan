@@ -115,10 +115,6 @@ AC_DEFINE_UNQUOTED(ARP_UINT64_FORMAT, $UINT64_FORMAT,
 dnl Checks for library functions.
 AC_CHECK_FUNCS([malloc gethostbyname gettimeofday inet_ntoa memset select socket strerror])
 
-dnl Determine type for 3rd arg to accept()
-dnl This is normally socklen_t, but can sometimes be size_t or int.
-AC_NTA_NET_SIZE_T
-
 dnl Check if the Posix regular expression functions "regcomp" and "regexec"
 dnl and the header file "regex.h" are present.
 AC_MSG_CHECKING([for posix regular expression support])
@@ -140,12 +136,25 @@ dnl Determine which link-layer sending functions to use
 dnl We base our choice on the operating system in $host_os
 case $host_os in
    *linux* )
-      AC_MSG_NOTICE([Host os is $host_os; using packet socket link layer implementation.]);
+      AC_MSG_NOTICE([Host OS is $host_os; using packet socket link layer implementation.]);
       AC_CHECK_HEADERS([sys/ioctl.h netpacket/packet.h net/if.h])
       AC_LIBOBJ([link-packet-socket])
       ;;
+   *freebsd* )
+      AC_MSG_NOTICE([Host OS is $host_os; using BPF link layer implementation.]);
+dnl FreeBSD 5.2 needs sys/socket.h included before net/if will compile and
+dnl sys/types.h for sys/sysctl.h and net/bpf.h
+      AC_CHECK_HEADERS([sys/ioctl.h fcntl.h net/if.h net/bpf.h sys/sysctl.h net/route.h net/if_dl.h],,,
+      [
+      #include <sys/types.h>
+      #ifdef HAVE_SYS_SOCKET_H
+      #include <sys/socket.h>
+      #endif
+      ])
+      AC_LIBOBJ([link-bpf])
+      ;;
    * )
-dnl XXXX Change this to AC_MSG_ERROR
+dnl XXXX Change this to AC_MSG_ERROR before public release XXXX
       AC_MSG_NOTICE([Host operating system $host_os is not supported])
       ;;
 esac

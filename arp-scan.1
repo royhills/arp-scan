@@ -154,7 +154,12 @@ various
 options.  The use of some of these options may make the outgoing ARP packet
 non RFC compliant. Different operating systems handle the various non standard
 ARP packets in different ways, and this may be used to fingerprint these
-systems. The table below summarises the options that change the outgoing ARP
+systems.  See
+.BR arp-fingerprint (1)
+for information about a script which uses these options to fingerprint the
+target operating system.
+.PP
+The table below summarises the options that change the outgoing ARP
 packet. In this table, the
 .I Field
 column gives the ARP packet field name from RFC 826,
