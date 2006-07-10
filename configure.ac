@@ -140,7 +140,7 @@ case $host_os in
       AC_CHECK_HEADERS([sys/ioctl.h netpacket/packet.h net/if.h])
       AC_LIBOBJ([link-packet-socket])
       ;;
-   *freebsd* )
+   *freebsd* | *darwin* )
       AC_MSG_NOTICE([Host OS is $host_os; using BPF link layer implementation.]);
 dnl FreeBSD 5.2 needs sys/socket.h included before net/if will compile and
 dnl sys/types.h for sys/sysctl.h and net/bpf.h

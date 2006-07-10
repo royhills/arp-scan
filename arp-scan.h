@@ -43,6 +43,15 @@
 
 #include <sys/types.h>
 
+/* Integer types */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h>
+#else
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif
+#endif
+
 #ifdef __CYGWIN__
 #include <windows.h>	/* Include windows.h if compiling under Cygwin */
 #endif
