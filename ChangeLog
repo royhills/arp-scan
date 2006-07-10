@@ -6,6 +6,8 @@ $Id$
 	  entry structure.  This reduces the per-host memory usage from
 	  32 bytes per host to 28 bytes per host.
 
+	* mac-vendor.5: New manual page for the mac-vendor.txt file format.
+
 2006-07-03 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* link-packet-socket.c: New file containing all functions that

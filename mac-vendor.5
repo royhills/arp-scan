@@ -1,0 +1,72 @@
+.\" $Id$
+.TH MAC-VENDOR 5 "July 10, 2006"
+.\" Please adjust this date whenever revising the man page.
+.SH NAME
+mac-vendor \- Ethernet vendor file for arp-scan
+.SH SYNOPSIS
+.I mac-vendor.txt
+.SH DESCRIPTION
+The
+.I mac-vendor.txt
+contains Ethernet MAC to vendor string mappings for
+.BR arp-scan .
+It is used in addition to the IEEE OUI and IAB listings in
+.I ieee-oui.txt
+and
+.IR ieee-iab.txt .
+It is for MAC-vendor mappings that are not covered by the IEEE manufacturer
+listings.
+.PP
+Each line in the
+.I mac-vendor.txt
+file contains a MAC-vendor mapping in the form:
+.PP
+.nf
+<MAC-Prefix><TAB><Vendor>
+.fi
+.PP
+Where <MAC-Prefix> is the prefix of the MAC address in hex, and <Vendor>
+is the name of the vendor.  The prefix can be of any length from two hex
+digits (one octet) to twelve hex digits (six octets, the entire Ethernet
+hardware address).  The alphabetic hex characters [A-F] must be entered
+in upper case.
+.PP
+For example:
+.nf
+012345    would match 01:23:45:xx:xx:xx, where xx represents any value;
+0123456   would match 01:23:45:6x:xx:xx; and
+01234567  would match 01:23:45:67:xx:xx.
+.fi
+.PP
+Blank lines and lines beginning with "#" are ignored.
+.PP
+The order of entries in the file is not important.
+.B arp-scan
+will attempt to match larger prefixes before trying to match smaller ones, and
+will stop at the first match.
+.SH FILES
+.I /usr/local/share/arp-scan/mac-vendor.txt
+.SH EXAMPLE
+.nf
+# From nmap Debian bug report #369681 dated 31 May 2006
+525400  QEMU
+B0C420  Bochs
+
+# From RFC 2338: 00-00-5E-00-01-{VRID}
+00005E0001      VRRP (last octet is VRID)
+
+# Microsoft WLBS (Windows NT Load Balancing Service)
+# http://www.microsoft.com/technet/prodtechnol/acs/reskit/acrkappb.mspx
+02BF    Microsoft WLBS (last four octets are IP address)
+.fi
+.SH AUTHOR
+Roy Hills <Roy.Hills@nta-monitor.com>
+.SH "SEE ALSO"
+.TP
+.BR arp-scan (1)
+.TP
+.BR get-oui (1)
+.TP
+.BR get-iab (1)
+.TP
+.BR arp-fingerprint (1)
