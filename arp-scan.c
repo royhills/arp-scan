@@ -49,7 +49,7 @@ static unsigned live_count;		/* Number of entries awaiting reply */
 static unsigned max_iter;		/* Max iterations in find_host() */
 static int verbose=0;			/* Verbose level */
 static int debug = 0;			/* Debug flag */
-static pcap_t *handle;			/* pcap handle */
+static pcap_t *pcap_handle;		/* pcap handle */
 static int pcap_fd;			/* Pcap file descriptor */
 static char filename[MAXLINE];		/* Target list file name */
 static int filename_flag=0;		/* Set if using target list file */
@@ -207,10 +207,11 @@ main(int argc, char *argv[]) {
 /*
  *	Prepare pcap
  */
-   if (!(handle = pcap_open_live(if_name, snaplen, PROMISC, TO_MS, errbuf)))
+   if (!(pcap_handle = pcap_open_live(if_name, snaplen, PROMISC, TO_MS,
+       errbuf)))
       err_msg("pcap_open_live: %s", errbuf);
-   if ((datalink=pcap_datalink(handle)) < 0)
-      err_msg("pcap_datalink: %s", pcap_geterr(handle));
+   if ((datalink=pcap_datalink(pcap_handle)) < 0)
+      err_msg("pcap_datalink: %s", pcap_geterr(pcap_handle));
    printf("Interface: %s, datalink type: %s (%s)\n", if_name,
           pcap_datalink_val_to_name(datalink),
           pcap_datalink_val_to_description(datalink));
@@ -225,9 +226,9 @@ main(int argc, char *argv[]) {
          err_msg("Unsupported datalink type");
          break;
    }
-   if ((pcap_fd=pcap_fileno(handle)) < 0)
-      err_msg("pcap_fileno: %s", pcap_geterr(handle));
-   if ((pcap_setnonblock(handle, 1, errbuf)) < 0)
+   if ((pcap_fd=pcap_fileno(pcap_handle)) < 0)
+      err_msg("pcap_fileno: %s", pcap_geterr(pcap_handle));
+   if ((pcap_setnonblock(pcap_handle, 1, errbuf)) < 0)
       err_msg("pcap_setnonblock: %s", errbuf);
    if (pcap_lookupnet(if_name, &localnet, &netmask, errbuf) < 0) {
       memset(&localnet, '\0', sizeof(localnet));
@@ -243,11 +244,12 @@ main(int argc, char *argv[]) {
                               interface_mac[4], interface_mac[5]);
    if (verbose)
       warn_msg("DEBUG: pcap filter string: \"%s\"", filter_string);
-   if ((pcap_compile(handle, &filter, filter_string, OPTIMISE, netmask)) < 0)
-      err_msg("pcap_geterr: %s", pcap_geterr(handle));
+   if ((pcap_compile(pcap_handle, &filter, filter_string, OPTIMISE,
+        netmask)) < 0)
+      err_msg("pcap_geterr: %s", pcap_geterr(pcap_handle));
    free(filter_string);
-   if ((pcap_setfilter(handle, &filter)) < 0)
-      err_msg("pcap_setfilter: %s", pcap_geterr(handle));
+   if ((pcap_setfilter(pcap_handle, &filter)) < 0)
+      err_msg("pcap_setfilter: %s", pcap_geterr(pcap_handle));
 /*
  *      Drop privileges.
  */
@@ -479,7 +481,7 @@ main(int argc, char *argv[]) {
                   req_interval = 0;
                }
             }
-            if (debug) {print_times(); printf("main: Can send packet to host %d now.  host_timediff=" ARP_UINT64_FORMAT ", timeout=%u, req_interval=%d, cum_err=%d\n", (*cursor)->n, host_timediff, (*cursor)->timeout, req_interval, cum_err);}
+            if (debug) {print_times(); printf("main: Can send packet to host %s now.  host_timediff=" ARP_UINT64_FORMAT ", timeout=%u, req_interval=%d, cum_err=%d\n", my_ntoa((*cursor)->addr), host_timediff, (*cursor)->timeout, req_interval, cum_err);}
             select_timeout = req_interval;
 /*
  *      If we've exceeded our retry limit, then this host has timed out so
@@ -493,8 +495,9 @@ main(int argc, char *argv[]) {
             }
             if ((*cursor)->num_sent >= retry) {
                if (verbose > 1)
-                  warn_msg("---\tRemoving host entry %u (%s) - Timeout", (*cursor)->n, my_ntoa((*cursor)->addr));
-               if (debug) {print_times(); printf("main: Timing out host %d.\n", (*cursor)->n);}
+                  warn_msg("---\tRemoving host %s - Timeout",
+                            my_ntoa((*cursor)->addr));
+               if (debug) {print_times(); printf("main: Timing out host %s.\n", my_ntoa((*cursor)->addr));}
                remove_host(cursor);     /* Automatically calls advance_cursor() */
                if (first_timeout) {
                   timeval_diff(&now, &((*cursor)->last_send_time), &diff);
@@ -503,7 +506,8 @@ main(int argc, char *argv[]) {
                   while (host_timediff >= (*cursor)->timeout && live_count) {
                      if ((*cursor)->live) {
                         if (verbose > 1)
-                           warn_msg("---\tRemoving host %u (%s) - Catch-Up Timeout", (*cursor)->n, my_ntoa((*cursor)->addr));
+                           warn_msg("---\tRemoving host %s - Catch-Up Timeout",
+                                    my_ntoa((*cursor)->addr));
                         remove_host(cursor);
                      } else {
                         advance_cursor();
@@ -528,7 +532,7 @@ main(int argc, char *argv[]) {
  */
             select_timeout = (*cursor)->timeout - host_timediff;
             reset_cum_err = 1;  /* Zero cumulative error */
-            if (debug) {print_times(); printf("main: Can't send packet to host %d yet. host_timediff=" ARP_UINT64_FORMAT "\n", (*cursor)->n, host_timediff);}
+            if (debug) {print_times(); printf("main: Can't send packet to host %s yet. host_timediff=" ARP_UINT64_FORMAT "\n", my_ntoa((*cursor)->addr), host_timediff);}
          } /* End If */
       } else {          /* We can't send a packet yet */
          select_timeout = req_interval - loop_timediff;
@@ -684,7 +688,7 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
  *
  *	Inputs:
  *
- *	handle		Link layer handle
+ *	link_handle		Link layer handle
  *	he		Host entry to send to. If NULL, then no packet is sent
  *	last_packet_time	Time when last packet was sent
  *
@@ -697,7 +701,7 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
  *	"last_send_time" field for the host entry.
  */
 int
-send_packet(link_t *handle, host_entry *he,
+send_packet(link_t *link_handle, host_entry *he,
             struct timeval *last_packet_time) {
    unsigned char buf[MAXIP];
    size_t buflen;
@@ -743,7 +747,7 @@ send_packet(link_t *handle, host_entry *he,
  *	Check that the host is live.  Complain if not.
  */
    if (!he->live) {
-      warn_msg("***\tsend_packet called on non-live host entry: SHOULDN'T HAPPEN");
+      warn_msg("***\tsend_packet called on non-live host: SHOULDN'T HAPPEN");
       return 0;
    }
 /*
@@ -756,10 +760,11 @@ send_packet(link_t *handle, host_entry *he,
 /*
  *	Send the packet.
  */
-   if (debug) {print_times(); printf("send_packet: #%u to host entry %u (%s) tmo %d\n", he->num_sent, he->n, my_ntoa(he->addr), he->timeout);}
+   if (debug) {print_times(); printf("send_packet: #%u to host %s tmo %d\n", he->num_sent, my_ntoa(he->addr), he->timeout);}
    if (verbose > 1)
-      warn_msg("---\tSending packet #%u to host entry %u (%s) tmo %d", he->num_sent, he->n, my_ntoa(he->addr), he->timeout);
-   if ((link_send(handle, buf, buflen)) < 0) {
+      warn_msg("---\tSending packet #%u to host %s tmo %d", he->num_sent,
+               my_ntoa(he->addr), he->timeout);
+   if ((link_send(link_handle, buf, buflen)) < 0) {
       err_sys("ERROR: failed to send packet");
    }
    return buflen;
@@ -784,12 +789,12 @@ void
 clean_up(void) {
    struct pcap_stat stats;
 
-   if ((pcap_stats(handle, &stats)) < 0)
-      err_msg("pcap_stats: %s", pcap_geterr(handle));
+   if ((pcap_stats(pcap_handle, &stats)) < 0)
+      err_msg("pcap_stats: %s", pcap_geterr(pcap_handle));
 
    printf("%u packets received by filter, %u packets dropped by kernel\n",
           stats.ps_recv, stats.ps_drop);
-   pcap_close(handle);
+   pcap_close(pcap_handle);
 }
 
 /*
@@ -1262,7 +1267,6 @@ add_host(const char *host_name, unsigned host_timeout) {
 
    Gettimeofday(&now);
 
-   he->n = num_hosts;
    memcpy(&(he->addr), &addr, sizeof(struct in_addr));
    he->live = 1;
    he->timeout = host_timeout * 1000;	/* Convert from ms to us */
@@ -1292,7 +1296,7 @@ remove_host(host_entry **he) {
       if (debug) {print_times(); printf("remove_host: live_count now %d\n", live_count);}
    } else {
       if (verbose > 1)
-         warn_msg("***\tremove_host called on non-live host entry: SHOULDN'T HAPPEN");
+         warn_msg("***\tremove_host called on non-live host: SHOULDN'T HAPPEN");
    }
 }
 
@@ -1315,7 +1319,7 @@ advance_cursor(void) {
             cursor++;
       } while (!(*cursor)->live);
    } /* End If */
-   if (debug) {print_times(); printf("advance_cursor: cursor now %d\n", (*cursor)->n);}
+   if (debug) {print_times(); printf("advance_cursor: host now %s\n", my_ntoa((*cursor)->addr));}
 }
 
 /*
@@ -1409,8 +1413,8 @@ recvfrom_wto(int s, unsigned char *buf, int len, struct sockaddr *saddr,
    } else if (n == 0) {
       return;	/* Timeout */
    }
-   if ((pcap_dispatch(handle, -1, callback, NULL)) < 0)
-      err_sys("pcap_dispatch: %s\n", pcap_geterr(handle));
+   if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) < 0)
+      err_sys("pcap_dispatch: %s\n", pcap_geterr(pcap_handle));
 }
 
 /*
@@ -1427,7 +1431,7 @@ dump_list(void) {
    printf("Host List:\n\n");
    printf("Entry\tIP Address\n");
    for (i=0; i<num_hosts; i++)
-      printf("%u\t%s\n", helistptr[i]->n, my_ntoa(helistptr[i]->addr));
+      printf("%u\t%s\n", i+1, my_ntoa(helistptr[i]->addr));
    printf("\nTotal of %u host entries.\n\n", num_hosts);
 }
 
@@ -1479,19 +1483,21 @@ callback(u_char *args, const struct pcap_pkthdr *header,
 /*
  *	We found an IP match for the packet. 
  */
-      if (verbose > 1)
-         warn_msg("---\tReceived packet #%u from %s",temp_cursor->num_recv ,my_ntoa(source_ip));
 /*
  *	Display the packet and increment the number of responders if 
  *	the entry is "live" or we are not ignoring duplicates.
  */
       temp_cursor->num_recv++;
+      if (verbose > 1)
+         warn_msg("---\tReceived packet #%u from %s",
+                  temp_cursor->num_recv ,my_ntoa(source_ip));
       if ((temp_cursor->live || !ignore_dups)) {
          display_packet(n, packet_in, temp_cursor, &source_ip);
          responders++;
       }
       if (verbose > 1)
-         warn_msg("---\tRemoving host entry %u (%s) - Received %d bytes", temp_cursor->n, my_ntoa(source_ip), n);
+         warn_msg("---\tRemoving host %s - Received %d bytes",
+                  my_ntoa(source_ip), n);
       remove_host(&temp_cursor);
    } else {
 /*

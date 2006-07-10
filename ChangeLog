@@ -1,5 +1,11 @@
 $Id$
 
+2006-07-10 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.h, arp-scan.c: Removed unneeded element "n" from host
+	  entry structure.  This reduces the per-host memory usage from
+	  32 bytes per host to 28 bytes per host.
+
 2006-07-03 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* link-packet-socket.c: New file containing all functions that

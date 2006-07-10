@@ -149,7 +149,6 @@
 /* Structures */
 
 typedef struct {
-   unsigned n;			/* Ordinal number for this entry */
    unsigned timeout;		/* Timeout for this host in us */
    struct in_addr addr;		/* Host IP address */
    struct timeval last_send_time; /* Time when last packet sent to this addr */
