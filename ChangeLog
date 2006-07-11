@@ -1,5 +1,12 @@
 $Id$
 
+2006-07-11 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Removed unneeded gettimeofday() call in add_host().
+	  This increases the host addition rate considerably, so adding
+	  a class-A network (2^24 hosts) now takes 15 seconds as opposed
+	  to 80 seconds.
+
 2006-07-10 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.h, arp-scan.c: Removed unneeded element "n" from host

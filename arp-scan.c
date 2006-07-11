@@ -1236,7 +1236,6 @@ add_host(const char *host_name, unsigned host_timeout) {
    struct in_addr *hp=NULL;
    struct in_addr addr;
    host_entry *he;
-   struct timeval now;
    static int num_left=0;	/* Number of free entries left */
    int result;
    char *ga_err_msg;
@@ -1244,12 +1243,13 @@ add_host(const char *host_name, unsigned host_timeout) {
    if (numeric_flag) {
       result = inet_pton(AF_INET, host_name, &addr);
       if (result <= 0)
-         err_sys("inet_pton failed for \"%s\"", host_name);
+         warn_sys("WARNING: inet_pton failed for \"%s\" - target ignored",
+                  host_name);
    } else {
       hp = get_host_address(host_name, AF_INET, &addr, &ga_err_msg);
       if (hp == NULL)
-         err_msg("get_host_address failed for \"%s\": %s", host_name,
-                 ga_err_msg);
+         warn_msg("WARNING: get_host_address failed for \"%s\": %s - target ignored",
+                  host_name, ga_err_msg);
    }
 
    if (!num_left) {	/* No entries left, allocate some more */
@@ -1264,8 +1264,6 @@ add_host(const char *host_name, unsigned host_timeout) {
    he = helist + num_hosts;	/* Would array notation be better? */
    num_hosts++;
    num_left--;
-
-   Gettimeofday(&now);
 
    memcpy(&(he->addr), &addr, sizeof(struct in_addr));
    he->live = 1;
@@ -1702,6 +1700,7 @@ process_options(int argc, char *argv[]) {
             break;
          case 'l':	/* --localnet */
             localnet_flag = 1;
+            numeric_flag=1;
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE);
