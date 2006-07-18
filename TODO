@@ -8,3 +8,6 @@ Use libnet or another packet creation library to allow arp-scan to run on
 non-linux platforms.
 
 AC: arp-fingerprint shouldn't accept ranges like 10.0.0.0/24.
+
+Avoid double unmarshalling of packet data: once in callback, then again
+in display_packet().

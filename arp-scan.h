@@ -132,6 +132,7 @@
 #define ARPHRD_ETHER 1			/* Ethernet ARP type */
 #define ARPOP_REQUEST 1			/* ARP Request */
 #define ARPOP_REPLY 2			/* ARP Reply */
+#define ETHER_HDR_SIZE 14		/* Size of Ethernet frame header in bytes */
 #define ARP_PKT_SIZE 28			/* Size of ARP Packet in bytes */
 #define ETH_ALEN 6			/* Octets in one ethernet addr */
 #define ETH_P_IP 0x0800			/* Internet Protocol packet */
@@ -156,6 +157,13 @@ typedef struct {
    unsigned short num_recv;	/* Number of packets received */
    unsigned char live;		/* Set when awaiting response */
 } host_entry;
+
+/* Ethernet frame header */
+typedef struct {
+   uint8_t dest_addr[ETH_ALEN];	/* Destination hardware address */
+   uint8_t src_addr[ETH_ALEN];	/* Source hardware address */
+   uint16_t frame_type;		/* Ethernet frame type */
+} ether_hdr;
 
 /* Ethernet ARP packet from RFC 826 */
 typedef struct {
@@ -206,8 +214,8 @@ const char *my_ntoa(struct in_addr);
 int get_source_ip(link_t *, uint32_t *);
 void get_hardware_address(link_t *, unsigned char []);
 void set_hardware_address(link_t *, unsigned char []);
-void marshal_arp_pkt(unsigned char *, arp_ether_ipv4 *, size_t *);
-void unmarshal_arp_pkt(const unsigned char *, arp_ether_ipv4 *);
+void marshal_arp_pkt(unsigned char *, ether_hdr *, arp_ether_ipv4 *, size_t *);
+void unmarshal_arp_pkt(const unsigned char *, ether_hdr *, arp_ether_ipv4 *);
 unsigned char *hex2data(const char *, size_t *);
 unsigned int hstr_i(const char *);
 char *hexstring(const unsigned char *, size_t);

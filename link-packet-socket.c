@@ -151,10 +151,6 @@ get_hardware_address(link_t *handle, unsigned char hw_address[]) {
    if ((ioctl(handle->fd, SIOCGIFHWADDR, &(handle->ifr))) != 0)
       err_sys("ioctl");
 
-/* Check that device type is Ethernet */
-   if (handle->ifr.ifr_ifru.ifru_hwaddr.sa_family != ARPHRD_ETHER)
-      err_msg("Interface is not an Ethernet device");
-
    memcpy(hw_address, handle->ifr.ifr_ifru.ifru_hwaddr.sa_data, ETH_ALEN);
 }
 

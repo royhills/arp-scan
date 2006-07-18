@@ -33,6 +33,13 @@ The ARP fingerprint of a system is generally a function of that system's
 kernel (although it is possible for the ARP function to be implemented in
 user space, it almost never is).
 .PP
+Sometimes, an operating system can give different fingerprints depending
+on the configuration.  An example is Linux, which will respond to a non-local
+source IP address if that IP is routed through the interface being tested.
+This is both good and bad: on one hand it makes the fingerprinting task more
+complex; but on the other, it can allow some aspects of the system configuration
+to be determined.
+.PP
 Sometimes the fact that two different operating systems share a common ARP
 fingerprint string points to a re-use of networking code. One example of
 this is Windows NT and FreeBSD.

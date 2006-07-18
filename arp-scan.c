@@ -69,7 +69,6 @@ static int arp_spa_flag=0;		/* Source IP address specified */
 static int arp_spa_is_tpa=0;		/* Source IP is dest IP */
 static unsigned char arp_sha[ETH_ALEN];	/* Source Ethernet MAC Address */
 static int arp_sha_flag=0;		/* Source MAC address specified */
-static size_t ip_offset;		/* Offset to IP header in pcap pkt */
 static char ouifilename[MAXLINE];	/* OUI filename */
 static char iabfilename[MAXLINE];	/* IAB filename */
 static char macfilename[MAXLINE];	/* MAC filename */
@@ -215,16 +214,8 @@ main(int argc, char *argv[]) {
    printf("Interface: %s, datalink type: %s (%s)\n", if_name,
           pcap_datalink_val_to_name(datalink),
           pcap_datalink_val_to_description(datalink));
-   switch (datalink) {
-      case DLT_EN10MB:		/* Ethernet */
-         ip_offset = 14;
-         break;
-      case DLT_LINUX_SLL:	/* PPP on Linux */
-         ip_offset = 16;
-         break;
-      default:
-         err_msg("Unsupported datalink type");
-         break;
+   if (datalink != DLT_EN10MB) {
+      warn_msg("WARNING: Unsupported datalink type");
    }
    if ((pcap_fd=pcap_fileno(pcap_handle)) < 0)
       err_msg("pcap_fileno: %s", pcap_geterr(pcap_handle));
@@ -588,6 +579,7 @@ main(int argc, char *argv[]) {
 void
 display_packet(int n, const unsigned char *packet_in, host_entry *he,
                struct in_addr *recv_addr) {
+   ether_hdr frame_hdr;
    arp_ether_ipv4 arpei;
    char *msg;
    char *cp;
@@ -608,7 +600,7 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
 /*
  *      Unmarshal packet buffer into ARP structure
  */
-   unmarshal_arp_pkt(packet_in+ip_offset, &arpei);
+   unmarshal_arp_pkt(packet_in, &frame_hdr, &arpei);
 /*
  *	Decode ARP packet
  */
@@ -649,8 +641,8 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
  *	Check that any data after the ARP packet is zero.
  *	If it is non-zero, and verbose is selected, then print the padding.
  */
-   ucp = packet_in+ip_offset+28;
-   extra_data = n-ip_offset-28;
+   ucp = packet_in+ETHER_HDR_SIZE+ARP_PKT_SIZE;
+   extra_data = n-ETHER_HDR_SIZE-ARP_PKT_SIZE;
    if (extra_data > 0) {
       int i;
       for (i=0; i<extra_data; i++) {
@@ -730,7 +722,7 @@ send_packet(link_t *link_handle, host_entry *he,
  *	Copy the required data into the output buffer "buf" and set "buflen"
  *	to the number of bytes in this buffer.
  */
-   marshal_arp_pkt(buf, &arpei, &buflen);
+   marshal_arp_pkt(buf, NULL, &arpei, &buflen);
 /*
  *	Add padding if specified
  */
@@ -1450,20 +1442,21 @@ void
 callback(u_char *args, const struct pcap_pkthdr *header,
          const u_char *packet_in) {
    arp_ether_ipv4 arpei;
+   ether_hdr frame_hdr;
    int n = header->caplen;
    struct in_addr source_ip;
    host_entry *temp_cursor;
 /*
  *      Check that the packet is large enough to decode.
  */
-   if (n < ip_offset + ARP_PKT_SIZE) {
+   if (n < ETHER_HDR_SIZE + ARP_PKT_SIZE) {
       printf("%d byte packet too short to decode\n", n);
       return;
    }
 /*
  *	Unmarshal packet buffer into ARP structure
  */
-   unmarshal_arp_pkt(packet_in+ip_offset, &arpei);
+   unmarshal_arp_pkt(packet_in, &frame_hdr, &arpei);
 /*
  *	Determine source IP address.
  */
@@ -1817,6 +1810,7 @@ my_ntoa(struct in_addr addr) {
  *	Inputs:
  *
  *	buffer		Pointer to the output buffer
+ *	frame_hdr	The Ethernet frame header
  *	arp_pkt		The ARP packet
  *	buf_siz		The size of the output buffer
  *
@@ -1825,16 +1819,30 @@ my_ntoa(struct in_addr addr) {
  *	None
  */
 void
-marshal_arp_pkt(unsigned char *buffer, arp_ether_ipv4 *arp_pkt,
-                size_t *buf_siz) {
+marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
+                arp_ether_ipv4 *arp_pkt, size_t *buf_siz) {
    unsigned char *cp;
 
-   *buf_siz = sizeof(arp_pkt->ar_hrd) + sizeof(arp_pkt->ar_pro) +
-              sizeof(arp_pkt->ar_hln) + sizeof(arp_pkt->ar_pln) +
-              sizeof(arp_pkt->ar_op)  + sizeof(arp_pkt->ar_sha) +
-              sizeof(arp_pkt->ar_sip) + sizeof(arp_pkt->ar_tha) +
-              sizeof(arp_pkt->ar_tip);
    cp = buffer;
+   *buf_siz = 0;
+
+   if (frame_hdr != NULL) {
+      *buf_siz += sizeof(frame_hdr->dest_addr) + sizeof(frame_hdr->src_addr) +
+                  sizeof(frame_hdr->frame_type);
+
+      memcpy(cp, &(frame_hdr->dest_addr), sizeof(frame_hdr->dest_addr));
+      cp += sizeof(frame_hdr->dest_addr);
+      memcpy(cp, &(frame_hdr->src_addr), sizeof(frame_hdr->src_addr));
+      cp += sizeof(frame_hdr->src_addr);
+      memcpy(cp, &(frame_hdr->frame_type), sizeof(frame_hdr->frame_type));
+      cp += sizeof(frame_hdr->frame_type);
+   }
+
+   *buf_siz += sizeof(arp_pkt->ar_hrd) + sizeof(arp_pkt->ar_pro) +
+               sizeof(arp_pkt->ar_hln) + sizeof(arp_pkt->ar_pln) +
+               sizeof(arp_pkt->ar_op)  + sizeof(arp_pkt->ar_sha) +
+               sizeof(arp_pkt->ar_sip) + sizeof(arp_pkt->ar_tha) +
+               sizeof(arp_pkt->ar_tip);
 
    memcpy(cp, &(arp_pkt->ar_hrd), sizeof(arp_pkt->ar_hrd));
    cp += sizeof(arp_pkt->ar_hrd);
@@ -1861,18 +1869,31 @@ marshal_arp_pkt(unsigned char *buffer, arp_ether_ipv4 *arp_pkt,
  *	Inputs:
  *
  *	buffer		Pointer to the input buffer
- *	arp_pkt		The output struct
+ *	frame_hdr	The ethernet frame header
+ *	arp_pkt		The arp packet data
  *
  *	Returns:
  *
  *	None
  */
 void
-unmarshal_arp_pkt(const unsigned char *buffer, arp_ether_ipv4 *arp_pkt) {
+unmarshal_arp_pkt(const unsigned char *buffer, ether_hdr *frame_hdr,
+                  arp_ether_ipv4 *arp_pkt) {
    const unsigned char *cp;
 
    cp = buffer;
-
+/*
+ *	Extract the Ethernet frame header data
+ */
+   memcpy(&(frame_hdr->dest_addr), cp, sizeof(frame_hdr->dest_addr));
+   cp += sizeof(frame_hdr->dest_addr);
+   memcpy(&(frame_hdr->src_addr), cp, sizeof(frame_hdr->src_addr));
+   cp += sizeof(frame_hdr->src_addr);
+   memcpy(&(frame_hdr->frame_type), cp, sizeof(frame_hdr->frame_type));
+   cp += sizeof(frame_hdr->frame_type);
+/*
+ *	Extract the ARP packet data
+ */
    memcpy(&(arp_pkt->ar_hrd), cp, sizeof(arp_pkt->ar_hrd));
    cp += sizeof(arp_pkt->ar_hrd);
    memcpy(&(arp_pkt->ar_pro), cp, sizeof(arp_pkt->ar_pro));
