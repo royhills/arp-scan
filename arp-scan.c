@@ -86,6 +86,7 @@ static unsigned char *padding=NULL;
 static size_t padding_len=0;
 static struct hash_control *hash_table;
 static int localnet_flag=0;		/* Scan local network */
+static unsigned char interface_mac[ETH_ALEN];	/* Belongs as auto in main() */
 
 int
 main(int argc, char *argv[]) {
@@ -116,7 +117,6 @@ main(int argc, char *argv[]) {
    bpf_u_int32 netmask;
    bpf_u_int32 localnet;
    int datalink;
-   unsigned char interface_mac[ETH_ALEN];
    int get_addr_status = 0;
    link_t *link_handle;		/* Handle for link-layer functions */
 /*
@@ -175,7 +175,7 @@ main(int argc, char *argv[]) {
    if ((link_handle = link_open(if_name, eth_pro, target_mac)) == NULL) {
       if (errno == EPERM || errno == EACCES)
          warn_msg("You need to be root, or arp-scan must be SUID root, "
-                  "to open a packet socket.");
+                  "to open a link-layer socket.");
       err_sys("link_open");
    }
 /*
@@ -242,7 +242,7 @@ main(int argc, char *argv[]) {
    if ((pcap_setfilter(pcap_handle, &filter)) < 0)
       err_msg("pcap_setfilter: %s", pcap_geterr(pcap_handle));
 /*
- *      Drop privileges.
+ *      Drop SUID privileges.
  */
    if ((setuid(getuid())) < 0) {
       err_sys("setuid");
@@ -411,7 +411,7 @@ main(int argc, char *argv[]) {
       packet_out_len=send_packet(NULL, NULL, NULL); /* Get packet data size */
       if (packet_out_len < MINIMUM_FRAME_SIZE)
          packet_out_len = MINIMUM_FRAME_SIZE;   /* Adjust to minimum size */
-      packet_out_len += PACKET_OVERHEAD;        /* Add layer 2 overhead */
+      packet_out_len += PACKET_OVERHEAD;	/* Add layer 2 overhead */
       interval = ((ARP_UINT64)packet_out_len * 8 * 1000000) / bandwidth;
       if (verbose) {
          warn_msg("DEBUG: pkt len=%u bytes, bandwidth=%u bps, interval=%u us",
@@ -697,7 +697,14 @@ send_packet(link_t *link_handle, host_entry *he,
             struct timeval *last_packet_time) {
    unsigned char buf[MAXIP];
    size_t buflen;
+   ether_hdr frame_hdr;
    arp_ether_ipv4 arpei;
+/*
+ *	Construct Ethernet frame header
+ */
+   memcpy(frame_hdr.dest_addr, target_mac, ETH_ALEN);
+   memcpy(frame_hdr.src_addr, interface_mac, ETH_ALEN);
+   frame_hdr.frame_type = htons(eth_pro);
 /*
  *	Construct the ARP Header.
  */
@@ -722,7 +729,7 @@ send_packet(link_t *link_handle, host_entry *he,
  *	Copy the required data into the output buffer "buf" and set "buflen"
  *	to the number of bytes in this buffer.
  */
-   marshal_arp_pkt(buf, NULL, &arpei, &buflen);
+   marshal_arp_pkt(buf, &frame_hdr, &arpei, &buflen);
 /*
  *	Add padding if specified
  */

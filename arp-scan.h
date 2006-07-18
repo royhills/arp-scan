@@ -120,8 +120,8 @@
 #define SYSLOG_FACILITY LOG_USER	/* Syslog facility to use */
 #define REALLOC_COUNT 1000		/* Entries to realloc at once */
 #define DEFAULT_BANDWIDTH 256000	/* Default bandwidth in bits/sec */
-#define PACKET_OVERHEAD 18		/* Size of Ethernet header */ 
-#define MINIMUM_FRAME_SIZE 46           /* Minimum data size for layer 2 */
+#define PACKET_OVERHEAD 4		/* Size of Ethernet header */ 
+#define MINIMUM_FRAME_SIZE 60           /* Minimum data size for layer 2 */
 #define DEFAULT_BACKOFF_FACTOR 1.5      /* Default timeout backoff factor */
 #define DEFAULT_RETRY 2                 /* Default number of retries */
 #define DEFAULT_TIMEOUT 100             /* Default per-host timeout in ms */

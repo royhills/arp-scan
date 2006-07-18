@@ -74,7 +74,7 @@ link_open(const char *device, int eth_pro, const unsigned char *target_mac) {
 
    handle = Malloc(sizeof(*handle));
    memset(handle, '\0', sizeof(*handle));
-   if ((handle->fd = socket(PF_PACKET, SOCK_DGRAM, 0)) < 0) {
+   if ((handle->fd = socket(PF_PACKET, SOCK_RAW, 0)) < 0) {
       free(handle);
       return NULL;
    }
