@@ -172,7 +172,7 @@ main(int argc, char *argv[]) {
 /*
  *      Open link layer socket.  This is used to send outbound packets.
  */
-   if ((link_handle = link_open(if_name, eth_pro, target_mac)) == NULL) {
+   if ((link_handle = link_open(if_name)) == NULL) {
       if (errno == EPERM || errno == EACCES)
          warn_msg("You need to be root, or arp-scan must be SUID root, "
                   "to open a link-layer socket.");

@@ -84,7 +84,7 @@ struct link_handle {
  *	A pointer to a link handle structure.
  */
 link_t *
-link_open(const char *device, int eth_pro, const unsigned char *target_mac) {
+link_open(const char *device) {
    link_t *handle;
    char dev_file[16];	/* /dev/bpfxxx */
    struct ifreq ifr;

@@ -222,7 +222,7 @@ char *hexstring(const unsigned char *, size_t);
 int get_ether_addr(const char *, unsigned char *);
 int add_mac_vendor(struct hash_control *, const char *);
 /* Link layer send functions */
-link_t *link_open(const char *, int, const unsigned char *);
+link_t *link_open(const char *);
 ssize_t link_send(link_t *, const unsigned char *, size_t);
 void link_close(link_t *);
 /* Wrappers */

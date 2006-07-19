@@ -69,7 +69,7 @@ struct link_handle {
  *	A pointer to a link handle structure.
  */
 link_t *
-link_open(const char *device, int eth_pro, const unsigned char *target_mac) {
+link_open(const char *device) {
    link_t *handle;
 
    handle = Malloc(sizeof(*handle));
@@ -82,10 +82,8 @@ link_open(const char *device, int eth_pro, const unsigned char *target_mac) {
    if ((ioctl(handle->fd, SIOCGIFINDEX, &(handle->ifr))) != 0)
       err_sys("ioctl");
    handle->sll.sll_family = PF_PACKET;
-   handle->sll.sll_protocol = htons(eth_pro);
    handle->sll.sll_ifindex = handle->ifr.ifr_ifindex;
    handle->sll.sll_halen = ETH_ALEN;
-   memcpy(handle->sll.sll_addr, target_mac, ETH_ALEN);
    
    return handle;
 }
