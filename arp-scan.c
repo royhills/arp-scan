@@ -281,7 +281,7 @@ main(int argc, char *argv[]) {
       else
          fn = make_message("%s", ouifilename);
       count = add_mac_vendor(hash_table, fn);
-      if (verbose)
+      if (verbose && count > 0)
          warn_msg("DEBUG: Loaded %d IEEE OUI/Vendor entries from %s.",
                   count, fn);
       free(fn);
@@ -291,7 +291,7 @@ main(int argc, char *argv[]) {
       else
          fn = make_message("%s", iabfilename);
       count = add_mac_vendor(hash_table, fn);
-      if (verbose)
+      if (verbose && count > 0)
          warn_msg("DEBUG: Loaded %d IEEE IAB/Vendor entries from %s.",
                   count, fn);
       free(fn);
@@ -301,7 +301,7 @@ main(int argc, char *argv[]) {
       else
          fn = make_message("%s", macfilename);
       count = add_mac_vendor(hash_table, fn);
-      if (verbose)
+      if (verbose && count > 0)
          warn_msg("DEBUG: Loaded %d MAC/Vendor entries from %s.",
                   count, fn);
       free(fn);
