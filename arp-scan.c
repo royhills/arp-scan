@@ -134,7 +134,7 @@ main(int argc, char *argv[]) {
       if (arg_str_space > 0) {
          strncat(arg_str, argv[arg], (size_t) arg_str_space);
          if (arg < (argc-1)) {
-            strcat(arg_str, " ");
+            strncat(arg_str, " ", 1);
             arg_str_space--;
          }
       }
@@ -1033,6 +1033,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
    uint32_t mask;
    unsigned long hoststart;
    unsigned long hostend;
+   size_t string_len;
    unsigned i;
    uint32_t x;
    static int first_call=1;
@@ -1080,8 +1081,9 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
 /*
  *      Make a copy of pattern because we don't want to modify our argument.
  */
-   patcopy=Malloc(strlen(pattern)+1);
-   strcpy(patcopy, pattern);
+   string_len=strlen(pattern)+1;
+   patcopy=Malloc(string_len);
+   strncpy(patcopy, pattern, string_len);
 
    if (!(regexec(&ipslash_pat, patcopy, 0, NULL, 0))) { /* IPnet/bits */
 /*
@@ -1129,7 +1131,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
          b2 = (hostip & 0x00ff0000) >> 16;
          b3 = (hostip & 0x0000ff00) >> 8;
          b4 = (hostip & 0x000000ff);
-         sprintf(ipstr, "%d.%d.%d.%d", b1,b2,b3,b4);
+         snprintf(ipstr, sizeof(ipstr), "%d.%d.%d.%d", b1,b2,b3,b4);
          add_host(ipstr, host_timeout);
       }
    } else if (!(regexec(&ipmask_pat, patcopy, 0, NULL, 0))) { /* IPnet:netmask */
@@ -1179,7 +1181,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
          b2 = (hostip & 0x00ff0000) >> 16;
          b3 = (hostip & 0x0000ff00) >> 8;
          b4 = (hostip & 0x000000ff);
-         sprintf(ipstr, "%d.%d.%d.%d", b1,b2,b3,b4);
+         snprintf(ipstr, sizeof(ipstr), "%d.%d.%d.%d", b1,b2,b3,b4);
          add_host(ipstr, host_timeout);
       }
    } else if (!(regexec(&iprange_pat, patcopy, 0, NULL, 0))) { /* IPstart-IPend */
@@ -1206,7 +1208,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
          b2 = (i & 0x00ff0000) >> 16;
          b3 = (i & 0x0000ff00) >> 8;
          b4 = (i & 0x000000ff);
-         sprintf(ipstr, "%d.%d.%d.%d", b1,b2,b3,b4);
+         snprintf(ipstr, sizeof(ipstr), "%d.%d.%d.%d", b1,b2,b3,b4);
          add_host(ipstr, host_timeout);
       }
    } else {                             /* Single host or IP address */
@@ -1390,7 +1392,9 @@ find_host(host_entry **he, struct in_addr *addr,
  *	saddr	= Socket structure.
  *	tmo	= Select timeout in us.
  *
- *	Returns number of characters received, or -1 for timeout.
+ *	Returns:
+ *
+ *	None.
  */
 void
 recvfrom_wto(int s, unsigned char *buf, int len, struct sockaddr *saddr,
@@ -1408,6 +1412,15 @@ recvfrom_wto(int s, unsigned char *buf, int len, struct sockaddr *saddr,
    if (n < 0) {
       err_sys("select");
    } else if (n == 0) {
+/*
+ * For the BPF pcap implementation, we call pcap_dispatch() even if select
+ * times out. This is because on many BPF implementations, select() doesn't
+ * indicate if there is input waiting on a BPF device.
+ */
+#ifdef ARP_PCAP_BPF
+      if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) < 0)
+         err_sys("pcap_dispatch: %s\n", pcap_geterr(pcap_handle));
+#endif
       return;	/* Timeout */
    }
    if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) < 0)

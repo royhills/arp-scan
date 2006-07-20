@@ -53,6 +53,11 @@
 #include <net/route.h>
 #endif
 
+/* OpenBSD needs sys/param.h */
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+
 #ifdef HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
 #endif
@@ -138,7 +143,7 @@ link_open(const char *device) {
    handle = Malloc(sizeof(*handle));
    memset(handle, '\0', sizeof(*handle));
 
-   for (i=0; i<32; i++) {
+   for (i=0; i<32; i++) {	/* The limit of 32 is arbitary */
       snprintf(dev_file, sizeof(dev_file), "/dev/bpf%d", i);
       handle->fd = open(dev_file, O_WRONLY);
       if (handle->fd != -1 || errno != EBUSY)

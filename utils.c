@@ -287,7 +287,7 @@ printable(const unsigned char *string, size_t size) {
                *r++ = *cp;	/* Printable character */
             } else {
                *r++ = '\\';
-               sprintf(r, "%.3o", *cp);
+               snprintf(r, 4, "%.3o", *cp);
                r += 3;
             }
             break;
@@ -339,7 +339,7 @@ hexstring(const unsigned char *data, size_t size) {
    cp = data;
    r = result;
    for (i=0; i<size; i++) {
-      sprintf(r, "%.2x", *cp++);
+      snprintf(r, 3, "%.2x", *cp++);
       r += 2;
    }
    *r = '\0';

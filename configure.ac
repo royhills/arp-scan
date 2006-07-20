@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan], [1.4.3], [arp-scan@nta-monitor.com])
+AC_INIT([arp-scan], [1.4.4], [arp-scan@nta-monitor.com])
 AC_PREREQ(2.59)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -136,21 +136,29 @@ dnl Determine which link-layer sending functions to use
 dnl We base our choice on the operating system in $host_os
 case $host_os in
    *linux* )
-      AC_MSG_NOTICE([Host OS is $host_os; using packet socket link layer implementation.]);
+      AC_MSG_NOTICE([Using packet socket link layer implementation.]);
       AC_CHECK_HEADERS([sys/ioctl.h netpacket/packet.h net/if.h])
       AC_LIBOBJ([link-packet-socket])
       ;;
-   *freebsd* | *darwin* )
-      AC_MSG_NOTICE([Host OS is $host_os; using BPF link layer implementation.]);
-dnl FreeBSD 5.2 needs sys/socket.h included before net/if will compile and
-dnl sys/types.h for sys/sysctl.h and net/bpf.h
-      AC_CHECK_HEADERS([sys/ioctl.h fcntl.h net/if.h net/bpf.h sys/sysctl.h net/route.h net/if_dl.h],,,
+   *freebsd* | *darwin* | *openbsd* | *netbsd* )
+      AC_MSG_NOTICE([Using BPF link layer implementation.]);
+dnl We need to specify additional headers to include here, because several
+dnl BSD variants require certain headers to be included before others will
+dnl work.
+dnl FreeBSD 5.2 needs sys/socket.h included for net/if, and
+dnl needs sys/types.h for sys/sysctl.h and net/bpf.h
+dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
+      AC_CHECK_HEADERS([sys/ioctl.h fcntl.h net/if.h net/bpf.h sys/param.h sys/sysctl.h net/route.h net/if_dl.h],,,
       [
       #include <sys/types.h>
       #ifdef HAVE_SYS_SOCKET_H
       #include <sys/socket.h>
       #endif
+      #ifdef HAVE_SYS_PARAM_H
+      #include <sys/param.h>
+      #endif
       ])
+      AC_DEFINE(ARP_PCAP_BPF, 1, [Define to 1 if pcap uses BPF])
       AC_LIBOBJ([link-bpf])
       ;;
    * )
