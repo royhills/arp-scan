@@ -13,7 +13,8 @@ $Id$
 	  just the ARP payload.
 
 	* arp-scan.c: Modifications to support BPF link-layer.  This has been
-	  tested on FreeBSD 6.9 and OpenBSD 3.9.
+	  tested on FreeBSD 6.1, OpenBSD 3.9, NetBSD 3.0.1 and
+          Darwin 7.9.0 (MacOS 10.3.9).
 
 2006-07-11 Roy Hills <Roy.Hills@nta-monitor.com>
 

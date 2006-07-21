@@ -161,6 +161,8 @@ dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
       AC_DEFINE(ARP_PCAP_BPF, 1, [Define to 1 if pcap uses BPF])
       AC_LIBOBJ([link-bpf])
       ;;
+dnl   *solaris* )
+dnl   *cygwin* )
    * )
 dnl XXXX Change this to AC_MSG_ERROR before public release XXXX
       AC_MSG_NOTICE([Host operating system $host_os is not supported])

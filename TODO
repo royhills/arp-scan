@@ -4,9 +4,6 @@ Code tidy up: reduce the number of global variables.
 
 Additional ARP fingerprinting options, e.g. arpsha != srcaddr.
 
-Use libnet or another packet creation library to allow arp-scan to run on
-non-linux platforms.
-
 AC: arp-fingerprint shouldn't accept ranges like 10.0.0.0/24.
 
 Avoid double unmarshalling of packet data: once in callback, then again
@@ -19,4 +16,9 @@ will make the --srcaddr option much safer.
 
 Support libpcap0.7.
 
-Some OSes, e.g. OpenBSD, don't run man pages through tbl.
+Some OSes, e.g. OpenBSD and NetBSD, don't run man pages through tbl.
+
+Why does darwin 7.9 not have prototypes for pcap_datalink_val_to_name(),
+pcap_datalink_val_to_description() and pcap_setnonblock() even though the
+pcap library contains these functions?  arp-scan compiles with warnings, but
+runs OK.
