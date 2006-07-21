@@ -110,6 +110,10 @@
 #include <pcap.h>
 #endif
 
+#ifdef HAVE_SYS_IOCTL_H
+#include <sys/ioctl.h>
+#endif
+
 #include "hash.h"		/* Hash table functions */
 
 /* Defines */

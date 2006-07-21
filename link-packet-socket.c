@@ -41,10 +41,6 @@
 #include <net/if.h>
 #endif
 
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-
 static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
 /*

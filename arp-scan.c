@@ -221,6 +221,20 @@ main(int argc, char *argv[]) {
       err_msg("pcap_fileno: %s", pcap_geterr(pcap_handle));
    if ((pcap_setnonblock(pcap_handle, 1, errbuf)) < 0)
       err_msg("pcap_setnonblock: %s", errbuf);
+/*
+ * For the BPF pcap implementation, set the BPF device into immediate mode,
+ * otherwise it will buffer the responses.
+ */
+#ifdef ARP_PCAP_BPF
+#ifdef BIOCIMMEDIATE
+      {
+         unsigned int one = 1;
+
+         if (ioctl(pcap_fd, BIOCIMMEDIATE, &one) < 0)
+            err_sys("ioctl BIOCIMMEDIATE");
+      }
+#endif /* BIOCIMMEDIATE */
+#endif /* ARP_PCAP_BPF */
    if (pcap_lookupnet(if_name, &localnet, &netmask, errbuf) < 0) {
       memset(&localnet, '\0', sizeof(localnet));
       memset(&netmask, '\0', sizeof(netmask));

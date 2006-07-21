@@ -17,6 +17,6 @@ address of outgoing frames rather than changing the hardware address of the
 interface.  This should be trivial now that we are sending raw frames, and
 will make the --srcaddr option much safer.
 
-Why does select() on the BPF file descriptor not work on FreeBSD?
-
 Support libpcap0.7.
+
+Some OSes, e.g. OpenBSD, don't run man pages through tbl.

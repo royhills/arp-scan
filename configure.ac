@@ -48,7 +48,7 @@ AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_datalink_val_to_name])],
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h syslog.h unistd.h getopt.h pcap.h])
+AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h syslog.h unistd.h getopt.h pcap.h sys/ioctl.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -137,7 +137,7 @@ dnl We base our choice on the operating system in $host_os
 case $host_os in
    *linux* )
       AC_MSG_NOTICE([Using packet socket link layer implementation.]);
-      AC_CHECK_HEADERS([sys/ioctl.h netpacket/packet.h net/if.h])
+      AC_CHECK_HEADERS([netpacket/packet.h net/if.h])
       AC_LIBOBJ([link-packet-socket])
       ;;
    *freebsd* | *darwin* | *openbsd* | *netbsd* )
@@ -148,7 +148,7 @@ dnl work.
 dnl FreeBSD 5.2 needs sys/socket.h included for net/if, and
 dnl needs sys/types.h for sys/sysctl.h and net/bpf.h
 dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
-      AC_CHECK_HEADERS([sys/ioctl.h fcntl.h net/if.h net/bpf.h sys/param.h sys/sysctl.h net/route.h net/if_dl.h],,,
+      AC_CHECK_HEADERS([fcntl.h net/if.h net/bpf.h sys/param.h sys/sysctl.h net/route.h net/if_dl.h],,,
       [
       #include <sys/types.h>
       #ifdef HAVE_SYS_SOCKET_H

@@ -1,5 +1,20 @@
 $Id$
 
+2006-07-21 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* link-bpf.c: New file containing link-level sending functions
+	  for BPF as used by BSD OSes.
+
+	* link-packet-socket.c: Changed socket protocol from SOCK_DGRAM to
+	  SOCK_RAW, so the entire Ethernet frame including the header can
+          be controlled.
+
+	* arp-scan.c: Changed to build entire outgoing frame, rather than
+	  just the ARP payload.
+
+	* arp-scan.c: Modifications to support BPF link-layer.  This has been
+	  tested on FreeBSD 6.9 and OpenBSD 3.9.
+
 2006-07-11 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Removed unneeded gettimeofday() call in add_host().
