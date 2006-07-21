@@ -274,23 +274,6 @@ get_hardware_address(link_t *handle, unsigned char hw_address[]) {
 }
 
 /*
- *      set_hardware_address    -- Set the Ethernet MAC address associated
- *                                 with the given device.
- *      Inputs:
- *
- *      handle		The link layer handle
- *      hw_address      (output) the Ethernet MAC address
- *
- *      Returns:
- *
- *      None.
- */
-void
-set_hardware_address(link_t *handle, unsigned char hw_address[]) {
-   err_msg("set_hardware_address() not supported for BPF");
-}
-
-/*
  *      get_source_ip   -- Get address and mask associated with given interface
  *
  *      Inputs:

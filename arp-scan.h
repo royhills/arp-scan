@@ -217,7 +217,6 @@ struct in_addr *get_host_address(const char *, int, struct in_addr *, char **);
 const char *my_ntoa(struct in_addr);
 int get_source_ip(link_t *, uint32_t *);
 void get_hardware_address(link_t *, unsigned char []);
-void set_hardware_address(link_t *, unsigned char []);
 void marshal_arp_pkt(unsigned char *, ether_hdr *, arp_ether_ipv4 *, size_t *);
 void unmarshal_arp_pkt(const unsigned char *, ether_hdr *, arp_ether_ipv4 *);
 unsigned char *hex2data(const char *, size_t *);

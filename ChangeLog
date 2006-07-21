@@ -16,6 +16,14 @@ $Id$
 	  tested on FreeBSD 6.1, OpenBSD 3.9, NetBSD 3.0.1 and
           Darwin 7.9.0 (MacOS 10.3.9).
 
+	* arp-scan.c: Changed operation of the --srcaddr option.  Now it
+	  sets the hardware address in the frame header of outgoing packets
+	  without altering the address of the outgoing interface.
+
+	* link-packet-socket.c, link-bpf.c: Removed set_hardware_address()
+	  function, as this is no longer needed with the new operation of
+	  the --srcaddr option.
+
 2006-07-11 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Removed unneeded gettimeofday() call in add_host().

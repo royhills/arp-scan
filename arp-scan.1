@@ -227,11 +227,6 @@ Protocol Type	16	--prototype	Default is 0x0806
 The most commonly used outgoing Ethernet frame option is
 .BR --destaddr ,
 which sets the destination Ethernet address for the ARP packet.
-.B --srcaddr
-should be used with caution, because it changes the hardware address
-of the interface used by
-.B arp-scan
-which may affect other communications using this interface.
 .B --prototype
 is not often used, because it will cause the packet to be interpreted
 as a different Ethernet protocol.
@@ -420,19 +415,13 @@ This file provides the custom Ethernet MAC to vendor
 string mapping.
 .TP
 .B --srcaddr=<m> or -S <m>
-Set the local Ethernet MAC address to <m>
-This sets the hardware address of the interface used
-by arp-scan to the specified value, which causes the
-48-bit source address in the Ethernet frame header of
-outgoing frames, including the packets sent by
-arp-scan, to use this value.
-Note that this option does not allow you to set the
-source address in the Ethernet frame header to a
-different value from the interface address.
-Use this option with caution as it will change the
-hardware address of the interface, which may affect
-other communications using this interface. arp-scan
-does not restore the original address after completion.
+Set the source Ethernet MAC address to <m>.
+This sets the 48-bit hardware address in the Ethernet
+frame header for outgoing ARP packets.  It does not
+change the hardware address in the ARP packet, see
+--arpsha for details on how to change that address.
+The default is the Ethernet address of the outgoing
+interface.
 .TP
 .B --destaddr=<m> or -T <m>
 Send the packets to Ethernet MAC address <m>
@@ -449,6 +438,9 @@ alphabetic hex characters may be upper or lower case.
 .B --arpsha=<m> or -u <m>
 Use <m> as the ARP source Ethernet address
 This sets the 48-bit ar$sha field in the ARP packet
+It does not change the hardware address in the frame
+header, see --srcaddr for details on how to change
+that address.
 The default is the Ethernet address of the outgoing
 interface.
 .TP

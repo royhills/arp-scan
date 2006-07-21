@@ -149,28 +149,6 @@ get_hardware_address(link_t *handle, unsigned char hw_address[]) {
 }
 
 /*
- *      set_hardware_address    -- Set the Ethernet MAC address associated
- *                                 with the given device.
- *      Inputs:
- *
- *      handle		The link layer handle
- *      hw_address      (output) the Ethernet MAC address
- *
- *      Returns:
- *
- *      None.
- */
-void
-set_hardware_address(link_t *handle, unsigned char hw_address[]) {
-
-   memcpy(handle->ifr.ifr_ifru.ifru_hwaddr.sa_data, hw_address, ETH_ALEN);
-
-/* Set hardware address for specified interface */
-   if ((ioctl(handle->fd, SIOCSIFHWADDR, &(handle->ifr))) != 0)
-      err_sys("ioctl");
-}
-
-/*
  *      get_source_ip   -- Get address and mask associated with given interface
  *
  *      Inputs:

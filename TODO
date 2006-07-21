@@ -9,11 +9,6 @@ AC: arp-fingerprint shouldn't accept ranges like 10.0.0.0/24.
 Avoid double unmarshalling of packet data: once in callback, then again
 in display_packet().
 
-Change behaviour of --srcaddr option so that it changes the source hardware
-address of outgoing frames rather than changing the hardware address of the
-interface.  This should be trivial now that we are sending raw frames, and
-will make the --srcaddr option much safer.
-
 Support libpcap0.7.
 
 Some OSes, e.g. OpenBSD and NetBSD, don't run man pages through tbl.

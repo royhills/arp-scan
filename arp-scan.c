@@ -86,7 +86,6 @@ static unsigned char *padding=NULL;
 static size_t padding_len=0;
 static struct hash_control *hash_table;
 static int localnet_flag=0;		/* Scan local network */
-static unsigned char interface_mac[ETH_ALEN];	/* Belongs as auto in main() */
 
 int
 main(int argc, char *argv[]) {
@@ -119,6 +118,7 @@ main(int argc, char *argv[]) {
    int datalink;
    int get_addr_status = 0;
    link_t *link_handle;		/* Handle for link-layer functions */
+   unsigned char interface_mac[ETH_ALEN];
 /*
  *      Open syslog channel and log arguments if required.
  *      We must be careful here to avoid overflowing the arg_str buffer
@@ -179,18 +179,19 @@ main(int argc, char *argv[]) {
       err_sys("link_open");
    }
 /*
- *	Change source mac address if required.
- */
-   if (source_mac_flag) {
-      set_hardware_address(link_handle, source_mac);
-   }
-/*
- *	Obtain the MAC address for the selected interface, and if possible
- *	also obtain the IP address.
+ *	Obtain the MAC address for the selected interface, and use this
+ *	as default for the source hardware addresses in the frame header
+ *	and ARP packet if the user has not specified their values.
  */
    get_hardware_address(link_handle, interface_mac);
+   if (source_mac_flag == 0)
+      memcpy(source_mac, interface_mac, ETH_ALEN);
    if (arp_sha_flag == 0)
       memcpy(arp_sha, interface_mac, ETH_ALEN);
+/*
+ *	If the user has not specified the ARP source address, obtain the
+ *	interface IP address and use that as the default value.
+ */
    if (arp_spa_flag == 0) {
       get_addr_status = get_source_ip(link_handle, &arp_spa);
       if (get_addr_status == -1) {
@@ -717,7 +718,7 @@ send_packet(link_t *link_handle, host_entry *he,
  *	Construct Ethernet frame header
  */
    memcpy(frame_hdr.dest_addr, target_mac, ETH_ALEN);
-   memcpy(frame_hdr.src_addr, interface_mac, ETH_ALEN);
+   memcpy(frame_hdr.src_addr, source_mac, ETH_ALEN);
    frame_hdr.frame_type = htons(eth_pro);
 /*
  *	Construct the ARP Header.
@@ -923,19 +924,13 @@ usage(int status) {
    fprintf(stderr, "\n--macfile=<m> or -m <m>\tUse MAC/Vendor file <m>, default=%s/%s\n", DATADIR, MACFILENAME);
    fprintf(stderr, "\t\t\tThis file provides the custom Ethernet MAC to vendor\n");
    fprintf(stderr, "\t\t\tstring mapping.\n");
-   fprintf(stderr, "\n--srcaddr=<m> or -S <m> Set the local Ethernet MAC address to <m>\n");
-   fprintf(stderr, "\t\t\tThis sets the hardware address of the interface used\n");
-   fprintf(stderr, "\t\t\tby arp-scan to the specified value, which causes the\n");
-   fprintf(stderr, "\t\t\t48-bit source address in the Ethernet frame header of\n");
-   fprintf(stderr, "\t\t\toutgoing frames, including the packets sent by\n");
-   fprintf(stderr, "\t\t\tarp-scan, to use this value.\n");
-   fprintf(stderr, "\t\t\tNote that this option does not allow you to set the\n");
-   fprintf(stderr, "\t\t\tsource address in the Ethernet frame header to a\n");
-   fprintf(stderr, "\t\t\tdifferent value from the interface address.\n");
-   fprintf(stderr, "\t\t\tUse this option with caution as it will change the\n");
-   fprintf(stderr, "\t\t\thardware address of the interface, which may affect\n");
-   fprintf(stderr, "\t\t\tother communications using this interface. arp-scan\n");
-   fprintf(stderr, "\t\t\tdoes not restore the original address after completion.\n");
+   fprintf(stderr, "\n--srcaddr=<m> or -S <m> Set the source Ethernet MAC address to <m>.\n");
+   fprintf(stderr, "\t\t\tThis sets the 48-bit hardware address in the Ethernet\n");
+   fprintf(stderr, "\t\t\tframe header for outgoing ARP packets.  It does not\n");
+   fprintf(stderr, "\t\t\tchange the hardware address in the ARP packet, see\n");
+   fprintf(stderr, "\t\t\t--arpsha for details on how to change that address.\n");
+   fprintf(stderr, "\t\t\tThe default is the Ethernet address of the outgoing\n");
+   fprintf(stderr, "\t\t\tinterface.\n");
    fprintf(stderr, "\n--destaddr=<m> or -T <m> Send the packets to Ethernet MAC address <m>\n");
    fprintf(stderr, "\t\t\tThis sets the 48-bit destination address in the\n");
    fprintf(stderr, "\t\t\tEthernet frame header.\n");
@@ -948,6 +943,9 @@ usage(int status) {
    fprintf(stderr, "\t\t\talphabetic hex characters may be upper or lower case.\n");
    fprintf(stderr, "\n--arpsha=<m> or -u <m>\tUse <m> as the ARP source Ethernet address\n");
    fprintf(stderr, "\t\t\tThis sets the 48-bit ar$sha field in the ARP packet\n");
+   fprintf(stderr, "\t\t\tIt does not change the hardware address in the frame\n");
+   fprintf(stderr, "\t\t\theader, see --srcaddr for details on how to change\n");
+   fprintf(stderr, "\t\t\tthat address.\n");
    fprintf(stderr, "\t\t\tThe default is the Ethernet address of the outgoing\n");
    fprintf(stderr, "\t\t\tinterface.\n");
    fprintf(stderr, "\n--arptha=<m> or -w <m>\tUse <m> as the ARP target Ethernet address\n");
