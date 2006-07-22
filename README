@@ -3,21 +3,54 @@ $Id$
 Installation
 ------------
 
+You will need the make utility, an ANSI C compiler (for example gcc), the
+development header files and libraries, and libpcap version 0.8 or later.
+
+arp-scan uses automake and autoconf, so the typical installation process is:
+
+$ ./configure
+$ make
+$ make check
+$ make install
+
+You can pass various options to "configure" to control the build and
+installation process.  See the file INSTALL for more details.
+
 arp-scan is known to compile and run on the following platforms:
 
  1. Linux
+ 2. FreeBSD
+ 3. OpenBSD
+ 4. NetBSD
+ 5. MacOS X (Darwin)
 
-On all platforms, you will need the make utility, and ANSI C compiler (for
-example gcc), the development header files and libraries, and libpcap version
-0.8 or later.
+The ARP packets are sent using raw datalink access.  The mechanism for this
+varies between platforms, currently Packet Socket (Linux) and BPF (BSD) are
+supported.  It is planned to add support for Win32 and DLPI (Solaris) in
+future releases.
 
-The sections below give details on the requirements for each supported
-operating system.
+All platforms use libpcap (http://www.tcpdump.org/) to receive the ARP
+responses.
 
-Linux
+I decided to implement the sending functions directly rather than using libnet
+or libdnet because these libraries are not normally installed by default, and
+I want to minimise the need to install additional packages.  By contrast,
+libpcap is a standard package on most systems.
+
+
+Documentation
+-------------
+
+For usage information, including details of all the options, use:
+
+$ arp-scan --help
+
+More detailed documentation is available in the manual pages: arp-scan(1),
+arp-fingerprint(1), get-iab(1), get-oui(1) and mac-vendor(5).
 
 
 ARP Packet Format
+-----------------
 
 The ARP packet format is defined in RFC 826 "An Ethernet Address Resolution
 Protocol".  The diagram below shows the entire ARP packet, including the
@@ -64,22 +97,4 @@ Optional Padding:
 +--------+--------+...
 | Padding          ...
 +--------+--------+...
-
-
-Field           Bits      Option        Notes
------           ----      ------        -----
-
-Dest Address    48        --destaddr	Default is ff:ff:ff:ff:ff:ff
-Source Address  48        --srcaddr     Default is interface h/w address
-Protocol Type   16        --prototype	Default is 0x0806
-ar$hrd          16        --arphrd	Default is 1 (ARPHRD_ETHER)
-ar$pro          16        --arppro	Default is 0x0800
-ar$hln           8        --arphln	Default is 6 (ETH_ALEN)
-ar$pln           8        --arppln	Default is 4 (IPv4)
-ar$op           16        --arpop	Default is 1 (ARPOP_REQUEST)
-ar$sha          48        --arpsha	Default is interface h/w address
-ar$spa          32        --arpspa	Default is interface IP address
-ar$tha          48        --arptha	Default is zero (00:00:00:00:00:00)
-ar$tpa          32        None          Set to the target host IP address
-Padding         variable  --padding	i/f driver will pad to min frame length
 

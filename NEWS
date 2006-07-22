@@ -3,7 +3,26 @@ $Id$
 This file gives a brief overview of the major changes between each ether-scan
 release.  For more details please read the ChangeLog file.
 
-arp-scan 1.4:
+2006-07-22 arp-scan 1.5:
+
+* Reduced memory usage from 44 bytes per target to 28 bytes.  This reduces
+  the memory usage for a Class-B network from 2.75MB to 1.75MB, and a Class-A
+  network from 704MB to 448MB.
+
+* Reduced the startup time for large target ranges.  This reduces the startup
+  time for a Class-A network from 80 seconds to 15 seconds.
+
+* Added support for FreeBSD, OpenBSD, NetBSD and MacOS X (Darwin).
+
+* Improved operation of the --srcaddr option.  Now this will change the
+  source hardware address in the Ethernet header without changing the
+  interface address.
+
+* Additional fingerprints for arp-fingerprint.
+
+* Improved manual pages.
+
+2006-06-26 arp-scan 1.4:
 
 * Initial public release.  Source distribution only, which will compile and
   run on Linux.

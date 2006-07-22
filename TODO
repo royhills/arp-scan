@@ -9,7 +9,7 @@ AC: arp-fingerprint shouldn't accept ranges like 10.0.0.0/24.
 Avoid double unmarshalling of packet data: once in callback, then again
 in display_packet().
 
-Support libpcap0.7.
+Support libpcap0.7, which is used by some older distibutions.
 
 Some OSes, e.g. OpenBSD and NetBSD, don't run man pages through tbl.
 
@@ -17,3 +17,6 @@ Why does darwin 7.9 not have prototypes for pcap_datalink_val_to_name(),
 pcap_datalink_val_to_description() and pcap_setnonblock() even though the
 pcap library contains these functions?  arp-scan compiles with warnings, but
 runs OK.
+
+Add support for other common link-layer implementations: win32 and
+dlpi (Solaris and other SysV Unix).

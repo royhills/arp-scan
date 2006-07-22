@@ -1,5 +1,11 @@
 $Id$
 
+2006-07-22 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* configure.ac: Increased version number to 1.4.5.
+
+	* README: Added installation instructions.
+
 2006-07-21 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* link-bpf.c: New file containing link-level sending functions

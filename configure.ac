@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan], [1.4.4], [arp-scan@nta-monitor.com])
+AC_INIT([arp-scan], [1.4.5], [arp-scan@nta-monitor.com])
 AC_PREREQ(2.59)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -164,8 +164,7 @@ dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
 dnl   *solaris* )
 dnl   *cygwin* )
    * )
-dnl XXXX Change this to AC_MSG_ERROR before public release XXXX
-      AC_MSG_NOTICE([Host operating system $host_os is not supported])
+      AC_MSG_ERROR([Host operating system $host_os is not supported])
       ;;
 esac
 
