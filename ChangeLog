@@ -1,5 +1,10 @@
 $Id$
 
+2006-07-24 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* ieee-oui.txt, ieee-iab.txt: Updated IEEE OUI and IAB listings from
+	  IEEE website using get-oui and get-iab Perl scripts.
+
 2006-07-22 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* configure.ac: Increased version number to 1.4.5.

@@ -22,6 +22,8 @@ release.  For more details please read the ChangeLog file.
 
 * Improved manual pages.
 
+* Updated IEEE OUI and IAB files.
+
 2006-06-26 arp-scan 1.4:
 
 * Initial public release.  Source distribution only, which will compile and

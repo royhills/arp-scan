@@ -6,6 +6,12 @@ Installation
 You will need the make utility, an ANSI C compiler (for example gcc), the
 development header files and libraries, and libpcap version 0.8 or later.
 
+If you want to run the Perl scripts arp-fingerprint, get-oui and get-iab, you
+will need to have the Perl interpreter installed.  These scripts were tested
+on Perl 5.8, but will probably run on earlier versions of Perl 5 as well.
+In addition, for get-oui and get-iab, you will need the LWP::Simple Perl
+module.
+
 arp-scan uses automake and autoconf, so the typical installation process is:
 
 $ ./configure
@@ -18,11 +24,11 @@ installation process.  See the file INSTALL for more details.
 
 arp-scan is known to compile and run on the following platforms:
 
- 1. Linux
- 2. FreeBSD
- 3. OpenBSD
- 4. NetBSD
- 5. MacOS X (Darwin)
+ 1. Linux (tested on Debian Sarge)
+ 2. FreeBSD (tested on FreeBSD 6.1)
+ 3. OpenBSD (tested on OpenBSD 3.9)
+ 4. NetBSD (tested on NetBSD 3.0.1)
+ 5. MacOS X (Darwin) (tested on MacOS 10.3.9)
 
 The ARP packets are sent using raw datalink access.  The mechanism for this
 varies between platforms, currently Packet Socket (Linux) and BPF (BSD) are
@@ -45,12 +51,47 @@ For usage information, including details of all the options, use:
 
 $ arp-scan --help
 
-More detailed documentation is available in the manual pages: arp-scan(1),
+For more detailed documentation, see the manual pages: arp-scan(1),
 arp-fingerprint(1), get-iab(1), get-oui(1) and mac-vendor(5).
+
+
+Known Bugs
+----------
+
+1.  Tables in arp-scan man page don't display correctly on NetBSD and OpenBSD
+
+The man page for arp-scan contains tbl tables.  These tables display OK on
+Linux, FreeBSD and MacOS X, but do not display correctly on NetBSD or OpenBSD.
+This is presumably because these OSes don't run man pages through tbl by
+default, and don't recognise the first line of the man page: '\" t
+
+2.  MacOS 10.3 gives warnings about functions pcap_datalink_val_to_name(),
+pcap_datalink_val_to_description() and pcap_setnonblock() not being defined,
+but it links and runs OK.
+
+This appears to be due to MacOS 10.3 having libpcap 0.8 libraries, but only
+0.7 headers.
+
+3.  OpenBSD 3.9 gives warning about use of strcat()
+arp-scan.c:137: warning: strcat() is almost always misused, please use strlcat()
+The offending line reads:
+
+strncat(arg_str, " ", 1);
+
+This is using strncat, not strcat, and I think it is safe.
+
+4.  The Perl scripts arp-fingerprint, get-oui and get-iab assume that Perl is
+installed as /usr/bin/perl.  This fails for NetBSD 3.0.1, where it is installed
+in /usr/pkg/bin/perl instead.
+
+A workaround is to make /usr/bin/perl a symlink to /usr/pkg/bin/perl.
 
 
 ARP Packet Format
 -----------------
+
+This belongs in the man page, and will probably be moved there in a future
+release.
 
 The ARP packet format is defined in RFC 826 "An Ethernet Address Resolution
 Protocol".  The diagram below shows the entire ARP packet, including the
