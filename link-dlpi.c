@@ -33,6 +33,10 @@
 
 #include "arp-scan.h"
 
+#ifdef HAVE_SYS_DLPI_H
+#include <sys/dlpi.h>
+#endif
+
 static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
 /*
