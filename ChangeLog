@@ -1,5 +1,25 @@
 $Id$
 
+2006-07-26 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Released version 1.5.
+
+	  Tarball details:
+
+	  -rw-rw-r--  1 rsh nta 298917 2006-07-26 13:50 arp-scan-1.5.tar.gz
+	  85b0e04323ce3a423f60ab905a589856  arp-scan-1.5.tar.gz
+
+	  Version details:
+
+	  $Id$
+	  $Id$
+	  $Id$
+	  $Id$
+	  $Id$
+
+	* configure.ac: Incremented version number to 1.5.1 in preparation
+	  for post-1.5 changes.
+
 2006-07-24 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* ieee-oui.txt, ieee-iab.txt: Updated IEEE OUI and IAB listings from
