@@ -74,6 +74,7 @@ my $arpscan="arp-scan -N -q -r 1";
 # WinME		Windows ME on VMware
 # HP-UX 11	HP-UX B.11.00 A 9000/712 (PA-RISC)
 # PIX OS	PIX OS (unknown vsn) on Cisco PIX 525
+# PIX OS 5.2	PIX OS 5.2(9) on Cisco PIX 520
 # PIX OS 5.3	PIX OS 5.3(2) on Cisco PIX 520
 # PIX OS 6.0	PIX OS 6.0(4) on Cisco PIX 520
 # PIX OS 6.1	PIX OS 6.1(5) on Cisco PIX 520
@@ -97,7 +98,7 @@ my %fp_hash = (
    '10110110000' => 'NetBSD 2.0.2',
    '00010110011' => 'PIX OS 6.3', # dwk at 7663 in June 2006, Cisco PIX 525
    '01010110011' => 'PIX OS', # dwk at 7663 in June 2006, Cisco PIX 525
-   '10110111111' => 'PIX OS 5.3',
+   '10110111111' => 'PIX OS 5.2, 5.3',
    '11110111111' => 'PIX OS 6.0, 6.1, 6.2, ScreenOS 5.0 (transparent)',
    '00000110000' => 'Netware 6.5',
    '00010100000' => 'Unknown 1', # 14805 79.253 Cisco
