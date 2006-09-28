@@ -63,6 +63,7 @@ my $arpscan="arp-scan -N -q -r 1";
 # Solaris 10	Solaris 10 (x86) on VMware
 # ScreenOS 5.0	Juniper ScreenOS 5.0.0r9 on NetScreen 5XP
 # ScreenOS 5.1	Juniper ScreenOS 5.1.0r1.0 on NetScreen 5GT
+# ScreenOS 5.3	Juniper ScreenOS 5.3.0r4.0 on NetScreen 5GT
 # MacOS 10.4	MacOS 10.4.6 on powerbook G4
 # MacOS 10.3	MacOS 10.3.9 on imac G3
 # IRIX 6.5	IRIX64 IRIS 6.5 05190004 IP30 on SGI Octane
@@ -95,7 +96,7 @@ my %fp_hash = (
    '01010100000' => 'Linux 2.2, 2.4, 2.6, Vista', # Linux only if non-local IP is routed
    '00000100000' => 'Cisco IOS 11.2, 11.3, 12.0, 12.1, 12.2, 12.3',
    '11110110000' => 'Solaris 2.5.1, 2.6, 7, 8, 9, 10, HP-UX 11',
-   '01000111111' => 'ScreenOS 5.0, 5.1',
+   '01000111111' => 'ScreenOS 5.0, 5.1, 5.3',
    '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1, Minix 3',
    '11110100011' => 'MacOS 10.3, FreeBSD 4.3, IRIX 6.5',
    '10010100011' => 'SCO OS 5.0.7',
