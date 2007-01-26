@@ -1,5 +1,10 @@
 $Id$
 
+2007-01-26 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Updated ieee-oui.txt and ieee-iab.txt from the IEEE website
+	  using get-oui and get-iab Perl scripts.
+
 2006-07-26 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* Released version 1.5.
