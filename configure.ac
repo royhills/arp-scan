@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan], [1.5.1], [arp-scan@nta-monitor.com])
+AC_INIT([arp-scan], [1.5.2], [arp-scan@nta-monitor.com])
 AC_PREREQ(2.59)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -163,7 +163,7 @@ dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
       ;;
    *solaris* )
       AC_MSG_NOTICE([Using DLPI link layer implementation.]);
-      AC_CHECK_HEADERS([sys/dlpi.h])
+      AC_CHECK_HEADERS([sys/dlpi.h sys/dlpihdr.h sys/stat.h fcntl.h stropts.h sys/ioctl.h sys/sockio.h net/if.h])
       AC_LIBOBJ([link-dlpi])
       ;;
 dnl   *cygwin* )
