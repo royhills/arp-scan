@@ -87,11 +87,13 @@ my $arpscan="arp-scan -N -q -r 1";
 # PIX OS 6.1	PIX OS 6.1(5) on Cisco PIX 520
 # PIX OS 6.2	PIX OS 6.2(4) on Cisco PIX 520
 # PIX OS 6.3	PIX OS 6.3(5) on Cisco PIX 520
+# PIX OS 7.0	PIX OS 7.0(1) on Cisco PIX 515E
 # Vista		Windows Vista Beta 2 Build 5384 on VMware
 # Minix 3	Minix 3 1.2a on VMware
 # Nortel Contivity 6.00	Nortel Contivity v6.00 (VxWorks based)
 # AIX 4.3	IBM AIX Version 4.3 on RS/6000 7043-260
 # AIX 5.3	IBM AIX Version 5.3 on RS/6000 7043-260
+# Cisco VPN Concentrator 4.7	Cisco VPN Concentrator 3030 4.7.2E
 #
 my %fp_hash = (
    '11110100000' => 'FreeBSD 5.3, Win98, WinME, NT4, 2000, XP, 2003',
@@ -100,13 +102,13 @@ my %fp_hash = (
    '00000100000' => 'Cisco IOS 11.2, 11.3, 12.0, 12.1, 12.2, 12.3',
    '11110110000' => 'Solaris 2.5.1, 2.6, 7, 8, 9, 10, HP-UX 11',
    '01000111111' => 'ScreenOS 5.0, 5.1, 5.3',
-   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1, Minix 3',
+   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1, Minix 3, Cisco VPN Concentrator 4.7',
    '11110100011' => 'MacOS 10.3, FreeBSD 4.3, IRIX 6.5, AIX 4.3, AIX 5.3',
    '10010100011' => 'SCO OS 5.0.7',
    '10110100000' => 'Win 3.11, 95, NT 3.51',
    '11110000011' => '4.3 BSD, OpenBSD 3.1, OpenBSD 3.9, Nortel Contivity 6.00',
    '10110110000' => 'NetBSD 2.0.2',
-   '00010110011' => 'PIX OS 6.3', # dwk at 7663 in June 2006, Cisco PIX 525
+   '00010110011' => 'PIX OS 6.3, 7.0',
    '01010110011' => 'PIX OS', # dwk at 7663 in June 2006, Cisco PIX 525
    '10110111111' => 'PIX OS 5.1, 5.2, 5.3',
    '11110111111' => 'PIX OS 6.0, 6.1, 6.2, ScreenOS 5.0 (transparent)',
