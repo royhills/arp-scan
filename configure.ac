@@ -163,7 +163,15 @@ dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
       ;;
    *solaris* )
       AC_MSG_NOTICE([Using DLPI link layer implementation.]);
-      AC_CHECK_HEADERS([sys/dlpi.h sys/dlpihdr.h sys/stat.h fcntl.h stropts.h sys/ioctl.h sys/sockio.h net/if.h])
+dnl Solaris 9 needs sys/types.h and sys/socket.h included before net/if.h.
+      AC_CHECK_HEADERS([sys/dlpi.h sys/dlpihdr.h sys/stat.h fcntl.h stropts.h sys/ioctl.h sys/sockio.h net/if.h],,,
+      [
+      #include <sys/types.h>
+      #ifdef HAVE_SYS_SOCKET_H
+      #include <sys/socket.h>
+      #endif
+      ])
+      AC_DEFINE(ARP_PCAP_DLPI, 1, [Define to 1 if pcap uses DLPI])
       AC_LIBOBJ([link-dlpi])
       ;;
 dnl   *cygwin* )

@@ -65,7 +65,9 @@
 #include <net/if.h>
 #endif
 
-#define MAXDLBUF 8192
+/* Neal Nuckolls' sample code defines MAXDLBUF as 8192 longwords, but we use
+ * unsigned char for our buffers and so must multiply by four */
+#define MAXDLBUF 8192*4
 
 static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
@@ -164,7 +166,7 @@ dlpi_msg(int fd, union DL_primitives *dlp, int rlen, int flags, int ack,
 link_t *
 link_open(const char *device) {
    union DL_primitives *dlp;
-   uint32_t buf[MAXDLBUF];
+   unsigned char buf[MAXDLBUF];
    char *p;
    char dev[16];
    link_t *handle;
@@ -269,7 +271,7 @@ link_send(link_t *handle, const unsigned char *buf, size_t buflen) {
    struct strbuf ctl;
    struct strbuf data;
    struct eth_hdr *eth;
-   uint32_t ctlbuf[MAXDLBUF];
+   unsigned char ctlbuf[MAXDLBUF];
    int dlen;
 
    dlp = (union DL_primitives *)ctlbuf;
@@ -346,7 +348,7 @@ link_close(link_t *handle) {
 void
 get_hardware_address(link_t *handle, unsigned char hw_address[]) {
    union DL_primitives *dlp;
-   uint32_t buf[MAXDLBUF];
+   unsigned char buf[MAXDLBUF];
 
    dlp = (union DL_primitives*) buf;
    dlp->physaddr_req.dl_primitive = DL_PHYS_ADDR_REQ;
