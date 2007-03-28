@@ -45,3 +45,7 @@ B0C420	Bochs
 # Microsoft WLBS (Windows NT Load Balancing Service)
 # http://www.microsoft.com/technet/prodtechnol/acs/reskit/acrkappb.mspx
 02BF	Microsoft WLBS (last four octets are IP address)
+
+# Cisco HSRP (Hot Standby Routing Protocol)
+# 00-00-0c-07-ac-XX, where XX is the HSRP group number (0 to 255)
+00000C07AC	HSRP (last octet is group number)
