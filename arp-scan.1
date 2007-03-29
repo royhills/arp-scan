@@ -323,7 +323,7 @@ subsequent timeouts are multiplied by the backoff
 factor which is set with --backoff.
 .TP
 .B --interval=<n> or -i <n>
-Set minimum packet interval to <n> ms, default=0.
+Set minimum packet interval to <n> ms.
 This controls the outgoing bandwidth usage by limiting
 the rate at which packets can be sent.  The packet
 interval will be no smaller than this number.
@@ -333,7 +333,7 @@ The interval specified is in milliseconds by default,
 or in microseconds if "u" is appended to the value.
 .TP
 .B --bandwidth=<n> or -B <n>
-Set desired outbound bandwidth to <n>.
+Set desired outbound bandwidth to <n>, default=256000.
 The value is in bits per second by default.  If you
 append "K" to the value, then the units are kilobits
 per sec; and if you append "M" to the value, the

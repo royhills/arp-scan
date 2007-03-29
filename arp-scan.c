@@ -859,7 +859,7 @@ usage(int status) {
    fprintf(stderr, "\t\t\tThis timeout is for the first packet sent to each host.\n");
    fprintf(stderr, "\t\t\tsubsequent timeouts are multiplied by the backoff\n");
    fprintf(stderr, "\t\t\tfactor which is set with --backoff.\n");
-   fprintf(stderr, "\n--interval=<n> or -i <n> Set minimum packet interval to <n> ms, default=%d.\n", interval/1000);
+   fprintf(stderr, "\n--interval=<n> or -i <n> Set minimum packet interval to <n> ms.\n");
    fprintf(stderr, "\t\t\tThis controls the outgoing bandwidth usage by limiting\n");
    fprintf(stderr, "\t\t\tthe rate at which packets can be sent.  The packet\n");
    fprintf(stderr, "\t\t\tinterval will be no smaller than this number.\n");
@@ -867,7 +867,7 @@ usage(int status) {
    fprintf(stderr, "\t\t\teasier to use the --bandwidth option instead.\n");
    fprintf(stderr, "\t\t\tThe interval specified is in milliseconds by default,\n");
    fprintf(stderr, "\t\t\tor in microseconds if \"u\" is appended to the value.\n");
-   fprintf(stderr, "\n--bandwidth=<n> or -B <n> Set desired outbound bandwidth to <n>.\n");
+   fprintf(stderr, "\n--bandwidth=<n> or -B <n> Set desired outbound bandwidth to <n>, default=%d.\n", DEFAULT_BANDWIDTH);
    fprintf(stderr, "\t\t\tThe value is in bits per second by default.  If you\n");
    fprintf(stderr, "\t\t\tappend \"K\" to the value, then the units are kilobits\n");
    fprintf(stderr, "\t\t\tper sec; and if you append \"M\" to the value, the\n");

@@ -1,5 +1,12 @@
 $Id$
 
+2007-03-29 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Change help output, so we display the default value for
+	  the --bandwidth option, and don't display it for the --interval
+	  option (as the latter will always be zero because we use bandwidth
+	  by default).  Updated arp-scan.1 manpage with the new output.
+
 2007-02-15 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* link-dlpi.c: Wrote link-level functions for DLPI.  Compiles on

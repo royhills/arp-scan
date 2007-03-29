@@ -25,3 +25,5 @@ Alter the shebang line for the Perl scripts if /usr/bin/perl doesn't exist,
 but there is a Perl in one of the other standard locations.  This is mainly
 for NetBSD where pkg_add installs Perl as /usr/pkg/bin/perl and doesn't
 make /usr/bin/perl a symlink to this.
+
+Add support for Token Ring.
