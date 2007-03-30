@@ -1,5 +1,9 @@
 $Id$
 
+Note: This README file is no longer being actively maintained.  Please refer
+to the arp-scan wiki at http://www.nta-monitor.com/wiki/ for up-to-date
+information about installing and using arp-scan.
+
 Installation
 ------------
 
@@ -46,6 +50,9 @@ libpcap is a standard package on most systems.
 
 Documentation
 -------------
+
+The primary source of documentation is the arp-scan wiki at
+http://www.nta-monitor.com/wiki/
 
 For usage information, including details of all the options, use:
 

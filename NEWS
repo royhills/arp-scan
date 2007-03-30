@@ -3,6 +3,16 @@ $Id$
 This file gives a brief overview of the major changes between each ether-scan
 release.  For more details please read the ChangeLog file.
 
+arp-scan 1.5.2:
+
+* arp-scan wiki at http://www.nta-monitor.com/wiki/
+  This contains detailed documentation on arp-scan, and is intended to be
+  the primary documentation resource.
+
+* Many new arp-fingerprint patterns for ARP fingerprinting.
+
+* Updated IEEE OUI and IAB MAC/Vendor files.
+
 2006-07-22 arp-scan 1.5:
 
 * Reduced memory usage from 44 bytes per target to 28 bytes.  This reduces
