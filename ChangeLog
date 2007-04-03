@@ -1,5 +1,12 @@
 $Id$
 
+2007-04-03 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Add ioctl to reduce the bufmod timeout to zero for
+	  Solaris (DLPI).  This prevents buffering, and ensures that packets
+	  are available immediately.  This allows arp-scan to work on
+	  Solaris (tested on Solaris/SPARC 2.9 with Libpcap 0.9.5).
+
 2007-03-29 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Change help output, so we display the default value for

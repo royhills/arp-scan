@@ -3,11 +3,13 @@ $Id$
 This file gives a brief overview of the major changes between each ether-scan
 release.  For more details please read the ChangeLog file.
 
-arp-scan 1.5.2:
+arp-scan 1.5.3:
 
 * arp-scan wiki at http://www.nta-monitor.com/wiki/
   This contains detailed documentation on arp-scan, and is intended to be
   the primary documentation resource.
+
+* Added support for Sun Solaris.  Tested on Solaris 9 (SPARC).
 
 * Many new arp-fingerprint patterns for ARP fingerprinting.
 
@@ -20,9 +22,9 @@ arp-scan 1.5.2:
   network from 704MB to 448MB.
 
 * Reduced the startup time for large target ranges.  This reduces the startup
-  time for a Class-A network from 80 seconds to 15 seconds.
+  time for a Class-A network from 80 seconds to 15 seconds on a Compaq laptop with 1.4GHz CPU.
 
-* Added support for FreeBSD, OpenBSD, NetBSD and MacOS X (Darwin).
+* Added support for FreeBSD, OpenBSD, NetBSD and MacOS X (Darwin). arp-scan will probably also work on other operating systems that implement BPF, but only those listed have been tested.
 
 * Improved operation of the --srcaddr option.  Now this will change the
   source hardware address in the Ethernet header without changing the

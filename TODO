@@ -9,7 +9,19 @@ AC: arp-fingerprint shouldn't accept ranges like 10.0.0.0/24.
 Avoid double unmarshalling of packet data: once in callback, then again
 in display_packet().
 
-Support libpcap0.7, which is used by some older distibutions.
+Support libpcap0.7, which is used by some older distributions.
+The following functions were added in 0.8.  Those marked with "*" are used by
+arp-scan:
+
+* pcap_lookupnet()
+pcap_next_ex()
+pcap_breakloop()
+pcap_dump_flush()
+pcap_list_datalinks()
+pcap_set_datalink()
+pcap_lib_version()
+* pcap_datalink_val_to_name()
+pcap_datalink_name_to_val()
 
 Some OSes, e.g. OpenBSD and NetBSD, don't run man pages through tbl.
 
@@ -18,8 +30,7 @@ pcap_datalink_val_to_description() and pcap_setnonblock() even though the
 pcap library contains these functions?  arp-scan compiles with warnings, but
 runs OK.
 
-Add support for other common link-layer implementations: win32 and
-dlpi (Solaris and other SysV Unix).
+Add support for win32 link-layer send and receive.
 
 Alter the shebang line for the Perl scripts if /usr/bin/perl doesn't exist,
 but there is a Perl in one of the other standard locations.  This is mainly
@@ -27,3 +38,8 @@ for NetBSD where pkg_add installs Perl as /usr/pkg/bin/perl and doesn't
 make /usr/bin/perl a symlink to this.
 
 Add support for Token Ring.
+
+Support the libpcap sending function pcap_sendpacket() or pcap_inject() when
+they are supported by the pcap library.
+
+User pcap_get_selectable_fd() to get the file descriptor for select().

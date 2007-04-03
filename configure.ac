@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan], [1.5.2], [arp-scan@nta-monitor.com])
+AC_INIT([arp-scan], [1.5.3], [arp-scan@nta-monitor.com])
 AC_PREREQ(2.59)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -164,7 +164,7 @@ dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
    *solaris* )
       AC_MSG_NOTICE([Using DLPI link layer implementation.]);
 dnl Solaris 9 needs sys/types.h and sys/socket.h included before net/if.h.
-      AC_CHECK_HEADERS([sys/dlpi.h sys/dlpihdr.h sys/stat.h fcntl.h stropts.h sys/ioctl.h sys/sockio.h net/if.h],,,
+      AC_CHECK_HEADERS([sys/dlpi.h sys/dlpihdr.h sys/stat.h fcntl.h stropts.h sys/ioctl.h sys/sockio.h net/if.h sys/bufmod.h],,,
       [
       #include <sys/types.h>
       #ifdef HAVE_SYS_SOCKET_H

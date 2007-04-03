@@ -114,6 +114,12 @@
 #include <sys/ioctl.h>
 #endif
 
+#ifdef ARP_PCAP_DLPI
+#ifdef HAVE_SYS_BUFMOD_H
+#include <sys/bufmod.h>
+#endif
+#endif
+
 #include "hash.h"		/* Hash table functions */
 
 /* Defines */

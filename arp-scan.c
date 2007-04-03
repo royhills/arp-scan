@@ -236,6 +236,19 @@ main(int argc, char *argv[]) {
       }
 #endif /* BIOCIMMEDIATE */
 #endif /* ARP_PCAP_BPF */
+/*
+ * For the DLPI pcap implementation on Solaris, set the bufmod timeout to
+ * zero.  This has the side-effect tof setting the chink size to zero as
+ * well, so bufmod will pass all incoming messages on immediately.
+ */
+#ifdef ARP_PCAP_DLPI
+   {
+      struct timeval time_zero = {0, 0};
+
+      if (ioctl(pcap_fd, SBIOCSTIME, &time_zero) < 0)
+         err_sys("ioctl SBIOCSTIME");
+   }
+#endif
    if (pcap_lookupnet(if_name, &localnet, &netmask, errbuf) < 0) {
       memset(&localnet, '\0', sizeof(localnet));
       memset(&netmask, '\0', sizeof(netmask));
