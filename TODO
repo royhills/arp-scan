@@ -4,8 +4,6 @@ Code tidy up: reduce the number of global variables.
 
 Additional ARP fingerprinting options, e.g. arpsha != srcaddr.
 
-AC: arp-fingerprint shouldn't accept ranges like 10.0.0.0/24.
-
 Avoid double unmarshalling of packet data: once in callback, then again
 in display_packet().
 
@@ -42,4 +40,6 @@ Add support for Token Ring.
 Support the libpcap sending function pcap_sendpacket() or pcap_inject() when
 they are supported by the pcap library.
 
-User pcap_get_selectable_fd() to get the file descriptor for select().
+Use pcap_get_selectable_fd() to get the file descriptor for select().
+
+WARNING: inet_pton failed for "mercury.nta-monitor.com" - target ignored: Resource temporarily unavailable

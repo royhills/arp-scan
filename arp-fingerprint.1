@@ -8,7 +8,17 @@ arp-fingerprint \- Fingerprint a system using ARP
 .RI [ options ]
 .I target
 .PP
-The target should be specified as a single IP address.  You cannot specify multiple targets, IP networks or ranges.
+The target should be specified as a single IP address or hostname.  You cannot specify multiple targets, IP networks or ranges.
+.PP
+If you use an IP address for the target, you can use the
+.B -o
+option to pass the
+.B --numeric
+option to
+.BR arp-scan ,
+which will prevent it from attempting DNS lookups.  This can speed up the
+fingerprinting process, especially on systems with a slow or faulty DNS
+configuration.
 .SH DESCRIPTION
 .B arp-fingerprint
 fingerprints the specified target host using the ARP protocol.
@@ -85,7 +95,8 @@ Display verbose progress messages.
 .B -o <option-string>
 Pass specified options to arp-scan. You need to enclose the options
 string in quotes if it contains spaces. e.g.
--o "-I eth1".
+-o "-I eth1".  The commonly used options are --interface (-I) and --numeric
+(-N).
 .SH EXAMPLES
 .nf
 $ arp-fingerprint 192.168.0.1
@@ -93,7 +104,7 @@ $ arp-fingerprint 192.168.0.1
 .fi
 .PP
 .nf
-$ arp-fingerprint -o "-I eth1" 192.168.0.202
+$ arp-fingerprint -o "-N -I eth1" 192.168.0.202
 192.168.0.202 11110100000     FreeBSD 5.3, Win98, WinME, NT4, 2000, XP, 2003
 .fi
 .SH NOTES

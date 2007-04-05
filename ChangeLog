@@ -1,5 +1,16 @@
 $Id$
 
+2007-04-04 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-fingerprint: Check that the target host specification is not
+	  an IP network or range, and terminate with an error message if it
+	  is.  Some users have mistakenly tried to use arp-fingerprint against
+	  a network, and I want to give a better error message in these cases.
+
+	* arp-fingerprint: Remove the default "-N" from the arp-scan command
+	  line as it is valid to use a hostname.  Modified the associated
+	  manpage so it agrees with this change.
+
 2007-04-03 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Add ioctl to reduce the bufmod timeout to zero for

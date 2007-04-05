@@ -32,7 +32,7 @@ use warnings;
 use strict;
 use Getopt::Std;
 #
-my $arpscan="arp-scan -N -q -r 1";
+my $arpscan="arp-scan -q -r 1";
 #
 # Hash of known fingerprints
 #
@@ -150,6 +150,14 @@ if ($#ARGV != 0) {
    die "$usage\n";
 }
 my $target=shift;
+#
+# Check that the target is not an IP range or network.
+#
+if ($target =~ /\d+\.\d+\.\d+\.\d+-\d+\.\d+\.\d+\.\d+/ ||
+    $target =~ /\d+\.\d+\.\d+\.\d+\/\d+/ ||
+    $target =~ /\d+\.\d+\.\d+\.\d+:\d+\.\d+\.\d+\.\d+/) {
+   die "argument must be a single IP address or hostname\n";
+}
 #
 # Check that the system responds to an arp-scan with no options.
 # If it does, then fingerprint the target.
