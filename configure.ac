@@ -27,7 +27,10 @@ dnl Just about everything will need pcap.
 AC_SEARCH_LIBS([gethostbyname], [nsl])
 AC_SEARCH_LIBS([socket], [socket])
 AC_SEARCH_LIBS([pcap_open_live], [pcap], ,
-   AC_MSG_ERROR([Cannot find libpcap library containing pcap_open_live]))
+   [
+   AC_MSG_NOTICE([Cannot find pcap library containing pcap_open_live])
+   AC_MSG_ERROR([Check that you have libpcap version 0.8 or later installed])
+   ])
 
 dnl Check that the pcap library contains pcap_datalink_val_to_name.
 dnl This was introduced in version 0.8, and our application requires it.

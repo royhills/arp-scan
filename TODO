@@ -22,6 +22,12 @@ pcap_lib_version()
 pcap_datalink_name_to_val()
 
 Some OSes, e.g. OpenBSD and NetBSD, don't run man pages through tbl.
+There is disagreement about what the first line in the manpage should be.
+Solaris 9 says in man(1):
+'\" X
+Linux sarge says in groff_man(7):
+.\" word
+In all cases, the letters in word are "e" for eqn, "r" for refer, "t" for tbl.
 
 Why does darwin 7.9 not have prototypes for pcap_datalink_val_to_name(),
 pcap_datalink_val_to_description() and pcap_setnonblock() even though the
@@ -42,4 +48,5 @@ they are supported by the pcap library.
 
 Use pcap_get_selectable_fd() to get the file descriptor for select().
 
-WARNING: inet_pton failed for "mercury.nta-monitor.com" - target ignored: Resource temporarily unavailable
+arp-scan.o(.text+0x11c6): In function `main':
+/home/test/arp-scan-1.5.3/arp-scan.c:137: warning: strcat() is almost always misused, please use strlcat()

@@ -1,5 +1,5 @@
 /*
- * The ARP Scanner (arp-scan) is Copyright (C) 2005-2006 Roy Hills,
+ * The ARP Scanner (arp-scan) is Copyright (C) 2005-2007 Roy Hills,
  * NTA Monitor Ltd.
  *
  * This program is free software; you can redistribute it and/or

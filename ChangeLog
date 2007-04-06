@@ -1,5 +1,19 @@
 $Id$
 
+2007-04-05 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Check the return status of pcap_dispatch() against -1
+	  rather than < 0 to check for error because the use of pcap_breakloop
+	  results in a return status of -2, and this is not an error.  Even
+	  though we don't use pcap_breakloop, we should still behave correctly
+	  if it used in the future.
+
+	* arp-scan.c: Check return status of inet_pton() seperately against
+          < 0, which indicates and error, and against == 0, which indicates
+	  that the string is not a valid address.  Previously we handled these
+	  together with the comparison <= 0.  Also return from add_host()
+	  immediately if the host lookup fails.
+
 2007-04-04 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-fingerprint: Check that the target host specification is not

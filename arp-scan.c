@@ -1,5 +1,5 @@
 /*
- * The ARP Scanner (arp-scan) is Copyright (C) 2005-2006 Roy Hills,
+ * The ARP Scanner (arp-scan) is Copyright (C) 2005-2007 Roy Hills,
  * NTA Monitor Ltd.
  *
  * This program is free software; you can redistribute it and/or
@@ -394,7 +394,7 @@ main(int argc, char *argv[]) {
  *      Check that we have at least one entry in the list.
  */
    if (!num_hosts)
-      err_msg("No hosts to process.");
+      err_msg("ERROR: No hosts to process.");
 /*
  *      Create and initialise array of pointers to host entries.
  */
@@ -1268,14 +1268,19 @@ add_host(const char *host_name, unsigned host_timeout) {
 
    if (numeric_flag) {
       result = inet_pton(AF_INET, host_name, &addr);
-      if (result <= 0)
-         warn_sys("WARNING: inet_pton failed for \"%s\" - target ignored",
-                  host_name);
+      if (result < 0) {
+         err_sys("ERROR: inet_pton failed for %s", host_name);
+      } else if (result == 0) {
+         warn_msg("WARNING: \"%s\" is not a valid IPv4 address - target ignored");
+         return;
+      }
    } else {
       hp = get_host_address(host_name, AF_INET, &addr, &ga_err_msg);
-      if (hp == NULL)
+      if (hp == NULL) {
          warn_msg("WARNING: get_host_address failed for \"%s\": %s - target ignored",
                   host_name, ga_err_msg);
+         return;
+      }
    }
 
    if (!num_left) {	/* No entries left, allocate some more */
@@ -1443,12 +1448,12 @@ recvfrom_wto(int s, unsigned char *buf, int len, struct sockaddr *saddr,
  * indicate if there is input waiting on a BPF device.
  */
 #ifdef ARP_PCAP_BPF
-      if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) < 0)
+      if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) == -1)
          err_sys("pcap_dispatch: %s\n", pcap_geterr(pcap_handle));
 #endif
       return;	/* Timeout */
    }
-   if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) < 0)
+   if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) == -1)
       err_sys("pcap_dispatch: %s\n", pcap_geterr(pcap_handle));
 }
 
@@ -1759,7 +1764,7 @@ process_options(int argc, char *argv[]) {
 void
 arp_scan_version (void) {
    fprintf(stderr, "%s\n\n", PACKAGE_STRING);
-   fprintf(stderr, "Copyright (C) 2005-2006 Roy Hills, NTA Monitor Ltd.\n");
+   fprintf(stderr, "Copyright (C) 2005-2007 Roy Hills, NTA Monitor Ltd.\n");
    fprintf(stderr, "arp-scan comes with NO WARRANTY to the extent permitted by law.\n");
    fprintf(stderr, "You may redistribute copies of arp-scan under the terms of the GNU\n");
    fprintf(stderr, "General Public License.\n");
