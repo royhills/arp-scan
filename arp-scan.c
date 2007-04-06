@@ -98,7 +98,6 @@ main(int argc, char *argv[]) {
    ARP_UINT64 loop_timediff;    /* Time since last packet sent in us */
    ARP_UINT64 host_timediff; /* Time since last pkt sent to this host (us) */
    int arg;
-   int arg_str_space;           /* Used to avoid buffer overruns when copying */
    struct timeval last_packet_time;     /* Time last packet was sent */
    int req_interval;            /* Requested per-packet interval */
    int cum_err=0;               /* Cumulative timing error */
@@ -121,22 +120,14 @@ main(int argc, char *argv[]) {
    unsigned char interface_mac[ETH_ALEN];
 /*
  *      Open syslog channel and log arguments if required.
- *      We must be careful here to avoid overflowing the arg_str buffer
- *      which could result in a buffer overflow vulnerability.  That's why
- *      we use strncat and keep track of the remaining buffer space.
  */
 #ifdef SYSLOG
    openlog("arp-scan", LOG_PID, SYSLOG_FACILITY);
    arg_str[0] = '\0';
-   arg_str_space = MAXLINE;     /* Amount of space in the arg_str buffer */
    for (arg=0; arg<argc; arg++) {
-      arg_str_space -= strlen(argv[arg]);
-      if (arg_str_space > 0) {
-         strncat(arg_str, argv[arg], (size_t) arg_str_space);
-         if (arg < (argc-1)) {
-            strncat(arg_str, " ", 1);
-            arg_str_space--;
-         }
+      strlcat(arg_str, argv[arg], sizeof(arg_str));
+      if (arg < (argc-1)) {
+         strlcat(arg_str, " ", sizeof(arg_str));
       }
    }
    info_syslog("Starting: %s", arg_str);
@@ -1108,7 +1099,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
  */
    string_len=strlen(pattern)+1;
    patcopy=Malloc(string_len);
-   strncpy(patcopy, pattern, string_len);
+   strlcpy(patcopy, pattern, string_len);
 
    if (!(regexec(&ipslash_pat, patcopy, 0, NULL, 0))) { /* IPnet/bits */
 /*
@@ -1614,7 +1605,7 @@ process_options(int argc, char *argv[]) {
          int result;
 
          case 'f':	/* --file */
-            strncpy(filename, optarg, MAXLINE);
+            strlcpy(filename, optarg, sizeof(filename));
             filename_flag=1;
             break;
          case 'h':	/* --help */
@@ -1627,7 +1618,7 @@ process_options(int argc, char *argv[]) {
             timeout=Strtoul(optarg, 10);
             break;
          case 'i':	/* --interval */
-            strncpy(interval_str, optarg, MAXLINE);
+            strlcpy(interval_str, optarg, sizeof(interval_str));
             interval_len=strlen(interval_str);
             if (interval_str[interval_len-1] == 'u') {
                interval=Strtoul(interval_str, 10);
@@ -1667,7 +1658,7 @@ process_options(int argc, char *argv[]) {
             numeric_flag=1;
             break;
          case 'B':      /* --bandwidth */
-            strncpy(bandwidth_str, optarg, MAXLINE);
+            strlcpy(bandwidth_str, optarg, sizeof(bandwidth_str));
             bandwidth_len=strlen(bandwidth_str);
             if (bandwidth_str[bandwidth_len-1] == 'M') {
                bandwidth=1000000 * Strtoul(bandwidth_str, 10);
@@ -1678,13 +1669,13 @@ process_options(int argc, char *argv[]) {
             }
             break;
          case 'O':	/* --ouifile */
-            strncpy(ouifilename, optarg, MAXLINE);
+            strlcpy(ouifilename, optarg, sizeof(ouifilename));
             break;
          case 'F':	/* --iabfile */
-            strncpy(iabfilename, optarg, MAXLINE);
+            strlcpy(iabfilename, optarg, sizeof(iabfilename));
             break;
          case 'm':	/* --macfile */
-            strncpy(macfilename, optarg, MAXLINE);
+            strlcpy(macfilename, optarg, sizeof(macfilename));
             break;
          case 's':	/* --arpspa */
             arp_spa_flag = 1;
@@ -1969,14 +1960,14 @@ unmarshal_arp_pkt(const unsigned char *buffer, ether_hdr *frame_hdr,
  *	Inputs:
  *
  *	table		The handle of the hash table
- *	filename	The name of the file containing the mappings
+ *	map_filename	The name of the file containing the mappings
  *
  *	Returns:
  *
  *	The number of entries added to the hash table.
  */
 int
-add_mac_vendor(struct hash_control *table, const char *filename) {
+add_mac_vendor(struct hash_control *table, const char *map_filename) {
    static int first_call=1;
    FILE *fp;	/* MAC/Vendor file handle */
    static const char *oui_pat_str = "([^\t]+)\t[\t ]*([^\t\r\n]+)";
@@ -2007,8 +1998,8 @@ add_mac_vendor(struct hash_control *table, const char *filename) {
 /*
  *	Open the file.
  */
-   if ((fp = fopen(filename, "r")) == NULL) {
-      warn_sys("WARNING: Cannot open MAC/Vendor file %s", filename);
+   if ((fp = fopen(map_filename, "r")) == NULL) {
+      warn_sys("WARNING: Cannot open MAC/Vendor file %s", map_filename);
       return 0;
    }
    line_count=0;
@@ -2031,6 +2022,11 @@ add_mac_vendor(struct hash_control *table, const char *filename) {
          data_len = pmatch[2].rm_eo - pmatch[2].rm_so;
          key=Malloc(key_len+1);
          data=Malloc(data_len+1);
+/*
+ * We cannot use strlcpy because the source is not guaranteed to be null
+ * terminated.  Therefore we use strncpy, specifying one less that the total
+ * length, and manually null terminate the destination.
+ */
          strncpy(key, line+pmatch[1].rm_so, key_len);
          key[key_len] = '\0';
          strncpy(data, line+pmatch[2].rm_so, data_len);

@@ -1,5 +1,18 @@
 $Id$
 
+2007-04-06 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* configure.ac: Added checks for strlcat and strlcpy, with
+	  replacement functions using the OpenBSD implementations if they are
+	  not present.
+
+	* strlcat.c, strlcpy.c: New source files from the OpenBSD source at
+	  http://www.openbsd.org/cgi-bin/cvsweb/src/lib/libc/string
+
+	* *.c: replaced most calls to strcat and strncat with strlcat, and
+	  calls to strcpy and strncpy with strlcpy.  Two calls to strncpy
+	  remain because the source strings are not null terminated.
+
 2007-04-05 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Check the return status of pcap_dispatch() against -1

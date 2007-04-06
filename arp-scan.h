@@ -193,6 +193,13 @@ typedef struct link_handle link_t;
 
 /* Functions */
 
+#ifndef HAVE_STRLCAT
+size_t strlcat(char *dst, const char *src, size_t siz);
+#endif
+#ifndef HAVE_STRLCPY
+size_t strlcpy(char *dst, const char *src, size_t siz);
+#endif
+
 void err_sys(const char *, ...);
 void warn_sys(const char *, ...);
 void err_msg(const char *, ...);

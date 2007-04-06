@@ -152,7 +152,7 @@ link_open(const char *device) {
    }
 
    memset(&ifr, '\0', sizeof(ifr));
-   strncpy(ifr.ifr_name, device, sizeof(ifr.ifr_name));
+   strlcpy(ifr.ifr_name, device, sizeof(ifr.ifr_name));
 
    if ((ioctl(handle->fd, BIOCSETIF, &ifr)) < 0) {
       free(handle);
@@ -168,7 +168,7 @@ link_open(const char *device) {
    }
 #endif
 
-   strncpy(handle->device, device, sizeof(handle->device));
+   strlcpy(handle->device, device, sizeof(handle->device));
    
    return handle;
 }

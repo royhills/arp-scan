@@ -110,7 +110,7 @@ link_match_ppa(link_t *handle, const char *device) {
    int len;
    int ppa;
 
-   strcpy(buf, "dl_ifnames");
+   strlcpy(buf, "dl_ifnames", sizeof(buf));
 
    if ((len = strioctl(handle->fd, ND_GET, sizeof(buf), buf)) < 0)
       return -1;
@@ -204,7 +204,7 @@ link_open(const char *device) {
    }
 #endif
    memset(&(handle->ifr), 0, sizeof(struct ifreq));
-   strncpy(handle->ifr.ifr_name, device, sizeof(handle->ifr.ifr_name));
+   strlcpy(handle->ifr.ifr_name, device, sizeof(handle->ifr.ifr_name));
    dlp = (union DL_primitives *)buf;
    dlp->info_req.dl_primitive = DL_INFO_REQ;
 

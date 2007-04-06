@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan], [1.5.3], [arp-scan@nta-monitor.com])
+AC_INIT([arp-scan], [1.5.4], [arp-scan@nta-monitor.com])
 AC_PREREQ(2.59)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -195,6 +195,16 @@ dnl Do we have inet_aton?  Most systems do, but some e.g. Solaris don't
 dnl If we don't have it, then use Russ Allbery's implementation as a
 dnl replacement function.
 AC_CHECK_FUNC(inet_aton, , [ AC_LIBOBJ(inet_aton) ])
+
+dnl Check for strlcat and strlcpy.  If we don't have them, use the replacement
+dnl functions from OpenBSD.  Most modern C libraries have these functions,
+dnl but some such as as glibc don't.
+AC_CHECK_FUNC([strlcat],
+              [AC_DEFINE(HAVE_STRLCAT, 1, [Define to 1 if the C library includes the strlcat function])],
+              [AC_LIBOBJ(strlcat)])
+AC_CHECK_FUNC([strlcpy],
+              [AC_DEFINE(HAVE_STRLCPY, 1, [Define to 1 if the C library includes the strlcpy function])],
+              [AC_LIBOBJ(strlcpy)])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

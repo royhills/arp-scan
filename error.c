@@ -108,7 +108,7 @@ err_print (int errnoflag, int level, const char *fmt, va_list ap) {
    n=strlen(buf);
    if (errnoflag)
      snprintf(buf+n, MAXLINE-n, ": %s", strerror(errno_save));
-   strcat(buf, "\n");
+   strlcat(buf, "\n", sizeof(buf));
 
    if (level != 0) {
       syslog(level, "%s", buf);

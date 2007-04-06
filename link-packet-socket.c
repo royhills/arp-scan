@@ -74,7 +74,7 @@ link_open(const char *device) {
       free(handle);
       return NULL;
    }
-   strncpy(handle->ifr.ifr_name, device, sizeof(handle->ifr.ifr_name));
+   strlcpy(handle->ifr.ifr_name, device, sizeof(handle->ifr.ifr_name));
    if ((ioctl(handle->fd, SIOCGIFINDEX, &(handle->ifr))) != 0)
       err_sys("ioctl");
    handle->sll.sll_family = PF_PACKET;
