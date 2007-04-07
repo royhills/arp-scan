@@ -1,6 +1,5 @@
 /*
- * The ARP Scan Engine (arp-scan-engine) is Copyright (C) 2005 Roy Hills,
- * NTA Monitor Ltd.
+ * ARP Scan is Copyright (C) 2005-2007 Roy Hills, NTA Monitor Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

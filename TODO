@@ -47,6 +47,3 @@ Support the libpcap sending function pcap_sendpacket() or pcap_inject() when
 they are supported by the pcap library.
 
 Use pcap_get_selectable_fd() to get the file descriptor for select().
-
-arp-scan.o(.text+0x11c6): In function `main':
-/home/test/arp-scan-1.5.3/arp-scan.c:137: warning: strcat() is almost always misused, please use strlcat()
