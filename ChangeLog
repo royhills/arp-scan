@@ -1,5 +1,16 @@
 $Id$
 
+2007-04-08 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* utils.c: Removed ununsed function printable().
+
+	* arp-scan.c: Added /* NOTREACHED */ comments in appropriate places.
+	  Removed uneeded max_iter global variable.
+	  Added call to pcap_lib_version() in arp_scan_version().
+
+	* configure.ac: Changed check for pcap_datalink_val_to_name() to
+	  check for pcap_lib_version() instead.
+
 2007-04-06 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* configure.ac: Added checks for strlcat and strlcpy, with

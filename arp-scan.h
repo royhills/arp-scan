@@ -222,7 +222,6 @@ void print_times(void);
 void clean_up(void);
 void arp_scan_version(void);
 char *make_message(const char *, ...);
-char *printable(const unsigned char*, size_t);
 void callback(u_char *, const struct pcap_pkthdr *, const u_char *);
 void process_options(int, char *[]);
 struct in_addr *get_host_address(const char *, int, struct in_addr *, char **);

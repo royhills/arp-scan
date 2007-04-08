@@ -46,7 +46,6 @@ static host_entry **cursor;		/* Pointer to current host entry ptr */
 static unsigned num_hosts = 0;		/* Number of entries in the list */
 static unsigned responders = 0;		/* Number of hosts which responded */
 static unsigned live_count;		/* Number of entries awaiting reply */
-static unsigned max_iter;		/* Max iterations in find_host() */
 static int verbose=0;			/* Verbose level */
 static int debug = 0;			/* Debug flag */
 static pcap_t *pcap_handle;		/* pcap handle */
@@ -1393,9 +1392,6 @@ find_host(host_entry **he, struct in_addr *addr,
 
    if (debug) {print_times(); printf("find_host: found=%d, iterations=%u\n", found, iterations);}
 
-   if (iterations > max_iter)
-      max_iter=iterations;
-
    if (found)
       return *p;
    else
@@ -1610,7 +1606,7 @@ process_options(int argc, char *argv[]) {
             break;
          case 'h':	/* --help */
             usage(EXIT_SUCCESS);
-            break;
+            break;	/* NOTREACHED */
          case 'r':	/* --retry */
             retry=Strtoul(optarg, 10);
             break;
@@ -1635,7 +1631,7 @@ process_options(int argc, char *argv[]) {
          case 'V':	/* --version */
             arp_scan_version();
             exit(0);
-            break;
+            break;	/* NOTREACHED */
          case 'd':	/* --debug */
             debug++;
             break;
@@ -1738,7 +1734,7 @@ process_options(int argc, char *argv[]) {
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE);
-            break;
+            break;	/* NOTREACHED */
       }
    }
 }
@@ -1761,6 +1757,7 @@ arp_scan_version (void) {
    fprintf(stderr, "General Public License.\n");
    fprintf(stderr, "For more information about these matters, see the file named COPYING.\n");
    fprintf(stderr, "\n");
+   fprintf(stderr, "%s\n", pcap_lib_version());
 /* We use rcsid here to prevent it being optimised away */
    fprintf(stderr, "%s\n", rcsid);
    error_use_rcsid();

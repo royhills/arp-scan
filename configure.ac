@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan], [1.5.4], [arp-scan@nta-monitor.com])
+AC_INIT([arp-scan], [1.5.5], [arp-scan@nta-monitor.com])
 AC_PREREQ(2.59)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -32,20 +32,20 @@ AC_SEARCH_LIBS([pcap_open_live], [pcap], ,
    AC_MSG_ERROR([Check that you have libpcap version 0.8 or later installed])
    ])
 
-dnl Check that the pcap library contains pcap_datalink_val_to_name.
+dnl Check that the pcap library contains pcap_lib_version
 dnl This was introduced in version 0.8, and our application requires it.
 dnl
 dnl We perform this check as a seperate step, rather than just checking for
-dnl pcap_datalink_val_to_name in the earlier AC_SEARCH_LIBS call, because it
+dnl pcap_lib_version in the earlier AC_SEARCH_LIBS call, because it
 dnl allows us to provide different error messages for missing pcap and non
 dnl functional pcap and so avoids confusing generic error messages.
 dnl
 AC_MSG_CHECKING([for a compatible pcap library])
-AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_datalink_val_to_name])],
+AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_lib_version])],
    [AC_MSG_RESULT([yes])],
    [
    AC_MSG_RESULT([no])
-   AC_MSG_NOTICE([Cannot find pcap_datalink_val_to_name in pcap library])
+   AC_MSG_NOTICE([Cannot find pcap_lib_version in pcap library])
    AC_MSG_ERROR([Check that the pcap library is at least version 0.8])
    ])
 
