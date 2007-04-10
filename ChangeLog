@@ -1,5 +1,17 @@
 $Id$
 
+2007-04-10 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* mt19937ar.c: New file - Mersenne Twister random number generator.
+
+	* arp-scan.c: Changed random number implementation to use the mersenne
+	  twister functions from mt19937ar.c rather than random() from the C
+	  library.  This improves portability, as random() is not part of
+	  standard C.
+
+	* Updated ieee-oui.txt and ieee-iab.txt from the IEEE website
+	  using get-oui and get-iab Perl scripts.
+
 2007-04-08 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* utils.c: Removed ununsed function printable().

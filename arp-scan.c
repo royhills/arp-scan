@@ -393,19 +393,20 @@ main(int argc, char *argv[]) {
       helistptr[i] = &helist[i];
 /*
  *      Randomise the list if required.
+ *	Uses Knuth's shuffle algorithm.
  */
    if (random_flag) {
-      unsigned seed;
+      unsigned random_seed;
       struct timeval tv;
       int r;
       host_entry *temp;
 
       Gettimeofday(&tv);
-      seed = tv.tv_usec ^ getpid();
-      srandom(seed);
+      random_seed = tv.tv_usec ^ getpid();	/* Unpredictable value */
+      init_genrand(random_seed);
 
       for (i=num_hosts-1; i>0; i--) {
-         r = random() % (i+1);     /* Random number 0<=r<i */
+         r = (int)(genrand_real2() * i);  /* 0<=r<i */
          temp = helistptr[i];
          helistptr[i] = helistptr[r];
          helistptr[r] = temp;

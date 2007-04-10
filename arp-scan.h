@@ -244,6 +244,15 @@ int Gettimeofday(struct timeval *);
 void *Malloc(size_t);
 void *Realloc(void *, size_t);
 unsigned long int Strtoul(const char *, int);
+/* MT19937 prototypes */
+void init_genrand(unsigned long);
+void init_by_array(unsigned long[], int);
+unsigned long genrand_int32(void);
+long genrand_int31(void);
+double genrand_real1(void);
+double genrand_real2(void);
+double genrand_real3(void);
+double genrand_res53(void);
 /* The following functions are just to prevent rcsid being optimised away */
 void wrappers_use_rcsid(void);
 void error_use_rcsid(void);
