@@ -1,5 +1,11 @@
 $Id$
 
+2007-04-12 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Released arp-scan version 1.6.
+	  tarball arp-scan-1.6.tar.gz, size 319,566 bytes
+	  md5sum eb24303c6eb4d77c3abf23511efce642
+
 2007-04-10 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* mt19937ar.c: New file - Mersenne Twister random number generator.
