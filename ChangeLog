@@ -1,5 +1,10 @@
 $Id$
 
+2007-04-13 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Added support for RFC 1042 LLC/SNAP framing with the
+	  new --llc (-L) option.
+
 2007-04-12 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* Released arp-scan version 1.6.

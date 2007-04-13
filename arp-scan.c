@@ -85,6 +85,7 @@ static unsigned char *padding=NULL;
 static size_t padding_len=0;
 static struct hash_control *hash_table;
 static int localnet_flag=0;		/* Scan local network */
+static int llc_flag=0;			/* Use 802.2 LLC with SNAP */
 
 int
 main(int argc, char *argv[]) {
@@ -1013,6 +1014,14 @@ usage(int status) {
    fprintf(stderr, "\t\t\tPadding.  The default is no padding, although the\n");
    fprintf(stderr, "\t\t\tEthernet driver on the sending system may pad the\n");
    fprintf(stderr, "\t\t\tpacket to the minimum Ethernet frame length.\n");
+   fprintf(stderr, "\n--llc or -L\t\tUse RFC 1042 LLC framing with SNAP.\n");
+   fprintf(stderr, "\t\t\tThis option causes the outgoing ARP packets to use\n");
+   fprintf(stderr, "\t\t\tIEEE 802.2 framing with a SNAP header as described\n");
+   fprintf(stderr, "\t\t\tin RFC 1042.  The default is to use Ethernet-II\n");
+   fprintf(stderr, "\t\t\tframing.\n");
+   fprintf(stderr, "\t\t\tarp-scan will decode and display received ARP packets\n");
+   fprintf(stderr, "\t\t\tin either Ethernet-II or IEEE 802.2 formats\n");
+   fprintf(stderr, "\t\t\tirrespective of this option.\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "Report bugs or send suggestions to %s\n", PACKAGE_BUGREPORT);
    fprintf(stderr, "See the arp-scan homepage at http://www.nta-monitor.com/tools/arp-scan/\n");
@@ -1585,10 +1594,11 @@ process_options(int argc, char *argv[]) {
       {"arptha", required_argument, 0, 'w'},
       {"srcaddr", required_argument, 0, 'S'},
       {"localnet", no_argument, 0, 'l'},
+      {"llc", no_argument, 0, 'L'},
       {0, 0, 0, 0}
    };
    const char *short_options =
-      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:l";
+      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lL";
    int arg;
    int options_index=0;
 
@@ -1733,6 +1743,9 @@ process_options(int argc, char *argv[]) {
             localnet_flag = 1;
             numeric_flag=1;
             break;
+         case 'L':	/* --llc */
+            llc_flag = 1;
+            break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE);
             break;	/* NOTREACHED */
@@ -1860,10 +1873,16 @@ my_ntoa(struct in_addr addr) {
 void
 marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
                 arp_ether_ipv4 *arp_pkt, size_t *buf_siz) {
+   unsigned char llc_snap[] = {0xAA, 0xAA, 0x03, 0x00, 0x00, 0x00, 0x08, 0x06};
    unsigned char *cp;
 
    cp = buffer;
-   *buf_siz = 0;
+
+   *buf_siz = sizeof(arp_pkt->ar_hrd) + sizeof(arp_pkt->ar_pro) +
+              sizeof(arp_pkt->ar_hln) + sizeof(arp_pkt->ar_pln) +
+              sizeof(arp_pkt->ar_op)  + sizeof(arp_pkt->ar_sha) +
+              sizeof(arp_pkt->ar_sip) + sizeof(arp_pkt->ar_tha) +
+              sizeof(arp_pkt->ar_tip);
 
    if (frame_hdr != NULL) {
       *buf_siz += sizeof(frame_hdr->dest_addr) + sizeof(frame_hdr->src_addr) +
@@ -1873,15 +1892,22 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
       cp += sizeof(frame_hdr->dest_addr);
       memcpy(cp, &(frame_hdr->src_addr), sizeof(frame_hdr->src_addr));
       cp += sizeof(frame_hdr->src_addr);
-      memcpy(cp, &(frame_hdr->frame_type), sizeof(frame_hdr->frame_type));
+      if (llc_flag) {	/* With 802.2 LLC framing, type field is frame size */
+         uint16_t frame_size;
+
+         frame_size=htons(*buf_siz + sizeof(llc_snap));
+         memcpy(cp, &(frame_size), sizeof(frame_size));
+      } else {		/* Normal Ethernet-II framing */
+         memcpy(cp, &(frame_hdr->frame_type), sizeof(frame_hdr->frame_type));
+      }
       cp += sizeof(frame_hdr->frame_type);
    }
 
-   *buf_siz += sizeof(arp_pkt->ar_hrd) + sizeof(arp_pkt->ar_pro) +
-               sizeof(arp_pkt->ar_hln) + sizeof(arp_pkt->ar_pln) +
-               sizeof(arp_pkt->ar_op)  + sizeof(arp_pkt->ar_sha) +
-               sizeof(arp_pkt->ar_sip) + sizeof(arp_pkt->ar_tha) +
-               sizeof(arp_pkt->ar_tip);
+   if (llc_flag) {
+      memcpy(cp, llc_snap, sizeof(llc_snap));
+      cp += sizeof(llc_snap);
+      *buf_siz += sizeof(llc_snap);
+   }
 
    memcpy(cp, &(arp_pkt->ar_hrd), sizeof(arp_pkt->ar_hrd));
    cp += sizeof(arp_pkt->ar_hrd);
@@ -1930,6 +1956,14 @@ unmarshal_arp_pkt(const unsigned char *buffer, ether_hdr *frame_hdr,
    cp += sizeof(frame_hdr->src_addr);
    memcpy(&(frame_hdr->frame_type), cp, sizeof(frame_hdr->frame_type));
    cp += sizeof(frame_hdr->frame_type);
+/*
+ *	Check for an LLC header with SNAP.  If this is present, the 802.2 LLC
+ *	header will contain DSAP=0xAA, SSAP=0xAA, Control=0x03.
+ *	If this 802.2 LLC header is present, skip it and the SNAP header
+ */
+   if (*cp == 0xAA && *(cp+1) == 0xAA && *(cp+2) == 0x03) {
+      cp += 8;	/* Skip eight bytes */
+   }
 /*
  *	Extract the ARP packet data
  */

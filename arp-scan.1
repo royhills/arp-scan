@@ -522,6 +522,16 @@ Most, if not all, operating systems will ignore any
 Padding.  The default is no padding, although the
 Ethernet driver on the sending system may pad the
 packet to the minimum Ethernet frame length.
+.TP
+.B --llc or -L
+Use RFC 1042 LLC framing with SNAP.
+This option causes the outgoing ARP packets to use
+IEEE 802.2 framing with a SNAP header as described
+in RFC 1042.  The default is to use Ethernet-II
+framing.
+arp-scan will decode and display received ARP packets
+in either Ethernet-II or IEEE 802.2 formats
+irrespective of this option.
 .SH FILES
 .TP
 .I /usr/local/share/arp-scan/ieee-oui.txt
