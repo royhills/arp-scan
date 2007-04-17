@@ -4,9 +4,6 @@ Code tidy up: reduce the number of global variables.
 
 Additional ARP fingerprinting options, e.g. arpsha != srcaddr.
 
-Avoid double unmarshalling of packet data: once in callback, then again
-in display_packet().
-
 Support libpcap0.7, which is used by some older distributions.
 The following functions were added in 0.8.  Those marked with "*" are used by
 arp-scan:

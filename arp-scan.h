@@ -124,13 +124,13 @@
 /* Defines */
 
 #define MAXLINE 255			/* Max line length for input files */
-#define MAXIP 65515			/* Max IP data size = 64k - 20 */
-#define SYSLOG 1			/* Use syslog if defined */
+#define MAX_FRAME 65536			/* Maximum allowed frame size */
+#undef SYSLOG				/* Use syslog if defined */
 #define SYSLOG_FACILITY LOG_USER	/* Syslog facility to use */
 #define REALLOC_COUNT 1000		/* Entries to realloc at once */
 #define DEFAULT_BANDWIDTH 256000	/* Default bandwidth in bits/sec */
-#define PACKET_OVERHEAD 4		/* Size of Ethernet header */ 
-#define MINIMUM_FRAME_SIZE 60           /* Minimum data size for layer 2 */
+#define PACKET_OVERHEAD 18		/* layer 2 overhead (6+6+2 + 4) */ 
+#define MINIMUM_FRAME_SIZE 46           /* Minimum layer 2 date size */
 #define DEFAULT_BACKOFF_FACTOR 1.5      /* Default timeout backoff factor */
 #define DEFAULT_RETRY 2                 /* Default number of retries */
 #define DEFAULT_TIMEOUT 100             /* Default per-host timeout in ms */
@@ -155,6 +155,8 @@
 #define DEFAULT_ARP_HLN 6		/* Default hardware length */
 #define DEFAULT_ARP_PLN 4		/* Default protocol length */
 #define DEFAULT_ETH_PRO	ETH_P_ARP	/* Default Ethernet protocol */
+#define FRAMING_ETHERNET_II 0		/* Standard Ethernet-II Framing */
+#define FRAMING_LLC_SNAP 1		/* 802.3 with LLC/SNAP */
 
 /* Structures */
 
@@ -215,7 +217,8 @@ void timeval_diff(const struct timeval *, const struct timeval *,
                   struct timeval *);
 host_entry *find_host(host_entry **, struct in_addr *,
                       const unsigned char *, int);
-void display_packet(int, const unsigned char *, host_entry *, struct in_addr *);
+void display_packet(host_entry *, struct in_addr *, arp_ether_ipv4 *,
+                    const unsigned char *, size_t, int);
 void advance_cursor(void);
 void dump_list(void);
 void print_times(void);
@@ -229,7 +232,8 @@ const char *my_ntoa(struct in_addr);
 int get_source_ip(link_t *, uint32_t *);
 void get_hardware_address(link_t *, unsigned char []);
 void marshal_arp_pkt(unsigned char *, ether_hdr *, arp_ether_ipv4 *, size_t *);
-void unmarshal_arp_pkt(const unsigned char *, ether_hdr *, arp_ether_ipv4 *);
+int unmarshal_arp_pkt(const unsigned char *, size_t, ether_hdr *,
+                      arp_ether_ipv4 *, unsigned char *, size_t *);
 unsigned char *hex2data(const char *, size_t *);
 unsigned int hstr_i(const char *);
 char *hexstring(const unsigned char *, size_t);

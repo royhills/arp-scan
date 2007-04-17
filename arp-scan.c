@@ -89,15 +89,13 @@ static int llc_flag=0;			/* Use 802.2 LLC with SNAP */
 
 int
 main(int argc, char *argv[]) {
-   char arg_str[MAXLINE];       /* Args as string for syslog */
    struct sockaddr_in sa_peer;
    struct timeval now;
-   unsigned char packet_in[MAXIP];      /* Received packet */
+   unsigned char packet_in[MAX_FRAME];      /* Received packet */
    struct timeval diff;         /* Difference between two timevals */
    int select_timeout;          /* Select timeout */
    ARP_UINT64 loop_timediff;    /* Time since last packet sent in us */
    ARP_UINT64 host_timediff; /* Time since last pkt sent to this host (us) */
-   int arg;
    struct timeval last_packet_time;     /* Time last packet was sent */
    int req_interval;            /* Requested per-packet interval */
    int cum_err=0;               /* Cumulative timing error */
@@ -122,15 +120,20 @@ main(int argc, char *argv[]) {
  *      Open syslog channel and log arguments if required.
  */
 #ifdef SYSLOG
-   openlog("arp-scan", LOG_PID, SYSLOG_FACILITY);
-   arg_str[0] = '\0';
-   for (arg=0; arg<argc; arg++) {
-      strlcat(arg_str, argv[arg], sizeof(arg_str));
-      if (arg < (argc-1)) {
-         strlcat(arg_str, " ", sizeof(arg_str));
+   {
+      char arg_str[MAXLINE];       /* Args as string for syslog */
+      int arg;
+
+      openlog("arp-scan", LOG_PID, SYSLOG_FACILITY);
+      arg_str[0] = '\0';
+      for (arg=0; arg<argc; arg++) {
+         strlcat(arg_str, argv[arg], sizeof(arg_str));
+         if (arg < (argc-1)) {
+            strlcat(arg_str, " ", sizeof(arg_str));
+         }
       }
+      info_syslog("Starting: %s", arg_str);
    }
-   info_syslog("Starting: %s", arg_str);
 #endif
 /*
  *      Initialise file names to the empty string.
@@ -248,7 +251,13 @@ main(int argc, char *argv[]) {
          err_msg("ERROR: pcap_lookupnet: %s", errbuf);
       }
    }
-   filter_string=make_message("arp and ether dst %.2x:%.2x:%.2x:%.2x:%.2x:%.2x",
+/*
+ *	The filter string selects packets addresses to our interface address
+ *	that are either Ethernet-II ARP packets or 802.3 LLC/SNAP ARP packets.
+ */
+   filter_string=make_message("ether dst %.2x:%.2x:%.2x:%.2x:%.2x:%.2x and "
+                              "(arp or (ether[14:4]=0xaaaa0300 and "
+                              "ether[20:2]=0x0806))",
                               interface_mac[0], interface_mac[1],
                               interface_mac[2], interface_mac[3],
                               interface_mac[4], interface_mac[5]);
@@ -550,7 +559,7 @@ main(int argc, char *argv[]) {
          if (debug) {print_times(); printf("main: Can't send packet yet.  loop_timediff=" ARP_UINT64_FORMAT "\n", loop_timediff);}
       } /* End If */
 
-      recvfrom_wto(pcap_fd, packet_in, MAXIP, (struct sockaddr *)&sa_peer,
+      recvfrom_wto(pcap_fd, packet_in, MAX_FRAME, (struct sockaddr *)&sa_peer,
                    select_timeout);
    } /* End While */
 
@@ -581,13 +590,12 @@ main(int argc, char *argv[]) {
  *
  *	Inputs:
  *
- *	n		The length of the received packet in bytes.
- *			Note that this can be more or less than the IP packet
- *			size because of minimum frame sizes or snaplength
- *			cutoff respectively.
- *	packet_in	The received packet
  *	he		The host entry corresponding to the received packet
  *	recv_addr	IP address that the packet was received from
+ *	arpei		ARP packet structure
+ *	extra_data	Extra data after ARP packet (padding)
+ *	extra_data_len	Length of extra data
+ *	framing		Framing type (e.g. Ethernet II, LLC)
  *
  *      Returns:
  *
@@ -597,15 +605,12 @@ main(int argc, char *argv[]) {
  *      was received in the format: <IP-Address><TAB><Details>.
  */
 void
-display_packet(int n, const unsigned char *packet_in, host_entry *he,
-               struct in_addr *recv_addr) {
-   ether_hdr frame_hdr;
-   arp_ether_ipv4 arpei;
+display_packet(host_entry *he, struct in_addr *recv_addr,
+               arp_ether_ipv4 *arpei, const unsigned char *extra_data,
+               size_t extra_data_len, int framing) {
    char *msg;
    char *cp;
    char *cp2;
-   const unsigned char *ucp;
-   int extra_data;
    int nonzero=0;
 /*
  *	Set msg to the IP address of the host entry, plus the address of the
@@ -618,17 +623,13 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
       free(cp);
    }
 /*
- *      Unmarshal packet buffer into ARP structure
- */
-   unmarshal_arp_pkt(packet_in, &frame_hdr, &arpei);
-/*
  *	Decode ARP packet
  */
    cp = msg;
    msg = make_message("%s%.2x:%.2x:%.2x:%.2x:%.2x:%.2x", cp,
-                      arpei.ar_sha[0], arpei.ar_sha[1],
-                      arpei.ar_sha[2], arpei.ar_sha[3],
-                      arpei.ar_sha[4], arpei.ar_sha[5]);
+                      arpei->ar_sha[0], arpei->ar_sha[1],
+                      arpei->ar_sha[2], arpei->ar_sha[3],
+                      arpei->ar_sha[4], arpei->ar_sha[5]);
    free(cp);
 /*
  *	Find vendor from hash table and add to message if quiet if not in
@@ -644,8 +645,8 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
       int oui_end=12;
 
       snprintf(oui_string, 13, "%.2X%.2X%.2X%.2X%.2X%.2X",
-               arpei.ar_sha[0], arpei.ar_sha[1], arpei.ar_sha[2],
-               arpei.ar_sha[3], arpei.ar_sha[4], arpei.ar_sha[5]);
+               arpei->ar_sha[0], arpei->ar_sha[1], arpei->ar_sha[2],
+               arpei->ar_sha[3], arpei->ar_sha[4], arpei->ar_sha[5]);
       while (vendor == NULL && oui_end > 1) {
          oui_string[oui_end] = '\0';	/* Truncate oui string */
          vendor = hash_find(hash_table, oui_string);
@@ -661,24 +662,34 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
  *	Check that any data after the ARP packet is zero.
  *	If it is non-zero, and verbose is selected, then print the padding.
  */
-   ucp = packet_in+ETHER_HDR_SIZE+ARP_PKT_SIZE;
-   extra_data = n-ETHER_HDR_SIZE-ARP_PKT_SIZE;
-   if (extra_data > 0) {
-      int i;
-      for (i=0; i<extra_data; i++) {
-         if (ucp[i] != '\0') {
-            nonzero=1;
-            break;
+      if (extra_data_len > 0) {
+         int i;
+         const unsigned char *ucp = extra_data;
+
+         for (i=0; i<extra_data_len; i++) {
+            if (ucp[i] != '\0') {
+               nonzero=1;
+               break;
+            }
          }
       }
-   }
-   if (nonzero && verbose) {
-      cp = msg;
-      cp2 = hexstring(ucp, (unsigned)extra_data);
-      msg = make_message("%s\tPadding=%s", cp, cp2);
-      free(cp2);
-      free(cp);
-   }
+      if (nonzero && verbose) {
+         cp = msg;
+         cp2 = hexstring(extra_data, extra_data_len);
+         msg = make_message("%s\tPadding=%s", cp, cp2);
+         free(cp2);
+         free(cp);
+      }
+/*
+ *	If the framing type is not Ethernet II, then report the framing type.
+ */
+      if (framing != FRAMING_ETHERNET_II) {
+         cp = msg;
+         if (framing == FRAMING_LLC_SNAP) {
+            msg = make_message("%s (802.2 LLC/SNAP)", cp);
+         }
+         free(cp);
+      }
 /*
  *      If the host entry is not live, then flag this as a duplicate.
  */
@@ -715,7 +726,7 @@ display_packet(int n, const unsigned char *packet_in, host_entry *he,
 int
 send_packet(link_t *link_handle, host_entry *he,
             struct timeval *last_packet_time) {
-   unsigned char buf[MAXIP];
+   unsigned char buf[MAX_FRAME];
    size_t buflen;
    ether_hdr frame_hdr;
    arp_ether_ipv4 arpei;
@@ -1493,6 +1504,9 @@ callback(u_char *args, const struct pcap_pkthdr *header,
    int n = header->caplen;
    struct in_addr source_ip;
    host_entry *temp_cursor;
+   unsigned char extra_data[MAX_FRAME];
+   size_t extra_data_len;
+   int framing;
 /*
  *      Check that the packet is large enough to decode.
  */
@@ -1503,7 +1517,8 @@ callback(u_char *args, const struct pcap_pkthdr *header,
 /*
  *	Unmarshal packet buffer into ARP structure
  */
-   unmarshal_arp_pkt(packet_in, &frame_hdr, &arpei);
+   framing = unmarshal_arp_pkt(packet_in, n, &frame_hdr, &arpei, extra_data,
+                               &extra_data_len);
 /*
  *	Determine source IP address.
  */
@@ -1530,7 +1545,8 @@ callback(u_char *args, const struct pcap_pkthdr *header,
          warn_msg("---\tReceived packet #%u from %s",
                   temp_cursor->num_recv ,my_ntoa(source_ip));
       if ((temp_cursor->live || !ignore_dups)) {
-         display_packet(n, packet_in, temp_cursor, &source_ip);
+         display_packet(temp_cursor, &source_ip, &arpei,
+                        extra_data, extra_data_len, framing);
          responders++;
       }
       if (verbose > 1)
@@ -1934,17 +1950,27 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
  *	Inputs:
  *
  *	buffer		Pointer to the input buffer
+ *	buf_len		Length of input buffer
  *	frame_hdr	The ethernet frame header
  *	arp_pkt		The arp packet data
+ *	extra_data	Any extra data after the ARP data (typically padding)
+ *	extra_data_len	Length of extra data
  *
  *	Returns:
  *
- *	None
+ *	An integer representing the data link framing:
+ *	0 = Ethernet-II
+ *	1 = 802.3 with LLC/SNAP
+ *
+ *	extra_data and extra_data_len are only calculated and returned if
+ *	extra_data is not NULL.
  */
-void
-unmarshal_arp_pkt(const unsigned char *buffer, ether_hdr *frame_hdr,
-                  arp_ether_ipv4 *arp_pkt) {
+int
+unmarshal_arp_pkt(const unsigned char *buffer, size_t buf_len,
+                  ether_hdr *frame_hdr, arp_ether_ipv4 *arp_pkt,
+                  unsigned char *extra_data, size_t *extra_data_len) {
    const unsigned char *cp;
+   int framing=FRAMING_ETHERNET_II;
 
    cp = buffer;
 /*
@@ -1963,6 +1989,7 @@ unmarshal_arp_pkt(const unsigned char *buffer, ether_hdr *frame_hdr,
  */
    if (*cp == 0xAA && *(cp+1) == 0xAA && *(cp+2) == 0x03) {
       cp += 8;	/* Skip eight bytes */
+      framing = FRAMING_LLC_SNAP;
    }
 /*
  *	Extract the ARP packet data
@@ -1984,6 +2011,19 @@ unmarshal_arp_pkt(const unsigned char *buffer, ether_hdr *frame_hdr,
    memcpy(&(arp_pkt->ar_tha), cp, sizeof(arp_pkt->ar_tha));
    cp += sizeof(arp_pkt->ar_tha);
    memcpy(&(arp_pkt->ar_tip), cp, sizeof(arp_pkt->ar_tip));
+   cp += sizeof(arp_pkt->ar_tip);
+
+   if (extra_data != NULL) {
+      int length;
+
+      length = buf_len - (cp - buffer);
+      if (length > 0) {		/* Extra data after ARP packet */
+         memcpy(extra_data, cp, length);
+      }
+      *extra_data_len = length;
+   }
+
+   return framing;
 }
 
 /*

@@ -1,5 +1,27 @@
 $Id$
 
+2007-04-17 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Changed display_packet() to take ARP structure, extra
+	  data and framing type as parmaters passed from callback() to avoid
+	  having to call unmarshal_arp_pkt() twice.  This also means that
+	  we don't need to pass the raw frame to display_packet() now as it
+	  has the data in individual variables.
+
+2007-04-14 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.h, arp-scan.c: Changed MAXIP to MAX_FRAME and changed value
+	  to 65536 bytes.  This is the maximum allowable frame size, which is
+	  used to size read/write buffers.  This is much larger than any
+	  layer-2 frame.
+
+	* arp-scan.h: Changed PACKET_OVERHEAD to 18 (6+6+2 ... +4) and
+	  MINIMUM_FRAME_SIZE to 46.
+
+	* arp-scan.h: undefine SYSLOG, as we don't use this any more, and I
+	  doubt that anyone else needs it.  The syslog functionality may be
+	  removed in a future release.
+
 2007-04-13 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Added support for RFC 1042 LLC/SNAP framing with the
