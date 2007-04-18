@@ -2,11 +2,19 @@ $Id$
 
 2007-04-17 Roy Hills <Roy.Hills@nta-monitor.com>
 
+	* arp-scan.h: Reduced MAX_FRAME from 65536 to 2048 bytes.
+
+	* arp-scan.c: Add the optional padding in marshal_arp_pkt(), and
+	  avoid potential buffer overflow if padding is longer than the
+	  remaining buffer size.
+
 	* arp-scan.c: Changed display_packet() to take ARP structure, extra
 	  data and framing type as parmaters passed from callback() to avoid
 	  having to call unmarshal_arp_pkt() twice.  This also means that
 	  we don't need to pass the raw frame to display_packet() now as it
 	  has the data in individual variables.
+
+	* arp-scan.c: Move padding addition to marshal_arp_pkt().
 
 2007-04-14 Roy Hills <Roy.Hills@nta-monitor.com>
 

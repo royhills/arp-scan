@@ -124,7 +124,7 @@
 /* Defines */
 
 #define MAXLINE 255			/* Max line length for input files */
-#define MAX_FRAME 65536			/* Maximum allowed frame size */
+#define MAX_FRAME 2048			/* Maximum allowed frame size */
 #undef SYSLOG				/* Use syslog if defined */
 #define SYSLOG_FACILITY LOG_USER	/* Syslog facility to use */
 #define REALLOC_COUNT 1000		/* Entries to realloc at once */
@@ -231,7 +231,8 @@ struct in_addr *get_host_address(const char *, int, struct in_addr *, char **);
 const char *my_ntoa(struct in_addr);
 int get_source_ip(link_t *, uint32_t *);
 void get_hardware_address(link_t *, unsigned char []);
-void marshal_arp_pkt(unsigned char *, ether_hdr *, arp_ether_ipv4 *, size_t *);
+void marshal_arp_pkt(unsigned char *, ether_hdr *, arp_ether_ipv4 *, size_t *,
+                     const unsigned char *, size_t);
 int unmarshal_arp_pkt(const unsigned char *, size_t, ether_hdr *,
                       arp_ether_ipv4 *, unsigned char *, size_t *);
 unsigned char *hex2data(const char *, size_t *);

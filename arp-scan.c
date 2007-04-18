@@ -760,14 +760,7 @@ send_packet(link_t *link_handle, host_entry *he,
  *	Copy the required data into the output buffer "buf" and set "buflen"
  *	to the number of bytes in this buffer.
  */
-   marshal_arp_pkt(buf, &frame_hdr, &arpei, &buflen);
-/*
- *	Add padding if specified
- */
-   if (padding != NULL) {
-      memcpy(buf+buflen, padding, padding_len);
-      buflen += padding_len;
-   }
+   marshal_arp_pkt(buf, &frame_hdr, &arpei, &buflen, padding, padding_len);
 /*
  *	If he is NULL, just return with the packet length.
  */
@@ -1888,43 +1881,54 @@ my_ntoa(struct in_addr addr) {
  */
 void
 marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
-                arp_ether_ipv4 *arp_pkt, size_t *buf_siz) {
+                arp_ether_ipv4 *arp_pkt, size_t *buf_siz,
+                const unsigned char *padding, size_t padding_len) {
    unsigned char llc_snap[] = {0xAA, 0xAA, 0x03, 0x00, 0x00, 0x00, 0x08, 0x06};
    unsigned char *cp;
+   size_t packet_size;
 
    cp = buffer;
 
-   *buf_siz = sizeof(arp_pkt->ar_hrd) + sizeof(arp_pkt->ar_pro) +
-              sizeof(arp_pkt->ar_hln) + sizeof(arp_pkt->ar_pln) +
-              sizeof(arp_pkt->ar_op)  + sizeof(arp_pkt->ar_sha) +
-              sizeof(arp_pkt->ar_sip) + sizeof(arp_pkt->ar_tha) +
-              sizeof(arp_pkt->ar_tip);
+/*
+ *	Set initial packet length to the size of an Ethernet frame using
+ *	Ethernet-II format plus the size of the ARP data.  This may be
+ *	increased later by LLC/SNAP frame format or padding after the
+ *	ARP data.
+ */
+   packet_size = sizeof(frame_hdr->dest_addr) + sizeof(frame_hdr->src_addr) +
+                 sizeof(frame_hdr->frame_type) +
+                 sizeof(arp_pkt->ar_hrd) + sizeof(arp_pkt->ar_pro) +
+                 sizeof(arp_pkt->ar_hln) + sizeof(arp_pkt->ar_pln) +
+                 sizeof(arp_pkt->ar_op)  + sizeof(arp_pkt->ar_sha) +
+                 sizeof(arp_pkt->ar_sip) + sizeof(arp_pkt->ar_tha) +
+                 sizeof(arp_pkt->ar_tip);
+/*
+ *	Copy the Ethernet frame header to the buffer.
+ */
+   memcpy(cp, &(frame_hdr->dest_addr), sizeof(frame_hdr->dest_addr));
+   cp += sizeof(frame_hdr->dest_addr);
+   memcpy(cp, &(frame_hdr->src_addr), sizeof(frame_hdr->src_addr));
+   cp += sizeof(frame_hdr->src_addr);
+   if (llc_flag) {	/* With 802.2 LLC framing, type field is frame size */
+      uint16_t frame_size;
 
-   if (frame_hdr != NULL) {
-      *buf_siz += sizeof(frame_hdr->dest_addr) + sizeof(frame_hdr->src_addr) +
-                  sizeof(frame_hdr->frame_type);
-
-      memcpy(cp, &(frame_hdr->dest_addr), sizeof(frame_hdr->dest_addr));
-      cp += sizeof(frame_hdr->dest_addr);
-      memcpy(cp, &(frame_hdr->src_addr), sizeof(frame_hdr->src_addr));
-      cp += sizeof(frame_hdr->src_addr);
-      if (llc_flag) {	/* With 802.2 LLC framing, type field is frame size */
-         uint16_t frame_size;
-
-         frame_size=htons(*buf_siz + sizeof(llc_snap));
-         memcpy(cp, &(frame_size), sizeof(frame_size));
-      } else {		/* Normal Ethernet-II framing */
-         memcpy(cp, &(frame_hdr->frame_type), sizeof(frame_hdr->frame_type));
-      }
-      cp += sizeof(frame_hdr->frame_type);
+      frame_size=htons(packet_size + sizeof(llc_snap));
+      memcpy(cp, &(frame_size), sizeof(frame_size));
+   } else {		/* Normal Ethernet-II framing */
+      memcpy(cp, &(frame_hdr->frame_type), sizeof(frame_hdr->frame_type));
    }
-
+   cp += sizeof(frame_hdr->frame_type);
+/*
+ *	Add IEEE 802.2 LLC and SNAP fields if we are using LLC frame format.
+ */
    if (llc_flag) {
       memcpy(cp, llc_snap, sizeof(llc_snap));
       cp += sizeof(llc_snap);
-      *buf_siz += sizeof(llc_snap);
+      packet_size += sizeof(llc_snap);
    }
-
+/*
+ *	Add the ARP data.
+ */
    memcpy(cp, &(arp_pkt->ar_hrd), sizeof(arp_pkt->ar_hrd));
    cp += sizeof(arp_pkt->ar_hrd);
    memcpy(cp, &(arp_pkt->ar_pro), sizeof(arp_pkt->ar_pro));
@@ -1942,6 +1946,22 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
    memcpy(cp, &(arp_pkt->ar_tha), sizeof(arp_pkt->ar_tha));
    cp += sizeof(arp_pkt->ar_tha);
    memcpy(cp, &(arp_pkt->ar_tip), sizeof(arp_pkt->ar_tip));
+   cp += sizeof(arp_pkt->ar_tip);
+/*
+ *	Add padding if specified
+ */
+   if (padding != NULL) {
+      size_t safe_padding_len;
+
+      safe_padding_len = padding_len;
+      if (packet_size + padding_len > MAX_FRAME) {
+         safe_padding_len = MAX_FRAME - packet_size;
+      }
+      memcpy(cp, padding, safe_padding_len);
+      cp += safe_padding_len;
+      packet_size += safe_padding_len;
+   }
+   *buf_siz = packet_size;
 }
 
 /*
