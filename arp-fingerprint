@@ -97,6 +97,7 @@ my $arpscan="arp-scan -q -r 1";
 # AIX 4.3	IBM AIX Version 4.3 on RS/6000 7043-260
 # AIX 5.3	IBM AIX Version 5.3 on RS/6000 7043-260
 # Cisco VPN Concentrator 4.7	Cisco VPN Concentrator 3030 4.7.2E
+# Cisco IP Phone 79xx	7940 SIP firmware version 5.3 (P0S3-05-3-00.sbn)
 #
 my %fp_hash = (
    '11110100000' => 'FreeBSD 5.3, Win98, WinME, NT4, 2000, XP, 2003',
@@ -117,7 +118,7 @@ my %fp_hash = (
    '11110111111' => 'PIX OS 6.0, 6.1, 6.2, ScreenOS 5.0 (transparent)',
    '00000110000' => 'Netware 6.5',
    '00010100000' => 'Unknown 1', # 14805 79.253 Cisco
-   '00000110011' => 'Unknown 3', # 14805 63.2 Cisco
+   '00000110011' => 'Cisco IP Phone 79xx',
    '11110110011' => 'Unknown 4', # 14805 63.11 Fujitsu Siemens
    );
 #
