@@ -5,12 +5,15 @@ release.  For more details please read the ChangeLog file.
 
 2007-04-17 arp-scan 1.6.1:
 
-*  New --llc (-L) option to create outgoing ARP packets with RFC 1042 LLC/SNAP
-   framing. Received ARP packets are decoded and displayed with either
-   LLC/SNAP or the default Ethernet-II framing irrespective of this option.
+* New --llc (-L) option to create outgoing ARP packets with RFC 1042 LLC/SNAP
+  framing. Received ARP packets are decoded and displayed with either
+  LLC/SNAP or the default Ethernet-II framing irrespective of this option.
 
-*  Avoid double unmarshalling of packet data: once in callback, then again in
-   display_packet().
+* Avoid double unmarshalling of packet data: once in callback, then again in
+  display_packet().
+
+* New arp-fingerprint patterns for ARP fingerprinting: Cisco 79xx IP Phone
+  SIP 5.x, 6.x and 7.x; Cisco 79xx IP Phone SIP 8.x.
 
 2007-04-12 arp-scan 1.6:
 

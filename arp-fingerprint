@@ -101,15 +101,19 @@ my $arpscan="arp-scan -q -r 1";
 # Cisco IP Phone 79xx SIP 5.x,6.x,7.x	7940 SIP firmware version 6.3
 # Cisco IP Phone 79xx SIP 5.x,6.x,7.x	7940 SIP firmware version 7.5
 # Cisco IP Phone 79xx SIP 8.x	7940 SIP firmware version 8.6
+# Catalyst 1900	Cisco Catalyst 1900 V9.00.03 Standard Edition
+# Catalyst IOS 12.2	Cisco Catalyst 3550-48 running IOS 12.2(35)SE
+# Catalyst IOS 12.0	Cisco Catalyst 2924-XL running IOS 12.0(5)WC17
+# Catalyst IOS 12.1	Cisco Catalyst 3550-48 running IOS 12.1(11)EA1a SMI
 #
 my %fp_hash = (
-   '11110100000' => 'FreeBSD 5.3, Win98, WinME, NT4, 2000, XP, 2003',
+   '11110100000' => 'FreeBSD 5.3, Win98, WinME, NT4, 2000, XP, 2003, Catalyst IOS 12.0, 12.1, 12.2',
    '01000100000' => 'Linux 2.2, 2.4, 2.6',
    '01010100000' => 'Linux 2.2, 2.4, 2.6, Vista', # Linux only if non-local IP is routed
    '00000100000' => 'Cisco IOS 11.2, 11.3, 12.0, 12.1, 12.2, 12.3, 12.4',
    '11110110000' => 'Solaris 2.5.1, 2.6, 7, 8, 9, 10, HP-UX 11',
    '01000111111' => 'ScreenOS 5.0, 5.1, 5.3, 5.4',
-   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1, Minix 3, Cisco VPN Concentrator 4.7',
+   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1, Minix 3, Cisco VPN Concentrator 4.7, Catalyst 1900',
    '11110100011' => 'MacOS 10.3, FreeBSD 4.3, IRIX 6.5, AIX 4.3, AIX 5.3',
    '10010100011' => 'SCO OS 5.0.7',
    '10110100000' => 'Win 3.11, 95, NT 3.51',
