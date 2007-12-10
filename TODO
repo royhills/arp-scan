@@ -44,3 +44,14 @@ Support the libpcap sending function pcap_sendpacket() or pcap_inject() when
 they are supported by the pcap library.
 
 Use pcap_get_selectable_fd() to get the file descriptor for select().
+
+Add support for 802.1Q VLAN tagging, which adds a four-byte tag to the Ethernet
+frame header after the source address and before the protocol type.  This tag
+consists of:
+	TPID (16 bits) Set to 0x8100
+	Priority (3 bits) 802.1p
+	CFI (1 bit) Canonical Format Identifier - set to 0
+	VID (12 bits) VLAN Identifier
+Minimum size of 801.1Q frame is 68 bytes.
+Ref: http://standards.ieee.org/getieee802/download/802.1Q-2005.pdf
+
