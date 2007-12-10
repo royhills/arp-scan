@@ -96,6 +96,7 @@ my $arpscan="arp-scan -q -r 1";
 # PIX OS 7.0(6)	PIX OS 7.0(6) on Cisco PIX 515E
 # PIX OS 7.1	PIX OS 7.1(1) on Cisco PIX 515E
 # PIX OS 7.2	PIX OS 7.2(1) on Cisco PIX 515E
+# PIX OS 8.0	PIX OS 8.0(2) on Cisco PIX 515E
 # Vista		Windows Vista Beta 2 Build 5384 on VMware
 # 2008		Windows 2008 Server Beta on i386
 # Minix 3	Minix 3 1.2a on VMware
@@ -129,7 +130,7 @@ my %fp_hash = (
    '10110111111' => 'PIX OS 4.4, 5.1, 5.2, 5.3',
    '11110111111' => 'PIX OS 6.0, 6.1, 6.2, ScreenOS 5.0 (transparent)',
    '00010110011' => 'PIX OS 6.3, 7.0(1), 7.0(2)',
-   '01010110011' => 'PIX OS 7.0(4)-7.0(6), 7.1, 7.2',
+   '01010110011' => 'PIX OS 7.0(4)-7.0(6), 7.1, 7.2, 8.0',
    '00000110000' => 'Netware 6.5',
    '00010100000' => 'Unknown 1', # 14805 79.253 Cisco
    '00000110011' => 'Cisco IP Phone 79xx SIP 5.x,6.x,7.x',
