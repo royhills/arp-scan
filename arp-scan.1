@@ -1,6 +1,6 @@
 '\" t
 .\" $Id$
-.TH ARP-SCAN 1 "March 30, 2007"
+.TH ARP-SCAN 1 "December 10, 2007"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -532,6 +532,14 @@ framing.
 arp-scan will decode and display received ARP packets
 in either Ethernet-II or IEEE 802.2 formats
 irrespective of this option.
+.TP
+.B --vlan=<v> or -Q <v>
+Use 802.1Q tagging with VLAN id <v>.
+This option causes the outgoing ARP packets to use
+802.1Q VLAN tagging with a VLAN ID of <v>, which should
+be in the range 0 to 4095 inclusive.
+arp-scan will always decode and display received ARP
+packets in 802.1Q format irrespective of this option.
 .SH FILES
 .TP
 .I /usr/local/share/arp-scan/ieee-oui.txt

@@ -1,5 +1,19 @@
 $Id$
 
+2007-12-10 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Change most calls to strtol() to use the new
+          wrapper function Strtol() instead, because this checks for
+          errors.  Previously, a non-numeric value would be converted to
+          zero without any error, meaning something like "--snap=xxx"
+          would be silently accepted.  Now such invalid inputs results in
+          an error.
+
+	* arp-scan.c: Added new --vlan (-Q) option to support sending
+	  ARP packets with an 802.1Q VLAN tag.  Response packets with
+	  an 802.1Q tag are decoded and displayed irrespective of this
+	  option.
+
 2007-04-17 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.h: Reduced MAX_FRAME from 65536 to 2048 bytes.

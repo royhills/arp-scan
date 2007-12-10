@@ -85,6 +85,17 @@ unsigned long int Strtoul(const char *nptr, int base) {
    return result;
 }
 
+long int Strtol(const char *nptr, int base) {
+   char *endptr;
+   long int result;
+
+   result=strtol(nptr, &endptr, base);
+   if (endptr == nptr)  /* No digits converted */
+      err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
+
+   return result;
+}
+
 void wrappers_use_rcsid(void) {
    fprintf(stderr, "%s\n", rcsid);	/* Use rcsid to stop compiler optimising away */
 }

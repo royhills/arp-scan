@@ -218,7 +218,7 @@ void timeval_diff(const struct timeval *, const struct timeval *,
 host_entry *find_host(host_entry **, struct in_addr *,
                       const unsigned char *, int);
 void display_packet(host_entry *, struct in_addr *, arp_ether_ipv4 *,
-                    const unsigned char *, size_t, int);
+                    const unsigned char *, size_t, int, int);
 void advance_cursor(void);
 void dump_list(void);
 void print_times(void);
@@ -234,7 +234,7 @@ void get_hardware_address(link_t *, unsigned char []);
 void marshal_arp_pkt(unsigned char *, ether_hdr *, arp_ether_ipv4 *, size_t *,
                      const unsigned char *, size_t);
 int unmarshal_arp_pkt(const unsigned char *, size_t, ether_hdr *,
-                      arp_ether_ipv4 *, unsigned char *, size_t *);
+                      arp_ether_ipv4 *, unsigned char *, size_t *, int *);
 unsigned char *hex2data(const char *, size_t *);
 unsigned int hstr_i(const char *);
 char *hexstring(const unsigned char *, size_t);
@@ -249,6 +249,7 @@ int Gettimeofday(struct timeval *);
 void *Malloc(size_t);
 void *Realloc(void *, size_t);
 unsigned long int Strtoul(const char *, int);
+long int Strtol(const char *, int);
 /* MT19937 prototypes */
 void init_genrand(unsigned long);
 void init_by_array(unsigned long[], int);

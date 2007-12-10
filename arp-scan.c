@@ -86,6 +86,7 @@ static size_t padding_len=0;
 static struct hash_control *hash_table;
 static int localnet_flag=0;		/* Scan local network */
 static int llc_flag=0;			/* Use 802.2 LLC with SNAP */
+static int ieee_8021q_vlan=-1;		/* Use 802.1Q VLAN tagging if >= 0 */
 
 int
 main(int argc, char *argv[]) {
@@ -596,6 +597,7 @@ main(int argc, char *argv[]) {
  *	extra_data	Extra data after ARP packet (padding)
  *	extra_data_len	Length of extra data
  *	framing		Framing type (e.g. Ethernet II, LLC)
+ *	vlan_id		802.1Q VLAN identifier, or -1 if not 802.1Q
  *
  *      Returns:
  *
@@ -607,7 +609,7 @@ main(int argc, char *argv[]) {
 void
 display_packet(host_entry *he, struct in_addr *recv_addr,
                arp_ether_ipv4 *arpei, const unsigned char *extra_data,
-               size_t extra_data_len, int framing) {
+               size_t extra_data_len, int framing, int vlan_id) {
    char *msg;
    char *cp;
    char *cp2;
@@ -688,6 +690,14 @@ display_packet(host_entry *he, struct in_addr *recv_addr,
          if (framing == FRAMING_LLC_SNAP) {
             msg = make_message("%s (802.2 LLC/SNAP)", cp);
          }
+         free(cp);
+      }
+/*
+ *	If the packet uses 802.1Q VLAN tagging, report the VLAN ID.
+ */
+      if (vlan_id != -1) {
+         cp = msg;
+         msg = make_message("%s (802.1Q VLAN=%d)", cp, vlan_id);
          free(cp);
       }
 /*
@@ -1026,6 +1036,12 @@ usage(int status) {
    fprintf(stderr, "\t\t\tarp-scan will decode and display received ARP packets\n");
    fprintf(stderr, "\t\t\tin either Ethernet-II or IEEE 802.2 formats\n");
    fprintf(stderr, "\t\t\tirrespective of this option.\n");
+   fprintf(stderr, "\n--vlan=<v> or -Q <v>\tUse 802.1Q tagging with VLAN id <v>.\n");
+   fprintf(stderr, "\t\t\tThis option causes the outgoing ARP packets to use\n");
+   fprintf(stderr, "\t\t\t802.1Q VLAN tagging with a VLAN ID of <v>, which should\n");
+   fprintf(stderr, "\t\t\tbe in the range 0 to 4095 inclusive.\n");
+   fprintf(stderr, "\t\t\tarp-scan will always decode and display received ARP\n");
+   fprintf(stderr, "\t\t\tpackets in 802.1Q format irrespective of this option.\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "Report bugs or send suggestions to %s\n", PACKAGE_BUGREPORT);
    fprintf(stderr, "See the arp-scan homepage at http://www.nta-monitor.com/tools/arp-scan/\n");
@@ -1499,6 +1515,7 @@ callback(u_char *args, const struct pcap_pkthdr *header,
    host_entry *temp_cursor;
    unsigned char extra_data[MAX_FRAME];
    size_t extra_data_len;
+   int vlan_id;
    int framing;
 /*
  *      Check that the packet is large enough to decode.
@@ -1508,10 +1525,10 @@ callback(u_char *args, const struct pcap_pkthdr *header,
       return;
    }
 /*
- *	Unmarshal packet buffer into ARP structure
+ *	Unmarshal packet buffer into structures and determine framing type
  */
    framing = unmarshal_arp_pkt(packet_in, n, &frame_hdr, &arpei, extra_data,
-                               &extra_data_len);
+                               &extra_data_len, &vlan_id);
 /*
  *	Determine source IP address.
  */
@@ -1539,7 +1556,7 @@ callback(u_char *args, const struct pcap_pkthdr *header,
                   temp_cursor->num_recv ,my_ntoa(source_ip));
       if ((temp_cursor->live || !ignore_dups)) {
          display_packet(temp_cursor, &source_ip, &arpei,
-                        extra_data, extra_data_len, framing);
+                        extra_data, extra_data_len, framing, vlan_id);
          responders++;
       }
       if (verbose > 1)
@@ -1604,10 +1621,11 @@ process_options(int argc, char *argv[]) {
       {"srcaddr", required_argument, 0, 'S'},
       {"localnet", no_argument, 0, 'l'},
       {"llc", no_argument, 0, 'L'},
+      {"vlan", required_argument, 0, 'Q'},
       {0, 0, 0, 0}
    };
    const char *short_options =
-      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lL";
+      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:";
    int arg;
    int options_index=0;
 
@@ -1656,7 +1674,7 @@ process_options(int argc, char *argv[]) {
             debug++;
             break;
          case 'n':	/* --snap */
-            snaplen=strtol(optarg, (char **)NULL, 0);
+            snaplen=Strtol(optarg, 0);
             break;
          case 'I':	/* --interface */
             if_name = make_message("%s", optarg);
@@ -1704,13 +1722,13 @@ process_options(int argc, char *argv[]) {
             }
             break;
          case 'o':	/* --arpop */
-            arp_op=strtol(optarg, (char **)NULL, 0);
+            arp_op=Strtol(optarg, 0);
             break;
          case 'H':	/* --arphrd */
-            arp_hrd=strtol(optarg, (char **)NULL, 0);
+            arp_hrd=Strtol(optarg, 0);
             break;
          case 'p':	/* --arppro */
-            arp_pro=strtol(optarg, (char **)NULL, 0);
+            arp_pro=Strtol(optarg, 0);
             break;
          case 'T':	/* --destaddr */
             result = get_ether_addr(optarg, target_mac);
@@ -1718,10 +1736,10 @@ process_options(int argc, char *argv[]) {
                err_msg("Invalid target MAC address: %s", optarg);
             break;
          case 'P':	/* --arppln */
-            arp_pln=strtol(optarg, (char **)NULL, 0);
+            arp_pln=Strtol(optarg, 0);
             break;
          case 'a':	/* --arphln */
-            arp_hln=strtol(optarg, (char **)NULL, 0);
+            arp_hln=Strtol(optarg, 0);
             break;
          case 'A':	/* --padding */
             if (strlen(optarg) % 2)     /* Length is odd */
@@ -1729,7 +1747,7 @@ process_options(int argc, char *argv[]) {
             padding=hex2data(optarg, &padding_len);
             break;
          case 'y':	/* --prototype */
-            eth_pro=strtol(optarg, (char **)NULL, 0);
+            eth_pro=Strtol(optarg, 0);
             break;
          case 'u':	/* --arpsha */
             result = get_ether_addr(optarg, arp_sha);
@@ -1754,6 +1772,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'L':	/* --llc */
             llc_flag = 1;
+            break;
+         case 'Q':	/* --vlan */
+            ieee_8021q_vlan = Strtol(optarg, 0);
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE);
@@ -1884,11 +1905,11 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
                 arp_ether_ipv4 *arp_pkt, size_t *buf_siz,
                 const unsigned char *padding, size_t padding_len) {
    unsigned char llc_snap[] = {0xAA, 0xAA, 0x03, 0x00, 0x00, 0x00, 0x08, 0x06};
+   unsigned char vlan_tag[] = {0x81, 0x00, 0x00, 0x00};
    unsigned char *cp;
    size_t packet_size;
 
    cp = buffer;
-
 /*
  *	Set initial packet length to the size of an Ethernet frame using
  *	Ethernet-II format plus the size of the ARP data.  This may be
@@ -1909,6 +1930,18 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
    cp += sizeof(frame_hdr->dest_addr);
    memcpy(cp, &(frame_hdr->src_addr), sizeof(frame_hdr->src_addr));
    cp += sizeof(frame_hdr->src_addr);
+/*
+ *	Add 802.1Q tag if we are using VLAN tagging
+ */
+   if (ieee_8021q_vlan != -1) {
+      uint16_t tci;
+
+      tci = htons(ieee_8021q_vlan);
+      memcpy(cp, vlan_tag, sizeof(vlan_tag));
+      memcpy(cp+2, &tci, sizeof(tci));
+      cp += sizeof(vlan_tag);
+      packet_size += sizeof(vlan_tag);
+   }
    if (llc_flag) {	/* With 802.2 LLC framing, type field is frame size */
       uint16_t frame_size;
 
@@ -1975,6 +2008,7 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
  *	arp_pkt		The arp packet data
  *	extra_data	Any extra data after the ARP data (typically padding)
  *	extra_data_len	Length of extra data
+ *	vlan_id		802.1Q VLAN identifier
  *
  *	Returns:
  *
@@ -1984,11 +2018,14 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
  *
  *	extra_data and extra_data_len are only calculated and returned if
  *	extra_data is not NULL.
+ *
+ *	vlan_id is set to -1 if the packet does not use 802.1Q tagging.
  */
 int
 unmarshal_arp_pkt(const unsigned char *buffer, size_t buf_len,
                   ether_hdr *frame_hdr, arp_ether_ipv4 *arp_pkt,
-                  unsigned char *extra_data, size_t *extra_data_len) {
+                  unsigned char *extra_data, size_t *extra_data_len,
+                  int *vlan_id) {
    const unsigned char *cp;
    int framing=FRAMING_ETHERNET_II;
 
@@ -2000,6 +2037,19 @@ unmarshal_arp_pkt(const unsigned char *buffer, size_t buf_len,
    cp += sizeof(frame_hdr->dest_addr);
    memcpy(&(frame_hdr->src_addr), cp, sizeof(frame_hdr->src_addr));
    cp += sizeof(frame_hdr->src_addr);
+/*
+ *	Check for 802.1Q VLAN tagging, indicated by a type code of
+ *	0x8100 (TPID).
+ */
+   if (*cp == 0x81 && *(cp+1) == 0x00) {
+      uint16_t tci;
+      cp += 2;	/* Skip TPID */
+      memcpy(&tci, cp, sizeof(tci));
+      cp += 2;	/* Skip TCI */
+      *vlan_id = ntohs(tci & 0x0fff);
+   } else {
+      *vlan_id = -1;
+   }
    memcpy(&(frame_hdr->frame_type), cp, sizeof(frame_hdr->frame_type));
    cp += sizeof(frame_hdr->frame_type);
 /*
