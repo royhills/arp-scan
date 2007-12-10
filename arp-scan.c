@@ -254,11 +254,13 @@ main(int argc, char *argv[]) {
    }
 /*
  *	The filter string selects packets addresses to our interface address
- *	that are either Ethernet-II ARP packets or 802.3 LLC/SNAP ARP packets.
+ *	that are either Ethernet-II ARP packets, 802.3 LLC/SNAP ARP packets
+ *	or 802.1Q tagged ARP packets.
  */
    filter_string=make_message("ether dst %.2x:%.2x:%.2x:%.2x:%.2x:%.2x and "
                               "(arp or (ether[14:4]=0xaaaa0300 and "
-                              "ether[20:2]=0x0806))",
+                              "ether[20:2]=0x0806) or (ether[12:2]=0x8100 and "
+                              "ether[16:2]=0x0806))",
                               interface_mac[0], interface_mac[1],
                               interface_mac[2], interface_mac[3],
                               interface_mac[4], interface_mac[5]);
@@ -2046,7 +2048,8 @@ unmarshal_arp_pkt(const unsigned char *buffer, size_t buf_len,
       cp += 2;	/* Skip TPID */
       memcpy(&tci, cp, sizeof(tci));
       cp += 2;	/* Skip TCI */
-      *vlan_id = ntohs(tci & 0x0fff);
+      *vlan_id = ntohs(tci);
+      *vlan_id &= 0x0fff;	/* Mask off PRI and CFI */
    } else {
       *vlan_id = -1;
    }
