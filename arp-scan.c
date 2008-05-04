@@ -49,6 +49,7 @@ static unsigned live_count;		/* Number of entries awaiting reply */
 static int verbose=0;			/* Verbose level */
 static int debug = 0;			/* Debug flag */
 static pcap_t *pcap_handle;		/* pcap handle */
+static pcap_dumper_t *pcap_dump_handle = NULL;	/* pcap savefile handle */
 static int pcap_fd;			/* Pcap file descriptor */
 static char filename[MAXLINE];		/* Target list file name */
 static int filename_flag=0;		/* Set if using target list file */
@@ -71,6 +72,7 @@ static int arp_sha_flag=0;		/* Source MAC address specified */
 static char ouifilename[MAXLINE];	/* OUI filename */
 static char iabfilename[MAXLINE];	/* IAB filename */
 static char macfilename[MAXLINE];	/* MAC filename */
+static char pcap_savefile[MAXLINE];	/* pcap savefile filename */
 static int arp_op=DEFAULT_ARP_OP;	/* ARP Operation code */
 static int arp_hrd=DEFAULT_ARP_HRD;	/* ARP hardware type */
 static int arp_pro=DEFAULT_ARP_PRO;	/* ARP protocol */
@@ -142,6 +144,7 @@ main(int argc, char *argv[]) {
    ouifilename[0] = '\0';
    iabfilename[0] = '\0';
    macfilename[0] = '\0';
+   pcap_savefile[0] = '\0';
 /*
  *      Process options.
  */
@@ -277,6 +280,14 @@ main(int argc, char *argv[]) {
  */
    if ((setuid(getuid())) < 0) {
       err_sys("setuid");
+   }
+/*
+ *	Open pcap savefile is the --pcapsavefile (-W) option was specified
+ */
+   if (*pcap_savefile != '\0') {
+      if (!(pcap_dump_handle=pcap_dump_open(pcap_handle, pcap_savefile))) {
+         err_msg("pcap_dump_open: %s", pcap_geterr(pcap_handle));
+      }
    }
 /*
  *      Check that the combination of specified options and arguments is
@@ -829,6 +840,9 @@ clean_up(void) {
 
    printf("%u packets received by filter, %u packets dropped by kernel\n",
           stats.ps_recv, stats.ps_drop);
+   if (pcap_dump_handle) {
+      pcap_dump_close(pcap_dump_handle);
+   }
    pcap_close(pcap_handle);
 }
 
@@ -1044,6 +1058,11 @@ usage(int status) {
    fprintf(stderr, "\t\t\tbe in the range 0 to 4095 inclusive.\n");
    fprintf(stderr, "\t\t\tarp-scan will always decode and display received ARP\n");
    fprintf(stderr, "\t\t\tpackets in 802.1Q format irrespective of this option.\n");
+   fprintf(stderr, "\n--pcapsavefile=<p> or -W <p>\tWrite received packets to pcap savefile <p>.\n");
+   fprintf(stderr, "\t\t\tThis option causes received ARP responses to be written\n");
+   fprintf(stderr, "\t\t\tto a pcap savefile with the specified name.  This\n");
+   fprintf(stderr, "\t\t\tsavefile can be analyzed with programs that understand\n");
+   fprintf(stderr, "\t\t\tthe pcap file format, such as \"tcpdump\" and \"wireshark\".\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "Report bugs or send suggestions to %s\n", PACKAGE_BUGREPORT);
    fprintf(stderr, "See the arp-scan homepage at http://www.nta-monitor.com/tools/arp-scan/\n");
@@ -1557,6 +1576,9 @@ callback(u_char *args, const struct pcap_pkthdr *header,
          warn_msg("---\tReceived packet #%u from %s",
                   temp_cursor->num_recv ,my_ntoa(source_ip));
       if ((temp_cursor->live || !ignore_dups)) {
+         if (pcap_dump_handle) {
+            pcap_dump((unsigned char *)pcap_dump_handle, header, packet_in);
+         }
          display_packet(temp_cursor, &source_ip, &arpei,
                         extra_data, extra_data_len, framing, vlan_id);
          responders++;
@@ -1624,10 +1646,11 @@ process_options(int argc, char *argv[]) {
       {"localnet", no_argument, 0, 'l'},
       {"llc", no_argument, 0, 'L'},
       {"vlan", required_argument, 0, 'Q'},
+      {"pcapsavefile", required_argument, 0, 'W'},
       {0, 0, 0, 0}
    };
    const char *short_options =
-      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:";
+      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:";
    int arg;
    int options_index=0;
 
@@ -1777,6 +1800,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'Q':	/* --vlan */
             ieee_8021q_vlan = Strtol(optarg, 0);
+            break;
+         case 'W':	/* --pcapsavefile */
+            strlcpy(pcap_savefile, optarg, sizeof(pcap_savefile));
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE);

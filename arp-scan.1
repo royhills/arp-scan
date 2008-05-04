@@ -546,6 +546,13 @@ This option causes the outgoing ARP packets to use
 be in the range 0 to 4095 inclusive.
 arp-scan will always decode and display received ARP
 packets in 802.1Q format irrespective of this option.
+.TP
+.B --pcapsavefile=<p> or -W <p>
+Write received packets to pcap savefile <p>.
+This option causes received ARP responses to be written
+to a pcap savefile with the specified name.  This
+savefile can be analyzed with programs that understand
+the pcap file format, such as "tcpdump" and "wireshark".
 .SH FILES
 .TP
 .I /usr/local/share/arp-scan/ieee-oui.txt

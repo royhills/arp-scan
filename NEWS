@@ -3,7 +3,14 @@ $Id$
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
-2007-04-17 arp-scan 1.6.1:
+2008-05-03 arp-scan 1.6.3:
+
+* new --pcapsavefile (-W) option to save the ARP response packets to a pcap
+  savefile for later analysis with tcpdump, wireshark or another program that
+  supports the pcap file format.
+
+* new --vlan (-Q) option to create outgoing ARP packets with an 802.1Q VLAN tag
+  ARP responses with a VLAN tag are interpreted and displayed.
 
 * New --llc (-L) option to create outgoing ARP packets with RFC 1042 LLC/SNAP
   framing. Received ARP packets are decoded and displayed with either

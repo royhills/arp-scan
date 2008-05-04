@@ -1,5 +1,14 @@
 $Id$
 
+2008-05-03 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Added --pcapsavefile (-W) option to allow received
+	  ARP responses to be saved in the specified pcap savefile for
+	  later analysis.
+
+	* TODO: Removed plan to support libpcap 0.7 as just about every
+	  system has at least libpcap 0.8, and most have 0.9.
+
 2007-12-10 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Change most calls to strtol() to use the new

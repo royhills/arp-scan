@@ -4,20 +4,6 @@ Code tidy up: reduce the number of global variables.
 
 Additional ARP fingerprinting options, e.g. arpsha != srcaddr.
 
-Support libpcap0.7, which is used by some older distributions.
-The following functions were added in 0.8.  Those marked with "*" are used by
-arp-scan:
-
-* pcap_lookupnet()
-pcap_next_ex()
-pcap_breakloop()
-pcap_dump_flush()
-pcap_list_datalinks()
-pcap_set_datalink()
-pcap_lib_version()
-* pcap_datalink_val_to_name()
-pcap_datalink_name_to_val()
-
 Some OSes, e.g. OpenBSD and NetBSD, don't run man pages through tbl.
 There is disagreement about what the first line in the manpage should be.
 Solaris 9 says in man(1):
@@ -45,15 +31,5 @@ they are supported by the pcap library.  These two functions are essentially
 the same, but pcap_sendpacket() came from WinPcap whereas pcap_inject() came
 from OpenBSD.
 
-Use pcap_get_selectable_fd() to get the file descriptor for select().
-
-Add support for 802.1Q VLAN tagging, which adds a four-byte tag to the Ethernet
-frame header after the source address and before the protocol type.  This tag
-consists of:
-	TPID (16 bits) Set to 0x8100
-	Priority (3 bits) 802.1p
-	CFI (1 bit) Canonical Format Identifier - set to 0
-	VID (12 bits) VLAN Identifier
-Minimum size of 801.1Q frame is 68 bytes.
-Ref: http://standards.ieee.org/getieee802/download/802.1Q-2005.pdf
-
+Use pcap_get_selectable_fd() to get the file descriptor for select().  This
+function is not supported on windows.
