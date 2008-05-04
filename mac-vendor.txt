@@ -52,3 +52,6 @@ B0C420	Bochs
 # Cisco HSRP (Hot Standby Routing Protocol)
 # 00-00-0c-07-ac-XX, where XX is the HSRP group number (0 to 255)
 00000C07AC	HSRP (last octet is group number)
+
+# Ethernet broadcast address
+FFFFFFFFFFFF	Broadcast
