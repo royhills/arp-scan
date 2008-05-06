@@ -605,12 +605,12 @@ main(int argc, char *argv[]) {
  *	Inputs:
  *
  *	he		The host entry corresponding to the received packet
- *	recv_addr	IP address that the packet was received from
  *	arpei		ARP packet structure
  *	extra_data	Extra data after ARP packet (padding)
  *	extra_data_len	Length of extra data
  *	framing		Framing type (e.g. Ethernet II, LLC)
  *	vlan_id		802.1Q VLAN identifier, or -1 if not 802.1Q
+ *	frame_hdr	The Ethernet frame header
  *
  *      Returns:
  *
@@ -620,23 +620,17 @@ main(int argc, char *argv[]) {
  *      was received in the format: <IP-Address><TAB><Details>.
  */
 void
-display_packet(host_entry *he, struct in_addr *recv_addr,
-               arp_ether_ipv4 *arpei, const unsigned char *extra_data,
-               size_t extra_data_len, int framing, int vlan_id) {
+display_packet(host_entry *he, arp_ether_ipv4 *arpei,
+               const unsigned char *extra_data, size_t extra_data_len,
+               int framing, int vlan_id, ether_hdr *frame_hdr) {
    char *msg;
    char *cp;
    char *cp2;
    int nonzero=0;
 /*
- *	Set msg to the IP address of the host entry, plus the address of the
- *	responder if different, and a tab.
+ *	Set msg to the IP address of the host entry and a tab.
  */
    msg = make_message("%s\t", my_ntoa(he->addr));
-   if ((he->addr).s_addr != recv_addr->s_addr) {
-      cp = msg;
-      msg = make_message("%s(%s) ", cp, my_ntoa(*recv_addr));
-      free(cp);
-   }
 /*
  *	Decode ARP packet
  */
@@ -646,6 +640,19 @@ display_packet(host_entry *he, struct in_addr *recv_addr,
                       arpei->ar_sha[2], arpei->ar_sha[3],
                       arpei->ar_sha[4], arpei->ar_sha[5]);
    free(cp);
+/*
+ *	Check that the source address in the Ethernet frame header is the same
+ *	as ar$sha in the ARP packet, and display the Ethernet source address
+ *	if it is different.
+ */
+   if ((memcmp(arpei->ar_sha, frame_hdr->src_addr, ETH_ALEN)) != 0) {
+      cp = msg;
+      msg = make_message("%s (%.2x:%.2x:%.2x:%.2x:%.2x:%.2x)", cp,
+                         frame_hdr->src_addr[0], frame_hdr->src_addr[1],
+                         frame_hdr->src_addr[2], frame_hdr->src_addr[3],
+                         frame_hdr->src_addr[4], frame_hdr->src_addr[5]);
+      free(cp);
+   }
 /*
  *	Find vendor from hash table and add to message if quiet if not in
  *	effect.
@@ -1400,19 +1407,15 @@ advance_cursor(void) {
  *	he 	Pointer to the current position in the list.  Search runs
  *		backwards starting from this point.
  *	addr 	The source IP address that the packet came from.
- *	packet_in The received packet data.
- *	n	The length of the received packet.
  *
  *	Returns a pointer to the host entry associated with the specified IP
  *	or NULL if no match found.
  *
- *	This routine will normally find the host by IP address by comparing
- *	"addr" against "he->addr" for each entry in the list.  In this case,
- *	"packet_in" and "n" are not used.
+ *	This routine finds the host by IP address by comparing "addr" against
+ *	"he->addr" for each entry in the list.
  */
 host_entry *
-find_host(host_entry **he, struct in_addr *addr,
-          const unsigned char *packet_in, int n) {
+find_host(host_entry **he, struct in_addr *addr) {
    host_entry **p;
    int found = 0;
    unsigned iterations = 0;	/* Used for debugging */
@@ -1562,7 +1565,7 @@ callback(u_char *args, const struct pcap_pkthdr *header,
  *	because we call advance_cursor() after sending each packet.  However,
  *	the time saved is minimal, and it's not worth the extra complexity.
  */
-   temp_cursor=find_host(cursor, &source_ip, packet_in, n);
+   temp_cursor=find_host(cursor, &source_ip);
    if (temp_cursor) {
 /*
  *	We found an IP match for the packet. 
@@ -1579,8 +1582,8 @@ callback(u_char *args, const struct pcap_pkthdr *header,
          if (pcap_dump_handle) {
             pcap_dump((unsigned char *)pcap_dump_handle, header, packet_in);
          }
-         display_packet(temp_cursor, &source_ip, &arpei,
-                        extra_data, extra_data_len, framing, vlan_id);
+         display_packet(temp_cursor, &arpei, extra_data, extra_data_len,
+                        framing, vlan_id, &frame_hdr);
          responders++;
       }
       if (verbose > 1)

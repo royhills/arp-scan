@@ -9,6 +9,11 @@ $Id$
 	* TODO: Removed plan to support libpcap 0.7 as just about every
 	  system has at least libpcap 0.8, and most have 0.9.
 
+	* arp-scan.c: changed display_packet() so it displays the source
+	  address from the frame header in parens if it is different from the
+	  ar$sha address.  E.g.
+          192.168.1.255 ff:ff:ff:ff:ff:ff (00:03:a0:88:eb:a8)   Broadcast
+
 2007-12-10 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Change most calls to strtol() to use the new
