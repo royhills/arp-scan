@@ -157,14 +157,11 @@ main(int argc, char *argv[]) {
 /*
  *	Determine network interface to use.
  *	If the interface was specified with the --interface option then use
- *	that, otherwise if the environment variable "RMIF" exists then use
- *	that, failing that use pcap_lookupdev() to pick a suitable interface.
+ *	that, otherwise use pcap_lookupdev() to pick a suitable interface.
  */
    if (!if_name) { /* i/f not specified with --interface */
-      if (!(if_name=getenv("RMIF"))) {	/* No RMIF env var */
-         if (!(if_name=pcap_lookupdev(errbuf))) {
-            err_msg("pcap_lookupdev: %s", errbuf);
-         }
+      if (!(if_name=pcap_lookupdev(errbuf))) {
+         err_msg("pcap_lookupdev: %s", errbuf);
       }
    }
 /*
@@ -944,11 +941,9 @@ usage(int status) {
    fprintf(stderr, "\t\t\tlength includes the data-link header.\n");
    fprintf(stderr, "\t\t\tThe default is normally sufficient.\n");
    fprintf(stderr, "\n--interface=<i> or -I <i> Use network interface <i>.\n");
-   fprintf(stderr, "\t\t\tIf this option is not specified, the default is the\n");
-   fprintf(stderr, "\t\t\tvalue of the RMIF environment variable.  If RMIF is\n");
-   fprintf(stderr, "\t\t\tnot defined, then arp-scan will search the system\n");
-   fprintf(stderr, "\t\t\tinterface list for the lowest numbered, configured\n");
-   fprintf(stderr, "\t\t\tup interface (excluding loopback).\n");
+   fprintf(stderr, "\t\t\tIf this option is not specified, arp-scan will search the\n");
+   fprintf(stderr, "\t\t\tsystem interface list for the lowest numbered,\n");
+   fprintf(stderr, "\t\t\tconfigured up interface (excluding loopback).\n");
    fprintf(stderr, "\t\t\tThe interface specified must support ARP.\n");
    fprintf(stderr, "\n--quiet or -q\t\tOnly display minimal output.\n");
    fprintf(stderr, "\t\t\tIf this option is specified, then only the minimum\n");

@@ -1,5 +1,12 @@
 $Id$
 
+2008-07-11 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.a: Removed reference to RMIF environment variable.
+	  arp-scan now uses the value specified with --interface, or
+	  if that is not specified, picks an interface with
+	  pcap_lookupdev().
+
 2008-05-03 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Added --pcapsavefile (-W) option to allow received
