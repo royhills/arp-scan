@@ -941,8 +941,8 @@ usage(int status) {
    fprintf(stderr, "\t\t\tlength includes the data-link header.\n");
    fprintf(stderr, "\t\t\tThe default is normally sufficient.\n");
    fprintf(stderr, "\n--interface=<i> or -I <i> Use network interface <i>.\n");
-   fprintf(stderr, "\t\t\tIf this option is not specified, arp-scan will search the\n");
-   fprintf(stderr, "\t\t\tsystem interface list for the lowest numbered,\n");
+   fprintf(stderr, "\t\t\tIf this option is not specified, arp-scan will search\n");
+   fprintf(stderr, "\t\t\tthe system interface list for the lowest numbered,\n");
    fprintf(stderr, "\t\t\tconfigured up interface (excluding loopback).\n");
    fprintf(stderr, "\t\t\tThe interface specified must support ARP.\n");
    fprintf(stderr, "\n--quiet or -q\t\tOnly display minimal output.\n");
