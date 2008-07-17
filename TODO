@@ -39,3 +39,5 @@ Investigate response packets >60 bytes long, e.g:
 10:27:40.802358 00:06:d7:55:0f:40 > 00:c0:9f:09:b8:db, ethertype ARP (0x0806), length 64: arp reply maple.nta-monitor.com is-at 00:06:d7:55:0f:40
 
 Review verbose levels, and what gets displayed.
+
+Add details of --llc and --vlan options to man page.

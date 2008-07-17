@@ -7,6 +7,11 @@ $Id$
 	  if that is not specified, picks an interface with
 	  pcap_lookupdev().
 
+	* configure.ac: Incremented version to 1.6.4 for pre-release
+	  testing.
+
+	* *.c, *.h: Modified copyright statements to read 2005-2008.
+
 2008-05-03 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Added --pcapsavefile (-W) option to allow received
