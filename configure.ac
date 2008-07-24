@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan], [1.6.4], [arp-scan@nta-monitor.com])
+AC_INIT([arp-scan], [1.7], [arp-scan@nta-monitor.com])
 AC_PREREQ(2.59)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])

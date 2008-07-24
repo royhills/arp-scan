@@ -3,7 +3,7 @@ $Id$
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
-2008-07-17 arp-scan 1.7:
+2008-07-24 arp-scan 1.7:
 
 * new --pcapsavefile (-W) option to save the ARP response packets to a pcap
   savefile for later analysis with tcpdump, wireshark or another program that
@@ -21,6 +21,9 @@ release.  For more details please read the ChangeLog file.
 
 * New arp-fingerprint patterns for ARP fingerprinting: Cisco 79xx IP Phone
   SIP 5.x, 6.x and 7.x; Cisco 79xx IP Phone SIP 8.x.
+
+* Updated IEEE OUI and IAB MAC/Vendor files.  There are now 11,697 OUI entries
+  and 2,386 IAB entries.
 
 2007-04-12 arp-scan 1.6:
 

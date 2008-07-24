@@ -28,24 +28,26 @@ installation process.  See the file INSTALL for more details.
 
 arp-scan is known to compile and run on the following platforms:
 
- 1. Linux (tested on Debian Sarge)
- 2. FreeBSD (tested on FreeBSD 6.1)
+ 1. Linux (tested on Debian Sarge, Debian Etch and Fedora 9)
+ 2. FreeBSD (tested on FreeBSD 6.1 and FreeBSD 7.0)
  3. OpenBSD (tested on OpenBSD 3.9)
  4. NetBSD (tested on NetBSD 3.0.1)
  5. MacOS X (Darwin) (tested on MacOS 10.3.9)
+ 6. Solaris (tested on Solaris 9/SPARC and Solaris 10/x86)
 
 The ARP packets are sent using raw datalink access.  The mechanism for this
-varies between platforms, currently Packet Socket (Linux) and BPF (BSD) are
-supported.  It is planned to add support for Win32 and DLPI (Solaris) in
+varies between platforms, currently Packet Socket (Linux), BPF (BSD) and
+DLPI (Solaris) are supported.  It is planned to add support for Win32 in
 future releases.
 
 All platforms use libpcap (http://www.tcpdump.org/) to receive the ARP
 responses.
 
-I decided to implement the sending functions directly rather than using libnet
-or libdnet because these libraries are not normally installed by default, and
-I want to minimise the need to install additional packages.  By contrast,
-libpcap is a standard package on most systems.
+It was decided to implement the sending functions directly rather than using
+libnet or libdnet because these libraries are not normally installed by
+default, and it was considered desirable to minimise the need to install
+additional packages.  By contrast, libpcap is a standard package on most
+modern systems.
 
 
 Documentation
@@ -79,70 +81,8 @@ but it links and runs OK.
 This appears to be due to MacOS 10.3 having libpcap 0.8 libraries, but only
 0.7 headers.
 
-3.  OpenBSD 3.9 gives warning about use of strcat()
-arp-scan.c:137: warning: strcat() is almost always misused, please use strlcat()
-The offending line reads:
-
-strncat(arg_str, " ", 1);
-
-This is using strncat, not strcat, and I think it is safe.
-
-4.  The Perl scripts arp-fingerprint, get-oui and get-iab assume that Perl is
+3.  The Perl scripts arp-fingerprint, get-oui and get-iab assume that Perl is
 installed as /usr/bin/perl.  This fails for NetBSD 3.0.1, where it is installed
 in /usr/pkg/bin/perl instead.
 
 A workaround is to make /usr/bin/perl a symlink to /usr/pkg/bin/perl.
-
-
-ARP Packet Format
------------------
-
-This belongs in the man page, and will probably be moved there in a future
-release.
-
-The ARP packet format is defined in RFC 826 "An Ethernet Address Resolution
-Protocol".  The diagram below shows the entire ARP packet, including the
-Ethernet frame header.
-
-In this diagram, each dash (-) represents one bit, with plus (+) marks every
-eight bits. The names for the ARP packet fields like "ar$hrd" are taken
-from RFC 826.
-
-Ethernet Frame Header:
-
-+--------+--------+--------+--------+--------+--------+
-| Dest Address                                        |
-+--------+--------+--------+--------+--------+--------+
-| Source Address                                      |
-+--------+--------+--------+--------+--------+--------+
-| Protocol Type   |
-+--------+--------+
-
-ARP Packet data:
-
-+--------+--------+
-| ar$hrd          |
-+--------+--------+
-| ar$pro          |
-+--------+--------+
-|ar$hln  |
-+--------+
-|ar$pln  |
-+--------+--------+
-| ar$op           |
-+--------+--------+--------+--------+--------+--------+
-| ar$sha                                              |
-+--------+--------+--------+--------+--------+--------+
-| ar$spa                            |
-+--------+--------+--------+--------+--------+--------+
-| ar$tha                                              |
-+--------+--------+--------+--------+--------+--------+
-| ar$tpa                            |
-+--------+--------+--------+--------+
-
-Optional Padding:
-
-+--------+--------+...
-| Padding          ...
-+--------+--------+...
-
