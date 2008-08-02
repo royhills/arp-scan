@@ -19,11 +19,6 @@ runs OK.
 
 Add support for win32 link-layer send and receive.
 
-Alter the shebang line for the Perl scripts if /usr/bin/perl doesn't exist,
-but there is a Perl in one of the other standard locations.  This is mainly
-for NetBSD where pkg_add installs Perl as /usr/pkg/bin/perl and doesn't
-make /usr/bin/perl a symlink to this.
-
 Add support for Token Ring.
 
 Support the libpcap sending function pcap_sendpacket() or pcap_inject() when
@@ -39,3 +34,9 @@ Investigate response packets >60 bytes long, e.g:
 10:27:40.802358 00:06:d7:55:0f:40 > 00:c0:9f:09:b8:db, ethertype ARP (0x0806), length 64: arp reply maple.nta-monitor.com is-at 00:06:d7:55:0f:40
 
 Review verbose levels, and what gets displayed.
+
+Investigate ARP trailer negotiation, as defined in RFC1122 section 2.3.1,
+Trailer Protocol Negotiation: 'the ARP exchange is completed in the usual
+manner using the normal IP protocol type, but a host that wants to speak
+trailers will send an additional "trailer ARP reply" packet'.  Trailer
+encapsulation itself is detailed in RFC 893.

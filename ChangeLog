@@ -1,5 +1,24 @@
 $Id$
 
+2008-08-01 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-fingerprint get-iab get-oui: Replaced "#!/usr/bin/perl" shebang
+	  with "#!/usr/bin/env perl" to increase portability.  This allows
+	  these perl scripts to work on systems where perl is not installed in
+	  /usr/bin, such as NetBSD.
+
+2008-07-26 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* configure.ac: Incremented version to 1.7.1.
+
+	* arp-fingerprint: Added NetBSD 4.0, FreeBSD 7.0 and Vista SP1
+
+2008-07-25 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Released arp-scan version 1.7.
+	  tarball arp-scan-1.7.tar.gz, size 344,771 bytes
+	  md5sum a9927dba2b1dbdfd1c3b3bb09615fc14
+
 2008-07-24 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* ieee-oui.txt, ieee-iab.txt: Updated IEEE OUI and IAB listings from
