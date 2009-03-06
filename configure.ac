@@ -18,6 +18,8 @@ AC_PROG_CC
 dnl Uncomment the line below for testing with stricter warnings.
 dnl      CFLAGS="$CFLAGS -pedantic -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs "
  fi
+GCC_STACK_PROTECT_CC
+GCC_FORTIFY_SOURCE
 AC_PROG_INSTALL
 AC_PROG_LN_S
 

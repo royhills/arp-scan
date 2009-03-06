@@ -40,3 +40,9 @@ Trailer Protocol Negotiation: 'the ARP exchange is completed in the usual
 manner using the normal IP protocol type, but a host that wants to speak
 trailers will send an additional "trailer ARP reply" packet'.  Trailer
 encapsulation itself is detailed in RFC 893.
+
+Hardening:
+
+1. gcc stack protection using GCC_STACK_PROTECT_CC macro
+2. Format string warnings using -Wformat and -Wformat-security
+3. -D_FORTIFY_SOURCE=2
