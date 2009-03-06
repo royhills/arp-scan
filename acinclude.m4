@@ -274,7 +274,6 @@ AC_DEFUN([GCC_FORTIFY_SOURCE],[
    if test "x$CC" != "X"; then
       AC_MSG_CHECKING([whether ${CC} accepts -D_FORTIFY_SOURCE])
       AC_TRY_COMPILE([#include <features.h>], [
-         int main() {
          #if !(__GNUC_PREREQ (4, 1) \
             || (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (4, 0)) \
             || (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (3, 4) \
@@ -283,8 +282,6 @@ AC_DEFUN([GCC_FORTIFY_SOURCE],[
                   || (__GNUC_PATCHLEVEL__ == 2 && __GNUC_RH_RELEASE__ >= 8))))
          #error No FORTIFY_SOURCE support
          #endif
-            return 0;
-         }
       ], [
          AC_MSG_RESULT(yes)
          CFLAGS="$CFLAGS -D_FORTIFY_SOURCE=2"

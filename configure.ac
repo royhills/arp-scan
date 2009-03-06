@@ -13,14 +13,14 @@ AC_CANONICAL_HOST
 
 dnl Checks for programs.
 AC_PROG_CC
- if test -n "$GCC"; then
-      CFLAGS="$CFLAGS -Wall"
+if test -n "$GCC"; then
+   CFLAGS="$CFLAGS -Wall"
+   GCC_STACK_PROTECT_CC
+   GCC_FORTIFY_SOURCE
+   GCC_FORMAT_SECURITY
 dnl Uncomment the line below for testing with stricter warnings.
-dnl      CFLAGS="$CFLAGS -pedantic -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs "
- fi
-GCC_STACK_PROTECT_CC
-GCC_FORTIFY_SOURCE
-GCC_FORMAT_SECURITY
+dnl CFLAGS="$CFLAGS -pedantic -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs"
+fi
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
