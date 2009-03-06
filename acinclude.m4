@@ -273,7 +273,6 @@ AC_DEFUN([GCC_STACK_PROTECT_CXX],[
 AC_DEFUN([GCC_FORTIFY_SOURCE],[
    if test "x$CC" != "X"; then
       AC_MSG_CHECKING([whether ${CC} accepts -D_FORTIFY_SOURCE])
-      fs_old_cflags="$CFLAGS"
       AC_TRY_COMPILE([#include <features.h>], [
          int main() {
          #if !(__GNUC_PREREQ (4, 1) \
@@ -291,6 +290,25 @@ AC_DEFUN([GCC_FORTIFY_SOURCE],[
          CFLAGS="$CFLAGS -D_FORTIFY_SOURCE=2"
       ], [
          AC_MSG_RESULT(no)
+      ])
+   fi
+])
+
+AC_DEFUN([GCC_FORMAT_SECURITY],[
+   if test "x$CC" != "X"; then
+      AC_MSG_CHECKING([whether ${CC} accepts -Wformat-security])
+      wfs_old_cflags="$CFLAGS"
+      CFLAGS="$CFLAGS -Wall -Werror -Wformat -Wformat-security"
+      AC_TRY_COMPILE([#include <stdio.h>], [
+         char *fmt=NULL;
+         printf(fmt);
+         return 0;
+      ], [
+         AC_MSG_RESULT(no)
+         CFLAGS="$wfs_old_cflags"
+      ], [
+         AC_MSG_RESULT(yes)
+         CFLAGS="$wfs_old_cflags -Wformat -Wformat-security"
       ])
    fi
 ])

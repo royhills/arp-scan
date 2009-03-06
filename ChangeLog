@@ -1,5 +1,16 @@
 $Id$
 
+2009-03-06 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* acinclude.m4: Added macros to detect compiler support for
+	  -fstack-protect, -D_FORTIFY_SOURCE and -Wformat-security.
+
+	* configure.ac: Conditionally enable compiler flags for
+	  -fstack-protect, -D_FORTIFY_SOURCE and -Wformat-security using
+	  the new acinclude.m4 autoconf macros.
+
+	* configure.ac: Incremented version to 1.7.2.
+
 2008-08-01 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-fingerprint get-iab get-oui: Replaced "#!/usr/bin/perl" shebang

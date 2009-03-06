@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan], [1.7.1], [arp-scan@nta-monitor.com])
+AC_INIT([arp-scan], [1.7.2], [arp-scan@nta-monitor.com])
 AC_PREREQ(2.59)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -14,12 +14,13 @@ AC_CANONICAL_HOST
 dnl Checks for programs.
 AC_PROG_CC
  if test -n "$GCC"; then
-      CFLAGS="$CFLAGS -Wall "
+      CFLAGS="$CFLAGS -Wall"
 dnl Uncomment the line below for testing with stricter warnings.
 dnl      CFLAGS="$CFLAGS -pedantic -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs "
  fi
 GCC_STACK_PROTECT_CC
 GCC_FORTIFY_SOURCE
+GCC_FORMAT_SECURITY
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
