@@ -1,5 +1,9 @@
 $Id$
 
+2009-05-06 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* autoconf.ac: Updated to autoconf 2.61
+
 2009-03-06 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* acinclude.m4: Added macros to detect compiler support for
