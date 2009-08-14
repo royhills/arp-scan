@@ -120,7 +120,7 @@ hstr_i(const char *cptr)
  *
  *	The returned pointer points to malloc'ed storage which should be
  *	free'ed by the caller when it's no longer needed.  If the length of
- *	the inputs string is not even, the function will return NULL and
+ *	the input string is not even, the function will return NULL and
  *	set data_len to 0.
  */
 unsigned char *

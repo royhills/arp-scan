@@ -54,7 +54,7 @@ AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_lib_version])],
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h syslog.h unistd.h getopt.h pcap.h sys/ioctl.h])
+AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unistd.h getopt.h pcap.h sys/ioctl.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

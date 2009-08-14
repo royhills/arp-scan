@@ -63,10 +63,6 @@
 #include <netdb.h>
 #endif
 
-#ifdef HAVE_SYSLOG_H
-#include <syslog.h>
-#endif
-
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
 #else
@@ -125,8 +121,6 @@
 
 #define MAXLINE 255			/* Max line length for input files */
 #define MAX_FRAME 2048			/* Maximum allowed frame size */
-#undef SYSLOG				/* Use syslog if defined */
-#define SYSLOG_FACILITY LOG_USER	/* Syslog facility to use */
 #define REALLOC_COUNT 1000		/* Entries to realloc at once */
 #define DEFAULT_BANDWIDTH 256000	/* Default bandwidth in bits/sec */
 #define PACKET_OVERHEAD 18		/* layer 2 overhead (6+6+2 + 4) */ 
@@ -205,8 +199,7 @@ void err_sys(const char *, ...);
 void warn_sys(const char *, ...);
 void err_msg(const char *, ...);
 void warn_msg(const char *, ...);
-void info_syslog(const char *, ...);
-void err_print(int, int, const char *, va_list);
+void err_print(int, const char *, va_list);
 void usage(int);
 void add_host_pattern(const char *, unsigned);
 void add_host(const char *, unsigned);

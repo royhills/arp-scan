@@ -120,25 +120,6 @@ main(int argc, char *argv[]) {
    link_t *link_handle;		/* Handle for link-layer functions */
    unsigned char interface_mac[ETH_ALEN];
 /*
- *      Open syslog channel and log arguments if required.
- */
-#ifdef SYSLOG
-   {
-      char arg_str[MAXLINE];       /* Args as string for syslog */
-      int arg;
-
-      openlog("arp-scan", LOG_PID, SYSLOG_FACILITY);
-      arg_str[0] = '\0';
-      for (arg=0; arg<argc; arg++) {
-         strlcat(arg_str, argv[arg], sizeof(arg_str));
-         if (arg < (argc-1)) {
-            strlcat(arg_str, " ", sizeof(arg_str));
-         }
-      }
-      info_syslog("Starting: %s", arg_str);
-   }
-#endif
-/*
  *      Initialise file names to the empty string.
  */
    ouifilename[0] = '\0';
@@ -584,11 +565,6 @@ main(int argc, char *argv[]) {
    elapsed_seconds = (elapsed_time.tv_sec*1000 +
                       elapsed_time.tv_usec/1000) / 1000.0;
 
-#ifdef SYSLOG
-   info_syslog("Ending: %u hosts scanned in %.3f seconds (%.2f hosts/sec). %u responded",
-               num_hosts, elapsed_seconds, num_hosts/elapsed_seconds,
-               responders);
-#endif
    printf("Ending %s: %u hosts scanned in %.3f seconds (%.2f hosts/sec).  %u responded\n",
           PACKAGE_STRING, num_hosts, elapsed_seconds,
           num_hosts/elapsed_seconds, responders);

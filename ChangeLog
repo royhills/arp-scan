@@ -1,5 +1,11 @@
 $Id$
 
+2009-08-14 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c, arp-scan.h, configure.ac, error.c: Rempved syslog
+	  functionality as this is not used and has been #ifdef'ed out
+	  for some time.
+
 2009-05-06 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* autoconf.ac: Updated to autoconf 2.61
