@@ -242,6 +242,9 @@ void *Malloc(size_t);
 void *Realloc(void *, size_t);
 unsigned long int Strtoul(const char *, int);
 long int Strtol(const char *, int);
+unsigned str_to_bandwidth(const char *);
+unsigned str_to_interval(const char *);
+char *dupstr(const char *);
 /* MT19937 prototypes */
 void init_genrand(unsigned long);
 void init_by_array(unsigned long[], int);

@@ -321,6 +321,122 @@ get_ether_addr(const char *address_string, unsigned char *ether_addr) {
    return 0;
 }
 
+/*
+ *	str_to_bandwidth -- Convert a bandwidth string to unsigned integer
+ *
+ *	Inputs:
+ *
+ *	bandwidth_string	The bandwidth string to convert
+ *
+ *	Returns:
+ *
+ *	The bandwidth in bits per second as an unsigned integer
+ */
+unsigned
+str_to_bandwidth(const char *bandwidth_string) {
+   char *bandwidth_str;
+   size_t bandwidth_len;
+   unsigned value;
+   int multiplier=1;
+   int end_char;
+
+   bandwidth_str=dupstr(bandwidth_string);	/* Writable copy */
+   bandwidth_len=strlen(bandwidth_str);
+   end_char = bandwidth_str[bandwidth_len-1];
+   if (!isdigit(end_char)) {	/* End character is not a digit */
+      bandwidth_str[bandwidth_len-1] = '\0';	/* Remove last character */
+      switch (end_char) {
+         case 'M':
+         case 'm':
+            multiplier = 1000000;
+            break;
+         case 'K':
+         case 'k':
+            multiplier = 1000;
+            break;
+         default:
+            err_msg("ERROR: Unknown bandwidth multiplier character: \"%c\"",
+                    end_char);
+            break;
+      }
+   }
+   value=Strtoul(bandwidth_str, 10);
+   free(bandwidth_str);
+   return multiplier * value;
+}
+
+/*
+ *	str_to_interval -- Convert an interval string to unsigned integer
+ *
+ *	Inputs:
+ *
+ *	interval_string		The interval string to convert
+ *
+ *	Returns:
+ *
+ *	The interval in microsecons as an unsigned integer
+ */
+unsigned
+str_to_interval(const char *interval_string) {
+   char *interval_str;
+   size_t interval_len;
+   unsigned value;
+   int multiplier=1000;
+   int end_char;
+
+   interval_str=dupstr(interval_string);	/* Writable copy */
+   interval_len=strlen(interval_str);
+   end_char = interval_str[interval_len-1];
+   if (!isdigit(end_char)) {	/* End character is not a digit */
+      interval_str[interval_len-1] = '\0';	/* Remove last character */
+      switch (end_char) {
+         case 'U':
+         case 'u':
+            multiplier = 1;
+            break;
+         case 'S':
+         case 's':
+            multiplier = 1000000;
+            break;
+         default:
+            err_msg("ERROR: Unknown interval multiplier character: \"%c\"",
+                    end_char);
+            break;
+      }
+   }
+   value=Strtoul(interval_str, 10);
+   free(interval_str);
+   return multiplier * value;
+}
+
+/*
+ *	dupstr -- duplicate a string
+ *
+ *	Inputs:
+ *
+ *	str	The string to duplcate
+ *
+ *	Returns:
+ *
+ *	A pointer to the duplicate string.
+ *
+ *	This is a replacement for the common but non-standard "strdup"
+ *	function.
+ *
+ *	The returned pointer points to Malloc'ed memory, which must be
+ *	free'ed by the caller.
+ */
+char *
+dupstr(const char *str) {
+   char *cp;
+   size_t len;
+
+   len = strlen(str) + 1;	/* Allow space for terminating NULL */
+   cp = Malloc(len);
+   strlcpy(cp, str, len);
+   return cp;
+}
+
 void utils_use_rcsid(void) {
    fprintf(stderr, "%s\n", rcsid);	/* Use rcsid to stop compiler optimising away */
 }

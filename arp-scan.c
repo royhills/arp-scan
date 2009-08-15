@@ -1630,10 +1630,6 @@ process_options(int argc, char *argv[]) {
 
    while ((arg=getopt_long_only(argc, argv, short_options, long_options, &options_index)) != -1) {
       switch (arg) {
-         char interval_str[MAXLINE];    /* --interval argument */
-         size_t interval_len;   /* --interval argument length */
-         char bandwidth_str[MAXLINE];   /* --bandwidth argument */
-         size_t bandwidth_len;  /* --bandwidth argument length */
          struct in_addr source_ip_address;
          int result;
 
@@ -1651,13 +1647,7 @@ process_options(int argc, char *argv[]) {
             timeout=Strtoul(optarg, 10);
             break;
          case 'i':	/* --interval */
-            strlcpy(interval_str, optarg, sizeof(interval_str));
-            interval_len=strlen(interval_str);
-            if (interval_str[interval_len-1] == 'u') {
-               interval=Strtoul(interval_str, 10);
-            } else {
-               interval=1000 * Strtoul(interval_str, 10);
-            }
+            interval=str_to_interval(optarg);
             break;
          case 'b':	/* --backoff */
             backoff_factor=atof(optarg);
@@ -1691,15 +1681,7 @@ process_options(int argc, char *argv[]) {
             numeric_flag=1;
             break;
          case 'B':      /* --bandwidth */
-            strlcpy(bandwidth_str, optarg, sizeof(bandwidth_str));
-            bandwidth_len=strlen(bandwidth_str);
-            if (bandwidth_str[bandwidth_len-1] == 'M') {
-               bandwidth=1000000 * Strtoul(bandwidth_str, 10);
-            } else if (bandwidth_str[bandwidth_len-1] == 'K') {
-               bandwidth=1000 * Strtoul(bandwidth_str, 10);
-            } else {
-               bandwidth=Strtoul(bandwidth_str, 10);
-            }
+            bandwidth=str_to_bandwidth(optarg);
             break;
          case 'O':	/* --ouifile */
             strlcpy(ouifilename, optarg, sizeof(ouifilename));

@@ -79,7 +79,9 @@ unsigned long int Strtoul(const char *nptr, int base) {
    unsigned long int result;
 
    result=strtoul(nptr, &endptr, base);
-   if (endptr == nptr)  /* No digits converted */
+   if (endptr == nptr)	/* No digits converted */
+      err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
+   if (*endptr != '\0' && !isspace((unsigned char)*endptr))
       err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
 
    return result;
@@ -90,7 +92,9 @@ long int Strtol(const char *nptr, int base) {
    long int result;
 
    result=strtol(nptr, &endptr, base);
-   if (endptr == nptr)  /* No digits converted */
+   if (endptr == nptr)	/* No digits converted */
+      err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
+   if (*endptr != '\0' && !isspace((unsigned char)*endptr))
       err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
 
    return result;
