@@ -40,3 +40,10 @@ Trailer Protocol Negotiation: 'the ARP exchange is completed in the usual
 manner using the normal IP protocol type, but a host that wants to speak
 trailers will send an additional "trailer ARP reply" packet'.  Trailer
 encapsulation itself is detailed in RFC 893.
+
+Replace MT19937 PRNG with SFMT19937.
+
+Enable extra GCC warnings: -Wextra if supported (around gcc 3.4, need an autoconf macro), or
+-W.
+
+Include warning about the arpspa option that is in the wiki in the man page.  Suggested by Ed Schaller.

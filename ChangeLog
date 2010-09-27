@@ -1,5 +1,9 @@
 $Id$
 
+2010-04-25 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-fingerprint: Added 2.11BSD
+
 2009-08-15 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c, utils.c: Improve handling of --bandwidth and
