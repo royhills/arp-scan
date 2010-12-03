@@ -6,7 +6,7 @@
 .\" notice and this notice are preserved.
 .\"
 .\" $Id$
-.TH ARP-SCAN 1 "July 11, 2008"
+.TH ARP-SCAN 1 "December 3, 2010"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -210,6 +210,10 @@ outgoing interface address.  With this option it is possible to use
 on an interface with no IP address configured, which can be useful if
 you want to ensure that the testing host does not interact with the
 network being tested.
+.PP
+Warning: Setting ar$spa to the destination IP address can disrupt some
+operating systems, as they assume there is an IP address clash if they
+receive an ARP request for their own address.
 .PP
 It is also possible to change the values in the Ethernet frame header
 that proceeds the ARP packet in the outgoing packets. The table below
@@ -517,6 +521,10 @@ respond if the source address is within the network
 of the receiving interface.  Others don't care, and
 will respond to any source address.
 By default, the outgoing interface address is used.
+.IP
+Warning: Setting ar$spa to the destination IP address can disrupt some
+operating systems, as they assume there is an IP address clash if they
+receive an ARP request for their own address.
 .TP
 .B --padding=<p> or -A <p>
 Specify padding after packet data.
