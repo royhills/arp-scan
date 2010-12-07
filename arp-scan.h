@@ -204,7 +204,7 @@ void usage(int);
 void add_host_pattern(const char *, unsigned);
 void add_host(const char *, unsigned);
 int send_packet(link_t *, host_entry *, struct timeval *);
-void recvfrom_wto(int, unsigned char *, int, struct sockaddr *, int);
+void recvfrom_wto(int, int);
 void remove_host(host_entry **);
 void timeval_diff(const struct timeval *, const struct timeval *,
                   struct timeval *);

@@ -42,6 +42,3 @@ trailers will send an additional "trailer ARP reply" packet'.  Trailer
 encapsulation itself is detailed in RFC 893.
 
 Replace MT19937 PRNG with SFMT19937.
-
-Enable extra GCC warnings: -Wextra if supported (around gcc 3.4, need an autoconf macro), or
--W.

@@ -309,3 +309,19 @@ AC_DEFUN([GCC_FORMAT_SECURITY],[
       ])
    fi
 ])
+
+AC_DEFUN([GCC_WEXTRA],[
+  gcc_wextra=yes
+  if test "X$CC" != "X"; then
+    AC_MSG_CHECKING([whether ${CC} accepts -Wextra])
+    gcc_old_cflags="$CFLAGS"
+    CFLAGS="$CFLAGS -Wextra"
+    AC_TRY_COMPILE(,,[
+       AC_MSG_RESULT(yes)
+    ],[
+       AC_MSG_RESULT(no)
+       gcc_wextra=no
+       CFLAGS="$ssp_old_cflags"
+    ])
+  fi
+])

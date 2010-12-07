@@ -18,8 +18,9 @@ if test -n "$GCC"; then
    GCC_STACK_PROTECT_CC
    GCC_FORTIFY_SOURCE
    GCC_FORMAT_SECURITY
-dnl Uncomment the line below for testing with stricter warnings.
-dnl CFLAGS="$CFLAGS -pedantic -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs"
+dnl Uncomment the lines below for testing with stricter warnings.
+dnl GCC_WEXTRA
+dnl CFLAGS="$CFLAGS -pedantic -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs"
 fi
 AC_PROG_INSTALL
 AC_PROG_LN_S

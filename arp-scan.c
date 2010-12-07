@@ -92,15 +92,13 @@ static int ieee_8021q_vlan=-1;		/* Use 802.1Q VLAN tagging if >= 0 */
 
 int
 main(int argc, char *argv[]) {
-   struct sockaddr_in sa_peer;
    struct timeval now;
-   unsigned char packet_in[MAX_FRAME];      /* Received packet */
    struct timeval diff;         /* Difference between two timevals */
    int select_timeout;          /* Select timeout */
    ARP_UINT64 loop_timediff;    /* Time since last packet sent in us */
    ARP_UINT64 host_timediff; /* Time since last pkt sent to this host (us) */
    struct timeval last_packet_time;     /* Time last packet was sent */
-   int req_interval;            /* Requested per-packet interval */
+   unsigned req_interval;	/* Requested per-packet interval */
    int cum_err=0;               /* Cumulative timing error */
    struct timeval start_time;   /* Program start time */
    struct timeval end_time;     /* Program end time */
@@ -109,7 +107,7 @@ main(int argc, char *argv[]) {
    static int reset_cum_err;
    static int pass_no;
    int first_timeout=1;
-   int i;
+   unsigned i;
    char errbuf[PCAP_ERRBUF_SIZE];
    struct bpf_program filter;
    char *filter_string;
@@ -214,7 +212,7 @@ main(int argc, char *argv[]) {
 #endif /* ARP_PCAP_BPF */
 /*
  * For the DLPI pcap implementation on Solaris, set the bufmod timeout to
- * zero.  This has the side-effect tof setting the chink size to zero as
+ * zero.  This has the side-effect of setting the chunk size to zero as
  * well, so bufmod will pass all incoming messages on immediately.
  */
 #ifdef ARP_PCAP_DLPI
@@ -551,8 +549,7 @@ main(int argc, char *argv[]) {
          if (debug) {print_times(); printf("main: Can't send packet yet.  loop_timediff=" ARP_UINT64_FORMAT "\n", loop_timediff);}
       } /* End If */
 
-      recvfrom_wto(pcap_fd, packet_in, MAX_FRAME, (struct sockaddr *)&sa_peer,
-                   select_timeout);
+      recvfrom_wto(pcap_fd, select_timeout);
    } /* End While */
 
    printf("\n");        /* Ensure we have a blank line */
@@ -658,7 +655,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
  *	If it is non-zero, and verbose is selected, then print the padding.
  */
       if (extra_data_len > 0) {
-         int i;
+         unsigned i;
          const unsigned char *ucp = extra_data;
 
          for (i=0; i<extra_data_len; i++) {
@@ -1429,9 +1426,6 @@ find_host(host_entry **he, struct in_addr *addr) {
  *	Inputs:
  *
  *	s	= Socket file descriptor.
- *	buf	= Buffer to receive data read from socket.
- *	len	= Size of buffer.
- *	saddr	= Socket structure.
  *	tmo	= Select timeout in us.
  *
  *	Returns:
@@ -1439,8 +1433,7 @@ find_host(host_entry **he, struct in_addr *addr) {
  *	None.
  */
 void
-recvfrom_wto(int s, unsigned char *buf, int len, struct sockaddr *saddr,
-             int tmo) {
+recvfrom_wto(int s, int tmo) {
    fd_set readset;
    struct timeval to;
    int n;
@@ -1478,7 +1471,7 @@ recvfrom_wto(int s, unsigned char *buf, int len, struct sockaddr *saddr,
  */
 void
 dump_list(void) {
-   int i;
+   unsigned i;
 
    printf("Host List:\n\n");
    printf("Entry\tIP Address\n");
@@ -2158,7 +2151,7 @@ add_mac_vendor(struct hash_control *table, const char *map_filename) {
          key[key_len] = '\0';
          strncpy(data, line+pmatch[2].rm_so, data_len);
          data[data_len] = '\0';
-         if ((result_str = hash_insert(hash_table, key, data)) != NULL) {
+         if ((result_str = hash_insert(table, key, data)) != NULL) {
 /* Ignore "exists" because there are a few duplicates in the IEEE list */
             if ((strcmp(result_str, "exists")) != 0) {
                warn_msg("hash_insert(%s, %s): %s", key, data, result_str);

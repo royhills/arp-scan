@@ -1,9 +1,17 @@
 $Id$
 
+2010-12-07 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* acinclude.m4: Added GCC_WEXTRA macro to determine if the C compiler
+	  supports the -Wextra switch to enable extra warnings.
+
+	* arp-scan.c, arp-scan.h, utils.c: Remove unused function parameters
+	  and address signed/unsigned comparisons highlighted by -Wextra.
+
 2010-12-03 Roy Hills <Roy.Hills@nta-monitor.com>
 
-	* Added warning about setting ar$spa to the destination IP address.
-	  Suggested by Ed Schaller.
+	* arp-scan.1: Added warning about setting ar$spa to the destination
+	  IP address. Suggested by Ed Schaller.
 
 2010-04-25 Roy Hills <Roy.Hills@nta-monitor.com>
 
