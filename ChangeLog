@@ -1,5 +1,18 @@
 $Id$
 
+2010-12-22 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* hash.c, hash.h, obstack.c, obstack.h: Updated version of GAS hash
+	  table code to the latest version from GNU binutils 2.21.  This new
+	  version addresses the shadowed variable warnings that the old version
+	  used to produce when compiled with -Wshadow.
+
+	* configure.ac: define ATTRIBUTE_UNUSED macro to enable portable use
+	  of attribute unused to mark possibly unused function arguments.
+
+	* arp-scan.c: Minor changes to remove a couple of shadowed variable
+	  warnings.
+
 2010-12-07 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* acinclude.m4: Added GCC_WEXTRA macro to determine if the C compiler

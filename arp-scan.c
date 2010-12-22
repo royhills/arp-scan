@@ -1494,8 +1494,8 @@ dump_list(void) {
  * None
  */
 void
-callback(u_char *args, const struct pcap_pkthdr *header,
-         const u_char *packet_in) {
+callback(u_char *args ATTRIBUTE_UNUSED,
+         const struct pcap_pkthdr *header, const u_char *packet_in) {
    arp_ether_ipv4 arpei;
    ether_hdr frame_hdr;
    int n = header->caplen;
@@ -1880,7 +1880,7 @@ my_ntoa(struct in_addr addr) {
 void
 marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
                 arp_ether_ipv4 *arp_pkt, size_t *buf_siz,
-                const unsigned char *padding, size_t padding_len) {
+                const unsigned char *frame_padding, size_t frame_padding_len) {
    unsigned char llc_snap[] = {0xAA, 0xAA, 0x03, 0x00, 0x00, 0x00, 0x08, 0x06};
    unsigned char vlan_tag[] = {0x81, 0x00, 0x00, 0x00};
    unsigned char *cp;
@@ -1960,14 +1960,14 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
 /*
  *	Add padding if specified
  */
-   if (padding != NULL) {
+   if (frame_padding != NULL) {
       size_t safe_padding_len;
 
-      safe_padding_len = padding_len;
-      if (packet_size + padding_len > MAX_FRAME) {
+      safe_padding_len = frame_padding_len;
+      if (packet_size + frame_padding_len > MAX_FRAME) {
          safe_padding_len = MAX_FRAME - packet_size;
       }
-      memcpy(cp, padding, safe_padding_len);
+      memcpy(cp, frame_padding, safe_padding_len);
       cp += safe_padding_len;
       packet_size += safe_padding_len;
    }

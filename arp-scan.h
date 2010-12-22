@@ -151,6 +151,7 @@
 #define DEFAULT_ETH_PRO	ETH_P_ARP	/* Default Ethernet protocol */
 #define FRAMING_ETHERNET_II 0		/* Standard Ethernet-II Framing */
 #define FRAMING_LLC_SNAP 1		/* 802.3 with LLC/SNAP */
+#define ARRAY_SIZE(a) (sizeof (a) / sizeof ((a)[0]))
 
 /* Structures */
 
