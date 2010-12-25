@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan],[1.7.3],[arp-scan@nta-monitor.com])
+AC_INIT([arp-scan],[1.7.4],[arp-scan@nta-monitor.com])
 AC_PREREQ(2.61)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -17,12 +17,12 @@ if test -n "$GCC"; then
    AC_DEFINE([ATTRIBUTE_UNUSED], [__attribute__ ((__unused__))],
              [Define to the compiler's unused pragma])
    CFLAGS="$CFLAGS -Wall -Wshadow -Wwrite-strings"
+   GCC_WEXTRA
    GCC_STACK_PROTECT_CC
    GCC_FORTIFY_SOURCE
    GCC_FORMAT_SECURITY
-dnl Uncomment the lines below for testing with stricter warnings.
-GCC_WEXTRA
-dnl CFLAGS="$CFLAGS -pedantic -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs"
+dnl Uncomment the line below to compile with additional warnings enabled.
+dnl CFLAGS="$CFLAGS -pedantic -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs"
 else
    AC_DEFINE([ATTRIBUTE_UNUSED], [],
              [Define to the compiler's unused pragma])

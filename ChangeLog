@@ -7,6 +7,9 @@ $Id$
 	  r18043, which caused the packet rate to be very high irrespective
 	  of the specified interval.
 
+	* configure.ac: Enable -Wextra warnings for gcc. Increment version
+	  number to 1.7.4.
+
 2010-12-22 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* hash.c, hash.h, obstack.c, obstack.h: Updated version of GAS hash
