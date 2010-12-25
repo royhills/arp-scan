@@ -260,12 +260,12 @@ print_times(void) {
       first_call=0;
       time_first.tv_sec  = time_now.tv_sec;
       time_first.tv_usec = time_now.tv_usec;
-      printf("%lu.%.6lu (0.000000) [0.000000]\n",
+      printf("%lu.%.6lu (0.000000) [0.000000]\t",
              (unsigned long)time_now.tv_sec, (unsigned long)time_now.tv_usec);
    } else {
       timeval_diff(&time_now, &time_last, &time_delta1);
       timeval_diff(&time_now, &time_first, &time_delta2);
-      printf("%lu.%.6lu (%lu.%.6lu) [%lu.%.6lu]\n",
+      printf("%lu.%.6lu (%lu.%.6lu) [%lu.%.6lu]\t",
              (unsigned long)time_now.tv_sec,
              (unsigned long)time_now.tv_usec,
              (unsigned long)time_delta1.tv_sec,

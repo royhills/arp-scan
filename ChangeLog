@@ -2,6 +2,13 @@ $Id$
 
 2010-12-22 Roy Hills <Roy.Hills@nta-monitor.com>
 
+	* arp-scan.c: Change req_interval back from unsigned to int. This
+	  addresses a bug in the timining code that was introduced in svn
+	  r18043, which caused the packet rate to be very high irrespective
+	  of the specified interval.
+
+2010-12-22 Roy Hills <Roy.Hills@nta-monitor.com>
+
 	* hash.c, hash.h, obstack.c, obstack.h: Updated version of GAS hash
 	  table code to the latest version from GNU binutils 2.21.  This new
 	  version addresses the shadowed variable warnings that the old version

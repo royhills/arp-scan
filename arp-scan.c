@@ -98,7 +98,7 @@ main(int argc, char *argv[]) {
    ARP_UINT64 loop_timediff;    /* Time since last packet sent in us */
    ARP_UINT64 host_timediff; /* Time since last pkt sent to this host (us) */
    struct timeval last_packet_time;     /* Time last packet was sent */
-   unsigned req_interval;	/* Requested per-packet interval */
+   int req_interval;		/* Requested per-packet interval */
    int cum_err=0;               /* Cumulative timing error */
    struct timeval start_time;   /* Program start time */
    struct timeval end_time;     /* Program end time */
@@ -468,8 +468,8 @@ main(int argc, char *argv[]) {
  */
       timeval_diff(&now, &last_packet_time, &diff);
       loop_timediff = (ARP_UINT64)1000000*diff.tv_sec + diff.tv_usec;
-      if (loop_timediff >= req_interval) {
-         if (debug) {print_times(); printf("main: Can send packet now.  loop_timediff=" ARP_UINT64_FORMAT "\n", loop_timediff);}
+      if (loop_timediff >= (unsigned)req_interval) {
+         if (debug) {print_times(); printf("main: Can send packet now. loop_timediff=" ARP_UINT64_FORMAT ", req_interval=%d, cum_err=%d\n", loop_timediff, req_interval, cum_err);}
 /*
  *      If the last packet to this host was sent more than the current
  *      timeout for this host us ago, then we can potentially send a packet
