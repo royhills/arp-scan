@@ -1,5 +1,13 @@
 $Id$
 
+2011-01-09 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* COPYING: Changed license from GPLv2 to GPLv3.
+
+	* Modified licence statement in source files to specify GPLv3
+
+	* Modified copyright statement in files to include up to 2011.
+
 2010-12-22 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Change req_interval back from unsigned to int. This
