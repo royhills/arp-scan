@@ -24,7 +24,9 @@ Add support for Token Ring.
 Support the libpcap sending function pcap_sendpacket() or pcap_inject() when
 they are supported by the pcap library.  These two functions are essentially
 the same, but pcap_sendpacket() came from WinPcap whereas pcap_inject() came
-from OpenBSD.
+from OpenBSD.  Need to find portable functions to get interface IP address
+and MAC address.  pcap_lookupnet() gets the network address and mask, but not
+the IP address.
 
 Use pcap_get_selectable_fd() to get the file descriptor for select().  This
 function is not supported on windows.

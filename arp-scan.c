@@ -51,7 +51,6 @@ static int verbose=0;			/* Verbose level */
 static int debug = 0;			/* Debug flag */
 static pcap_t *pcap_handle;		/* pcap handle */
 static pcap_dumper_t *pcap_dump_handle = NULL;	/* pcap savefile handle */
-static int pcap_fd;			/* Pcap file descriptor */
 static char filename[MAXLINE];		/* Target list file name */
 static int filename_flag=0;		/* Set if using target list file */
 static int random_flag=0;		/* Randomise the list */
@@ -117,6 +116,7 @@ main(int argc, char *argv[]) {
    int datalink;
    int get_addr_status = 0;
    link_t *link_handle;		/* Handle for link-layer functions */
+   int pcap_fd;			/* Pcap file descriptor */
    unsigned char interface_mac[ETH_ALEN];
 /*
  *      Initialise file names to the empty string.
