@@ -102,6 +102,14 @@
 #include <regex.h>		/* Posix regular expression functions */
 #endif
 
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+
 #ifdef HAVE_PCAP_H
 #include <pcap.h>
 #endif
@@ -153,6 +161,8 @@
 #define FRAMING_ETHERNET_II 0		/* Standard Ethernet-II Framing */
 #define FRAMING_LLC_SNAP 1		/* 802.3 with LLC/SNAP */
 #define ARRAY_SIZE(a) (sizeof (a) / sizeof ((a)[0]))
+#define OPT_WRITEPKTTOFILE 256		/* --writepkttofile option */
+#define OPT_READPKTFROMFILE 257		/* --readpktfromfile option */
 
 /* Structures */
 

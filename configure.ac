@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan],[1.7.4],[arp-scan@nta-monitor.com])
+AC_INIT([arp-scan],[1.7.5],[arp-scan@nta-monitor.com])
 AC_PREREQ(2.61)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -23,6 +23,8 @@ if test -n "$GCC"; then
    GCC_FORMAT_SECURITY
 dnl Uncomment the line below to compile with additional warnings enabled.
 dnl CFLAGS="$CFLAGS -pedantic -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs"
+dnl Uncomment the line below to compile with gcov support.
+dnl   CFLAGS="$CFLAGS -fprofile-arcs -ftest-coverage"
 else
    AC_DEFINE([ATTRIBUTE_UNUSED], [],
              [Define to the compiler's unused pragma])
@@ -60,7 +62,7 @@ AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_lib_version])],
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unistd.h getopt.h pcap.h sys/ioctl.h])
+AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unistd.h getopt.h pcap.h sys/ioctl.h sys/stat.h fcntl.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -160,7 +162,7 @@ dnl work.
 dnl FreeBSD 5.2 needs sys/socket.h included for net/if, and
 dnl needs sys/types.h for sys/sysctl.h and net/bpf.h
 dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
-      AC_CHECK_HEADERS([fcntl.h net/if.h net/bpf.h sys/param.h sys/sysctl.h net/route.h net/if_dl.h],,,
+      AC_CHECK_HEADERS([net/if.h net/bpf.h sys/param.h sys/sysctl.h net/route.h net/if_dl.h],,,
       [
       #include <sys/types.h>
       #ifdef HAVE_SYS_SOCKET_H
@@ -176,7 +178,7 @@ dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
    *solaris* )
       AC_MSG_NOTICE([Using DLPI link layer implementation.]);
 dnl Solaris 9 needs sys/types.h and sys/socket.h included before net/if.h.
-      AC_CHECK_HEADERS([sys/dlpi.h sys/dlpihdr.h sys/stat.h fcntl.h stropts.h sys/ioctl.h sys/sockio.h net/if.h sys/bufmod.h],,,
+      AC_CHECK_HEADERS([sys/dlpi.h sys/dlpihdr.h stropts.h sys/ioctl.h sys/sockio.h net/if.h sys/bufmod.h],,,
       [
       #include <sys/types.h>
       #ifdef HAVE_SYS_SOCKET_H

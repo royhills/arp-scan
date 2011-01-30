@@ -1,0 +1,131 @@
+#!/bin/sh
+# The ARP Scanner (arp-scan) is Copyright (C) 2005-2011 Roy Hills,
+# NTA Monitor Ltd.
+#
+# This file is part of arp-scan.
+#
+# arp-scan is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# arp-scan is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
+#
+# $Id$
+#
+# check-packet - Shell script to test arp-scan packet creation
+#
+# Author: Roy Hills
+# Date: 30 January 2011
+#
+# This script checks that arp-scan builds ARP request packets correctly.
+# It uses the undocumented arp-scan option --writepkttofile to write the
+# packet to a file rather than sending it via the network.
+#
+
+# Check that the user is root. Skip this check if they are not.
+ID=`id | sed 's/(.*//'`
+if test "$ID" != "uid=0"
+then
+   echo "User is not root, skipping check-packet test..."
+   exit 0
+fi
+
+TMPFILE=/tmp/arp-scan-test.$$.tmp
+#
+SAMPLE01="$srcdir/pkt-simple-request.dat"
+SAMPLE02="$srcdir/pkt-custom-request.dat"
+SAMPLE03="$srcdir/pkt-custom-request-padding.dat"
+SAMPLE04="$srcdir/pkt-custom-request-llc.dat"
+SAMPLE05="$srcdir/pkt-custom-request-vlan.dat"
+
+echo "Checking simple ARP request packet against $SAMPLE01 ..."
+ARPARGS="--retry=1 --file=- --srcaddr=00:01:02:03:04:05 --arpsha=00:01:02:03:04:05 --arpspa=127.0.0.1"
+echo "127.0.0.1" | $srcdir/arp-scan $ARPARGS --writepkttofile=$TMPFILE >/dev/null 2>&1
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+cmp -s $TMPFILE $SAMPLE01
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f $TMPFILE
+
+echo "Checking custom ARP request packet against $SAMPLE02 ..."
+ARPARGS="--retry=1 --file=- --destaddr=11:11:11:11:11:11 --srcaddr=22:22:22:22:22:22 --prototype=0x3333 --arphrd=0x4444 --arppro=0x5555 --arphln=0x66 --arppln=0x77 --arpop=0x8888 --arpsha=99:99:99:99:99:99 --arpspa=170.170.170.170 --arptha=bb:bb:bb:bb:bb:bb"
+echo "204.204.204.204" | $srcdir/arp-scan $ARPARGS --writepkttofile=$TMPFILE >/dev/null 2>&1
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+cmp -s $TMPFILE $SAMPLE02
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f $TMPFILE
+
+echo "Checking custom ARP request packet with padding against $SAMPLE03 ..."
+ARPARGS="--retry=1 --file=- --destaddr=11:11:11:11:11:11 --srcaddr=22:22:22:22:22:22 --prototype=0x3333 --arphrd=0x4444 --arppro=0x5555 --arphln=0x66 --arppln=0x77 --arpop=0x8888 --arpsha=99:99:99:99:99:99 --arpspa=170.170.170.170 --arptha=bb:bb:bb:bb:bb:bb --padding=dddddddddddddddd"
+echo "204.204.204.204" | $srcdir/arp-scan $ARPARGS --writepkttofile=$TMPFILE >/dev/null 2>&1
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+cmp -s $TMPFILE $SAMPLE03
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f $TMPFILE
+
+echo "Checking custom ARP request packet with LLC/SNAP framing against $SAMPLE04 ..."
+ARPARGS="--retry=1 --file=- --destaddr=11:11:11:11:11:11 --srcaddr=22:22:22:22:22:22 --prototype=0x3333 --arphrd=0x4444 --arppro=0x5555 --arphln=0x66 --arppln=0x77 --arpop=0x8888 --arpsha=99:99:99:99:99:99 --arpspa=170.170.170.170 --arptha=bb:bb:bb:bb:bb:bb --llc"
+echo "204.204.204.204" | $srcdir/arp-scan $ARPARGS --writepkttofile=$TMPFILE >/dev/null 2>&1
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+cmp -s $TMPFILE $SAMPLE04
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f $TMPFILE
+
+echo "Checking custom ARP request packet with VLAN tag against $SAMPLE05 ..."
+ARPARGS="--retry=1 --file=- --destaddr=11:11:11:11:11:11 --srcaddr=22:22:22:22:22:22 --prototype=0x3333 --arphrd=0x4444 --arppro=0x5555 --arphln=0x66 --arppln=0x77 --arpop=0x8888 --arpsha=99:99:99:99:99:99 --arpspa=170.170.170.170 --arptha=bb:bb:bb:bb:bb:bb --vlan=0xddd"
+echo "204.204.204.204" | $srcdir/arp-scan $ARPARGS --writepkttofile=$TMPFILE >/dev/null 2>&1
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+cmp -s $TMPFILE $SAMPLE05
+if test $? -ne 0; then
+   rm -f $TMPFILE
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f $TMPFILE

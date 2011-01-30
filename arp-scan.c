@@ -89,6 +89,11 @@ static struct hash_control *hash_table;
 static int localnet_flag=0;		/* Scan local network */
 static int llc_flag=0;			/* Use 802.2 LLC with SNAP */
 static int ieee_8021q_vlan=-1;		/* Use 802.1Q VLAN tagging if >= 0 */
+static int pkt_filename_flag=0;		/* Write packet to file flag */
+static int pkt_read_filename_flag=0;	/* Read packet from file flag */
+static char pkt_filename[MAXLINE];	/* Read/Write packet to file filename */
+static int write_pkt_to_file=0;		/* Write packet to file for debugging */
+static int read_pkt_from_file=0;	/* Read packet from file for debugging */
 
 int
 main(int argc, char *argv[]) {
@@ -336,9 +341,7 @@ main(int argc, char *argv[]) {
       char *cp;
 
       if ((strcmp(filename, "-")) == 0) {       /* Filename "-" means stdin */
-         if ((fp = fdopen(0, "r")) == NULL) {
-            err_sys("fdopen");
-         }
+         fp = stdin;
       } else {
          if ((fp = fopen(filename, "r")) == NULL) {
             err_sys("fopen");
@@ -351,7 +354,9 @@ main(int argc, char *argv[]) {
          *cp = '\0';
          add_host_pattern(line, timeout);
       }
-      fclose(fp);
+      if (fp != stdin) {
+         fclose(fp);
+      }
    } else if (localnet_flag) {	/* Populate list from i/f addr & mask */
       struct in_addr if_network;
       struct in_addr if_netmask;
@@ -386,6 +391,22 @@ main(int argc, char *argv[]) {
  */
    if (!num_hosts)
       err_msg("ERROR: No hosts to process.");
+/*
+ *	If --writepkttofile was specified, open the specified output file.
+ */
+   if (pkt_filename_flag) {
+      write_pkt_to_file = open(pkt_filename, O_WRONLY|O_CREAT|O_TRUNC, 0666);
+      if (write_pkt_to_file == -1)
+         err_sys("open %s", pkt_filename);
+   }
+/*
+ *	If --readpktfromfile was specified, open the specified input file.
+ */
+   if (pkt_read_filename_flag) {
+      read_pkt_from_file = open(pkt_filename, O_RDONLY);
+      if (read_pkt_from_file == -1)
+         err_sys("open %s", pkt_filename);
+   }
 /*
  *      Create and initialise array of pointers to host entries.
  */
@@ -557,6 +578,10 @@ main(int argc, char *argv[]) {
 
    link_close(link_handle);
    clean_up();
+   if (write_pkt_to_file)
+      close(write_pkt_to_file);
+   if (read_pkt_from_file)
+      close(read_pkt_from_file);
 
    Gettimeofday(&end_time);
    timeval_diff(&end_time, &start_time, &elapsed_time);
@@ -731,6 +756,7 @@ send_packet(link_t *link_handle, host_entry *he,
    size_t buflen;
    ether_hdr frame_hdr;
    arp_ether_ipv4 arpei;
+   int nsent;
 /*
  *	Construct Ethernet frame header
  */
@@ -788,9 +814,14 @@ send_packet(link_t *link_handle, host_entry *he,
    if (verbose > 1)
       warn_msg("---\tSending packet #%u to host %s tmo %d", he->num_sent,
                my_ntoa(he->addr), he->timeout);
-   if ((link_send(link_handle, buf, buflen)) < 0) {
-      err_sys("ERROR: failed to send packet");
+   if (write_pkt_to_file) {
+      nsent = write(write_pkt_to_file, buf, buflen);
+   } else {
+      nsent = link_send(link_handle, buf, buflen);
    }
+   if (nsent < 0)
+      err_sys("ERROR: failed to send packet");
+
    return buflen;
 }
 
@@ -1447,7 +1478,7 @@ recvfrom_wto(int s, int tmo) {
    if (debug) {print_times(); printf("recvfrom_wto: select end, tmo=%d, n=%d\n", tmo, n);}
    if (n < 0) {
       err_sys("select");
-   } else if (n == 0) {
+   } else if (n == 0 && read_pkt_from_file == 0) {
 /*
  * For the BPF pcap implementation, we call pcap_dispatch() even if select
  * times out. This is because on many BPF implementations, select() doesn't
@@ -1459,8 +1490,21 @@ recvfrom_wto(int s, int tmo) {
 #endif
       return;	/* Timeout */
    }
-   if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) == -1)
-      err_sys("pcap_dispatch: %s\n", pcap_geterr(pcap_handle));
+   if (read_pkt_from_file == 0) {
+      if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) == -1)
+         err_sys("pcap_dispatch: %s\n", pcap_geterr(pcap_handle));
+   } else {	/* Read from file */
+      unsigned char buf[MAX_FRAME];
+      struct pcap_pkthdr header;
+
+      if ((n = read(read_pkt_from_file, buf, MAX_FRAME)) < 0) {
+         err_sys("ERROR: read");
+      }
+      Gettimeofday(&(header.ts));
+      header.caplen = n;
+      header.len = n;
+      callback(NULL, &header, buf);
+   }
 }
 
 /*
@@ -1615,6 +1659,8 @@ process_options(int argc, char *argv[]) {
       {"llc", no_argument, 0, 'L'},
       {"vlan", required_argument, 0, 'Q'},
       {"pcapsavefile", required_argument, 0, 'W'},
+      {"writepkttofile", required_argument, 0, OPT_WRITEPKTTOFILE},
+      {"readpktfromfile", required_argument, 0, OPT_READPKTFROMFILE},
       {0, 0, 0, 0}
    };
    const char *short_options =
@@ -1754,6 +1800,14 @@ process_options(int argc, char *argv[]) {
          case 'W':	/* --pcapsavefile */
             strlcpy(pcap_savefile, optarg, sizeof(pcap_savefile));
             break;
+         case OPT_WRITEPKTTOFILE: /* --writepkttofile */
+            strlcpy(pkt_filename, optarg, sizeof(pkt_filename));
+            pkt_filename_flag=1;
+            break;
+         case OPT_READPKTFROMFILE: /* --readpktfromfile */
+            strlcpy(pkt_filename, optarg, sizeof(pkt_filename));
+            pkt_read_filename_flag=1;
+            break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE);
             break;	/* NOTREACHED */
@@ -1882,7 +1936,7 @@ void
 marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
                 arp_ether_ipv4 *arp_pkt, size_t *buf_siz,
                 const unsigned char *frame_padding, size_t frame_padding_len) {
-   unsigned char llc_snap[] = {0xAA, 0xAA, 0x03, 0x00, 0x00, 0x00, 0x08, 0x06};
+   unsigned char llc_snap[] = {0xAA, 0xAA, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00};
    unsigned char vlan_tag[] = {0x81, 0x00, 0x00, 0x00};
    unsigned char *cp;
    size_t packet_size;
@@ -1934,6 +1988,7 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
  */
    if (llc_flag) {
       memcpy(cp, llc_snap, sizeof(llc_snap));
+      memcpy(cp+6, &(frame_hdr->frame_type), sizeof(frame_hdr->frame_type));
       cp += sizeof(llc_snap);
       packet_size += sizeof(llc_snap);
    }

@@ -1,0 +1,93 @@
+#!/bin/sh
+# The ARP Scanner (arp-scan) is Copyright (C) 2005-2011 Roy Hills,
+# NTA Monitor Ltd.
+#
+# This file is part of arp-scan.
+#
+# arp-scan is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# arp-scan is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
+#
+# $Id$
+#
+# check-packet - Shell script to test arp-scan packet decoding
+#
+# Author: Roy Hills
+# Date: 30 January 2011
+#
+# This script checks that arp-scan decodes and displays ARP response packets
+# correctly. It uses the undocumented arp-scan option --readpktfromfile to
+# read the packet from a file rather than from the network.
+#
+
+# Check that the user is root. Skip this check if they are not.
+ID=`id | sed 's/(.*//'`
+if test "$ID" != "uid=0"
+then
+   echo "User is not root, skipping check-decode test..."
+   exit 0
+fi
+#
+ARPSCANOUTPUT=/tmp/arp-scan-output.$$.tmp
+EXAMPLEOUTPUT=/tmp/example-output.$$.tmp
+#
+SAMPLE01="$srcdir/pkt-simple-response.dat"
+SAMPLE02="$srcdir/pkt-padding-response.dat"
+
+echo "Checking simple ARP response packet decode using $SAMPLE01 ..."
+cat >$EXAMPLEOUTPUT <<_EOF_
+127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION
+
+_EOF_
+ARPARGS="--retry=1"
+$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE01 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f $ARPSCANOUTPUT
+rm -f $EXAMPLEOUTPUT
+#
+echo "Checking padded ARP response packet decode using $SAMPLE02 ..."
+cat >$EXAMPLEOUTPUT <<_EOF_
+127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION	Padding=55aa55aa55aa55aa55aa55aa55aa55aa55aa
+
+_EOF_
+ARPARGS="--retry=1 --verbose"
+$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE02 127.0.0.1 | grep -v '^DEBUG: ' | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f $ARPSCANOUTPUT
+rm -f $EXAMPLEOUTPUT
+

@@ -1,5 +1,30 @@
 $Id$
 
+2011-01-30 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* check-packet, check-decode: New checks to check packet creation and
+	  packet decoding.
+
+	* pkt-custom-request.dat, pkt-custom-request-llc.dat,
+	  pkt-custom-request-padding.dat, pkt-custom-request-vlan.dat,
+	  pkt-padding-response.dat, pkt-simple-request.dat,
+	  pkt-simple-response.dat: Data files for check-packet and check-decode
+	  scripts.
+
+	* Makefile.am: Add new check scripts and data files.
+
+	* arp-scan.c, arp-scan.h: Added undocumented options --writepkttofile
+	  and --readpktfromfile to allow data to be written to or read from a
+	  file instead of the network for testing.
+
+	* arp-scan.c: Use "stdin" instead of fdopen(0,"r") when using
+	  --filename=-, fixing a bug which was causing fd 0 to be closed.
+	  Set the frame type correctly for LLC/SNAP format frames: before
+	  it was always set to 0x0806.
+
+	* configure.ac: Add headers required for --writepkttofile and
+	  --readpktfromfile.  Increment version number to 1.7.5.
+
 2011-01-09 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* COPYING: Changed license from GPLv2 to GPLv3.
