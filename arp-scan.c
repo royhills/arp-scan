@@ -249,7 +249,7 @@ main(int argc, char *argv[]) {
                               interface_mac[0], interface_mac[1],
                               interface_mac[2], interface_mac[3],
                               interface_mac[4], interface_mac[5]);
-   if (verbose)
+   if (verbose > 1)
       warn_msg("DEBUG: pcap filter string: \"%s\"", filter_string);
    if ((pcap_compile(pcap_handle, &filter, filter_string, OPTIMISE,
         netmask)) < 0)
@@ -305,7 +305,7 @@ main(int argc, char *argv[]) {
       else
          fn = make_message("%s", ouifilename);
       count = add_mac_vendor(hash_table, fn);
-      if (verbose && count > 0)
+      if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d IEEE OUI/Vendor entries from %s.",
                   count, fn);
       free(fn);
@@ -315,7 +315,7 @@ main(int argc, char *argv[]) {
       else
          fn = make_message("%s", iabfilename);
       count = add_mac_vendor(hash_table, fn);
-      if (verbose && count > 0)
+      if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d IEEE IAB/Vendor entries from %s.",
                   count, fn);
       free(fn);
@@ -325,7 +325,7 @@ main(int argc, char *argv[]) {
       else
          fn = make_message("%s", macfilename);
       count = add_mac_vendor(hash_table, fn);
-      if (verbose && count > 0)
+      if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d MAC/Vendor entries from %s.",
                   count, fn);
       free(fn);
@@ -376,7 +376,7 @@ main(int argc, char *argv[]) {
       free(c_netmask);
 
       if (verbose) {
-         warn_msg("DEBUG: Using %s for localnet", localnet_descr);
+         warn_msg("Using %s for localnet", localnet_descr);
       }
       add_host_pattern(localnet_descr, timeout);
    } else {             /* Populate list from command line arguments */
@@ -454,7 +454,7 @@ main(int argc, char *argv[]) {
          packet_out_len = MINIMUM_FRAME_SIZE;   /* Adjust to minimum size */
       packet_out_len += PACKET_OVERHEAD;	/* Add layer 2 overhead */
       interval = ((ARP_UINT64)packet_out_len * 8 * 1000000) / bandwidth;
-      if (verbose) {
+      if (verbose > 1) {
          warn_msg("DEBUG: pkt len=%u bytes, bandwidth=%u bps, interval=%u us",
                   packet_out_len, bandwidth, interval);
       }
@@ -929,9 +929,14 @@ usage(int status) {
    fprintf(stderr, "\t\t\t500ms, the second 750ms and the third 1125ms.\n");
    fprintf(stderr, "\n--verbose or -v\t\tDisplay verbose progress messages.\n");
    fprintf(stderr, "\t\t\tUse more than once for greater effect:\n");
-   fprintf(stderr, "\t\t\t1 - Show when hosts are removed from the list and\n");
-   fprintf(stderr, "\t\t\t    other useful information.\n");
-   fprintf(stderr, "\t\t\t2 - Show each packet sent and received.\n");
+   fprintf(stderr, "\t\t\t1 - Display the network address and mask used when the\n");
+   fprintf(stderr, "\t\t\t    --localnet option is specified, display any\n");
+   fprintf(stderr, "\t\t\t    nonzero packet padding, display packets received\n");
+   fprintf(stderr, "\t\t\t    from unknown hosts, and show when each pass through\n");
+   fprintf(stderr, "\t\t\t    the list completes.\n");
+   fprintf(stderr, "\t\t\t2 - Show each packet sent and received, when entries\n");
+   fprintf(stderr, "\t\t\t    are removed from the list, the pcap filter string,\n");
+   fprintf(stderr, "\t\t\t    and counts of MAC/Vendor mapping entries.\n");
    fprintf(stderr, "\t\t\t3 - Display the host list before scanning starts.\n");
    fprintf(stderr, "\n--version or -V\t\tDisplay program version and exit.\n");
    fprintf(stderr, "\n--random or -R\t\tRandomise the host list.\n");

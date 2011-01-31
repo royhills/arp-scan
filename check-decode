@@ -73,7 +73,7 @@ cat >$EXAMPLEOUTPUT <<_EOF_
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt --verbose"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE02 127.0.0.1 | grep -v '^DEBUG: ' | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE02 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
 if test $? -ne 0; then
    rm -f $ARPSCANOUTPUT
    rm -f $EXAMPLEOUTPUT

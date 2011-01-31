@@ -128,7 +128,7 @@ link_match_ppa(link_t *handle, const char *device) {
 #endif
 
 static int
-dlpi_msg(int fd, union DL_primitives *dlp, int rlen, int flags, int ack,
+dlpi_msg(int fd, union DL_primitives *dlp, int rlen, int flags, unsigned ack,
          int alen, int size) {
 
    struct strbuf ctl;

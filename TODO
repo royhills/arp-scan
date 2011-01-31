@@ -32,10 +32,28 @@ Use pcap_get_selectable_fd() to get the file descriptor for select().  This
 function is not supported on windows.
 
 Investigate response packets >60 bytes long, e.g:
+1. Windows 2003 Server:
+Example #1 (Server 4)
 10:27:40.710842 00:11:43:0f:f2:dd > 00:c0:9f:09:b8:db, ethertype ARP (0x0806), length 106: arp reply server4.nta-monitor.ad.nta-monitor.com is-at 00:11:43:0f:f2:dd
+Example #2 (Server 4)
+09:53:57.393806 arp reply 192.168.124.204 is-at 00:11:43:0f:f2:dd
+        0x0000:  00c0 9f09 b8db 0011 430f f2dd 0806 0001  ........C.......
+        0x0010:  0800 0604 0002 0011 430f f2dd c0a8 7ccc  ........C.....|.
+        0x0020:  00c0 9f09 b8db c0a8 7c01 0000 0000 0000  ........|.......
+        0x0030:  0000 0000 0000 0000 0000 0000 0000 0000  ................
+        0x0040:  0000 0000 0000 0000 0000 0000 0000 0000  ................
+        0x0050:  0000 0000 0000 0000 0000 0000 0000 0000  ................
+Example #3 (Server 6)
+10:12:07.507050 arp reply 192.168.124.207 is-at 00:12:3f:ec:cf:a0
+        0x0000:  00c0 9f09 b8db 0012 3fec cfa0 0806 0001  ........?.......
+        0x0010:  0800 0604 0002 0012 3fec cfa0 c0a8 7ccf  ........?.....|.
+        0x0020:  00c0 9f09 b8db c0a8 7c01 0000 0000 0000  ........|.......
+        0x0030:  0000 0000 0000 0000 0000 0000 0000 0000  ................
+        0x0040:  0000 0000 0000 0000 0000 0000 0000 0000  ................
+        0x0050:  0000 0000 0000 0000 0000 0000 0000 0000  ................
+2. Cisco
+Example #1
 10:27:40.802358 00:06:d7:55:0f:40 > 00:c0:9f:09:b8:db, ethertype ARP (0x0806), length 64: arp reply maple.nta-monitor.com is-at 00:06:d7:55:0f:40
-
-Review verbose levels, and what gets displayed.
 
 Investigate ARP trailer negotiation, as defined in RFC1122 section 2.3.1,
 Trailer Protocol Negotiation: 'the ARP exchange is completed in the usual
@@ -48,6 +66,3 @@ Replace MT19937 PRNG with SFMT19937.
 Support LLC/SNAP encapsulation with 802.1Q VLAN tagging (--llc --vlan=n) and
 generate the correct packet format.  Currently the VLAN tag is added first,
 which is incorrect.
-
-link-dlpi.c: In function `dlpi_msg':
-link-dlpi.c:150: warning: comparison between signed and unsigned

@@ -1,5 +1,15 @@
 $Id$
 
+2011-01-31 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* link-dlpi.c: Fix "comparison between signed and unsigned" warning in
+	  function dlpi_msg.
+
+	* arp-fingerprint: Added fingerprint for Windows 7.
+
+	* arp-scan.c: Changed what gets displayed for the different verbose
+	  levels, and updated the --help output to reflect the new behaviour.
+
 2011-01-30 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* check-packet, check-decode: New checks to check packet creation and
@@ -36,7 +46,7 @@ $Id$
 2010-12-22 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Change req_interval back from unsigned to int. This
-	  addresses a bug in the timining code that was introduced in svn
+	  addresses a bug in the timing code that was introduced in svn
 	  r18043, which caused the packet rate to be very high irrespective
 	  of the specified interval.
 
@@ -83,14 +93,14 @@ $Id$
 	  no multiplier at all.
 
 	* wrappers.c: Change Strtoul and Strtol so they give an error
-	  if the underlying function finishes at an unconvertable
+	  if the underlying function finishes at an unconvertible
 	  character other than NULL or whitespace.
 
 	* configure.ac: Added extra warning "-Wwrite-strings" for gcc.
 
 2009-08-14 Roy Hills <Roy.Hills@nta-monitor.com>
 
-	* arp-scan.c, arp-scan.h, configure.ac, error.c: Rempved syslog
+	* arp-scan.c, arp-scan.h, configure.ac, error.c: Removed syslog
 	  functionality as this is not used and has been #ifdef'ed out
 	  for some time.
 
@@ -184,7 +194,7 @@ $Id$
 	  remaining buffer size.
 
 	* arp-scan.c: Changed display_packet() to take ARP structure, extra
-	  data and framing type as parmaters passed from callback() to avoid
+	  data and framing type as parameters passed from callback() to avoid
 	  having to call unmarshal_arp_pkt() twice.  This also means that
 	  we don't need to pass the raw frame to display_packet() now as it
 	  has the data in individual variables.
@@ -233,7 +243,7 @@ $Id$
 	* utils.c: Removed ununsed function printable().
 
 	* arp-scan.c: Added /* NOTREACHED */ comments in appropriate places.
-	  Removed uneeded max_iter global variable.
+	  Removed unneeded max_iter global variable.
 	  Added call to pcap_lib_version() in arp_scan_version().
 
 	* configure.ac: Changed check for pcap_datalink_val_to_name() to
@@ -260,7 +270,7 @@ $Id$
 	  though we don't use pcap_breakloop, we should still behave correctly
 	  if it used in the future.
 
-	* arp-scan.c: Check return status of inet_pton() seperately against
+	* arp-scan.c: Check return status of inet_pton() separately against
           < 0, which indicates and error, and against == 0, which indicates
 	  that the string is not a valid address.  Previously we handled these
 	  together with the comparison <= 0.  Also return from add_host()
