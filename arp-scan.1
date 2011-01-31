@@ -6,7 +6,7 @@
 .\" notice and this notice are preserved.
 .\"
 .\" $Id$
-.TH ARP-SCAN 1 "December 3, 2010"
+.TH ARP-SCAN 1 "January 31, 2011"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -60,9 +60,7 @@ with the
 option; or by specifying the
 .B --localnet
 option which causes all possible hosts on the network attached to the interface
-(as defined by the interface address and mask) to be scanned.  For hosts specified
-on the command line, or with the
---file  For hosts specified
+(as defined by the interface address and mask) to be scanned. For hosts specified
 on the command line, or with the
 .B --file
 option, you can use either IP addresses or hostnames.  You can also use network
@@ -211,12 +209,12 @@ on an interface with no IP address configured, which can be useful if
 you want to ensure that the testing host does not interact with the
 network being tested.
 .PP
-Warning: Setting ar$spa to the destination IP address can disrupt some
-operating systems, as they assume there is an IP address clash if they
-receive an ARP request for their own address.
+.B Warning: Setting ar$spa to the destination IP address can disrupt some
+.B operating systems, as they assume there is an IP address clash if they
+.B receive an ARP request for their own address.
 .PP
 It is also possible to change the values in the Ethernet frame header
-that proceeds the ARP packet in the outgoing packets. The table below
+that precedes the ARP packet in the outgoing packets. The table below
 summarises the options that change values in the Ethernet frame header.
 .TS
 box;
@@ -257,7 +255,7 @@ is its Ethernet hardware address (also known as the MAC address) and
 are the vendor details, decoded from the hardware address.  The output
 fields are separated by a single tab character.
 .PP
-The responses are displayed in the order that they are received, which
+The responses are displayed in the order they are received, which
 is not always the same order as the requests were sent because some
 hosts may respond faster than others.
 .PP
@@ -265,7 +263,7 @@ The vendor decoding uses the files
 .IR ieee-oui.txt ,
 .I ieee-iab.txt 
 and
-.I mac-vendor.txt
+.IR mac-vendor.txt ,
 which are supplied with
 .BR arp-scan .
 The
@@ -287,7 +285,7 @@ files with the latest data from the IEEE website.
 The
 .I mac-vendor.txt
 file contains other MAC to Vendor mappings that are not covered by
-the IEEE OUI and IAB files.
+the IEEE OUI and IAB files, and can be used to add custom mappings.
 .PP
 Almost all hosts that support IP will respond to
 .B arp-scan
@@ -522,9 +520,9 @@ of the receiving interface.  Others don't care, and
 will respond to any source address.
 By default, the outgoing interface address is used.
 .IP
-Warning: Setting ar$spa to the destination IP address can disrupt some
-operating systems, as they assume there is an IP address clash if they
-receive an ARP request for their own address.
+.B Warning: Setting ar$spa to the destination IP address can disrupt some
+.B operating systems, as they assume there is an IP address clash if they
+.B receive an ARP request for their own address.
 .TP
 .B --padding=<p> or -A <p>
 Specify padding after packet data.
@@ -557,12 +555,12 @@ packets in 802.1Q format irrespective of this option.
 Write received packets to pcap savefile <p>.
 This option causes received ARP responses to be written
 to a pcap savefile with the specified name.  This
-savefile can be analyzed with programs that understand
+savefile can be analysed with programs that understand
 the pcap file format, such as "tcpdump" and "wireshark".
 .SH FILES
 .TP
 .I /usr/local/share/arp-scan/ieee-oui.txt
-List of IEEE OUI (Organizationally Unique Identifier) to vendor mappings.
+List of IEEE OUI (Organisationally Unique Identifier) to vendor mappings.
 .TP
 .I /usr/local/share/arp-scan/ieee-iab.txt
 List of IEEE IAB (Individual Address Block) to vendor mappings.
