@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check-run1 6194 2006-03-09 14:27:39Z rsh $
+# $Id$
 #
 # check-run1 -- Shell script to test arp-scan basic functionality
 #

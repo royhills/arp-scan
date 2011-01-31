@@ -19,7 +19,7 @@
 #
 # $Id$
 #
-# check-packet - Shell script to test arp-scan packet decoding
+# check-decode - Shell script to test arp-scan packet decoding
 #
 # Author: Roy Hills
 # Date: 30 January 2011
@@ -42,6 +42,8 @@ EXAMPLEOUTPUT=/tmp/example-output.$$.tmp
 #
 SAMPLE01="$srcdir/pkt-simple-response.dat"
 SAMPLE02="$srcdir/pkt-padding-response.dat"
+SAMPLE03="$srcdir/pkt-vlan-response.dat"
+SAMPLE04="$srcdir/pkt-llc-response.dat"
 
 echo "Checking simple ARP response packet decode using $SAMPLE01 ..."
 cat >$EXAMPLEOUTPUT <<_EOF_
@@ -74,6 +76,54 @@ cat >$EXAMPLEOUTPUT <<_EOF_
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt --verbose"
 $srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE02 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f $ARPSCANOUTPUT
+rm -f $EXAMPLEOUTPUT
+#
+echo "Checking 802.1Q ARP response packet decode using $SAMPLE03 ..."
+cat >$EXAMPLEOUTPUT <<_EOF_
+127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION (802.1Q VLAN=4095)
+
+_EOF_
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE03 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f $ARPSCANOUTPUT
+rm -f $EXAMPLEOUTPUT
+#
+echo "Checking LLC/SNAP ARP response packet decode using $SAMPLE04 ..."
+cat >$EXAMPLEOUTPUT <<_EOF_
+127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION (802.2 LLC/SNAP)
+
+_EOF_
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE04 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
 if test $? -ne 0; then
    rm -f $ARPSCANOUTPUT
    rm -f $EXAMPLEOUTPUT

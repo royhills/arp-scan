@@ -80,9 +80,3 @@ but it links and runs OK.
 
 This appears to be due to MacOS 10.3 having libpcap 0.8 libraries, but only
 0.7 headers.
-
-3.  The Perl scripts arp-fingerprint, get-oui and get-iab assume that Perl is
-installed as /usr/bin/perl.  This fails for NetBSD 3.0.1, where it is installed
-in /usr/pkg/bin/perl instead.
-
-A workaround is to make /usr/bin/perl a symlink to /usr/pkg/bin/perl.

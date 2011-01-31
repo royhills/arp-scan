@@ -20,6 +20,9 @@ release.  For more details please read the ChangeLog file.
 * Added new "make check" tests to check packet generation, and packet decoding
   and display.
 
+* Modified get-oui and get-iab perl scripts so they will work on systems where
+  the perl interpreter is not in /usr/bin, e.g. NetBSD.
+
 * Various minor bug fixes.
 
 2008-07-24 arp-scan 1.7:
