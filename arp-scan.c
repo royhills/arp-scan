@@ -150,7 +150,7 @@ main(int argc, char *argv[]) {
       }
    }
 /*
- *      Open link layer socket.  This is used to send outbound packets.
+ *      Open link layer socket. This is used to send outbound packets.
  */
    if ((link_handle = link_open(if_name)) == NULL) {
       if (errno == EPERM || errno == EACCES)
@@ -218,7 +218,7 @@ main(int argc, char *argv[]) {
 #endif /* ARP_PCAP_BPF */
 /*
  * For the DLPI pcap implementation on Solaris, set the bufmod timeout to
- * zero.  This has the side-effect of setting the chunk size to zero as
+ * zero. This has the side-effect of setting the chunk size to zero as
  * well, so bufmod will pass all incoming messages on immediately.
  */
 #ifdef ARP_PCAP_DLPI
@@ -513,11 +513,11 @@ main(int argc, char *argv[]) {
                   req_interval = 0;
                }
             }
-            if (debug) {print_times(); printf("main: Can send packet to host %s now.  host_timediff=" ARP_UINT64_FORMAT ", timeout=%u, req_interval=%d, cum_err=%d\n", my_ntoa((*cursor)->addr), host_timediff, (*cursor)->timeout, req_interval, cum_err);}
+            if (debug) {print_times(); printf("main: Can send packet to host %s now. host_timediff=" ARP_UINT64_FORMAT ", timeout=%u, req_interval=%d, cum_err=%d\n", my_ntoa((*cursor)->addr), host_timediff, (*cursor)->timeout, req_interval, cum_err);}
             select_timeout = req_interval;
 /*
  *      If we've exceeded our retry limit, then this host has timed out so
- *      remove it from the list.  Otherwise, increase the timeout by the
+ *      remove it from the list. Otherwise, increase the timeout by the
  *      backoff factor if this is not the first packet sent to this host
  *      and send a packet.
  */
@@ -568,7 +568,7 @@ main(int argc, char *argv[]) {
          } /* End If */
       } else {          /* We can't send a packet yet */
          select_timeout = req_interval - loop_timediff;
-         if (debug) {print_times(); printf("main: Can't send packet yet.  loop_timediff=" ARP_UINT64_FORMAT "\n", loop_timediff);}
+         if (debug) {print_times(); printf("main: Can't send packet yet. loop_timediff=" ARP_UINT64_FORMAT "\n", loop_timediff);}
       } /* End If */
 
       recvfrom_wto(pcap_fd, select_timeout);
@@ -588,7 +588,7 @@ main(int argc, char *argv[]) {
    elapsed_seconds = (elapsed_time.tv_sec*1000 +
                       elapsed_time.tv_usec/1000) / 1000.0;
 
-   printf("Ending %s: %u hosts scanned in %.3f seconds (%.2f hosts/sec).  %u responded\n",
+   printf("Ending %s: %u hosts scanned in %.3f seconds (%.2f hosts/sec). %u responded\n",
           PACKAGE_STRING, num_hosts, elapsed_seconds,
           num_hosts/elapsed_seconds, responders);
    if (debug) {print_times(); printf("main: End\n");}
@@ -794,7 +794,7 @@ send_packet(link_t *link_handle, host_entry *he,
    if (he == NULL)
       return buflen;
 /*
- *	Check that the host is live.  Complain if not.
+ *	Check that the host is live. Complain if not.
  */
    if (!he->live) {
       warn_msg("***\tsend_packet called on non-live host: SHOULDN'T HAPPEN");
@@ -836,7 +836,7 @@ send_packet(link_t *link_handle, host_entry *he,
  *
  *      None.
  *
- *      This is called once after all hosts have been processed.  It can be
+ *      This is called once after all hosts have been processed. It can be
  *      used to perform any tidying-up or statistics-displaying required.
  *      It does not have to do anything.
  */
@@ -860,7 +860,7 @@ clean_up(void) {
  *
  *	Inputs:
  *
- *	status	Status to pass to exit()
+ *	status	Status code to pass to exit()
  */
 void
 usage(int status) {
@@ -871,21 +871,48 @@ usage(int status) {
    fprintf(stderr, "the --localnet option is used, in which case the targets are generated from\n");
    fprintf(stderr, "the network interface IP address and netmask.\n");
    fprintf(stderr, "\n");
-   fprintf(stderr, "The target hosts can be specified as IP addresses or hostnames.  You can also\n");
+   fprintf(stderr, "You will need to be root, or arp-scan must be SUID root, in order to run\n");
+   fprintf(stderr, "arp-scan, because the functions that it uses to read and write packets\n");
+   fprintf(stderr, "require root privilege.\n");
+   fprintf(stderr, "\n");
+   fprintf(stderr, "The target hosts can be specified as IP addresses or hostnames. You can also\n");
    fprintf(stderr, "specify the target as IPnetwork/bits (e.g. 192.168.1.0/24) to specify all hosts\n");
    fprintf(stderr, "in the given network (network and broadcast addresses included), or\n");
    fprintf(stderr, "IPstart-IPend (e.g. 192.168.1.3-192.168.1.27) to specify all hosts in the\n");
-   fprintf(stderr, "inclusive range.\n");
+   fprintf(stderr, "inclusive range, or IPnetwork:NetMask (e.g. 192.168.1.0:255.255.255.0) to\n");
+   fprintf(stderr, "specify all hosts in the given network and mask.\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "These different options for specifying target hosts may be used both on the\n");
    fprintf(stderr, "command line, and also in the file specified with the --file option.\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "Options:\n");
+   fprintf(stderr, "\n");
+   fprintf(stderr, "Note: where an option takes a value, that value is specified as a letter in\n");
+   fprintf(stderr, "angle brackets. The letter indicates the type of data that is expected:\n");
+   fprintf(stderr, "\n");
+   fprintf(stderr, "<s> A character string, e.g. --file=hostlist.txt.\n");
+   fprintf(stderr, "\n");
+   fprintf(stderr, "<i> An integer, which can be specified as a decimal number or as a hexadecimal\n");
+   fprintf(stderr, "    number if preceeded with 0x, e.g. --arppro=2048 or --arpro=0x0800.\n");
+   fprintf(stderr, "\n");
+   fprintf(stderr, "<f> A floating point decimal number, e.g. --backoff=1.5.\n");
+   fprintf(stderr, "\n");
+   fprintf(stderr, "<m> An Ethernet MAC address, which can be specified either in the format\n");
+   fprintf(stderr, "    01:23:45:67:89:ab, or as 01-23-45-67-89-ab. The alphabetic hex characters\n");
+   fprintf(stderr, "    may be either upper or lower case. E.g. --arpsha=01:23:45:67:89:ab.\n");
+   fprintf(stderr, "\n");
+   fprintf(stderr, "<a> An IPv4 address, e.g. --arpspa=10.0.0.1\n");
+   fprintf(stderr, "\n");
+   fprintf(stderr, "<h> Binary data specified as a hexadecimal string, which should not\n");
+   fprintf(stderr, "    include a leading 0x. The alphabetic hex characters may be either\n");
+   fprintf(stderr, "    upper or lower case. E.g. --padding=aaaaaaaaaaaa\n");
+   fprintf(stderr, "\n");
+   fprintf(stderr, "<x> Something else. See the description of the option for details.\n");
    fprintf(stderr, "\n--help or -h\t\tDisplay this usage message and exit.\n");
-   fprintf(stderr, "\n--file=<fn> or -f <fn>\tRead hostnames or addresses from the specified file\n");
+   fprintf(stderr, "\n--file=<s> or -f <s>\tRead hostnames or addresses from the specified file\n");
    fprintf(stderr, "\t\t\tinstead of from the command line. One name or IP\n");
-   fprintf(stderr, "\t\t\taddress per line.  Use \"-\" for standard input.\n");
-   fprintf(stderr, "\n--localnet or -l\tGenerate addresses from network interface configuration\n");
+   fprintf(stderr, "\t\t\taddress per line. Use \"-\" for standard input.\n");
+   fprintf(stderr, "\n--localnet or -l\tGenerate addresses from network interface configuration.\n");
    fprintf(stderr, "\t\t\tUse the network interface IP address and network mask\n");
    fprintf(stderr, "\t\t\tto generate the list of target host addresses.\n");
    fprintf(stderr, "\t\t\tThe list will include the network and broadcast\n");
@@ -897,33 +924,33 @@ usage(int status) {
    fprintf(stderr, "\t\t\tThe interface specifications are taken from the\n");
    fprintf(stderr, "\t\t\tinterface that arp-scan will use, which can be\n");
    fprintf(stderr, "\t\t\tchanged with the --interface option.\n");
-   fprintf(stderr, "\n--retry=<n> or -r <n>\tSet total number of attempts per host to <n>,\n");
+   fprintf(stderr, "\n--retry=<i> or -r <i>\tSet total number of attempts per host to <i>,\n");
    fprintf(stderr, "\t\t\tdefault=%d.\n", DEFAULT_RETRY);
-   fprintf(stderr, "\n--timeout=<n> or -t <n>\tSet initial per host timeout to <n> ms, default=%d.\n", DEFAULT_TIMEOUT);
+   fprintf(stderr, "\n--timeout=<i> or -t <i>\tSet initial per host timeout to <i> ms, default=%d.\n", DEFAULT_TIMEOUT);
    fprintf(stderr, "\t\t\tThis timeout is for the first packet sent to each host.\n");
    fprintf(stderr, "\t\t\tsubsequent timeouts are multiplied by the backoff\n");
    fprintf(stderr, "\t\t\tfactor which is set with --backoff.\n");
-   fprintf(stderr, "\n--interval=<n> or -i <n> Set minimum packet interval to <n> ms.\n");
+   fprintf(stderr, "\n--interval=<x> or -i <x> Set minimum packet interval to <x>.\n");
    fprintf(stderr, "\t\t\tThis controls the outgoing bandwidth usage by limiting\n");
-   fprintf(stderr, "\t\t\tthe rate at which packets can be sent.  The packet\n");
+   fprintf(stderr, "\t\t\tthe rate at which packets can be sent. The packet\n");
    fprintf(stderr, "\t\t\tinterval will be no smaller than this number.\n");
    fprintf(stderr, "\t\t\tIf you want to use up to a given bandwidth, then it is\n");
    fprintf(stderr, "\t\t\teasier to use the --bandwidth option instead.\n");
    fprintf(stderr, "\t\t\tThe interval specified is in milliseconds by default,\n");
    fprintf(stderr, "\t\t\tor in microseconds if \"u\" is appended to the value.\n");
-   fprintf(stderr, "\n--bandwidth=<n> or -B <n> Set desired outbound bandwidth to <n>, default=%d.\n", DEFAULT_BANDWIDTH);
-   fprintf(stderr, "\t\t\tThe value is in bits per second by default.  If you\n");
+   fprintf(stderr, "\n--bandwidth=<x> or -B <x> Set desired outbound bandwidth to <x>, default=%d.\n", DEFAULT_BANDWIDTH);
+   fprintf(stderr, "\t\t\tThe value is in bits per second by default. If you\n");
    fprintf(stderr, "\t\t\tappend \"K\" to the value, then the units are kilobits\n");
    fprintf(stderr, "\t\t\tper sec; and if you append \"M\" to the value, the\n");
    fprintf(stderr, "\t\t\tunits are megabits per second.\n");
    fprintf(stderr, "\t\t\tThe \"K\" and \"M\" suffixes represent the decimal, not\n");
-   fprintf(stderr, "\t\t\tbinary, multiples.  So 64K is 64000, not 65536.\n");
+   fprintf(stderr, "\t\t\tbinary, multiples. So 64K is 64000, not 65536.\n");
    fprintf(stderr, "\t\t\tYou cannot specify both --interval and --bandwidth\n");
    fprintf(stderr, "\t\t\tbecause they are just different ways to change the\n");
-   fprintf(stderr, "\t\t\tsame parameter.\n");
-   fprintf(stderr, "\n--backoff=<b> or -b <b>\tSet timeout backoff factor to <b>, default=%.2f.\n", DEFAULT_BACKOFF_FACTOR);
+   fprintf(stderr, "\t\t\tsame underlying parameter.\n");
+   fprintf(stderr, "\n--backoff=<f> or -b <f>\tSet timeout backoff factor to <f>, default=%.2f.\n", DEFAULT_BACKOFF_FACTOR);
    fprintf(stderr, "\t\t\tThe per-host timeout is multiplied by this factor\n");
-   fprintf(stderr, "\t\t\tafter each timeout.  So, if the number of retrys\n");
+   fprintf(stderr, "\t\t\tafter each timeout. So, if the number of retries\n");
    fprintf(stderr, "\t\t\tis 3, the initial per-host timeout is 500ms and the\n");
    fprintf(stderr, "\t\t\tbackoff factor is 1.5, then the first timeout will be\n");
    fprintf(stderr, "\t\t\t500ms, the second 750ms and the third 1125ms.\n");
@@ -942,38 +969,39 @@ usage(int status) {
    fprintf(stderr, "\n--random or -R\t\tRandomise the host list.\n");
    fprintf(stderr, "\t\t\tThis option randomises the order of the hosts in the\n");
    fprintf(stderr, "\t\t\thost list, so the ARP packets are sent to the hosts in\n");
-   fprintf(stderr, "\t\t\ta random order.  It uses the Knuth shuffle algorithm.\n");
+   fprintf(stderr, "\t\t\ta random order. It uses the Knuth shuffle algorithm.\n");
    fprintf(stderr, "\n--numeric or -N\t\tIP addresses only, no hostnames.\n");
    fprintf(stderr, "\t\t\tWith this option, all hosts must be specified as\n");
-   fprintf(stderr, "\t\t\tIP addresses.  Hostnames are not permitted.\n");
-   fprintf(stderr, "\n--snap=<s> or -n <s>\tSet the pcap snap length to <s>. Default=%d.\n", SNAPLEN);
-   fprintf(stderr, "\t\t\tThis specifies the frame capture length.  This\n");
+   fprintf(stderr, "\t\t\tIP addresses. Hostnames are not permitted. No DNS\n");
+   fprintf(stderr, "\t\t\tlookups will be performed.\n");
+   fprintf(stderr, "\n--snap=<i> or -n <i>\tSet the pcap snap length to <i>. Default=%d.\n", SNAPLEN);
+   fprintf(stderr, "\t\t\tThis specifies the frame capture length. This\n");
    fprintf(stderr, "\t\t\tlength includes the data-link header.\n");
    fprintf(stderr, "\t\t\tThe default is normally sufficient.\n");
-   fprintf(stderr, "\n--interface=<i> or -I <i> Use network interface <i>.\n");
+   fprintf(stderr, "\n--interface=<s> or -I <s> Use network interface <s>.\n");
    fprintf(stderr, "\t\t\tIf this option is not specified, arp-scan will search\n");
    fprintf(stderr, "\t\t\tthe system interface list for the lowest numbered,\n");
    fprintf(stderr, "\t\t\tconfigured up interface (excluding loopback).\n");
    fprintf(stderr, "\t\t\tThe interface specified must support ARP.\n");
    fprintf(stderr, "\n--quiet or -q\t\tOnly display minimal output.\n");
    fprintf(stderr, "\t\t\tIf this option is specified, then only the minimum\n");
-   fprintf(stderr, "\t\t\tinformation is displayed.  With this option, the\n");
-   fprintf(stderr, "\t\t\tOUI file is not used.\n");
+   fprintf(stderr, "\t\t\tinformation is displayed. With this option, the\n");
+   fprintf(stderr, "\t\t\tOUI files are not used.\n");
    fprintf(stderr, "\n--ignoredups or -g\tDon't display duplicate packets.\n");
    fprintf(stderr, "\t\t\tBy default, duplicate packets are displayed and are\n");
    fprintf(stderr, "\t\t\tflagged with \"(DUP: n)\".\n");
-   fprintf(stderr, "\n--ouifile=<o> or -O <o>\tUse OUI file <o>, default=%s/%s\n", DATADIR, OUIFILENAME);
+   fprintf(stderr, "\n--ouifile=<s> or -O <s>\tUse OUI file <s>, default=%s/%s\n", DATADIR, OUIFILENAME);
    fprintf(stderr, "\t\t\tThis file provides the IEEE Ethernet OUI to vendor\n");
    fprintf(stderr, "\t\t\tstring mapping.\n");
-   fprintf(stderr, "\n--iabfile=<i> or -F <i>\tUse IAB file <i>, default=%s/%s\n", DATADIR, IABFILENAME);
+   fprintf(stderr, "\n--iabfile=<s> or -F <s>\tUse IAB file <s>, default=%s/%s\n", DATADIR, IABFILENAME);
    fprintf(stderr, "\t\t\tThis file provides the IEEE Ethernet IAB to vendor\n");
    fprintf(stderr, "\t\t\tstring mapping.\n");
-   fprintf(stderr, "\n--macfile=<m> or -m <m>\tUse MAC/Vendor file <m>, default=%s/%s\n", DATADIR, MACFILENAME);
+   fprintf(stderr, "\n--macfile=<s> or -m <s>\tUse MAC/Vendor file <s>, default=%s/%s\n", DATADIR, MACFILENAME);
    fprintf(stderr, "\t\t\tThis file provides the custom Ethernet MAC to vendor\n");
    fprintf(stderr, "\t\t\tstring mapping.\n");
    fprintf(stderr, "\n--srcaddr=<m> or -S <m> Set the source Ethernet MAC address to <m>.\n");
    fprintf(stderr, "\t\t\tThis sets the 48-bit hardware address in the Ethernet\n");
-   fprintf(stderr, "\t\t\tframe header for outgoing ARP packets.  It does not\n");
+   fprintf(stderr, "\t\t\tframe header for outgoing ARP packets. It does not\n");
    fprintf(stderr, "\t\t\tchange the hardware address in the ARP packet, see\n");
    fprintf(stderr, "\t\t\t--arpsha for details on how to change that address.\n");
    fprintf(stderr, "\t\t\tThe default is the Ethernet address of the outgoing\n");
@@ -985,95 +1013,93 @@ usage(int status) {
    fprintf(stderr, "\t\t\tMost operating systems will also respond if the ARP\n");
    fprintf(stderr, "\t\t\trequest is sent to their MAC address, or to a\n");
    fprintf(stderr, "\t\t\tmulticast address that they are listening on.\n");
-   fprintf(stderr, "\t\t\tThe address can be specified either in the format\n");
-   fprintf(stderr, "\t\t\t01:23:45:67:89:ab, or as 01-23-45-67-89-ab. The\n");
-   fprintf(stderr, "\t\t\talphabetic hex characters may be upper or lower case.\n");
    fprintf(stderr, "\n--arpsha=<m> or -u <m>\tUse <m> as the ARP source Ethernet address\n");
    fprintf(stderr, "\t\t\tThis sets the 48-bit ar$sha field in the ARP packet\n");
    fprintf(stderr, "\t\t\tIt does not change the hardware address in the frame\n");
    fprintf(stderr, "\t\t\theader, see --srcaddr for details on how to change\n");
-   fprintf(stderr, "\t\t\tthat address.\n");
-   fprintf(stderr, "\t\t\tThe default is the Ethernet address of the outgoing\n");
-   fprintf(stderr, "\t\t\tinterface.\n");
+   fprintf(stderr, "\t\t\tthat address. The default is the Ethernet address of\n");
+   fprintf(stderr, "\t\t\tthe outgoing interface.\n");
    fprintf(stderr, "\n--arptha=<m> or -w <m>\tUse <m> as the ARP target Ethernet address\n");
    fprintf(stderr, "\t\t\tThis sets the 48-bit ar$tha field in the ARP packet\n");
    fprintf(stderr, "\t\t\tThe default is zero, because this field is not used\n");
    fprintf(stderr, "\t\t\tfor ARP request packets.\n");
-   fprintf(stderr, "\n--prototype=<p> or -y <p> Set the Ethernet protocol type to <p>, default=0x%.4x.\n", DEFAULT_ETH_PRO);
+   fprintf(stderr, "\n--prototype=<i> or -y <i> Set the Ethernet protocol type to <i>, default=0x%.4x.\n", DEFAULT_ETH_PRO);
    fprintf(stderr, "\t\t\tThis sets the 16-bit protocol type field in the\n");
    fprintf(stderr, "\t\t\tEthernet frame header.\n");
    fprintf(stderr, "\t\t\tSetting this to a non-default value will result in the\n");
-   fprintf(stderr, "\t\t\tpacket being ignored by the target, or send to the\n");
+   fprintf(stderr, "\t\t\tpacket being ignored by the target, or sent to the\n");
    fprintf(stderr, "\t\t\twrong protocol stack.\n");
-   fprintf(stderr, "\t\t\tThis option is probably not useful, and is only\n");
-   fprintf(stderr, "\t\t\tpresent for completeness.\n");
-   fprintf(stderr, "\n--arphrd=<o> or -H <o>\tUse <o> for the ARP hardware type, default=%d.\n", DEFAULT_ARP_HRD);
+   fprintf(stderr, "\n--arphrd=<i> or -H <i>\tUse <i> for the ARP hardware type, default=%d.\n", DEFAULT_ARP_HRD);
    fprintf(stderr, "\t\t\tThis sets the 16-bit ar$hrd field in the ARP packet.\n");
-   fprintf(stderr, "\t\t\tThe normal value is 1 (ARPHRD_ETHER).  Most, but not\n");
+   fprintf(stderr, "\t\t\tThe normal value is 1 (ARPHRD_ETHER). Most, but not\n");
    fprintf(stderr, "\t\t\tall, operating systems will also respond to 6\n");
    fprintf(stderr, "\t\t\t(ARPHRD_IEEE802). A few systems respond to any value.\n");
-   fprintf(stderr, "\n--arppro=<o> or -p <o>\tUse <o> for the ARP protocol type, default=0x%.4x.\n", DEFAULT_ARP_PRO);
+   fprintf(stderr, "\n--arppro=<i> or -p <i>\tUse <i> for the ARP protocol type, default=0x%.4x.\n", DEFAULT_ARP_PRO);
    fprintf(stderr, "\t\t\tThis sets the 16-bit ar$pro field in the ARP packet.\n");
    fprintf(stderr, "\t\t\tMost operating systems only respond to 0x0800 (IPv4)\n");
    fprintf(stderr, "\t\t\tbut some will respond to other values as well.\n");
-   fprintf(stderr, "\n--arphln=<l> or -a <l>\tSet the hardware address length to <l>, default=%d.\n", DEFAULT_ARP_HLN);
+   fprintf(stderr, "\n--arphln=<i> or -a <i>\tSet the hardware address length to <i>, default=%d.\n", DEFAULT_ARP_HLN);
    fprintf(stderr, "\t\t\tThis sets the 8-bit ar$hln field in the ARP packet.\n");
    fprintf(stderr, "\t\t\tIt sets the claimed length of the hardware address\n");
-   fprintf(stderr, "\t\t\tin the ARP packet.  Setting it to any value other than\n");
+   fprintf(stderr, "\t\t\tin the ARP packet. Setting it to any value other than\n");
    fprintf(stderr, "\t\t\tthe default will make the packet non RFC compliant.\n");
    fprintf(stderr, "\t\t\tSome operating systems may still respond to it though.\n");
    fprintf(stderr, "\t\t\tNote that the actual lengths of the ar$sha and ar$tha\n");
    fprintf(stderr, "\t\t\tfields in the ARP packet are not changed by this\n");
    fprintf(stderr, "\t\t\toption; it only changes the ar$hln field.\n");
-   fprintf(stderr, "\n--arppln=<l> or -P <l>\tSet the protocol address length to <l>, default=%d.\n", DEFAULT_ARP_PLN);
+   fprintf(stderr, "\n--arppln=<i> or -P <i>\tSet the protocol address length to <i>, default=%d.\n", DEFAULT_ARP_PLN);
    fprintf(stderr, "\t\t\tThis sets the 8-bit ar$pln field in the ARP packet.\n");
    fprintf(stderr, "\t\t\tIt sets the claimed length of the protocol address\n");
-   fprintf(stderr, "\t\t\tin the ARP packet.  Setting it to any value other than\n");
+   fprintf(stderr, "\t\t\tin the ARP packet. Setting it to any value other than\n");
    fprintf(stderr, "\t\t\tthe default will make the packet non RFC compliant.\n");
    fprintf(stderr, "\t\t\tSome operating systems may still respond to it though.\n");
    fprintf(stderr, "\t\t\tNote that the actual lengths of the ar$spa and ar$tpa\n");
    fprintf(stderr, "\t\t\tfields in the ARP packet are not changed by this\n");
    fprintf(stderr, "\t\t\toption; it only changes the ar$pln field.\n");
-   fprintf(stderr, "\n--arpop=<o> or -o <o>\tUse <o> for the ARP operation, default=%d.\n", DEFAULT_ARP_OP);
+   fprintf(stderr, "\n--arpop=<i> or -o <i>\tUse <i> for the ARP operation, default=%d.\n", DEFAULT_ARP_OP);
    fprintf(stderr, "\t\t\tThis sets the 16-bit ar$op field in the ARP packet.\n");
    fprintf(stderr, "\t\t\tMost operating systems will only respond to the value 1\n");
    fprintf(stderr, "\t\t\t(ARPOP_REQUEST). However, some systems will respond\n");
    fprintf(stderr, "\t\t\tto other values as well.\n");
-   fprintf(stderr, "\n--arpspa=<s> or -s <s>\tUse <s> as the source IP address.\n");
+   fprintf(stderr, "\n--arpspa=<a> or -s <a>\tUse <a> as the source IP address.\n");
    fprintf(stderr, "\t\t\tThe address should be specified in dotted quad format;\n");
-   fprintf(stderr, "\t\t\tor the string \"dest\", which sets the source address\n");
-   fprintf(stderr, "\t\t\tto be the same as the target host address.\n");
+   fprintf(stderr, "\t\t\tor the literal string \"dest\", which sets the source\n");
+   fprintf(stderr, "\t\t\taddress to be the same as the target host address.\n");
    fprintf(stderr, "\t\t\tThis sets the 32-bit ar$spa field in the ARP packet.\n");
    fprintf(stderr, "\t\t\tSome operating systems check this, and will only\n");
    fprintf(stderr, "\t\t\trespond if the source address is within the network\n");
-   fprintf(stderr, "\t\t\tof the receiving interface.  Others don't care, and\n");
+   fprintf(stderr, "\t\t\tof the receiving interface. Others don't care, and\n");
    fprintf(stderr, "\t\t\twill respond to any source address.\n");
    fprintf(stderr, "\t\t\tBy default, the outgoing interface address is used.\n");
-   fprintf(stderr, "\n--padding=<p> or -A <p>\tSpecify padding after packet data.\n");
-   fprintf(stderr, "\t\t\tSet the padding data to hex value <p>.  This data is\n");
+   fprintf(stderr, "\n\t\t\tWARNING: Setting ar$spa to the destination IP address\n");
+   fprintf(stderr, "\t\t\tcan disrupt some operating systems, as they assume\n");
+   fprintf(stderr, "\t\t\tthere is an IP address clash if they receive an ARP\n");
+   fprintf(stderr, "\t\t\trequest for their own address.\n");
+   fprintf(stderr, "\n--padding=<h> or -A <h>\tSpecify padding after packet data.\n");
+   fprintf(stderr, "\t\t\tSet the padding data to hex value <h>. This data is\n");
    fprintf(stderr, "\t\t\tappended to the end of the ARP packet, after the data.\n");
    fprintf(stderr, "\t\t\tMost, if not all, operating systems will ignore any\n");
-   fprintf(stderr, "\t\t\tPadding.  The default is no padding, although the\n");
+   fprintf(stderr, "\t\t\tpadding. The default is no padding, although the\n");
    fprintf(stderr, "\t\t\tEthernet driver on the sending system may pad the\n");
    fprintf(stderr, "\t\t\tpacket to the minimum Ethernet frame length.\n");
    fprintf(stderr, "\n--llc or -L\t\tUse RFC 1042 LLC framing with SNAP.\n");
    fprintf(stderr, "\t\t\tThis option causes the outgoing ARP packets to use\n");
    fprintf(stderr, "\t\t\tIEEE 802.2 framing with a SNAP header as described\n");
-   fprintf(stderr, "\t\t\tin RFC 1042.  The default is to use Ethernet-II\n");
+   fprintf(stderr, "\t\t\tin RFC 1042. The default is to use Ethernet-II\n");
    fprintf(stderr, "\t\t\tframing.\n");
    fprintf(stderr, "\t\t\tarp-scan will decode and display received ARP packets\n");
    fprintf(stderr, "\t\t\tin either Ethernet-II or IEEE 802.2 formats\n");
    fprintf(stderr, "\t\t\tirrespective of this option.\n");
-   fprintf(stderr, "\n--vlan=<v> or -Q <v>\tUse 802.1Q tagging with VLAN id <v>.\n");
+   fprintf(stderr, "\n--vlan=<i> or -Q <i>\tUse 802.1Q tagging with VLAN id <i>.\n");
    fprintf(stderr, "\t\t\tThis option causes the outgoing ARP packets to use\n");
-   fprintf(stderr, "\t\t\t802.1Q VLAN tagging with a VLAN ID of <v>, which should\n");
+   fprintf(stderr, "\t\t\t802.1Q VLAN tagging with a VLAN ID of <i>, which should\n");
    fprintf(stderr, "\t\t\tbe in the range 0 to 4095 inclusive.\n");
    fprintf(stderr, "\t\t\tarp-scan will always decode and display received ARP\n");
    fprintf(stderr, "\t\t\tpackets in 802.1Q format irrespective of this option.\n");
-   fprintf(stderr, "\n--pcapsavefile=<p> or -W <p>\tWrite received packets to pcap savefile <p>.\n");
+   fprintf(stderr, "\n--pcapsavefile=<s> or -W <s>\tWrite received packets to pcap savefile <s>.\n");
    fprintf(stderr, "\t\t\tThis option causes received ARP responses to be written\n");
-   fprintf(stderr, "\t\t\tto a pcap savefile with the specified name.  This\n");
-   fprintf(stderr, "\t\t\tsavefile can be analyzed with programs that understand\n");
+   fprintf(stderr, "\t\t\tto a pcap savefile with the specified name. This\n");
+   fprintf(stderr, "\t\t\tsavefile can be analysed with programs that understand\n");
    fprintf(stderr, "\t\t\tthe pcap file format, such as \"tcpdump\" and \"wireshark\".\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "Report bugs or send suggestions to %s\n", PACKAGE_BUGREPORT);
@@ -1091,7 +1117,7 @@ usage(int status) {
  *
  *      Returns: None
  *
- *      This adds one or more new hosts to the list.  The pattern argument
+ *      This adds one or more new hosts to the list. The pattern argument
  *      can either be a single host or IP address, in which case one host
  *      will be added to the list, or it can specify a number of hosts with
  *      the IPnet/bits or IPstart-IPend formats.
@@ -1165,7 +1191,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
 
    if (!(regexec(&ipslash_pat, patcopy, 0, NULL, 0))) { /* IPnet/bits */
 /*
- *      Get IPnet and bits as integers.  Perform basic error checking.
+ *      Get IPnet and bits as integers. Perform basic error checking.
  */
       cp=strchr(patcopy, '/');
       *(cp++)='\0';     /* patcopy points to IPnet, cp points to bits */
@@ -1184,13 +1210,13 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
          mask += 1 << i;
       mask = mask << (32-i);
 /*
- *      Mask off the network.  Warn if the host bits were non-zero.
+ *      Mask off the network. Warn if the host bits were non-zero.
  */
       network=ipnet_val & mask;
       if (network != ipnet_val)
          warn_msg("WARNING: host part of %s is non-zero", pattern);
 /*
- *      Determine maximum and minimum host values.  We include the host
+ *      Determine maximum and minimum host values. We include the host
  *      and broadcast.
  */
       hoststart=0;
@@ -1214,7 +1240,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
       }
    } else if (!(regexec(&ipmask_pat, patcopy, 0, NULL, 0))) { /* IPnet:netmask */
 /*
- *      Get IPnet and bits as integers.  Perform basic error checking.
+ *      Get IPnet and bits as integers. Perform basic error checking.
  */
       cp=strchr(patcopy, ':');
       *(cp++)='\0';     /* patcopy points to IPnet, cp points to netmask */
@@ -1234,13 +1260,13 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
          }
       }
 /*
- *      Mask off the network.  Warn if the host bits were non-zero.
+ *      Mask off the network. Warn if the host bits were non-zero.
  */
       network=ipnet_val & mask;
       if (network != ipnet_val)
          warn_msg("WARNING: host part of %s is non-zero", pattern);
 /*
- *      Determine maximum and minimum host values.  We include the host
+ *      Determine maximum and minimum host values. We include the host
  *      and broadcast.
  */
       hoststart=0;
@@ -1365,6 +1391,10 @@ add_host(const char *host_name, unsigned host_timeout) {
  *
  *	he = Pointer to host entry to remove.
  *
+ *	Returns:
+ *
+ *	None.
+ *
  *	If the host being removed is the one pointed to by the cursor, this
  *	function updates cursor so that it points to the next entry.
  */
@@ -1389,6 +1419,10 @@ remove_host(host_entry **he) {
  *
  *	None.
  *
+ *	Returns:
+ *
+ *	None.
+ *
  *	Does nothing if there are no live entries in the list.
  */
 void
@@ -1409,7 +1443,7 @@ advance_cursor(void) {
  *
  *	Inputs:
  *
- *	he 	Pointer to the current position in the list.  Search runs
+ *	he 	Pointer to the current position in the list. Search runs
  *		backwards starting from this point.
  *	addr 	The source IP address that the packet came from.
  *
@@ -1518,6 +1552,10 @@ recvfrom_wto(int s, int tmo) {
  *	Inputs:
  *
  *	None.
+ *
+ *	Returns:
+ *
+ *	None.
  */
 void
 dump_list(void) {
@@ -1572,11 +1610,11 @@ callback(u_char *args ATTRIBUTE_UNUSED,
  */
    source_ip.s_addr = arpei.ar_sip;
 /*
- *	We've received a response.  Try to match up the packet by IP address
+ *	We've received a response. Try to match up the packet by IP address
  *
  *	We should really start searching at the host before the cursor, as we
  *	know that the host to match cannot be the one at the cursor position
- *	because we call advance_cursor() after sending each packet.  However,
+ *	because we call advance_cursor() after sending each packet. However,
  *	the time saved is minimal, and it's not worth the extra complexity.
  */
    temp_cursor=find_host(cursor, &source_ip);
@@ -1827,6 +1865,10 @@ process_options(int argc, char *argv[]) {
  *
  *	None.
  *
+ *	Returns:
+ *
+ *	None.
+ *
  *	This displays the arp-scan version information.
  */
 void
@@ -1932,6 +1974,8 @@ my_ntoa(struct in_addr addr) {
  *	frame_hdr	The Ethernet frame header
  *	arp_pkt		The ARP packet
  *	buf_siz		The size of the output buffer
+ *	frame_padding	Any padding to add after the ARP payload.
+ *	frame_padding_len	The length of the padding.
  *
  *	Returns:
  *
@@ -1949,7 +1993,7 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
    cp = buffer;
 /*
  *	Set initial packet length to the size of an Ethernet frame using
- *	Ethernet-II format plus the size of the ARP data.  This may be
+ *	Ethernet-II format plus the size of the ARP data. This may be
  *	increased later by LLC/SNAP frame format or padding after the
  *	ARP data.
  */
@@ -2092,7 +2136,7 @@ unmarshal_arp_pkt(const unsigned char *buffer, size_t buf_len,
    memcpy(&(frame_hdr->frame_type), cp, sizeof(frame_hdr->frame_type));
    cp += sizeof(frame_hdr->frame_type);
 /*
- *	Check for an LLC header with SNAP.  If this is present, the 802.2 LLC
+ *	Check for an LLC header with SNAP. If this is present, the 802.2 LLC
  *	header will contain DSAP=0xAA, SSAP=0xAA, Control=0x03.
  *	If this 802.2 LLC header is present, skip it and the SNAP header
  */
@@ -2205,7 +2249,7 @@ add_mac_vendor(struct hash_control *table, const char *map_filename) {
          data=Malloc(data_len+1);
 /*
  * We cannot use strlcpy because the source is not guaranteed to be null
- * terminated.  Therefore we use strncpy, specifying one less that the total
+ * terminated. Therefore we use strncpy, specifying one less that the total
  * length, and manually null terminate the destination.
  */
          strncpy(key, line+pmatch[1].rm_so, key_len);
