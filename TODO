@@ -61,8 +61,6 @@ manner using the normal IP protocol type, but a host that wants to speak
 trailers will send an additional "trailer ARP reply" packet'.  Trailer
 encapsulation itself is detailed in RFC 893.
 
-Replace MT19937 PRNG with SFMT19937.
-
 Support LLC/SNAP encapsulation with 802.1Q VLAN tagging (--llc --vlan=n) and
 generate the correct packet format.  Currently the VLAN tag is added first,
 which is incorrect.
