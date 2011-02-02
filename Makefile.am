@@ -17,4 +17,4 @@ arp_scan_LDADD = $(LIBOBJS)
 dist_pkgdata_DATA = ieee-oui.txt ieee-iab.txt mac-vendor.txt
 #
 TESTS = $(dist_check_SCRIPTS)
-EXTRA_DIST = pkt-simple-request.dat pkt-custom-request.dat pkt-custom-request-padding.dat pkt-custom-request-llc.dat pkt-custom-request-vlan.dat pkt-simple-response.dat pkt-padding-response.dat
+EXTRA_DIST = pkt-simple-request.dat pkt-custom-request.dat pkt-custom-request-padding.dat pkt-custom-request-llc.dat pkt-custom-request-vlan.dat pkt-simple-response.pcap pkt-padding-response.pcap pkt-vlan-response.pcap pkt-llc-response.pcap pkt-net1921681-response.pcap

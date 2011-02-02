@@ -93,7 +93,6 @@ static int pkt_filename_flag=0;		/* Write packet to file flag */
 static int pkt_read_filename_flag=0;	/* Read packet from file flag */
 static char pkt_filename[MAXLINE];	/* Read/Write packet to file filename */
 static int write_pkt_to_file=0;		/* Write packet to file for debugging */
-static int read_pkt_from_file=0;	/* Read packet from file for debugging */
 
 int
 main(int argc, char *argv[]) {
@@ -140,39 +139,47 @@ main(int argc, char *argv[]) {
    Gettimeofday(&start_time);
    if (debug) {print_times(); printf("main: Start\n");}
 /*
- *	Determine network interface to use.
+ *	Determine network interface to use if not reading from a pcap file.
  *	If the interface was specified with the --interface option then use
  *	that, otherwise use pcap_lookupdev() to pick a suitable interface.
  */
-   if (!if_name) { /* i/f not specified with --interface */
+   if (!if_name && !pkt_read_filename_flag) { /* --interface not specified */
       if (!(if_name=pcap_lookupdev(errbuf))) {
          err_msg("pcap_lookupdev: %s", errbuf);
       }
    }
 /*
  *      Open link layer socket. This is used to send outbound packets.
+ *	If we are reading packets from a pcap file, set this to NULL as we
+ *	don't need to send packets in this case.
  */
-   if ((link_handle = link_open(if_name)) == NULL) {
-      if (errno == EPERM || errno == EACCES)
-         warn_msg("You need to be root, or arp-scan must be SUID root, "
-                  "to open a link-layer socket.");
-      err_sys("link_open");
+   if (!pkt_read_filename_flag) {
+      if ((link_handle = link_open(if_name)) == NULL) {
+         if (errno == EPERM || errno == EACCES)
+            warn_msg("You need to be root, or arp-scan must be SUID root, "
+                     "to open a link-layer socket.");
+         err_sys("link_open");
+      }
+   } else {	/* Set link_handle to NULL if reading packets from a file */
+      link_handle = NULL;
    }
 /*
  *	Obtain the MAC address for the selected interface, and use this
  *	as default for the source hardware addresses in the frame header
  *	and ARP packet if the user has not specified their values.
  */
-   get_hardware_address(link_handle, interface_mac);
-   if (source_mac_flag == 0)
-      memcpy(source_mac, interface_mac, ETH_ALEN);
-   if (arp_sha_flag == 0)
-      memcpy(arp_sha, interface_mac, ETH_ALEN);
+   if (link_handle) {
+      get_hardware_address(link_handle, interface_mac);
+      if (source_mac_flag == 0)
+         memcpy(source_mac, interface_mac, ETH_ALEN);
+      if (arp_sha_flag == 0)
+         memcpy(arp_sha, interface_mac, ETH_ALEN);
+   }
 /*
  *	If the user has not specified the ARP source address, obtain the
  *	interface IP address and use that as the default value.
  */
-   if (arp_spa_flag == 0) {
+   if (arp_spa_flag == 0 && link_handle) {
       get_addr_status = get_source_ip(link_handle, &arp_spa);
       if (get_addr_status == -1) {
          warn_msg("WARNING: Could not obtain IP address for interface %s. "
@@ -185,23 +192,38 @@ main(int argc, char *argv[]) {
       }
    }
 /*
- *	Prepare pcap
+ *	Open the network device for reading with pcap, or the pcap file if we
+ *	have specified --readpktfromfile.
  */
-   if (!(pcap_handle = pcap_open_live(if_name, snaplen, PROMISC, TO_MS,
-       errbuf)))
-      err_msg("pcap_open_live: %s", errbuf);
+   if (pkt_read_filename_flag) {
+      if (!(pcap_handle = pcap_open_offline(pkt_filename, errbuf)))
+         err_msg("pcap_open_offline: %s", errbuf);
+   } else {
+      if (!(pcap_handle = pcap_open_live(if_name, snaplen, PROMISC, TO_MS,
+          errbuf)))
+         err_msg("pcap_open_live: %s", errbuf);
+   }
    if ((datalink=pcap_datalink(pcap_handle)) < 0)
       err_msg("pcap_datalink: %s", pcap_geterr(pcap_handle));
-   printf("Interface: %s, datalink type: %s (%s)\n", if_name,
+   printf("Interface: %s, datalink type: %s (%s)\n",
+          pkt_read_filename_flag ? "savefile" : if_name,
           pcap_datalink_val_to_name(datalink),
           pcap_datalink_val_to_description(datalink));
    if (datalink != DLT_EN10MB) {
       warn_msg("WARNING: Unsupported datalink type");
    }
-   if ((pcap_fd=pcap_fileno(pcap_handle)) < 0)
-      err_msg("pcap_fileno: %s", pcap_geterr(pcap_handle));
-   if ((pcap_setnonblock(pcap_handle, 1, errbuf)) < 0)
-      err_msg("pcap_setnonblock: %s", errbuf);
+/*
+ *	If we are reading from a network device, then get the associated file
+ *	descriptor and configure it, determine the interface IP network and
+ *	netmask, and install a pcap filter to receive only ARP responses.
+ *	If we are reading from a pcap file, just set the file descriptor to -1
+ *	to indicate that it is not associated with a network device.
+ */
+   if (!pkt_read_filename_flag) {
+      if ((pcap_fd=pcap_fileno(pcap_handle)) < 0)
+         err_msg("pcap_fileno: %s", pcap_geterr(pcap_handle));
+      if ((pcap_setnonblock(pcap_handle, 1, errbuf)) < 0)
+         err_msg("pcap_setnonblock: %s", errbuf);
 /*
  * For the BPF pcap implementation, set the BPF device into immediate mode,
  * otherwise it will buffer the responses.
@@ -222,41 +244,44 @@ main(int argc, char *argv[]) {
  * well, so bufmod will pass all incoming messages on immediately.
  */
 #ifdef ARP_PCAP_DLPI
-   {
-      struct timeval time_zero = {0, 0};
+      {
+         struct timeval time_zero = {0, 0};
 
-      if (ioctl(pcap_fd, SBIOCSTIME, &time_zero) < 0)
-         err_sys("ioctl SBIOCSTIME");
-   }
-#endif
-   if (pcap_lookupnet(if_name, &localnet, &netmask, errbuf) < 0) {
-      memset(&localnet, '\0', sizeof(localnet));
-      memset(&netmask, '\0', sizeof(netmask));
-      if (localnet_flag) {
-         warn_msg("ERROR: Could not obtain interface IP address and netmask");
-         err_msg("ERROR: pcap_lookupnet: %s", errbuf);
+         if (ioctl(pcap_fd, SBIOCSTIME, &time_zero) < 0)
+            err_sys("ioctl SBIOCSTIME");
       }
-   }
+#endif
+      if (pcap_lookupnet(if_name, &localnet, &netmask, errbuf) < 0) {
+         memset(&localnet, '\0', sizeof(localnet));
+         memset(&netmask, '\0', sizeof(netmask));
+         if (localnet_flag) {
+            warn_msg("ERROR: Could not obtain interface IP address and netmask");
+            err_msg("ERROR: pcap_lookupnet: %s", errbuf);
+         }
+      }
 /*
  *	The filter string selects packets addresses to our interface address
  *	that are either Ethernet-II ARP packets, 802.3 LLC/SNAP ARP packets
  *	or 802.1Q tagged ARP packets.
  */
-   filter_string=make_message("ether dst %.2x:%.2x:%.2x:%.2x:%.2x:%.2x and "
-                              "(arp or (ether[14:4]=0xaaaa0300 and "
-                              "ether[20:2]=0x0806) or (ether[12:2]=0x8100 and "
-                              "ether[16:2]=0x0806))",
-                              interface_mac[0], interface_mac[1],
-                              interface_mac[2], interface_mac[3],
-                              interface_mac[4], interface_mac[5]);
-   if (verbose > 1)
-      warn_msg("DEBUG: pcap filter string: \"%s\"", filter_string);
-   if ((pcap_compile(pcap_handle, &filter, filter_string, OPTIMISE,
-        netmask)) < 0)
-      err_msg("pcap_geterr: %s", pcap_geterr(pcap_handle));
-   free(filter_string);
-   if ((pcap_setfilter(pcap_handle, &filter)) < 0)
-      err_msg("pcap_setfilter: %s", pcap_geterr(pcap_handle));
+      filter_string=make_message("ether dst %.2x:%.2x:%.2x:%.2x:%.2x:%.2x and "
+                                 "(arp or (ether[14:4]=0xaaaa0300 and "
+                                 "ether[20:2]=0x0806) or (ether[12:2]=0x8100 "
+                                 "and ether[16:2]=0x0806))",
+                                 interface_mac[0], interface_mac[1],
+                                 interface_mac[2], interface_mac[3],
+                                 interface_mac[4], interface_mac[5]);
+      if (verbose > 1)
+         warn_msg("DEBUG: pcap filter string: \"%s\"", filter_string);
+      if ((pcap_compile(pcap_handle, &filter, filter_string, OPTIMISE,
+           netmask)) < 0)
+         err_msg("pcap_geterr: %s", pcap_geterr(pcap_handle));
+      free(filter_string);
+      if ((pcap_setfilter(pcap_handle, &filter)) < 0)
+         err_msg("pcap_setfilter: %s", pcap_geterr(pcap_handle));
+   } else {	/* Reading packets from file */
+      pcap_fd = -1;
+   }
 /*
  *      Drop SUID privileges.
  */
@@ -397,14 +422,6 @@ main(int argc, char *argv[]) {
    if (pkt_filename_flag) {
       write_pkt_to_file = open(pkt_filename, O_WRONLY|O_CREAT|O_TRUNC, 0666);
       if (write_pkt_to_file == -1)
-         err_sys("open %s", pkt_filename);
-   }
-/*
- *	If --readpktfromfile was specified, open the specified input file.
- */
-   if (pkt_read_filename_flag) {
-      read_pkt_from_file = open(pkt_filename, O_RDONLY);
-      if (read_pkt_from_file == -1)
          err_sys("open %s", pkt_filename);
    }
 /*
@@ -570,18 +587,16 @@ main(int argc, char *argv[]) {
          select_timeout = req_interval - loop_timediff;
          if (debug) {print_times(); printf("main: Can't send packet yet. loop_timediff=" ARP_UINT64_FORMAT "\n", loop_timediff);}
       } /* End If */
-
       recvfrom_wto(pcap_fd, select_timeout);
    } /* End While */
 
    printf("\n");        /* Ensure we have a blank line */
 
-   link_close(link_handle);
+   if (link_handle)
+      link_close(link_handle);
    clean_up();
    if (write_pkt_to_file)
       close(write_pkt_to_file);
-   if (read_pkt_from_file)
-      close(read_pkt_from_file);
 
    Gettimeofday(&end_time);
    timeval_diff(&end_time, &start_time, &elapsed_time);
@@ -748,6 +763,9 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
  *      This constructs an appropriate packet and sends it to the host
  *      identified by "he" using the socket "s". It also updates the
  *	"last_send_time" field for the host entry.
+ *
+ *	If link_handle is NULL, then don't attempt to send any packets. This
+ *	is typically when we are reading packets from a pcap file.
  */
 int
 send_packet(link_t *link_handle, host_entry *he,
@@ -756,7 +774,7 @@ send_packet(link_t *link_handle, host_entry *he,
    size_t buflen;
    ether_hdr frame_hdr;
    arp_ether_ipv4 arpei;
-   int nsent;
+   int nsent = 0;
 /*
  *	Construct Ethernet frame header
  */
@@ -817,7 +835,9 @@ send_packet(link_t *link_handle, host_entry *he,
    if (write_pkt_to_file) {
       nsent = write(write_pkt_to_file, buf, buflen);
    } else {
-      nsent = link_send(link_handle, buf, buflen);
+      if (link_handle) {	/* Don't send if reading packets from file */
+         nsent = link_send(link_handle, buf, buflen);
+      }
    }
    if (nsent < 0)
       err_sys("ERROR: failed to send packet");
@@ -844,11 +864,13 @@ void
 clean_up(void) {
    struct pcap_stat stats;
 
-   if ((pcap_stats(pcap_handle, &stats)) < 0)
-      err_msg("pcap_stats: %s", pcap_geterr(pcap_handle));
+   if (!pkt_read_filename_flag) {	/* Can't get stats from a savefile */
+      if ((pcap_stats(pcap_handle, &stats)) < 0)
+         err_msg("pcap_stats: %s", pcap_geterr(pcap_handle));
 
-   printf("%u packets received by filter, %u packets dropped by kernel\n",
-          stats.ps_recv, stats.ps_drop);
+      printf("%u packets received by filter, %u packets dropped by kernel\n",
+             stats.ps_recv, stats.ps_drop);
+   }
    if (pcap_dump_handle) {
       pcap_dump_close(pcap_dump_handle);
    }
@@ -1502,6 +1524,10 @@ find_host(host_entry **he, struct in_addr *addr) {
  *	Returns:
  *
  *	None.
+ *
+ *	If the socket file descriptor is -1, this indicates that we are
+ *	reading packets from a pcap file and there is no associated network
+ *	device.
  */
 void
 recvfrom_wto(int s, int tmo) {
@@ -1510,14 +1536,15 @@ recvfrom_wto(int s, int tmo) {
    int n;
 
    FD_ZERO(&readset);
-   FD_SET(s, &readset);
+   if (s >= 0)
+      FD_SET(s, &readset);
    to.tv_sec  = tmo/1000000;
    to.tv_usec = (tmo - 1000000*to.tv_sec);
    n = select(s+1, &readset, NULL, NULL, &to);
    if (debug) {print_times(); printf("recvfrom_wto: select end, tmo=%d, n=%d\n", tmo, n);}
    if (n < 0) {
       err_sys("select");
-   } else if (n == 0 && read_pkt_from_file == 0) {
+   } else if (n == 0 && s >= 0) {
 /*
  * For the BPF pcap implementation, we call pcap_dispatch() even if select
  * times out. This is because on many BPF implementations, select() doesn't
@@ -1529,21 +1556,8 @@ recvfrom_wto(int s, int tmo) {
 #endif
       return;	/* Timeout */
    }
-   if (read_pkt_from_file == 0) {
-      if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) == -1)
-         err_sys("pcap_dispatch: %s\n", pcap_geterr(pcap_handle));
-   } else {	/* Read from file */
-      unsigned char buf[MAX_FRAME];
-      struct pcap_pkthdr header;
-
-      if ((n = read(read_pkt_from_file, buf, MAX_FRAME)) < 0) {
-         err_sys("ERROR: read");
-      }
-      Gettimeofday(&(header.ts));
-      header.caplen = n;
-      header.len = n;
-      callback(NULL, &header, buf);
-   }
+   if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) == -1)
+      err_sys("pcap_dispatch: %s\n", pcap_geterr(pcap_handle));
 }
 
 /*

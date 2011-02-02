@@ -1,5 +1,17 @@
 $Id$
 
+2011-02-02 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Change operation of --readpktfromfile so it reads from
+	  a pcap savefile rather than from a raw file.
+
+	* pkt-simple-response.pcap, pkt-padding-response.pcap,
+	  pkt-vlan-response.pcap, pkt-llc-response.pcap: New pcap format
+	  files for check-decode.
+
+	* check-decode: Modified to use new pcap format savefiles, and remove
+	  check for root privileges as this is no longer needed.
+
 2011-01-31 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* link-dlpi.c: Fix "comparison between signed and unsigned" warning in
