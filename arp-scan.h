@@ -214,7 +214,7 @@ void warn_msg(const char *, ...);
 void err_print(int, const char *, va_list);
 void usage(int);
 void add_host_pattern(const char *, unsigned);
-void add_host(const char *, unsigned);
+void add_host(const char *, unsigned, int);
 int send_packet(link_t *, host_entry *, struct timeval *);
 void recvfrom_wto(int, int);
 void remove_host(host_entry **);

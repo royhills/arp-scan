@@ -89,8 +89,8 @@ static struct hash_control *hash_table;
 static int localnet_flag=0;		/* Scan local network */
 static int llc_flag=0;			/* Use 802.2 LLC with SNAP */
 static int ieee_8021q_vlan=-1;		/* Use 802.1Q VLAN tagging if >= 0 */
-static int pkt_filename_flag=0;		/* Write packet to file flag */
-static int pkt_read_filename_flag=0;	/* Read packet from file flag */
+static int pkt_write_file_flag=0;	/* Write packet to file flag */
+static int pkt_read_file_flag=0;	/* Read packet from file flag */
 static char pkt_filename[MAXLINE];	/* Read/Write packet to file filename */
 static int write_pkt_to_file=0;		/* Write packet to file for debugging */
 
@@ -139,21 +139,23 @@ main(int argc, char *argv[]) {
    Gettimeofday(&start_time);
    if (debug) {print_times(); printf("main: Start\n");}
 /*
- *	Determine network interface to use if not reading from a pcap file.
+ *	Determine network interface to use if not reading from a pcap file
+ *	or writing to a binary file.
  *	If the interface was specified with the --interface option then use
  *	that, otherwise use pcap_lookupdev() to pick a suitable interface.
  */
-   if (!if_name && !pkt_read_filename_flag) { /* --interface not specified */
+   if (!if_name && !pkt_read_file_flag && !pkt_write_file_flag) {
       if (!(if_name=pcap_lookupdev(errbuf))) {
          err_msg("pcap_lookupdev: %s", errbuf);
       }
    }
 /*
  *      Open link layer socket. This is used to send outbound packets.
- *	If we are reading packets from a pcap file, set this to NULL as we
- *	don't need to send packets in this case.
+ *	If we are reading packets from a pcap file, or writing packets to a
+ *	binary file, set this to NULL as we don't need to send packets in
+ *	this case.
  */
-   if (!pkt_read_filename_flag) {
+   if (!pkt_read_file_flag && !pkt_write_file_flag) {
       if ((link_handle = link_open(if_name)) == NULL) {
          if (errno == EPERM || errno == EACCES)
             warn_msg("You need to be root, or arp-scan must be SUID root, "
@@ -193,33 +195,43 @@ main(int argc, char *argv[]) {
    }
 /*
  *	Open the network device for reading with pcap, or the pcap file if we
- *	have specified --readpktfromfile.
+ *	have specified --readpktfromfile. If we are writing packets to a binary
+ *	file, then set pcap_handle to NULL as we don't need to read packets in
+ *	this case.
  */
-   if (pkt_read_filename_flag) {
+   if (pkt_read_file_flag) {
       if (!(pcap_handle = pcap_open_offline(pkt_filename, errbuf)))
          err_msg("pcap_open_offline: %s", errbuf);
-   } else {
+   } else if (!pkt_write_file_flag) {
       if (!(pcap_handle = pcap_open_live(if_name, snaplen, PROMISC, TO_MS,
           errbuf)))
          err_msg("pcap_open_live: %s", errbuf);
+   } else {
+      pcap_handle = NULL;
    }
-   if ((datalink=pcap_datalink(pcap_handle)) < 0)
-      err_msg("pcap_datalink: %s", pcap_geterr(pcap_handle));
-   printf("Interface: %s, datalink type: %s (%s)\n",
-          pkt_read_filename_flag ? "savefile" : if_name,
-          pcap_datalink_val_to_name(datalink),
-          pcap_datalink_val_to_description(datalink));
-   if (datalink != DLT_EN10MB) {
-      warn_msg("WARNING: Unsupported datalink type");
+/*
+ *	If we are reading files with pcap, get and display the datalink details
+ */
+   if (pcap_handle) {
+      if ((datalink=pcap_datalink(pcap_handle)) < 0)
+         err_msg("pcap_datalink: %s", pcap_geterr(pcap_handle));
+      printf("Interface: %s, datalink type: %s (%s)\n",
+             pkt_read_file_flag ? "savefile" : if_name,
+             pcap_datalink_val_to_name(datalink),
+             pcap_datalink_val_to_description(datalink));
+      if (datalink != DLT_EN10MB) {
+         warn_msg("WARNING: Unsupported datalink type");
+      }
    }
 /*
  *	If we are reading from a network device, then get the associated file
  *	descriptor and configure it, determine the interface IP network and
  *	netmask, and install a pcap filter to receive only ARP responses.
- *	If we are reading from a pcap file, just set the file descriptor to -1
- *	to indicate that it is not associated with a network device.
+ *	If we are reading from a pcap file, or writing to a binary file, just
+ *	set the file descriptor to -1 to indicate that it is not associated
+ *	with a network device.
  */
-   if (!pkt_read_filename_flag) {
+   if (!pkt_read_file_flag && !pkt_write_file_flag) {
       if ((pcap_fd=pcap_fileno(pcap_handle)) < 0)
          err_msg("pcap_fileno: %s", pcap_geterr(pcap_handle));
       if ((pcap_setnonblock(pcap_handle, 1, errbuf)) < 0)
@@ -419,7 +431,7 @@ main(int argc, char *argv[]) {
 /*
  *	If --writepkttofile was specified, open the specified output file.
  */
-   if (pkt_filename_flag) {
+   if (pkt_write_file_flag) {
       write_pkt_to_file = open(pkt_filename, O_WRONLY|O_CREAT|O_TRUNC, 0666);
       if (write_pkt_to_file == -1)
          err_sys("open %s", pkt_filename);
@@ -864,7 +876,7 @@ void
 clean_up(void) {
    struct pcap_stat stats;
 
-   if (!pkt_read_filename_flag) {	/* Can't get stats from a savefile */
+   if (pcap_handle && !pkt_read_file_flag) {
       if ((pcap_stats(pcap_handle, &stats)) < 0)
          err_msg("pcap_stats: %s", pcap_geterr(pcap_handle));
 
@@ -874,7 +886,9 @@ clean_up(void) {
    if (pcap_dump_handle) {
       pcap_dump_close(pcap_dump_handle);
    }
-   pcap_close(pcap_handle);
+   if (pcap_handle) {
+      pcap_close(pcap_handle);
+   }
 }
 
 /*
@@ -1259,7 +1273,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
          b3 = (hostip & 0x0000ff00) >> 8;
          b4 = (hostip & 0x000000ff);
          snprintf(ipstr, sizeof(ipstr), "%d.%d.%d.%d", b1,b2,b3,b4);
-         add_host(ipstr, host_timeout);
+         add_host(ipstr, host_timeout, 1);
       }
    } else if (!(regexec(&ipmask_pat, patcopy, 0, NULL, 0))) { /* IPnet:netmask */
 /*
@@ -1309,7 +1323,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
          b3 = (hostip & 0x0000ff00) >> 8;
          b4 = (hostip & 0x000000ff);
          snprintf(ipstr, sizeof(ipstr), "%d.%d.%d.%d", b1,b2,b3,b4);
-         add_host(ipstr, host_timeout);
+         add_host(ipstr, host_timeout, 1);
       }
    } else if (!(regexec(&iprange_pat, patcopy, 0, NULL, 0))) { /* IPstart-IPend */
 /*
@@ -1336,10 +1350,10 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
          b3 = (i & 0x0000ff00) >> 8;
          b4 = (i & 0x000000ff);
          snprintf(ipstr, sizeof(ipstr), "%d.%d.%d.%d", b1,b2,b3,b4);
-         add_host(ipstr, host_timeout);
+         add_host(ipstr, host_timeout, 1);
       }
    } else {                             /* Single host or IP address */
-      add_host(patcopy, host_timeout);
+      add_host(patcopy, host_timeout, numeric_flag);
    }
    free(patcopy);
 }
@@ -1351,6 +1365,9 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
  *
  *	host_name = The Name or IP address of the host.
  *	host_timeout = The initial host timeout in ms.
+ *	numeric_only = 1 if the host name is definitely an IP address in
+ *	               dotted quad format, or 0 if it may be a hostname or
+ *	               IP address.
  *
  *	Returns:
  *
@@ -1360,7 +1377,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
  *	we use the helist array directly.
  */
 void
-add_host(const char *host_name, unsigned host_timeout) {
+add_host(const char *host_name, unsigned host_timeout, int numeric_only) {
    struct in_addr *hp=NULL;
    struct in_addr addr;
    host_entry *he;
@@ -1368,7 +1385,7 @@ add_host(const char *host_name, unsigned host_timeout) {
    int result;
    char *ga_err_msg;
 
-   if (numeric_flag) {
+   if (numeric_only) {
       result = inet_pton(AF_INET, host_name, &addr);
       if (result < 0) {
          err_sys("ERROR: inet_pton failed for %s", host_name);
@@ -1557,8 +1574,13 @@ recvfrom_wto(int s, int tmo) {
 #endif
       return;	/* Timeout */
    }
-   if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) == -1)
-      err_sys("pcap_dispatch: %s\n", pcap_geterr(pcap_handle));
+/*
+ * Call pcap_dispatch() to process the packet if we are reading packets.
+ */
+   if (pcap_handle) {
+      if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) == -1)
+         err_sys("pcap_dispatch: %s\n", pcap_geterr(pcap_handle));
+   }
 }
 
 /*
@@ -1847,7 +1869,6 @@ process_options(int argc, char *argv[]) {
             break;
          case 'l':	/* --localnet */
             localnet_flag = 1;
-            numeric_flag=1;
             break;
          case 'L':	/* --llc */
             llc_flag = 1;
@@ -1860,11 +1881,11 @@ process_options(int argc, char *argv[]) {
             break;
          case OPT_WRITEPKTTOFILE: /* --writepkttofile */
             strlcpy(pkt_filename, optarg, sizeof(pkt_filename));
-            pkt_filename_flag=1;
+            pkt_write_file_flag=1;
             break;
          case OPT_READPKTFROMFILE: /* --readpktfromfile */
             strlcpy(pkt_filename, optarg, sizeof(pkt_filename));
-            pkt_read_filename_flag=1;
+            pkt_read_file_flag=1;
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE);

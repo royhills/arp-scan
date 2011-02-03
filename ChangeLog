@@ -2,6 +2,21 @@ $Id$
 
 2011-02-02 Roy Hills <Roy.Hills@nta-monitor.com>
 
+	* arp-scan.c: When using --writepkttofile we no longer open a link
+	  layer socket or a pcap handle, so we don't need root privileges.
+
+	* check-packet: Remove check for root privileges as this is no longer
+	  needed.
+
+	* check-decode: Added two new tests to improve code coverage.
+
+	* arp-scan.c, arp-scan.h: Modify add_host_pattern() and add_host() so
+	  we always use the more efficient inet_pton() rather than
+	  get_host_address() for IPnet/bits, IPnet:mask and IPstart-IPend
+	  patterns.
+
+2011-02-02 Roy Hills <Roy.Hills@nta-monitor.com>
+
 	* arp-scan.c: Change operation of --readpktfromfile so it reads from
 	  a pcap savefile rather than from a raw file.
 

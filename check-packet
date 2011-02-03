@@ -29,14 +29,6 @@
 # packet to a file rather than sending it via the network.
 #
 
-# Check that the user is root. Skip this check if they are not.
-ID=`id | sed 's/(.*//'`
-if test "$ID" != "uid=0"
-then
-   echo "User is not root, skipping check-packet test..."
-   exit 0
-fi
-
 TMPFILE=/tmp/arp-scan-test.$$.tmp
 #
 SAMPLE01="$srcdir/pkt-simple-request.dat"
