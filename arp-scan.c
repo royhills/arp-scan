@@ -1120,9 +1120,10 @@ usage(int status) {
    fprintf(stderr, "\t\t\tpackets in 802.1Q format irrespective of this option.\n");
    fprintf(stderr, "\n--pcapsavefile=<s> or -W <s>\tWrite received packets to pcap savefile <s>.\n");
    fprintf(stderr, "\t\t\tThis option causes received ARP responses to be written\n");
-   fprintf(stderr, "\t\t\tto a pcap savefile with the specified name. This\n");
-   fprintf(stderr, "\t\t\tsavefile can be analysed with programs that understand\n");
-   fprintf(stderr, "\t\t\tthe pcap file format, such as \"tcpdump\" and \"wireshark\".\n");
+   fprintf(stderr, "\t\t\tto the specified pcap savefile as well as being decoded\n");
+   fprintf(stderr, "\t\t\tand displayed. This savefile can be analysed with\n");
+   fprintf(stderr, "\t\t\tprograms that understand the pcap file format, such as\n");
+   fprintf(stderr, "\t\t\t\"tcpdump\" and \"wireshark\".\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "Report bugs or send suggestions to %s\n", PACKAGE_BUGREPORT);
    fprintf(stderr, "See the arp-scan homepage at http://www.nta-monitor.com/tools/arp-scan/\n");

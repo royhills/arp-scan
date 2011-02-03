@@ -38,6 +38,7 @@ SAMPLE03="$srcdir/pkt-vlan-response.pcap"
 SAMPLE04="$srcdir/pkt-llc-response.pcap"
 SAMPLE05="$srcdir/pkt-net1921681-response.pcap"
 
+# Simple ARP response packet
 echo "Checking simple ARP response packet decode using $SAMPLE01 ..."
 cat >$EXAMPLEOUTPUT <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION
@@ -61,7 +62,8 @@ fi
 echo "ok"
 rm -f $ARPSCANOUTPUT
 rm -f $EXAMPLEOUTPUT
-#
+
+# Simple ARP response packet with non zero padding
 echo "Checking padded ARP response packet decode using $SAMPLE02 ..."
 cat >$EXAMPLEOUTPUT <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION	Padding=55aa55aa55aa55aa55aa55aa55aa55aa55aa
@@ -85,7 +87,8 @@ fi
 echo "ok"
 rm -f $ARPSCANOUTPUT
 rm -f $EXAMPLEOUTPUT
-#
+
+# ARP response packet with 802.1Q VLAN tag
 echo "Checking 802.1Q ARP response packet decode using $SAMPLE03 ..."
 cat >$EXAMPLEOUTPUT <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION (802.1Q VLAN=4095)
@@ -109,7 +112,8 @@ fi
 echo "ok"
 rm -f $ARPSCANOUTPUT
 rm -f $EXAMPLEOUTPUT
-#
+
+# ARP response packet with 802.2 LLC/SNAP encapsulation
 echo "Checking LLC/SNAP ARP response packet decode using $SAMPLE04 ..."
 cat >$EXAMPLEOUTPUT <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION (802.2 LLC/SNAP)
@@ -133,7 +137,8 @@ fi
 echo "ok"
 rm -f $ARPSCANOUTPUT
 rm -f $EXAMPLEOUTPUT
-#
+
+# 56 ARP responses from a Class-C sized network with various vendors
 echo "Checking 192.168.1.0/24 ARP response packet decode using $SAMPLE05 ..."
 cat >$EXAMPLEOUTPUT <<_EOF_
 192.168.1.3	00:0b:cd:26:aa:78	Hewlett Packard
