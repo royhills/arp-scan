@@ -232,7 +232,7 @@ main(int argc, char *argv[]) {
  *	with a network device.
  */
    if (!pkt_read_file_flag && !pkt_write_file_flag) {
-      if ((pcap_fd=pcap_fileno(pcap_handle)) < 0)
+      if ((pcap_fd=pcap_get_selectable_fd(pcap_handle)) < 0)
          err_msg("pcap_fileno: %s", pcap_geterr(pcap_handle));
       if ((pcap_setnonblock(pcap_handle, 1, errbuf)) < 0)
          err_msg("pcap_setnonblock: %s", errbuf);

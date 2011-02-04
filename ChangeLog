@@ -1,6 +1,14 @@
 $Id$
 
-2011-02-02 Roy Hills <Roy.Hills@nta-monitor.com>
+2011-02-04 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Use pcap_get_selectable_fd() rather than pcap_fileno()
+	  to get the pcap file descriptor.
+
+	* check-host-list: Added new test to check the creation of the host
+	  list.
+
+2011-02-03 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: When using --writepkttofile we no longer open a link
 	  layer socket or a pcap handle, so we don't need root privileges.

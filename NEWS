@@ -7,8 +7,8 @@ release.  For more details please read the ChangeLog file.
 
 * Changed license from GPLv2 to GPLv3.
 
-* Added warning about setting ar$spa to the destination IP address to the
-  help output and man page.
+* Added warning about possible DoS when setting ar$spa to the destination IP
+  address to the help output and man page.
 
 * Added arp-fingerprint patterns for 2.11BSD, NetBSD 4.0, FreeBSD 7.0,
   Vista SP1 and Windows 7.
@@ -23,7 +23,7 @@ release.  For more details please read the ChangeLog file.
 * Modified get-oui and get-iab perl scripts so they will work on systems where
   the perl interpreter is not in /usr/bin, e.g. NetBSD.
 
-* Various minor bug fixes.
+* Various bug fixes.
 
 2008-07-24 arp-scan 1.7:
 
