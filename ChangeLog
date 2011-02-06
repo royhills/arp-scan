@@ -1,5 +1,11 @@
 $Id$
 
+2011-02-06 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* acinclude.m4: Changed GCC_FORTIFY_SOURCE macro so the test program
+	  doesn't include <features.h>, because that header file is not
+	  present on all the operating systems that we support, e.g. OpenBSD.
+
 2011-02-04 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Use pcap_get_selectable_fd() rather than pcap_fileno()

@@ -237,7 +237,6 @@ dnl GCC_STACK_PROTECT_CXX
 dnl checks -fstack-protector with the C++ compiler, if it exists then updates
 dnl CXXFLAGS and defines ENABLE_SSP_CXX
 dnl
-
 AC_DEFUN([GCC_STACK_PROTECT_CC],[
   ssp_cc=yes
   if test "X$CC" != "X"; then
@@ -270,13 +269,23 @@ AC_DEFUN([GCC_STACK_PROTECT_CXX],[
   fi
 ])
 
+dnl Check whether GCC accepts -D_FORTIFY_SOURCE
+dnl
+dnl This was introduced in GCC 4.1 and glibc 2.4, but was present in earlier
+dnl versions on redhat systems (specifically GCC 3.4.3 and above).
+dnl
+dnl We define the GNUC_PREREQ macro to the same definition as __GNUC_PREREQ
+dnl in <features.h>. We don't use __GNUC_PREREQ directly because <features.h>
+dnl is not present on all the operating systems that we support, e.g. OpenBSD.
+dnl
 AC_DEFUN([GCC_FORTIFY_SOURCE],[
    if test "x$CC" != "X"; then
       AC_MSG_CHECKING([whether ${CC} accepts -D_FORTIFY_SOURCE])
-      AC_TRY_COMPILE([#include <features.h>], [
-         #if !(__GNUC_PREREQ (4, 1) \
-            || (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (4, 0)) \
-            || (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (3, 4) \
+      AC_TRY_COMPILE(,[
+         #define GNUC_PREREQ(maj, min) ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+         #if !(GNUC_PREREQ (4, 1) \
+            || (defined __GNUC_RH_RELEASE__ && GNUC_PREREQ (4, 0)) \
+            || (defined __GNUC_RH_RELEASE__ && GNUC_PREREQ (3, 4) \
                && __GNUC_MINOR__ == 4 \
                && (__GNUC_PATCHLEVEL__ > 2 \
                   || (__GNUC_PATCHLEVEL__ == 2 && __GNUC_RH_RELEASE__ >= 8))))
@@ -291,6 +300,16 @@ AC_DEFUN([GCC_FORTIFY_SOURCE],[
    fi
 ])
 
+dnl Check for support of the GCC -Wformat-security option.
+dnl
+dnl Note that in this test, the test compilation fails if the option is
+dnl supported, and succeeds if it is not supported.
+dnl
+dnl If this option is supported, then the test program will produce a
+dnl warning like "format not a string literal and no format arguments".
+dnl If it is not supported, then the test program will compile without
+dnl warnings.
+dnl
 AC_DEFUN([GCC_FORMAT_SECURITY],[
    if test "x$CC" != "X"; then
       AC_MSG_CHECKING([whether ${CC} accepts -Wformat-security])
@@ -310,6 +329,9 @@ AC_DEFUN([GCC_FORMAT_SECURITY],[
    fi
 ])
 
+dnl Check for support of the GCC -Wextra option, which enables extra warnings.
+dnl Support for this option was added in gcc 3.4.0.
+dnl
 AC_DEFUN([GCC_WEXTRA],[
   gcc_wextra=yes
   if test "X$CC" != "X"; then
