@@ -3,7 +3,9 @@ $Id$
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
-2011-01-31 arp-scan 1.7.5:
+2011-01-31 arp-scan 1.7.6:
+
+* Added support for MacOS X with Xcode 2.5 and later.
 
 * Changed license from GPLv2 to GPLv3.
 

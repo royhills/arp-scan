@@ -301,6 +301,7 @@ AC_DEFUN([GCC_FORTIFY_SOURCE],[
 ])
 
 dnl Check for support of the GCC -Wformat-security option.
+dnl This option was introduced in GCC 3.0.
 dnl
 dnl Note that in this test, the test compilation fails if the option is
 dnl supported, and succeeds if it is not supported.
