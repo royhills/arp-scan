@@ -1,5 +1,21 @@
 $Id$
 
+2011-02-21 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Modified usage() so that it can output either brief or
+          detailed help output depending on a new "detailed" argument.  Now,
+          detailed output, including information on the available options, is
+          only displayed when arp-scan is run with the --help option.  For
+          error conditions such as incorrect options, it only produces brief
+          output.
+
+	* arp-scan.c: Modify display_packet() to report responses where the
+	  ARP protocol type (ar$pro) is not IP (0x0800). This allows trailer
+	  negotiation responses to be distinguished from regular ARP replies.
+
+	* pkt-trailer-reply.pcap: New file containing an example of a trailer
+	  negotiation ARP response from a Quasijarus 4.3BSD system on SIMH VAX.
+
 2011-02-19 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.h: On Apple Mac OS X systems with Xcode 2.5 and later,

@@ -31,12 +31,6 @@ the IP address.
 Investigate response packets >60 bytes long, e.g. Windows 2003 Server and
 some Cisco.
 
-Investigate ARP trailer negotiation, as defined in RFC1122 section 2.3.1,
-Trailer Protocol Negotiation: 'the ARP exchange is completed in the usual
-manner using the normal IP protocol type, but a host that wants to speak
-trailers will send an additional "trailer ARP reply" packet'.  Trailer
-encapsulation itself is detailed in RFC 893.
-
 Support LLC/SNAP encapsulation with 802.1Q VLAN tagging (--llc --vlan=n) and
 generate the correct packet format.  Currently the VLAN tag is added first,
 which is incorrect.

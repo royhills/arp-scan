@@ -5,6 +5,9 @@ release.  For more details please read the ChangeLog file.
 
 2011-01-31 arp-scan 1.7.6:
 
+* The full help output is only displayed if specifically requested with
+  arp-scan --help.  Usage errors now result in smaller help output.
+
 * Added support for MacOS X with Xcode 2.5 and later.
 
 * Changed license from GPLv2 to GPLv3.

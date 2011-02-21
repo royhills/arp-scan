@@ -221,7 +221,7 @@ void warn_sys(const char *, ...);
 void err_msg(const char *, ...);
 void warn_msg(const char *, ...);
 void err_print(int, const char *, va_list);
-void usage(int);
+void usage(int, int);
 void add_host_pattern(const char *, unsigned);
 void add_host(const char *, unsigned, int);
 int send_packet(link_t *, host_entry *, struct timeval *);
