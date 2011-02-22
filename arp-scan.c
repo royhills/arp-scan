@@ -108,8 +108,8 @@ main(int argc, char *argv[]) {
    struct timeval end_time;     /* Program end time */
    struct timeval elapsed_time; /* Elapsed time as timeval */
    double elapsed_seconds;      /* Elapsed time in seconds */
-   static int reset_cum_err;
-   static int pass_no;
+   int reset_cum_err;
+   int pass_no = 0;
    int first_timeout=1;
    unsigned i;
    char errbuf[PCAP_ERRBUF_SIZE];
