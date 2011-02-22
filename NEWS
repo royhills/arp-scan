@@ -16,7 +16,7 @@ release.  For more details please read the ChangeLog file.
   address to the help output and man page.
 
 * Added arp-fingerprint patterns for 2.11BSD, NetBSD 4.0, FreeBSD 7.0,
-  Vista SP1 and Windows 7.
+  Vista SP1, Windows 7 and Blackberry OS.
 
 * Enabled compiler security options -fstack-protect, -D_FORTIFY_SOURCE=2 and
   -Wformat-security if they are supported by the compiler. Also enabled extra

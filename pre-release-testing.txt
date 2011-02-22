@@ -2,18 +2,14 @@ $Id$
 
 Checks to perform on all supported platforms before release:
 
-1.  Build and check for no warnings or errors: ./configure; make; make install
+1.  Build and check for no warnings or errors: ./configure; make
 
 2.  make check
 
-3.  Single target test: arp-scan <IP>
+3.  Localnet test: arp-scan [-I <if>] --localnet
 
-4.  Localnet test: arp-scan [-I <if>] --localnet
+4.  get-oui/get-iab test
 
-5.  Range test: arp-scan [-I <if>] a.b.c.d/x
+5.  Fingerprint test: arp-fingerprint <IP>
 
-6.  get-oui/get-iab test
-
-7.  Fingerprint test: arp-fingerprint <IP>
-
-8.  manpage test: read manpages, and check for correct formatting.
+6.  manpage test: read manpages, and check for correct formatting.

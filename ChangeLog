@@ -16,6 +16,8 @@ $Id$
 	* pkt-trailer-reply.pcap: New file containing an example of a trailer
 	  negotiation ARP response from a Quasijarus 4.3BSD system on SIMH VAX.
 
+	* arp-fingerprint: Added fingerprint for Blackberry OS.
+
 2011-02-19 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.h: On Apple Mac OS X systems with Xcode 2.5 and later,

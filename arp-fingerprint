@@ -124,6 +124,7 @@ my $arpscan="arp-scan -q -r 1";
 # Catalyst IOS 12.1	Cisco Catalyst 3550-48 running IOS 12.1(11)EA1a SMI
 # FortiOS 3.00	FortiGate 100A running FortiOS 3.00,build0406,070126
 # Plan9		Plan9 release 4 on VMware
+# Blackberry OS	Blackberry OS v5.0.0.681 on Blackberry 8900
 #
 my %fp_hash = (
    '11110100000' => 'FreeBSD 5.3, 7.0, DragonflyBSD 2.0, Win98, WinME, NT4, 2000, XP, 2003, Catalyst IOS 12.0, 12.1, 12.2, FortiOS 3.00',
@@ -139,7 +140,7 @@ my %fp_hash = (
    '11110000011' => '2.11BSD, 4.3BSD, OpenBSD 3.1, OpenBSD 3.9, Nortel Contivity 6.00, 6.05',
    '10110110000' => 'NetBSD 2.0.2, 4.0',
    '10110111111' => 'PIX OS 4.4, 5.1, 5.2, 5.3',
-   '11110111111' => 'PIX OS 6.0, 6.1, 6.2, ScreenOS 5.0 (transparent), Plan9',
+   '11110111111' => 'PIX OS 6.0, 6.1, 6.2, ScreenOS 5.0 (transparent), Plan9, Blackberry OS',
    '00010110011' => 'PIX OS 6.3, 7.0(1), 7.0(2)',
    '01010110011' => 'PIX OS 7.0(4)-7.0(6), 7.1, 7.2, 8.0',
    '00000110000' => 'Netware 6.5',
