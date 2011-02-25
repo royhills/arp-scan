@@ -37,6 +37,8 @@ SAMPLE02="$srcdir/pkt-padding-response.pcap"
 SAMPLE03="$srcdir/pkt-vlan-response.pcap"
 SAMPLE04="$srcdir/pkt-llc-response.pcap"
 SAMPLE05="$srcdir/pkt-net1921681-response.pcap"
+SAMPLE06="$srcdir/pkt-trailer-response.pcap"
+SAMPLE07="$srcdir/pkt-vlan-llc-response.pcap"
 
 # Simple ARP response packet
 echo "Checking simple ARP response packet decode using $SAMPLE01 ..."
@@ -253,6 +255,57 @@ cat >$EXAMPLEOUTPUT <<_EOF_
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
 $srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE01 127.0.0.0:255.255.252.0 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f $ARPSCANOUTPUT
+rm -f $EXAMPLEOUTPUT
+
+# Simple ARP response packet with trailer ARP reply.
+echo "Checking trailer ARP response packet decode using $SAMPLE06 ..."
+cat >$EXAMPLEOUTPUT <<_EOF_
+127.0.0.1	08:00:2b:12:34:56	DIGITAL EQUIPMENT CORPORATION
+127.0.0.1	08:00:2b:12:34:56	DIGITAL EQUIPMENT CORPORATION (ARP Proto=0x1000) (DUP: 2)
+
+_EOF_
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE06 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+if test $? -ne 0; then
+   rm -f $ARPSCANOUTPUT
+   rm -f $EXAMPLEOUTPUT
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f $ARPSCANOUTPUT
+rm -f $EXAMPLEOUTPUT
+
+# 802.1Q LLC ARP response packet
+echo "Checking 802.1Q LLC ARP response packet decode using $SAMPLE07 ..."
+cat >$EXAMPLEOUTPUT <<_EOF_
+127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION (802.2 LLC/SNAP) (802.1Q VLAN=100)
+
+_EOF_
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE07 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
 if test $? -ne 0; then
    rm -f $ARPSCANOUTPUT
    rm -f $EXAMPLEOUTPUT

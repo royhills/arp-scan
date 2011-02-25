@@ -1,5 +1,22 @@
 $Id$
 
+2011-02-25 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* pkt-vlan-llc-response.pcap: New file containing an example of
+	  an ARP reply with 802.1Q tag and LLC/SNAP framing. From a Cisco
+	  2621 router.
+
+	* pkt-trailer-response.pcap: Renamed from pkt-trailer-reply.pcap.
+
+	* check-decode: New checks for trailer response and 802.1Q/LLC
+	  responses.
+
+	* arp-scan.c: Modified pcap filter string to capture ARP responses
+	  with both 802.1Q tag and LLC/SNAP framing.
+
+	* Makefile.am: Include pkt-trailer-response.pcap and
+	  pkt-vlan-llc-response.pcap.
+
 2011-02-21 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Modified usage() so that it can output either brief or

@@ -272,14 +272,17 @@ main(int argc, char *argv[]) {
          }
       }
 /*
- *	The filter string selects packets addresses to our interface address
- *	that are either Ethernet-II ARP packets, 802.3 LLC/SNAP ARP packets
- *	or 802.1Q tagged ARP packets.
+ *	The filter string selects packets addressed to our interface address
+ *	that are Ethernet-II ARP packets, 802.3 LLC/SNAP ARP packets,
+ *	802.1Q tagged ARP packets or 802.1Q tagged 802.3 LLC/SNAP ARP packets.
  */
       filter_string=make_message("ether dst %.2x:%.2x:%.2x:%.2x:%.2x:%.2x and "
                                  "(arp or (ether[14:4]=0xaaaa0300 and "
                                  "ether[20:2]=0x0806) or (ether[12:2]=0x8100 "
-                                 "and ether[16:2]=0x0806))",
+                                 "and ether[16:2]=0x0806) or "
+                                 "(ether[12:2]=0x8100 and "
+                                 "ether[18:4]=0xaaaa0300 and "
+                                 "ether[24:2]=0x0806))",
                                  interface_mac[0], interface_mac[1],
                                  interface_mac[2], interface_mac[3],
                                  interface_mac[4], interface_mac[5]);

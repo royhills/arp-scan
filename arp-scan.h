@@ -111,11 +111,14 @@
 #endif
 
 #ifdef HAVE_PCAP_H
-/* The pcap.h header file on Apple Mac OS Xcode 2.5 and later includes pcap's
+/*
+ * The pcap.h header file on Apple Mac OS Xcode 2.5 and later includes pcap's
  * cut-down version of bpf.h, which defines macros that conflict with those in
  * the full bpf.h. To avoid the conflict, we include net/bpf.h before pcap.h
  * if compiling under Xcode 2.5 or later. This defines all the required macros
  * and prevents pcap's cut-down version from defining its own ones.
+ *
+ * 5370 is the value of __APPLE_CC__ for Xcode 2.5 on Tiger with GCC 4.0.1
  */
 #if defined(__APPLE_CC__) && (__APPLE_CC__ >= 5370)
 #include <net/bpf.h>

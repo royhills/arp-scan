@@ -31,10 +31,6 @@ the IP address.
 Investigate response packets >60 bytes long, e.g. Windows 2003 Server and
 some Cisco.
 
-Support LLC/SNAP encapsulation with 802.1Q VLAN tagging (--llc --vlan=n) and
-generate the correct packet format.  Currently the VLAN tag is added first,
-which is incorrect.
-
 Add XML output format.
 
 Dave's Mac gives these errors:
