@@ -1,5 +1,14 @@
 $Id$
 
+2011-02-26 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* pkt-custom-request-vlan-llc.dat: New data file for check-packet
+	  script containing custom ARP request with 802.1Q VLAN tag and
+	  LLC/SNAP framing.
+
+	* check-packet: Added check for custom ARP request with 802.1Q VLAN
+	  tag and LLC/SNAP framing.
+
 2011-02-25 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* pkt-vlan-llc-response.pcap: New file containing an example of

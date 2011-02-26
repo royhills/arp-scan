@@ -3,7 +3,12 @@ $Id$
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
-2011-01-31 arp-scan 1.7.6:
+2011-02-25 arp-scan 1.7.6:
+
+* Added support for trailer ARP replies, which were used in early versions
+  of BSD Unix on VAX.
+
+* Added support for ARP packets with both 802.1Q VLAN tag and LLC/SNAP framing.
 
 * The full help output is only displayed if specifically requested with
   arp-scan --help.  Usage errors now result in smaller help output.
