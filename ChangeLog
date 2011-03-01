@@ -3,7 +3,7 @@ $Id$
 2011-03-01 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* configure.ac: Remove version number from AM_INIT_AUTOMAKE macro,
-	  as this usage is obsolete now.
+	  as this usage is obsolete now. Incremented version to 1.8.
 
 	* ieee-oui.txt, ieee-iab.txt: Updated IEEE OUI and IAB listings from
 	  IEEE website using get-oui and get-iab Perl scripts.
