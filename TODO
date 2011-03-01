@@ -33,13 +33,11 @@ some Cisco.
 
 Add XML output format.
 
-Dave's Mac gives these errors:
-gcc -DHAVE_CONFIG_H -I.  -DDATADIR=\"/usr/local/share/arp-scan\"   -g -O2 -Wall -Wshadow -Wwrite-strings -Wextra -fstack-protector -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -MT link-bpf.o -MD -MP -MF .deps/link-bpf.Tpo -c -o link-bpf.o link-bpf.c
- In file included from link-bpf.c:46:
- /usr/include/net/bpf.h:105: error: redefinition of struct bpf_program
- /usr/include/net/bpf.h:130: error: redefinition of struct bpf_version
- In file included from link-bpf.c:46:
- /usr/include/net/bpf.h:386: error: redefinition of struct bpf_insn
+./configure gives warnings on OS X Snow Leopard:
 
-This is due to pcap.h including pcap_bph.h on Mac OS X, which defines things
-that conflict with net/bpf.h.
+checking for ANSI C header files... rm: conftest.dSYM: is a directory
+rm: conftest.dSYM: is a directory
+yes
+
+It is suspected that an upgrade to autoconf, automake and libtools will fix
+this.

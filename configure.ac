@@ -5,7 +5,7 @@ AC_INIT([arp-scan],[1.7.6],[arp-scan@nta-monitor.com])
 AC_PREREQ(2.61)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
-AM_INIT_AUTOMAKE(1.9)
+AM_INIT_AUTOMAKE
 
 AC_CONFIG_HEADERS([config.h])
 

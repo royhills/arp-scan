@@ -1,5 +1,13 @@
 $Id$
 
+2011-03-01 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* configure.ac: Remove version number from AM_INIT_AUTOMAKE macro,
+	  as this usage is obsolete now.
+
+	* ieee-oui.txt, ieee-iab.txt: Updated IEEE OUI and IAB listings from
+	  IEEE website using get-oui and get-iab Perl scripts.
+
 2011-02-26 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* pkt-custom-request-vlan-llc.dat: New data file for check-packet

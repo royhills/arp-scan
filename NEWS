@@ -3,7 +3,10 @@ $Id$
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
-2011-02-25 arp-scan 1.7.6:
+2011-03-01 arp-scan 1.7.6:
+
+* Updated IEEE OUI and IAB MAC/Vendor files.  There are now 14707 OUI entries
+  and 3542 IAB entries.
 
 * Added support for trailer ARP replies, which were used in early versions
   of BSD Unix on VAX.
@@ -13,7 +16,8 @@ release.  For more details please read the ChangeLog file.
 * The full help output is only displayed if specifically requested with
   arp-scan --help.  Usage errors now result in smaller help output.
 
-* Added support for MacOS X with Xcode 2.5 and later.
+* Added support for Apple Mac OS X with Xcode 2.5 and later. This allows
+  arp-scan to build on Tiger, Leopard and Snow Leopard.
 
 * Changed license from GPLv2 to GPLv3.
 
@@ -33,7 +37,7 @@ release.  For more details please read the ChangeLog file.
 * Modified get-oui and get-iab perl scripts so they will work on systems where
   the perl interpreter is not in /usr/bin, e.g. NetBSD.
 
-* Various bug fixes.
+* Various minor bug fixes and improvements.
 
 2008-07-24 arp-scan 1.7:
 
