@@ -1,6 +1,14 @@
 $Id$
 
+2011-03-07 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* configure.ac: Incremented version to 1.8.1.
+
 2011-03-01 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Released arp-scan version 1.8.
+	  tarball arp-scan-1.8.tar.gz, size 430221 bytes
+	  md5sum be8826574ec566217eb7ca040fe472f9
 
 	* configure.ac: Remove version number from AM_INIT_AUTOMAKE macro,
 	  as this usage is obsolete now. Incremented version to 1.8.

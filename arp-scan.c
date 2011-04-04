@@ -1195,7 +1195,6 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
    uint32_t mask;
    unsigned long hoststart;
    unsigned long hostend;
-   size_t string_len;
    unsigned i;
    uint32_t x;
    static int first_call=1;
@@ -1209,7 +1208,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
    static const char *ipmask_pat_str =
       "[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+:[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+";
 /*
- *      Compile regex patterns if this is the first time we've been called.
+ *	Compile regex patterns if this is the first time we've been called.
  */
    if (first_call) {
       int result;
@@ -1241,47 +1240,45 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
       }
    }
 /*
- *      Make a copy of pattern because we don't want to modify our argument.
+ *	Make a copy of pattern because we don't want to modify our argument.
  */
-   string_len=strlen(pattern)+1;
-   patcopy=Malloc(string_len);
-   strlcpy(patcopy, pattern, string_len);
+   patcopy = dupstr(pattern);
 
    if (!(regexec(&ipslash_pat, patcopy, 0, NULL, 0))) { /* IPnet/bits */
 /*
- *      Get IPnet and bits as integers. Perform basic error checking.
+ *	Get IPnet and bits as integers. Perform basic error checking.
  */
       cp=strchr(patcopy, '/');
-      *(cp++)='\0';     /* patcopy points to IPnet, cp points to bits */
+      *(cp++)='\0';	/* patcopy points to IPnet, cp points to bits */
       if (!(inet_aton(patcopy, &in_val)))
          err_msg("ERROR: %s is not a valid IP address", patcopy);
-      ipnet_val=ntohl(in_val.s_addr);   /* We need host byte order */
+      ipnet_val=ntohl(in_val.s_addr);	/* We need host byte order */
       numbits=Strtoul(cp, 10);
       if (numbits<3 || numbits>32)
          err_msg("ERROR: Number of bits in %s must be between 3 and 32",
                  pattern);
 /*
- *      Construct 32-bit network bitmask from number of bits.
+ *	Construct 32-bit network bitmask from number of bits.
  */
       mask=0;
       for (i=0; i<numbits; i++)
          mask += 1 << i;
       mask = mask << (32-i);
 /*
- *      Mask off the network. Warn if the host bits were non-zero.
+ *	Mask off the network. Warn if the host bits were non-zero.
  */
       network=ipnet_val & mask;
       if (network != ipnet_val)
          warn_msg("WARNING: host part of %s is non-zero", pattern);
 /*
- *      Determine maximum and minimum host values. We include the host
- *      and broadcast.
+ *	Determine maximum and minimum host values. We include the host
+ *	and broadcast.
  */
       hoststart=0;
       hostend=(1<<(32-numbits))-1;
 /*
- *      Calculate all host addresses in the range and feed to add_host()
- *      in dotted-quad format.
+ *	Calculate all host addresses in the range and feed to add_host()
+ *	in dotted-quad format.
  */
       for (i=hoststart; i<=hostend; i++) {
          uint32_t hostip;
@@ -1298,16 +1295,16 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
       }
    } else if (!(regexec(&ipmask_pat, patcopy, 0, NULL, 0))) { /* IPnet:netmask */
 /*
- *      Get IPnet and bits as integers. Perform basic error checking.
+ *	Get IPnet and bits as integers. Perform basic error checking.
  */
       cp=strchr(patcopy, ':');
-      *(cp++)='\0';     /* patcopy points to IPnet, cp points to netmask */
+      *(cp++)='\0';	/* patcopy points to IPnet, cp points to netmask */
       if (!(inet_aton(patcopy, &in_val)))
          err_msg("ERROR: %s is not a valid IP address", patcopy);
-      ipnet_val=ntohl(in_val.s_addr);   /* We need host byte order */
+      ipnet_val=ntohl(in_val.s_addr);	/* We need host byte order */
       if (!(inet_aton(cp, &mask_val)))
          err_msg("ERROR: %s is not a valid netmask", patcopy);
-      mask=ntohl(mask_val.s_addr);   /* We need host byte order */
+      mask=ntohl(mask_val.s_addr);	/* We need host byte order */
 /*
  *	Calculate the number of bits in the network.
  */
@@ -1318,20 +1315,20 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
          }
       }
 /*
- *      Mask off the network. Warn if the host bits were non-zero.
+ *	Mask off the network. Warn if the host bits were non-zero.
  */
       network=ipnet_val & mask;
       if (network != ipnet_val)
          warn_msg("WARNING: host part of %s is non-zero", pattern);
 /*
- *      Determine maximum and minimum host values. We include the host
- *      and broadcast.
+ *	Determine maximum and minimum host values. We include the host
+ *	and broadcast.
  */
       hoststart=0;
       hostend=(1<<(32-numbits))-1;
 /*
- *      Calculate all host addresses in the range and feed to add_host()
- *      in dotted-quad format.
+ *	Calculate all host addresses in the range and feed to add_host()
+ *	in dotted-quad format.
  */
       for (i=hoststart; i<=hostend; i++) {
          uint32_t hostip;
@@ -1348,19 +1345,19 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
       }
    } else if (!(regexec(&iprange_pat, patcopy, 0, NULL, 0))) { /* IPstart-IPend */
 /*
- *      Get IPstart and IPend as integers.
+ *	Get IPstart and IPend as integers.
  */
       cp=strchr(patcopy, '-');
-      *(cp++)='\0';     /* patcopy points to IPstart, cp points to IPend */
+      *(cp++)='\0';	/* patcopy points to IPstart, cp points to IPend */
       if (!(inet_aton(patcopy, &in_val)))
          err_msg("ERROR: %s is not a valid IP address", patcopy);
-      hoststart=ntohl(in_val.s_addr);   /* We need host byte order */
+      hoststart=ntohl(in_val.s_addr);	/* We need host byte order */
       if (!(inet_aton(cp, &in_val)))
          err_msg("ERROR: %s is not a valid IP address", cp);
-      hostend=ntohl(in_val.s_addr);     /* We need host byte order */
+      hostend=ntohl(in_val.s_addr);	/* We need host byte order */
 /*
- *      Calculate all host addresses in the range and feed to add_host()
- *      in dotted-quad format.
+ *	Calculate all host addresses in the range and feed to add_host()
+ *	in dotted-quad format.
  */
       for (i=hoststart; i<=hostend; i++) {
          int b1, b2, b3, b4;
@@ -1373,7 +1370,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
          snprintf(ipstr, sizeof(ipstr), "%d.%d.%d.%d", b1,b2,b3,b4);
          add_host(ipstr, host_timeout, 1);
       }
-   } else {                             /* Single host or IP address */
+   } else {	/* Single host or IP address */
       add_host(patcopy, host_timeout, numeric_flag);
    }
    free(patcopy);

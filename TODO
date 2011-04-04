@@ -41,3 +41,8 @@ yes
 
 It is suspected that an upgrade to autoconf, automake and libtools will fix
 this.
+
+Build failures on Debian GNU/Hurd and Debian kFreeBSD.
+
+Test with other compilers: pcc, clang/llvm
+
