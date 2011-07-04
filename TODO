@@ -46,3 +46,7 @@ Build failures on Debian GNU/Hurd and Debian kFreeBSD.
 
 Test with other compilers: pcc, clang/llvm
 
+Try to open MAC/Vendor files from current directory if the open attempt from
+the standard location fails with ENOENT.
+
+MPLS tag support.
