@@ -125,6 +125,7 @@ my $arpscan="arp-scan -q -r 1";
 # FortiOS 3.00	FortiGate 100A running FortiOS 3.00,build0406,070126
 # Plan9		Plan9 release 4 on VMware
 # Blackberry OS	Blackberry OS v5.0.0.681 on Blackberry 8900
+# GNU/Hurd	Debian GNU/Hurd (GNU-Mach 1.3.99/Hurd-0.3) on VMware
 #
 my %fp_hash = (
    '11110100000' => 'FreeBSD 5.3, 7.0, DragonflyBSD 2.0, Win98, WinME, NT4, 2000, XP, 2003, Catalyst IOS 12.0, 12.1, 12.2, FortiOS 3.00',
@@ -147,6 +148,7 @@ my %fp_hash = (
    '00010100000' => 'Unknown 1', # 14805 79.253 Cisco
    '00000110011' => 'Cisco IP Phone 79xx SIP 5.x,6.x,7.x',
    '11110110011' => 'Cisco IP Phone 79xx SIP 8.x', # Also 14805 63.11 Fujitsu Siemens
+   '01010000000' => 'GNU/Hurd',
    );
 #
 my $usage =

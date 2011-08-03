@@ -1,5 +1,9 @@
 $Id$
 
+2011-07-31 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-fingerprint: Added fingerprint for GNU/Hurd
+
 2011-07-04 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* Makefile.am: Added pkt-custom-request-vlan-llc.dat to EXTRA_DIST.
