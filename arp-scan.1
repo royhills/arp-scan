@@ -148,11 +148,11 @@ For small lists of hosts, the timeout value will dominate, but for large lists
 the packet interval is the most important value.
 .PP
 With 65,536 hosts, the default bandwidth of 256,000 bits/second (which results in a packet
-interval of 2ms), the default timeout of 100ms, and a single pass (
+interval of 2ms), the default timeout of 500ms, and a single pass (
 .BR --retry=1 ),
 and assuming an overhead of 1 second, the scan would take
-65536*0.002 + 0.1 + 1 = 132.172
-seconds, or about 2 minutes 12 seconds.
+65536*0.002 + 0.5 + 1 = 132.57
+seconds, or about 2 minutes 13 seconds.
 .PP
 Any part of the outgoing ARP packet may be modified through the use of the
 various
@@ -353,7 +353,7 @@ Set total number of attempts per host to <i>,
 default=2.
 .TP
 .B --timeout=<i> or -t <i>
-Set initial per host timeout to <i> ms, default=100.
+Set initial per host timeout to <i> ms, default=500.
 This timeout is for the first packet sent to each host.
 subsequent timeouts are multiplied by the backoff
 factor which is set with --backoff.

@@ -1,5 +1,21 @@
 $Id$
 
+2011-08-18 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.h, arp-scan.1: Raised default timeout from 100ms to 500ms.
+	  It is suspected that the default timeout is too short in some
+	  situations, and this may be one of the causes of duplicate responses.
+
+	* arp-scan.h, link-bpf.c: Include <net/bpf.h> before arp-scan.h in
+	  link-bpf.c, and remove conditional inclusion of <net/bpf.h> in
+	  arp-scan.h. This causes <net/bpf.h> to be included before <pcap.h>
+	  on all systems that use BPF, e.g. BSD and MacOS. This should prevent
+	  the problems that occur on some of these systems, and remove the need
+	  for conditional inclusion to prevent them.
+
+	* arp-fingerprint: Added additional fingerprint for Linux 2.6 on
+	  Amazon Kindle.
+
 2011-07-31 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-fingerprint: Added fingerprint for GNU/Hurd

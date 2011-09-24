@@ -32,6 +32,10 @@
  *
  */
 
+#ifdef HAVE_NET_BPF_H
+#include <net/bpf.h>
+#endif
+
 #include "arp-scan.h"
 
 #ifdef HAVE_FCNTL_H
@@ -40,10 +44,6 @@
 
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
-#endif
-
-#ifdef HAVE_NET_BPF_H
-#include <net/bpf.h>
 #endif
 
 #ifdef HAVE_NET_ROUTE_H

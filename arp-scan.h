@@ -111,18 +111,6 @@
 #endif
 
 #ifdef HAVE_PCAP_H
-/*
- * The pcap.h header file on Apple Mac OS Xcode 2.5 and later includes pcap's
- * cut-down version of bpf.h, which defines macros that conflict with those in
- * the full bpf.h. To avoid the conflict, we include net/bpf.h before pcap.h
- * if compiling under Xcode 2.5 or later. This defines all the required macros
- * and prevents pcap's cut-down version from defining its own ones.
- *
- * 5370 is the value of __APPLE_CC__ for Xcode 2.5 on Tiger with GCC 4.0.1
- */
-#if defined(__APPLE_CC__) && (__APPLE_CC__ >= 5370)
-#include <net/bpf.h>
-#endif
 #include <pcap.h>
 #endif
 
@@ -148,7 +136,7 @@
 #define MINIMUM_FRAME_SIZE 46           /* Minimum layer 2 date size */
 #define DEFAULT_BACKOFF_FACTOR 1.5      /* Default timeout backoff factor */
 #define DEFAULT_RETRY 2                 /* Default number of retries */
-#define DEFAULT_TIMEOUT 100             /* Default per-host timeout in ms */
+#define DEFAULT_TIMEOUT 500             /* Default per-host timeout in ms */
 #define SNAPLEN 64			/* 14 (ether) + 28 (ARP) + extra */
 #define PROMISC 0			/* Enable promiscuous mode */
 #define TO_MS 0				/* Timeout for pcap_open_live() */
