@@ -93,6 +93,7 @@ static int pkt_write_file_flag=0;	/* Write packet to file flag */
 static int pkt_read_file_flag=0;	/* Read packet from file flag */
 static char pkt_filename[MAXLINE];	/* Read/Write packet to file filename */
 static int write_pkt_to_file=0;		/* Write packet to file for debugging */
+static int rtt_flag=0;			/* Display round-trip time */
 
 int
 main(int argc, char *argv[]) {
@@ -637,6 +638,7 @@ main(int argc, char *argv[]) {
  *	framing		Framing type (e.g. Ethernet II, LLC)
  *	vlan_id		802.1Q VLAN identifier, or -1 if not 802.1Q
  *	frame_hdr	The Ethernet frame header
+ *	pcap_header	The PCAP header struct
  *
  *      Returns:
  *
@@ -648,7 +650,8 @@ main(int argc, char *argv[]) {
 void
 display_packet(host_entry *he, arp_ether_ipv4 *arpei,
                const unsigned char *extra_data, size_t extra_data_len,
-               int framing, int vlan_id, ether_hdr *frame_hdr) {
+               int framing, int vlan_id, ether_hdr *frame_hdr,
+               const struct pcap_pkthdr *pcap_header) {
    char *msg;
    char *cp;
    char *cp2;
@@ -761,6 +764,20 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       if (!he->live) {
          cp = msg;
          msg = make_message("%s (DUP: %u)", cp, he->num_recv);
+         free(cp);
+      }
+/*
+ *	If the rtt_flag is set, calculate and report the packet round-trip
+ *	time.
+ */
+      if (rtt_flag ){
+         struct timeval rtt;
+         unsigned long rtt_us; /* round-trip time in microseconds */
+
+         timeval_diff(&(pcap_header->ts), &(he->last_send_time), &rtt);
+         rtt_us = rtt.tv_sec * 1000000 + rtt.tv_usec;
+         cp=msg;
+         msg=make_message("%s\tRTT=%lu.%03lu ms", cp, rtt_us/1000, rtt_us%1000);
          free(cp);
       }
    }	/* End if (!quiet_flag) */
@@ -1156,6 +1173,7 @@ usage(int status, int detailed) {
       fprintf(stderr, "\t\t\tand displayed. This savefile can be analysed with\n");
       fprintf(stderr, "\t\t\tprograms that understand the pcap file format, such as\n");
       fprintf(stderr, "\t\t\t\"tcpdump\" and \"wireshark\".\n");
+      fprintf(stderr, "\n--rtt or -D\t\tDisplay the packet round-trip time.\n");
    } else {
       fprintf(stderr, "use \"arp-scan --help\" for detailed information on the available options.\n");
    }
@@ -1690,7 +1708,7 @@ callback(u_char *args ATTRIBUTE_UNUSED,
             pcap_dump((unsigned char *)pcap_dump_handle, header, packet_in);
          }
          display_packet(temp_cursor, &arpei, extra_data, extra_data_len,
-                        framing, vlan_id, &frame_hdr);
+                        framing, vlan_id, &frame_hdr, header);
          responders++;
       }
       if (verbose > 1)
@@ -1759,10 +1777,11 @@ process_options(int argc, char *argv[]) {
       {"pcapsavefile", required_argument, 0, 'W'},
       {"writepkttofile", required_argument, 0, OPT_WRITEPKTTOFILE},
       {"readpktfromfile", required_argument, 0, OPT_READPKTFROMFILE},
+      {"rtt", no_argument, 0, 'D'},
       {0, 0, 0, 0}
    };
    const char *short_options =
-      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:";
+      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:D";
    int arg;
    int options_index=0;
 
@@ -1904,6 +1923,9 @@ process_options(int argc, char *argv[]) {
          case OPT_READPKTFROMFILE: /* --readpktfromfile */
             strlcpy(pkt_filename, optarg, sizeof(pkt_filename));
             pkt_read_file_flag=1;
+            break;
+         case 'D':	/* --rtt */
+            rtt_flag = 1;
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE, 0);

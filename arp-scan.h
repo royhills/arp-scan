@@ -222,7 +222,7 @@ void timeval_diff(const struct timeval *, const struct timeval *,
                   struct timeval *);
 host_entry *find_host(host_entry **, struct in_addr *);
 void display_packet(host_entry *, arp_ether_ipv4 *, const unsigned char *,
-                    size_t, int, int, ether_hdr *);
+                    size_t, int, int, ether_hdr *, const struct pcap_pkthdr *);
 void advance_cursor(void);
 void dump_list(void);
 void print_times(void);

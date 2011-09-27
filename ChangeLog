@@ -1,5 +1,10 @@
 $Id$
 
+2011-09-27 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.h, arp-scan.c, arp-scan.1: Added new option --rtt (-D) to
+          calculate and display the packet round-trip time.
+
 2011-08-18 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.h, arp-scan.1: Raised default timeout from 100ms to 500ms.
