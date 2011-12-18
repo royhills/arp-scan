@@ -1,5 +1,9 @@
 $Id$
 
+2011-12-18 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* configure.ac: Incremented version to 1.8.2
+
 2011-09-27 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.h, arp-scan.c, arp-scan.1: Added new option --rtt (-D) to

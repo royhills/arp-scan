@@ -80,6 +80,7 @@ my $arpscan="arp-scan -q -r 1";
 # ScreenOS 5.1	Juniper ScreenOS 5.1.0r1.0 on NetScreen 5GT
 # ScreenOS 5.3	Juniper ScreenOS 5.3.0r4.0 on NetScreen 5GT
 # ScreenOS 5.4	Juniper ScreenOS 5.4.0r1.0 on NetScreen 5GT
+# ScreenOS 5.4	Juniper ScreenOS 5.4.0r22.0 on NetScreen 5GT
 # MacOS 10.4	MacOS 10.4.6 on powerbook G4
 # MacOS 10.3	MacOS 10.3.9 on imac G3
 # IRIX 6.5	IRIX64 IRIS 6.5 05190004 IP30 on SGI Octane
