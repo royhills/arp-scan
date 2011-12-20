@@ -42,11 +42,11 @@ yes
 It is suspected that an upgrade to autoconf, automake and libtools will fix
 this.
 
-Build failures on Debian GNU/Hurd and Debian kFreeBSD.
+Build failure on Debian kFreeBSD.
 
 Test with other compilers: pcc, clang/llvm
 
-Try to open MAC/Vendor files from current directory if the open attempt from
-the standard location fails with ENOENT.
+If the MAC/Vendor file locations are not explicitly specified, look for the
+files in the current directory and then in their default location.
 
 MPLS tag support.
