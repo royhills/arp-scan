@@ -12,11 +12,6 @@ Linux sarge says in groff_man(7):
 .\" word
 In all cases, the letters in word are "e" for eqn, "r" for refer, "t" for tbl.
 
-Why does darwin 7.9 not have prototypes for pcap_datalink_val_to_name(),
-pcap_datalink_val_to_description() and pcap_setnonblock() even though the
-pcap library contains these functions?  arp-scan compiles with warnings, but
-runs OK. This is on MacOS 10.3 (Panther) with Xcode tools 1.5
-
 Add support for win32 link-layer send and receive.
 
 Add support for Token Ring.
@@ -43,10 +38,5 @@ It is suspected that an upgrade to autoconf, automake and libtools will fix
 this.
 
 Build failure on Debian kFreeBSD.
-
-Test with other compilers: pcc, clang/llvm
-
-If the MAC/Vendor file locations are not explicitly specified, look for the
-files in the current directory and then in their default location.
 
 MPLS tag support.

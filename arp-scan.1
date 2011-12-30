@@ -6,7 +6,7 @@
 .\" notice and this notice are preserved.
 .\"
 .\" $Id$
-.TH ARP-SCAN 1 "September 27, 2011"
+.TH ARP-SCAN 1 "December 30, 2011"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -444,19 +444,25 @@ By default, duplicate packets are displayed and are
 flagged with "(DUP: n)".
 .TP
 .B --ouifile=<s> or -O <s>
-Use OUI file <s>, default=/usr/local/share/arp-scan/ieee-oui.txt
-This file provides the IEEE Ethernet OUI to vendor
-string mapping.
+Use IEEE Ethernet OUI to vendor mapping file <s>.
+If this option is not specified, the default filename
+is ieee-oui.txt in the current directory. If that is
+not found, then the file
+/usr/local/share/arp-scan/ieee-oui.txt is used.
 .TP
-.B --iabfile=<s> or -F <s>
-Use IAB file <s>, default=/usr/local/share/arp-scan/ieee-iab.txt
-This file provides the IEEE Ethernet IAB to vendor
-string mapping.
+.B --iabfile=<s> or -O <s>
+Use IEEE Ethernet IAB to vendor mapping file <s>.
+If this option is not specified, the default filename
+is ieee-iab.txt in the current directory. If that is
+not found, then the file
+/usr/local/share/arp-scan/ieee-iab.txt is used.
 .TP
-.B --macfile=<s> or -m <s>
-Use MAC/Vendor file <s>, default=/usr/local/share/arp-scan/mac-vendor.txt
-This file provides the custom Ethernet MAC to vendor
-string mapping.
+.B --macfile=<s> or -O <s>
+Use custom Ethernet MAC to vendor mapping file <s>.
+If this option is not specified, the default filename
+is mac-vendor.txt in the current directory. If that is
+not found, then the file
+/usr/local/share/arp-scan/mac-vendor.txt is used.
 .TP
 .B --srcaddr=<m> or -S <m>
 Set the source Ethernet MAC address to <m>.

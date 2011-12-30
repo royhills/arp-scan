@@ -1,5 +1,19 @@
 $Id$
 
+2011-12-30 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c, arp-scan.h, arp-scan.1: If the location of the various
+	  MAC/Vendor mapping files (IEEE OUI, IEEE IAB or custom) are not
+	  specified on the command line with the appropriate option, then
+	  look for them in the current directory before looking in the system
+	  wide location.
+
+	* ieee-oui.txt, ieee-iab.txt: Updated IEEE OUI and IAB listings from
+	  IEEE website using get-oui and get-iab Perl scripts.
+
+	* check-decode: Updated patterns to reflect vendor name changes in
+	  latest IEEE OUI file.
+
 2011-12-18 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* configure.ac: Incremented version to 1.8.2

@@ -341,30 +341,21 @@ main(int argc, char *argv[]) {
       if ((hash_table = hash_new()) == NULL)
          err_sys("hash_new");
 
-      if (*ouifilename == '\0')	/* If OUI filename not specified */
-         fn = make_message("%s/%s", DATADIR, OUIFILENAME);
-      else
-         fn = make_message("%s", ouifilename);
+      fn = get_mac_vendor_filename(ouifilename, DATADIR, OUIFILENAME);
       count = add_mac_vendor(hash_table, fn);
       if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d IEEE OUI/Vendor entries from %s.",
                   count, fn);
       free(fn);
 
-      if (*iabfilename == '\0')	/* If IAB filename not specified */
-         fn = make_message("%s/%s", DATADIR, IABFILENAME);
-      else
-         fn = make_message("%s", iabfilename);
+      fn = get_mac_vendor_filename(iabfilename, DATADIR, IABFILENAME);
       count = add_mac_vendor(hash_table, fn);
       if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d IEEE IAB/Vendor entries from %s.",
                   count, fn);
       free(fn);
 
-      if (*macfilename == '\0')	/* If MAC filename not specified */
-         fn = make_message("%s/%s", DATADIR, MACFILENAME);
-      else
-         fn = make_message("%s", macfilename);
+      fn = get_mac_vendor_filename(macfilename, DATADIR, MACFILENAME);
       count = add_mac_vendor(hash_table, fn);
       if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d MAC/Vendor entries from %s.",
@@ -1061,15 +1052,21 @@ usage(int status, int detailed) {
       fprintf(stderr, "\n--ignoredups or -g\tDon't display duplicate packets.\n");
       fprintf(stderr, "\t\t\tBy default, duplicate packets are displayed and are\n");
       fprintf(stderr, "\t\t\tflagged with \"(DUP: n)\".\n");
-      fprintf(stderr, "\n--ouifile=<s> or -O <s>\tUse OUI file <s>, default=%s/%s\n", DATADIR, OUIFILENAME);
-      fprintf(stderr, "\t\t\tThis file provides the IEEE Ethernet OUI to vendor\n");
-      fprintf(stderr, "\t\t\tstring mapping.\n");
-      fprintf(stderr, "\n--iabfile=<s> or -F <s>\tUse IAB file <s>, default=%s/%s\n", DATADIR, IABFILENAME);
-      fprintf(stderr, "\t\t\tThis file provides the IEEE Ethernet IAB to vendor\n");
-      fprintf(stderr, "\t\t\tstring mapping.\n");
-      fprintf(stderr, "\n--macfile=<s> or -m <s>\tUse MAC/Vendor file <s>, default=%s/%s\n", DATADIR, MACFILENAME);
-      fprintf(stderr, "\t\t\tThis file provides the custom Ethernet MAC to vendor\n");
-      fprintf(stderr, "\t\t\tstring mapping.\n");
+      fprintf(stderr, "\n--ouifile=<s> or -O <s>\tUse IEEE Ethernet OUI to vendor mapping file <s>.\n");
+      fprintf(stderr, "\t\t\tIf this option is not specified, the default filename\n");
+      fprintf(stderr, "\t\t\tis %s in the current directory. If that is\n", OUIFILENAME);
+      fprintf(stderr, "\t\t\tnot found, then the file\n");
+      fprintf(stderr, "\t\t\t%s/%s is used.\n", DATADIR, OUIFILENAME);
+      fprintf(stderr, "\n--iabfile=<s> or -O <s>\tUse IEEE Ethernet IAB to vendor mapping file <s>.\n");
+      fprintf(stderr, "\t\t\tIf this option is not specified, the default filename\n");
+      fprintf(stderr, "\t\t\tis %s in the current directory. If that is\n", IABFILENAME);
+      fprintf(stderr, "\t\t\tnot found, then the file\n");
+      fprintf(stderr, "\t\t\t%s/%s is used.\n", DATADIR, IABFILENAME);
+      fprintf(stderr, "\n--macfile=<s> or -O <s>\tUse custom Ethernet MAC to vendor mapping file <s>.\n");
+      fprintf(stderr, "\t\t\tIf this option is not specified, the default filename\n");
+      fprintf(stderr, "\t\t\tis %s in the current directory. If that is\n", MACFILENAME);
+      fprintf(stderr, "\t\t\tnot found, then the file\n");
+      fprintf(stderr, "\t\t\t%s/%s is used.\n", DATADIR, MACFILENAME);
       fprintf(stderr, "\n--srcaddr=<m> or -S <m> Set the source Ethernet MAC address to <m>.\n");
       fprintf(stderr, "\t\t\tThis sets the 48-bit hardware address in the Ethernet\n");
       fprintf(stderr, "\t\t\tframe header for outgoing ARP packets. It does not\n");
@@ -2344,4 +2341,44 @@ add_mac_vendor(struct hash_control *table, const char *map_filename) {
    }
    fclose(fp);
    return line_count;
+}
+
+/*
+ *	get_mac_vendor_filename -- Determine MAC/Vendor mapping filename
+ *
+ *	Inputs:
+ *
+ *	specified_filename	The filename specified on the command line
+ *	default_datadir		The default data directory
+ *	default_filename	The default filename
+ *
+ *	Returns:
+ *
+ *	The MAC/Vendor mapping filename.
+ *
+ *	If a filename was specified as an option on the command line, then
+ *	that filename is used. Otherwise we look for the default filename
+ *	in the current directory, and use that if it's present. Otherwise
+ *	we use the default filename in the default directory.
+ *
+ */
+char *
+get_mac_vendor_filename(const char *specified_filename,
+                        const char *default_datadir,
+                        const char *default_filename) {
+   struct stat statbuf;
+   int status;
+   char *file_name;
+
+   if (*specified_filename == '\0') {	/* No filename specified */
+      file_name = make_message("%s", default_filename);
+      status = stat(file_name, &statbuf);
+      if (status == -1 && errno == ENOENT) {
+         free(file_name);
+         file_name = make_message("%s/%s", default_datadir, default_filename);
+      }
+   } else {	/* Filename specified */
+      file_name = make_message("%s", specified_filename);
+   }
+   return file_name;
 }

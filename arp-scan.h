@@ -244,6 +244,7 @@ unsigned int hstr_i(const char *);
 char *hexstring(const unsigned char *, size_t);
 int get_ether_addr(const char *, unsigned char *);
 int add_mac_vendor(struct hash_control *, const char *);
+char *get_mac_vendor_filename(const char *, const char *, const char *);
 /* Link layer send functions */
 link_t *link_open(const char *);
 ssize_t link_send(link_t *, const unsigned char *, size_t);
