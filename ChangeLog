@@ -1,5 +1,15 @@
 $Id$
 
+2012-05-20 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* get-oui, get-iab: Applied patch from Stuart Henderson at OpenBSD.
+	  This allows the -u (alternative URL) option to be correctly handled,
+	  and changes the default URLs to the new locations on the IEEE
+	  website (the old locations still work, but with a redirect).
+
+	* ieee-oui.txt, ieee-iab.txt: Updated IEEE OUI and IAB listings from
+	  IEEE website using get-oui and get-iab Perl scripts.
+
 2011-12-30 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c, arp-scan.h, arp-scan.1: If the location of the various

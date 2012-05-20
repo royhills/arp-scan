@@ -3,7 +3,12 @@ $Id$
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
-2011-12-30 arp-scan 1.8.2:
+2012-05-20 arp-scan 1.8.2:
+
+* -u option to get-iab and get-oui scripts now works.
+
+* get-oui and get-iab scripts now get the OUI and IAB files from the new
+  locations on the IEEE website.
 
 * If the MAC/Vendor file locations are not explicitly specified, look for them
   in the current directory and then in their default location.

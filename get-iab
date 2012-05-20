@@ -36,7 +36,7 @@ use strict;
 use Getopt::Std;
 use LWP::Simple;
 #
-my $default_url = 'http://standards.ieee.org/regauth/oui/iab.txt';
+my $default_url = 'http://standards.ieee.org/develop/regauth/iab/iab.txt';
 my $default_filename='ieee-iab.txt';
 #
 my $usage =
@@ -61,7 +61,7 @@ my $vendor;
 #
 # Process options
 #
-die "$usage\n" unless getopts('hf:v',\%opts);
+die "$usage\n" unless getopts('hf:u:v',\%opts);
 if ($opts{h}) {
    print "$usage\n";
    exit(0);
