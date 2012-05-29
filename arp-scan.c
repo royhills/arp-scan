@@ -761,11 +761,18 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
  *	If the rtt_flag is set, calculate and report the packet round-trip
  *	time.
  */
-      if (rtt_flag ){
+      if (rtt_flag) {
          struct timeval rtt;
+         struct timeval pcap_timestamp;
          unsigned long rtt_us; /* round-trip time in microseconds */
-
-         timeval_diff(&(pcap_header->ts), &(he->last_send_time), &rtt);
+/*
+ * We can't pass a pointer to pcap_header->ts directly to timeval_diff
+ * because it's not guaranteed to have the same size as a struct timeval.
+ * E.g. OpenBSD 5.1 on amd64.
+ */
+         pcap_timestamp.tv_sec = pcap_header->ts.tv_sec;
+         pcap_timestamp.tv_usec = pcap_header->ts.tv_usec;
+         timeval_diff(&pcap_timestamp, &(he->last_send_time), &rtt);
          rtt_us = rtt.tv_sec * 1000000 + rtt.tv_usec;
          cp=msg;
          msg=make_message("%s\tRTT=%lu.%03lu ms", cp, rtt_us/1000, rtt_us%1000);

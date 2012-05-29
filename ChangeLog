@@ -1,5 +1,14 @@
 $Id$
 
+2012-05-29 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Copy the pcap_header->ts structure to a temporary
+	  struct timeval before passing to timeval_diff during rtt calculation.
+	  We can't pass a pointer to pcap_header->ts directly to timeval_diff
+	  because it's not guaranteed to have the same size as a struct
+	  timeval. E.g. OpenBSD 5.1 on amd64. Thanks to Stuart Henderson at
+	  OpenBSD for spotting this bug.
+
 2012-05-20 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* get-oui, get-iab: Applied patch from Stuart Henderson at OpenBSD.
