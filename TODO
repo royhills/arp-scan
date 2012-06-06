@@ -4,13 +4,9 @@ Code tidy up: reduce the number of global variables.
 
 Additional ARP fingerprinting options, e.g. arpsha != srcaddr.
 
-Some OSes, e.g. OpenBSD and NetBSD, don't run man pages through tbl.
-There is disagreement about what the first line in the manpage should be.
-Solaris 9 says in man(1):
-'\" X
-Linux sarge says in groff_man(7):
-.\" word
-In all cases, the letters in word are "e" for eqn, "r" for refer, "t" for tbl.
+NetBSD doesn't run man pages through tbl. This may apply to other OSes as well.
+This used to be a problem with OpenBSD up to 4.8, but the mandoc formatter in
+OpenBSD 4.9 and later has integrated tbl support.
 
 Add support for win32 link-layer send and receive.
 
@@ -36,7 +32,5 @@ yes
 
 It is suspected that an upgrade to autoconf, automake and libtools will fix
 this.
-
-Build failure on Debian kFreeBSD.
 
 MPLS tag support.

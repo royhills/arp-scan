@@ -1,5 +1,9 @@
 $Id$
 
+2012-06-06 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-fingerprint: Added fingerprint for BeOS.
+
 2012-05-29 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Copy the pcap_header->ts structure to a temporary

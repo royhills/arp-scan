@@ -5,7 +5,7 @@ release.  For more details please read the ChangeLog file.
 
 2012-05-20 arp-scan 1.8.2:
 
-* -u option to get-iab and get-oui scripts now works.
+* The -u option to get-iab and get-oui scripts now works.
 
 * get-oui and get-iab scripts now get the OUI and IAB files from the new
   locations on the IEEE website.
@@ -17,7 +17,7 @@ release.  For more details please read the ChangeLog file.
 
 * Added new --rtt (-D) option to display the packet round-trip time.
 
-* Added arp-fingerprint patterns for GNU/Hurd, Amazon Kindle (Linux 2.6)
+* Added arp-fingerprint patterns for GNU/Hurd, Amazon Kindle (Linux 2.6), BeOS
 
 * Added data file "pkt-custom-request-vlan-llc.dat" to the tarball to allow
   the ARP request packet generation self test to complete successfully.
