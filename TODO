@@ -26,11 +26,11 @@ Add XML output format.
 
 ./configure gives warnings on OS X Snow Leopard:
 
-checking for ANSI C header files... rm: conftest.dSYM: is a directory
-rm: conftest.dSYM: is a directory
-yes
+   checking for ANSI C header files... rm: conftest.dSYM: is a directory
+   rm: conftest.dSYM: is a directory
+   yes
 
-It is suspected that an upgrade to autoconf, automake and libtools will fix
-this.
+   It is suspected that an upgrade to autoconf, automake and libtools will fix
+   this.
 
 MPLS tag support.

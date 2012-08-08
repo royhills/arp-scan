@@ -1,5 +1,9 @@
 $Id$
 
+2012-08-08 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* configure.ac: Added OS pattern for Dragonfly BSD.
+
 2012-06-06 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-fingerprint: Added fingerprint for BeOS.

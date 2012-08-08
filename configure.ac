@@ -154,7 +154,7 @@ case $host_os in
       AC_CHECK_HEADERS([netpacket/packet.h net/if.h])
       AC_LIBOBJ([link-packet-socket])
       ;;
-   *freebsd* | *darwin* | *openbsd* | *netbsd* )
+   *freebsd* | *darwin* | *openbsd* | *netbsd* | *dragonfly* )
       AC_MSG_NOTICE([Using BPF link layer implementation.]);
 dnl We need to specify additional headers to include here, because several
 dnl BSD variants require certain headers to be included before others will

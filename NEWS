@@ -5,6 +5,8 @@ release.  For more details please read the ChangeLog file.
 
 2012-05-20 arp-scan 1.8.2:
 
+* Added support for Dragonfly BSD.
+
 * The -u option to get-iab and get-oui scripts now works.
 
 * get-oui and get-iab scripts now get the OUI and IAB files from the new
@@ -16,6 +18,9 @@ release.  For more details please read the ChangeLog file.
 * Raised default timeout from 100ms to 500ms.
 
 * Added new --rtt (-D) option to display the packet round-trip time.
+
+* Include <net/bpf.h> header file early in link-bpf.c to avoid BPF symbol
+  problems on some BSD based operating systems.
 
 * Added arp-fingerprint patterns for GNU/Hurd, Amazon Kindle (Linux 2.6), BeOS
 
