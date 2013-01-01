@@ -1,5 +1,9 @@
 $Id$
 
+2013-01-01 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-fingerprint: Added Windows 8
+
 2012-08-08 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* configure.ac: Added OS pattern for Dragonfly BSD.
