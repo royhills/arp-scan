@@ -1239,24 +1239,21 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
       if ((result=regcomp(&iprange_pat, iprange_pat_str,
                           REG_EXTENDED|REG_NOSUB))) {
          char errbuf[MAXLINE];
-         size_t errlen;
-         errlen=regerror(result, &iprange_pat, errbuf, MAXLINE);
+         regerror(result, &iprange_pat, errbuf, MAXLINE);
          err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
                  iprange_pat_str, errbuf);
       }
       if ((result=regcomp(&ipslash_pat, ipslash_pat_str,
                           REG_EXTENDED|REG_NOSUB))) {
          char errbuf[MAXLINE];
-         size_t errlen;
-         errlen=regerror(result, &ipslash_pat, errbuf, MAXLINE);
+         regerror(result, &ipslash_pat, errbuf, MAXLINE);
          err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
                  ipslash_pat_str, errbuf);
       }
       if ((result=regcomp(&ipmask_pat, ipmask_pat_str,
                           REG_EXTENDED|REG_NOSUB))) {
          char errbuf[MAXLINE];
-         size_t errlen;
-         errlen=regerror(result, &ipmask_pat, errbuf, MAXLINE);
+         regerror(result, &ipmask_pat, errbuf, MAXLINE);
          err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
                  ipmask_pat_str, errbuf);
       }
@@ -2294,8 +2291,7 @@ add_mac_vendor(struct hash_control *table, const char *map_filename) {
       first_call=0;
       if ((result=regcomp(&oui_pat, oui_pat_str, REG_EXTENDED))) {
          char reg_errbuf[MAXLINE];
-         size_t errlen;
-         errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
+         regerror(result, &oui_pat, reg_errbuf, MAXLINE);
          err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
                  oui_pat_str, reg_errbuf);
       }
@@ -2319,8 +2315,7 @@ add_mac_vendor(struct hash_control *table, const char *map_filename) {
          warn_msg("WARNING: Could not parse oui: %s", line);
       } else if (result != 0) {
          char reg_errbuf[MAXLINE];
-         size_t errlen;
-         errlen=regerror(result, &oui_pat, reg_errbuf, MAXLINE);
+         regerror(result, &oui_pat, reg_errbuf, MAXLINE);
          err_msg("ERROR: oui regexec failed: %s", reg_errbuf);
       } else {
          key_len = pmatch[1].rm_eo - pmatch[1].rm_so;

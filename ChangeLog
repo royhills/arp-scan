@@ -14,6 +14,9 @@ $Id$
 
 	* configure.ac: Incremented version number to 1.8.3.
 
+	* arp-scan.c: Removed unneeded errlen declaration to avoid "set but
+	  not used" warning with GCC 4.6 and later.
+
 2013-01-01 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-fingerprint: Added Windows 8
