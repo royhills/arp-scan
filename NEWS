@@ -10,7 +10,8 @@ release.  For more details please read the ChangeLog file.
 * The -u option to get-iab and get-oui scripts now works.
 
 * get-oui and get-iab scripts now get the OUI and IAB files from the new
-  locations on the IEEE website.
+  locations on the IEEE website, and allow whitespace at the beginning of
+  the line.
 
 * If the MAC/Vendor file locations are not explicitly specified, look for them
   in the current directory and then in their default location.

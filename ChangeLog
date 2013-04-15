@@ -10,6 +10,10 @@ $Id$
 	* ieee-oui.txt, ieee-iab.txt: Updated IEEE OUI and IAB listings from
 	  IEEE website using get-oui and get-iab Perl scripts.
 
+	* check-decode: Updated for new IEEE OUI vendors.
+
+	* configure.ac: Incremented version number to 1.8.3.
+
 2013-01-01 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-fingerprint: Added Windows 8
