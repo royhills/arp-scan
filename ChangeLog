@@ -1,5 +1,15 @@
 $Id$
 
+2013-04-15 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Modified copyright statement in files to include up to 2013.
+
+	* get-oui, get-iab: Modified regex to allow optional whitespace at
+	  the beginning of line.
+
+	* ieee-oui.txt, ieee-iab.txt: Updated IEEE OUI and IAB listings from
+	  IEEE website using get-oui and get-iab Perl scripts.
+
 2013-01-01 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-fingerprint: Added Windows 8

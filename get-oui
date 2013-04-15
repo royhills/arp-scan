@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright 2006-2011 Roy Hills
+# Copyright 2006-2013 Roy Hills
 #
 # This file is part of arp-scan.
 # 
@@ -131,7 +131,7 @@ print OUTPUT $header_comments;
 # and write them to the output file looking like this:
 # 000000	XEROX CORPORATION
 #
-while ($content =~ m/^(\w+)-(\w+)-(\w+)\s+\(hex\)\s+(.*)$/gm) {
+while ($content =~ m/^\s*(\w+)-(\w+)-(\w+)\s+\(hex\)\s+(.*)$/gm) {
    print OUTPUT "$1$2$3\t$4\n";
    $lineno++;
 }

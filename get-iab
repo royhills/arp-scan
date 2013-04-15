@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright 2006-2011 Roy Hills
+# Copyright 2006-2013 Roy Hills
 #
 # This file is part of arp-scan.
 # 
@@ -140,7 +140,7 @@ print OUTPUT $header_comments;
 # Note that the 0050C2 bit is a constant, and we take
 # the next three hex digits from the IEEE data.
 #
-while ($content =~ m/^(\w+)-\w+\s+\(base 16\)[ 	]+(.*)$/gm) {
+while ($content =~ m/^\s*(\w+)-\w+\s+\(base 16\)[ 	]+(.*)$/gm) {
    $iab_var = substr($1,0,3);
    $vendor = $2;
    $vendor = "PRIVATE" if length($vendor) == 0;
