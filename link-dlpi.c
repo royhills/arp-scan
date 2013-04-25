@@ -251,69 +251,6 @@ link_open(const char *device) {
 }
 
 /*
- *	link_send -- Send a packet
- *
- *	Inputs:
- *
- *	handle		The handle for the link interface
- *	buf		Pointer to the data to send
- *	buflen		Number of bytes to send
- *
- *	Returns:
- *
- *	The number of bytes sent, or -1 for error.
- */
-ssize_t
-link_send(link_t *handle, const unsigned char *buf, size_t buflen) {
-#if defined(DLIOCRAW)
-   return write(handle->fd, buf, buflen);
-#else
-   union DL_primitives *dlp;
-   struct strbuf ctl;
-   struct strbuf data;
-   struct eth_hdr *eth;
-   unsigned char ctlbuf[MAXDLBUF];
-   int dlen;
-
-   dlp = (union DL_primitives *)ctlbuf;
-#ifdef DL_HP_RAWDATA_REQ
-   dlp->dl_primitive = DL_HP_RAWDATA_REQ;
-   dlen = DL_HP_RAWDATA_REQ_SIZE;
-#else
-   dlp->unitdata_req.dl_primitive = DL_UNITDATA_REQ;
-   dlp->unitdata_req.dl_dest_addr_length = ETH_ALEN;
-   dlp->unitdata_req.dl_dest_addr_offset = DL_UNITDATA_REQ_SIZE;
-   dlp->unitdata_req.dl_priority.dl_min = 0;
-   dlp->unitdata_req.dl_priority.dl_max = 0;
-   dlen = DL_UNITDATA_REQ_SIZE;
-#endif
-   ctl.maxlen = 0;
-   ctl.len = dlen + ETH_ALEN + sizeof(eth->eth_type);
-   ctl.buf = (char *)ctlbuf;
-
-   eth = (struct eth_hdr *)buf;
-
-   if (handle->sap_first) {
-      memcpy(ctlbuf + dlen, &eth->eth_type, sizeof(eth->eth_type));
-      memcpy(ctlbuf + dlen + sizeof(eth->eth_type),
-             eth->eth_dst.data, ETH_ALEN);
-   } else {
-      memcpy(ctlbuf + dlen, eth->eth_dst.data, ETH_ALEN);
-      memcpy(ctlbuf + dlen + ETH_ALEN,
-             &eth->eth_type, sizeof(eth->eth_type));
-   }
-   data.maxlen = 0;
-   data.len = buflen;
-   data.buf = (char *)buf;
-
-   if (putmsg(handle->fd, &ctl, &data, 0) < 0)
-      return -1;
-
-   return buflen;
-#endif
-}
-
-/*
  *	link_close -- Close the link
  *
  *	Inputs:

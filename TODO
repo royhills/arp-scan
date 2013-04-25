@@ -12,12 +12,9 @@ Add support for win32 link-layer send and receive.
 
 Add support for Token Ring.
 
-Support the libpcap sending function pcap_sendpacket() or pcap_inject() when
-they are supported by the pcap library.  These two functions are essentially
-the same, but pcap_sendpacket() came from WinPcap whereas pcap_inject() came
-from OpenBSD.  Need to find portable functions to get interface IP address
-and MAC address.  pcap_lookupnet() gets the network address and mask, but not
-the IP address.
+Find portable functions to get interface IP address and MAC address.
+pcap_lookupnet() gets the network address and mask, but not
+the IP address. pcap_findalldevs() can obtain the IP address and netmask.
 
 Investigate response packets >60 bytes long, e.g. Windows 2003 Server and
 some Cisco.
@@ -34,3 +31,7 @@ Add XML output format.
    this.
 
 MPLS tag support.
+
+Use the new libpcap 1.0 API functions pcap_create(), pcap_set_XXX(), 
+pcap_activate() instead of the old pcap_open_live() once we can be sure that
+all supported OSes use libpcap 1.0 or later.

@@ -215,7 +215,7 @@ void err_print(int, const char *, va_list);
 void usage(int, int);
 void add_host_pattern(const char *, unsigned);
 void add_host(const char *, unsigned, int);
-int send_packet(link_t *, host_entry *, struct timeval *);
+int send_packet(pcap_t *, host_entry *, struct timeval *);
 void recvfrom_wto(int, int);
 void remove_host(host_entry **);
 void timeval_diff(const struct timeval *, const struct timeval *,
@@ -247,7 +247,6 @@ int add_mac_vendor(struct hash_control *, const char *);
 char *get_mac_vendor_filename(const char *, const char *, const char *);
 /* Link layer send functions */
 link_t *link_open(const char *);
-ssize_t link_send(link_t *, const unsigned char *, size_t);
 void link_close(link_t *);
 /* Wrappers */
 int Gettimeofday(struct timeval *);

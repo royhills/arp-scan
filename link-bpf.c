@@ -175,27 +175,6 @@ link_open(const char *device) {
 }
 
 /*
- *	link_send -- Send a packet
- *
- *	Inputs:
- *
- *	handle		The handle for the link interface
- *	buf		Pointer to the data to send
- *	buflen		Number of bytes to send
- *
- *	Returns:
- *
- *	The number of bytes sent, or -1 for error.
- */
-ssize_t
-link_send(link_t *handle, const unsigned char *buf, size_t buflen) {
-   ssize_t nbytes;
-
-   nbytes = write(handle->fd, buf, buflen);
-   return nbytes;
-}
-
-/*
  *	link_close -- Close the link
  *
  *	Inputs:

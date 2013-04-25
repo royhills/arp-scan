@@ -195,6 +195,11 @@ main(int argc, char *argv[]) {
       }
    }
 /*
+ *	Close the link handle.
+ */
+   if (link_handle)
+      link_close(link_handle);
+/*
  *	Open the network device for reading with pcap, or the pcap file if we
  *	have specified --readpktfromfile. If we are writing packets to a binary
  *	file, then set pcap_handle to NULL as we don't need to read packets in
@@ -578,7 +583,7 @@ main(int argc, char *argv[]) {
             } else {    /* Retry limit not reached for this host */
                if ((*cursor)->num_sent)
                   (*cursor)->timeout *= backoff_factor;
-               send_packet(link_handle, *cursor, &last_packet_time);
+               send_packet(pcap_handle, *cursor, &last_packet_time);
                advance_cursor();
             }
          } else {       /* We can't send a packet to this host yet */
@@ -599,8 +604,6 @@ main(int argc, char *argv[]) {
 
    printf("\n");        /* Ensure we have a blank line */
 
-   if (link_handle)
-      link_close(link_handle);
    clean_up();
    if (write_pkt_to_file)
       close(write_pkt_to_file);
@@ -791,7 +794,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
  *
  *	Inputs:
  *
- *	link_handle		Link layer handle
+ *	pcap_handle	Pcap handle
  *	he		Host entry to send to. If NULL, then no packet is sent
  *	last_packet_time	Time when last packet was sent
  *
@@ -803,11 +806,15 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
  *      identified by "he" using the socket "s". It also updates the
  *	"last_send_time" field for the host entry.
  *
- *	If link_handle is NULL, then don't attempt to send any packets. This
- *	is typically when we are reading packets from a pcap file.
+ *	If we are using the undocumented --writepkttofile option, then we
+ *	write the packet to the write_pkt_to_file file descriptor instead of
+ *	transmitting it on the network.
+ *
+ *	If we are using the undocumented --readpktfromfile option, then we
+ *	don't send anything.
  */
 int
-send_packet(link_t *link_handle, host_entry *he,
+send_packet(pcap_t *pcap_handle, host_entry *he,
             struct timeval *last_packet_time) {
    unsigned char buf[MAX_FRAME];
    size_t buflen;
@@ -873,10 +880,8 @@ send_packet(link_t *link_handle, host_entry *he,
                my_ntoa(he->addr), he->timeout);
    if (write_pkt_to_file) {
       nsent = write(write_pkt_to_file, buf, buflen);
-   } else {
-      if (link_handle) {	/* Don't send if reading packets from file */
-         nsent = link_send(link_handle, buf, buflen);
-      }
+   } else if (!pkt_read_file_flag) {
+      nsent = pcap_sendpacket(pcap_handle, buf, buflen);
    }
    if (nsent < 0)
       err_sys("ERROR: failed to send packet");
