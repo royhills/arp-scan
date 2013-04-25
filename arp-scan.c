@@ -120,7 +120,6 @@ main(int argc, char *argv[]) {
    bpf_u_int32 localnet;
    int datalink;
    int get_addr_status = 0;
-   link_t *link_handle;		/* Handle for link-layer functions */
    int pcap_fd;			/* Pcap file descriptor */
    unsigned char interface_mac[ETH_ALEN];
 /*
@@ -151,54 +150,37 @@ main(int argc, char *argv[]) {
       }
    }
 /*
- *      Open link layer socket. This is used to send outbound packets.
- *	If we are reading packets from a pcap file, or writing packets to a
- *	binary file, set this to NULL as we don't need to send packets in
- *	this case.
+ *	Obtain interface MAC address and IP address unless we're reading
+ *	from a pcap file or writing to a binary file.
  */
    if (!pkt_read_file_flag && !pkt_write_file_flag) {
-      if ((link_handle = link_open(if_name)) == NULL) {
-         if (errno == EPERM || errno == EACCES)
-            warn_msg("You need to be root, or arp-scan must be SUID root, "
-                     "to open a link-layer socket.");
-         err_sys("link_open");
-      }
-   } else {	/* Set link_handle to NULL if reading packets from a file */
-      link_handle = NULL;
-   }
 /*
  *	Obtain the MAC address for the selected interface, and use this
  *	as default for the source hardware addresses in the frame header
  *	and ARP packet if the user has not specified their values.
  */
-   if (link_handle) {
-      get_hardware_address(link_handle, interface_mac);
+      get_hardware_address(if_name, interface_mac);
       if (source_mac_flag == 0)
          memcpy(source_mac, interface_mac, ETH_ALEN);
       if (arp_sha_flag == 0)
          memcpy(arp_sha, interface_mac, ETH_ALEN);
-   }
 /*
  *	If the user has not specified the ARP source address, obtain the
  *	interface IP address and use that as the default value.
  */
-   if (arp_spa_flag == 0 && link_handle) {
-      get_addr_status = get_source_ip(link_handle, &arp_spa);
-      if (get_addr_status == -1) {
-         warn_msg("WARNING: Could not obtain IP address for interface %s. "
-                  "Using 0.0.0.0 for", if_name);
-         warn_msg("the source address, which is probably not what you want.");
-         warn_msg("Either configure %s with an IP address, or manually specify"
-                  " the address", if_name);
-         warn_msg("with the --arpspa option.");
-         memset(&arp_spa, '\0', sizeof(arp_spa));
+      if (arp_spa_flag == 0) {
+         get_addr_status = get_source_ip(if_name, &arp_spa);
+         if (get_addr_status == -1) {
+            warn_msg("WARNING: Could not obtain IP address for interface %s. "
+                     "Using 0.0.0.0 for", if_name);
+            warn_msg("the source address, which is probably not what you want.");
+            warn_msg("Either configure %s with an IP address, or manually specify"
+                     " the address", if_name);
+            warn_msg("with the --arpspa option.");
+            memset(&arp_spa, '\0', sizeof(arp_spa));
+         }
       }
    }
-/*
- *	Close the link handle.
- */
-   if (link_handle)
-      link_close(link_handle);
 /*
  *	Open the network device for reading with pcap, or the pcap file if we
  *	have specified --readpktfromfile. If we are writing packets to a binary

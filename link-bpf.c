@@ -84,10 +84,10 @@ static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
  *	Link layer handle structure for BPF.
  *	This is typedef'ed as link_t.
  */
-struct link_handle {
+typedef struct link_handle {
    int fd;		/* Socket file descriptor */
    char device[16];
-};
+} link_t;
 
 /*
  *	get_rtaddrs -- Populate rti_info array with pointers to socket
@@ -130,7 +130,7 @@ get_rtaddrs(int addrs, struct sockaddr *sa, struct sockaddr **rti_info) {
  *
  *	A pointer to a link handle structure.
  */
-link_t *
+static link_t *
 link_open(const char *device) {
    link_t *handle;
    char dev_file[16];	/* /dev/bpfxxx */
@@ -185,7 +185,7 @@ link_open(const char *device) {
  *
  *	None
  */
-void
+static void
 link_close(link_t *handle) {
    if (handle != NULL) {
       if (handle->fd != 0)
@@ -199,7 +199,7 @@ link_close(link_t *handle) {
  *                                 with the given device.
  *      Inputs:
  *
- *      handle		The link layer handle
+ *      if_name		The name of the network interface
  *      hw_address	(output) the Ethernet MAC address
  *
  *      Returns:
@@ -207,13 +207,16 @@ link_close(link_t *handle) {
  *      None
  */
 void
-get_hardware_address(link_t *handle, unsigned char hw_address[]) {
+get_hardware_address(const char *if_name, unsigned char hw_address[]) {
    struct if_msghdr *ifm;
    struct sockaddr_dl *sdl=NULL;
    unsigned char *p;
    unsigned char *buf;
    size_t len;
    int mib[] = { CTL_NET, PF_ROUTE, 0, AF_LINK, NET_RT_IFLIST, 0 };
+   link_t *handle;
+
+   handle = link_open(if_name);
 /*
  *	Use sysctl to obtain interface list.
  *	We first call sysctl with the 3rd arg set to NULL to obtain the
@@ -249,6 +252,8 @@ get_hardware_address(link_t *handle, unsigned char hw_address[]) {
       err_msg("Could not get hardware address for interface %s",
               handle->device);
 
+   link_close(handle);
+
    memcpy(hw_address, sdl->sdl_data + sdl->sdl_nlen, ETH_ALEN);
    free(buf);
 }
@@ -258,7 +263,7 @@ get_hardware_address(link_t *handle, unsigned char hw_address[]) {
  *
  *      Inputs:
  *
- *      handle		The link level handle
+ *      if_name		The name of the network interface
  *      ip_addr		(output) The IP Address associated with the device
  *
  *      Returns:
@@ -266,7 +271,7 @@ get_hardware_address(link_t *handle, unsigned char hw_address[]) {
  *      Zero on success, or -1 on failure.
  */
 int
-get_source_ip(link_t *handle, uint32_t *ip_addr) {
+get_source_ip(const char *if_name, uint32_t *ip_addr) {
    struct if_msghdr *ifm;
    struct ifa_msghdr *ifam;
    struct sockaddr *sa;
@@ -278,6 +283,9 @@ get_source_ip(link_t *handle, uint32_t *ip_addr) {
    size_t len;
    int mib[] = { CTL_NET, PF_ROUTE, 0, AF_INET, NET_RT_IFLIST, 0 };
    int found_dev = 0;
+   link_t *handle;
+
+   handle = link_open(if_name);
 /*
  *	Use sysctl to obtain interface list.
  *	We first call sysctl with the 3rd arg set to NULL to obtain the
@@ -326,6 +334,8 @@ get_source_ip(link_t *handle, uint32_t *ip_addr) {
    sin = (struct sockaddr_in *)rti_info[RTAX_IFA];
    memcpy(ip_addr, &(sin->sin_addr.s_addr), sizeof(*ip_addr));
    free(buf);
+
+   link_close(handle);
 
    return 0;
 }

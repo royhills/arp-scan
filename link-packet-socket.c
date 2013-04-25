@@ -48,11 +48,11 @@ static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
  *	Link layer handle structure for packet socket.
  *	This is typedef'ed as link_t.
  */
-struct link_handle {
+typedef struct link_handle {
    int fd;		/* Socket file descriptor */
    struct ifreq ifr;
    struct sockaddr_ll sll;
-};
+} link_t;
 
 /*
  *	link_open -- Open the specified link-level device
@@ -65,7 +65,7 @@ struct link_handle {
  *
  *	A pointer to a link handle structure.
  */
-link_t *
+static link_t *
 link_open(const char *device) {
    link_t *handle;
 
@@ -96,7 +96,7 @@ link_open(const char *device) {
  *
  *	None
  */
-void
+static void
 link_close(link_t *handle) {
    if (handle != NULL) {
       if (handle->fd != 0)
@@ -110,7 +110,7 @@ link_close(link_t *handle) {
  *                                 with the given device.
  *      Inputs:
  *
- *      handle		The link layer handle
+ *      if_name		The name of the network interface
  *      hw_address	(output) the Ethernet MAC address
  *
  *      Returns:
@@ -118,11 +118,16 @@ link_close(link_t *handle) {
  *      None
  */
 void
-get_hardware_address(link_t *handle, unsigned char hw_address[]) {
+get_hardware_address(const char *if_name, unsigned char hw_address[]) {
+   link_t *handle;
+
+   handle = link_open(if_name);
 
 /* Obtain hardware address for specified interface */
    if ((ioctl(handle->fd, SIOCGIFHWADDR, &(handle->ifr))) != 0)
       err_sys("ioctl");
+
+   link_close(handle);
 
    memcpy(hw_address, handle->ifr.ifr_ifru.ifru_hwaddr.sa_data, ETH_ALEN);
 }
@@ -132,7 +137,7 @@ get_hardware_address(link_t *handle, unsigned char hw_address[]) {
  *
  *      Inputs:
  *
- *      handle		The link level handle
+ *      if_name		The name of the network interface
  *      ip_addr		(output) The IP Address associated with the device
  *
  *      Returns:
@@ -140,14 +145,20 @@ get_hardware_address(link_t *handle, unsigned char hw_address[]) {
  *      Zero on success, or -1 on failure.
  */
 int
-get_source_ip(link_t *handle, uint32_t *ip_addr) {
+get_source_ip(const char *if_name, uint32_t *ip_addr) {
    struct sockaddr_in sa_addr;
+   link_t *handle;
+
+   handle = link_open(if_name);
 
 /* Obtain IP address for specified interface */
    if ((ioctl(handle->fd, SIOCGIFADDR, &(handle->ifr))) != 0) {
       warn_sys("ioctl");
       return -1;
    }
+
+   link_close(handle);
+
    memcpy(&sa_addr, &(handle->ifr.ifr_ifru.ifru_addr), sizeof(sa_addr));
    *ip_addr = sa_addr.sin_addr.s_addr;
 

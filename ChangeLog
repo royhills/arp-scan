@@ -8,7 +8,11 @@ $Id$
 	  version 0.9.3 or later.
 
 	* link-bpf.c, link-dlpi.c, link-packet-socket.c: Removed unneeded
-	  link-layer specific link_send() functions.
+	  link-layer specific link_send() functions. Changed link_open()
+	  and link_close() functions to static, and modified
+	  get_hardware_address() and get_source_ip() functions to call
+	  link_open/link_close directly. Included link_t typedef in
+	  link_handle struct declaration.
 
 	* configure.ac: Change the libpcap function check from
 	  pcap_lib_version() to pcap_sendpacket(), to ensure that we have

@@ -195,9 +195,6 @@ typedef struct {
    uint32_t ar_tip;		/* Target IP address */
 } arp_ether_ipv4;
 
-/* Link-layer handle structure, defined in link-xxx.c  */
-typedef struct link_handle link_t;
-
 /* Functions */
 
 #ifndef HAVE_STRLCAT
@@ -233,8 +230,8 @@ void callback(u_char *, const struct pcap_pkthdr *, const u_char *);
 void process_options(int, char *[]);
 struct in_addr *get_host_address(const char *, int, struct in_addr *, char **);
 const char *my_ntoa(struct in_addr);
-int get_source_ip(link_t *, uint32_t *);
-void get_hardware_address(link_t *, unsigned char []);
+int get_source_ip(const char *, uint32_t *);
+void get_hardware_address(const char *, unsigned char []);
 void marshal_arp_pkt(unsigned char *, ether_hdr *, arp_ether_ipv4 *, size_t *,
                      const unsigned char *, size_t);
 int unmarshal_arp_pkt(const unsigned char *, size_t, ether_hdr *,
@@ -245,9 +242,6 @@ char *hexstring(const unsigned char *, size_t);
 int get_ether_addr(const char *, unsigned char *);
 int add_mac_vendor(struct hash_control *, const char *);
 char *get_mac_vendor_filename(const char *, const char *, const char *);
-/* Link layer send functions */
-link_t *link_open(const char *);
-void link_close(link_t *);
 /* Wrappers */
 int Gettimeofday(struct timeval *);
 void *Malloc(size_t);
