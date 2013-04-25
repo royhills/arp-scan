@@ -12,9 +12,7 @@ Add support for win32 link-layer send and receive.
 
 Add support for Token Ring.
 
-Find portable functions to get interface IP address and MAC address.
-pcap_lookupnet() gets the network address and mask, but not
-the IP address. pcap_findalldevs() can obtain the IP address and netmask.
+Find portable function to get interface MAC address.
 
 Investigate response packets >60 bytes long, e.g. Windows 2003 Server and
 some Cisco.

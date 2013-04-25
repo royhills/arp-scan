@@ -63,21 +63,6 @@
 #include <net/if_dl.h>
 #endif
 
-/*
- * Round up 'a' to next multiple of 'size', which must be a power of 2
- * From Fig 17.9 in Unix Network Programming (2nd ed.) by W. Richard Stevens.
- */
-#define ROUNDUP(a, size) (((a) & ((size)-1)) ? (1 + ((a) | ((size)-1))) : (a))
-
-/*
- * Step to next socket address structure;
- * if sa_len is 0, assume it is sizeof(u_long).
- * From Fig 17.9 in Unix Network Programming (2nd ed.) by W. Richard Stevens.
- */
-#define NEXT_SA(ap)     ap = (struct sockaddr *) \
-        ((caddr_t) ap + (ap->sa_len ? ROUNDUP(ap->sa_len, sizeof (u_long)) : \
-        sizeof(u_long)))
-
 static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
 /*
@@ -88,36 +73,6 @@ typedef struct link_handle {
    int fd;		/* Socket file descriptor */
    char device[16];
 } link_t;
-
-/*
- *	get_rtaddrs -- Populate rti_info array with pointers to socket
- *			address structures
- *
- *	Inputs:
- *
- *	sa		Pointer to the first socket address structure
- *	rti_info	(output) Pointer to the rti_info array.
- *
- *	Returns:
- *
- *	None
- *
- *	This function, and the NEXT_SA and ROUNDUP macros that it uses,
- *	was taken from Figure 17.9 of Unix Network Programming (2nd ed.)
- *	by W. Richard Stevens.
- */
-static void
-get_rtaddrs(int addrs, struct sockaddr *sa, struct sockaddr **rti_info) {
-   int   i;
-
-   for (i = 0; i < RTAX_MAX; i++) {
-      if (addrs & (1 << i)) {
-         rti_info[i] = sa;
-         NEXT_SA(sa);
-      } else
-         rti_info[i] = NULL;
-   }
-}
 
 /*
  *	link_open -- Open the specified link-level device
@@ -256,88 +211,6 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
 
    memcpy(hw_address, sdl->sdl_data + sdl->sdl_nlen, ETH_ALEN);
    free(buf);
-}
-
-/*
- *      get_source_ip   -- Get address and mask associated with given interface
- *
- *      Inputs:
- *
- *      if_name		The name of the network interface
- *      ip_addr		(output) The IP Address associated with the device
- *
- *      Returns:
- *
- *      Zero on success, or -1 on failure.
- */
-int
-get_source_ip(const char *if_name, uint32_t *ip_addr) {
-   struct if_msghdr *ifm;
-   struct ifa_msghdr *ifam;
-   struct sockaddr *sa;
-   struct sockaddr *rti_info[RTAX_MAX];
-   struct sockaddr_dl *sdl;
-   struct sockaddr_in *sin;
-   unsigned char *p;
-   unsigned char *buf;
-   size_t len;
-   int mib[] = { CTL_NET, PF_ROUTE, 0, AF_INET, NET_RT_IFLIST, 0 };
-   int found_dev = 0;
-   link_t *handle;
-
-   handle = link_open(if_name);
-/*
- *	Use sysctl to obtain interface list.
- *	We first call sysctl with the 3rd arg set to NULL to obtain the
- *	required length, then malloc the buffer and call sysctl again to get
- *	the data.
- */
-   if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
-      err_sys("sysctl");
-
-   buf = Malloc(len);
-
-   if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
-      err_sys("sysctl");
-/*
- *	Go through all the entries in the list until we find the device we
- *	are using, then look for the associated address structure.
- */
-   for (p = buf; p < buf + len; p += ifm->ifm_msglen) {
-      ifm = (struct if_msghdr *)p;
-      sa = (struct sockaddr *) (ifm + 1);
-
-      if (ifm->ifm_type == RTM_IFINFO && (ifm->ifm_addrs & RTA_IFP) != 0 &&
-          sa->sa_family == AF_LINK) {
-         sdl = (struct sockaddr_dl *) (ifm + 1);
-         if (sdl->sdl_nlen > 0)
-            if ((memcmp(sdl->sdl_data, handle->device, sdl->sdl_nlen)) == 0)
-               found_dev = 1;	/* We've found the correct interface */
-      }
-      if (ifm->ifm_type == RTM_NEWADDR && (ifm->ifm_addrs & RTA_IFA) != 0 &&
-          found_dev) {
-         ifam = (struct ifa_msghdr *) p;
-         sa = (struct sockaddr *) (ifam + 1);
-         get_rtaddrs(ifam->ifam_addrs, sa, rti_info);
-         break;
-      }
-   }
-/*
- *	If we've not found an IP address, return with -1 to indicate
- *	failure.
- */
-   if ((p >= buf + len) || !found_dev || rti_info[RTAX_IFA] == NULL)
-      return -1;	/* Cannot get IP address */
-/*
- *	Copy the IP address and return with success.
- */
-   sin = (struct sockaddr_in *)rti_info[RTAX_IFA];
-   memcpy(ip_addr, &(sin->sin_addr.s_addr), sizeof(*ip_addr));
-   free(buf);
-
-   link_close(handle);
-
-   return 0;
 }
 
 /*

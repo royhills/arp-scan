@@ -133,40 +133,6 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
 }
 
 /*
- *      get_source_ip   -- Get address and mask associated with given interface
- *
- *      Inputs:
- *
- *      if_name		The name of the network interface
- *      ip_addr		(output) The IP Address associated with the device
- *
- *      Returns:
- *
- *      Zero on success, or -1 on failure.
- */
-int
-get_source_ip(const char *if_name, uint32_t *ip_addr) {
-   struct sockaddr_in sa_addr;
-   link_t *handle;
-
-   handle = link_open(if_name);
-
-/* Obtain IP address for specified interface */
-   if ((ioctl(handle->fd, SIOCGIFADDR, &(handle->ifr))) != 0) {
-      warn_sys("ioctl");
-      return -1;
-   }
-
-   link_close(handle);
-
-   memcpy(&sa_addr, &(handle->ifr.ifr_ifru.ifru_addr), sizeof(sa_addr));
-   *ip_addr = sa_addr.sin_addr.s_addr;
-
-   return 0;
-}
-
-
-/*
  *	Use rcsid to prevent the compiler optimising it away.
  */
 void link_use_rcsid(void) {

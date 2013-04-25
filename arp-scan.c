@@ -2372,3 +2372,55 @@ get_mac_vendor_filename(const char *specified_filename,
    }
    return file_name;
 }
+
+/*
+ *      get_source_ip   -- Get IP address associated with given interface
+ *
+ *      Inputs:
+ *
+ *      interface_name  The name of the network interface
+ *      ip_addr         (output) The IP Address associated with the device
+ *
+ *      Returns:
+ *
+ *      Zero on success, or -1 on failure.
+ */
+int
+get_source_ip(const char *interface_name, uint32_t *ip_addr) {
+   char errbuf[PCAP_ERRBUF_SIZE];
+   pcap_if_t *alldevsp;
+   pcap_if_t *device;
+   pcap_addr_t *addr;
+   struct sockaddr *sa;
+   struct sockaddr_in *sin = NULL;
+
+   if ((pcap_findalldevs(&alldevsp, errbuf)) != 0) {
+      printf("pcap_findalldevs: %s\n", errbuf);
+   }
+
+   device=alldevsp;
+   while (device != NULL && (strcmp(device->name,interface_name) != 0)) {
+      device=device->next;
+   }
+   if (device == NULL) {
+      warn_msg("could not find interface: %s", interface_name);
+      return -1;
+   }
+
+   for (addr=device->addresses; addr != NULL; addr=addr->next) {
+      sa = addr->addr;
+      if (sa->sa_family == AF_INET) {
+         sin = (struct sockaddr_in *) sa;
+         break;
+      }
+   }
+   if (sin == NULL) {
+      return -1;
+   }
+
+   memcpy(ip_addr, &(sin->sin_addr.s_addr), sizeof(*ip_addr));
+
+   pcap_freealldevs(alldevsp);
+
+   return 0;
+}
