@@ -213,7 +213,7 @@ void usage(int, int);
 void add_host_pattern(const char *, unsigned);
 void add_host(const char *, unsigned, int);
 int send_packet(pcap_t *, host_entry *, struct timeval *);
-void recvfrom_wto(int, int);
+void recvfrom_wto(int, int, pcap_t *);
 void remove_host(host_entry **);
 void timeval_diff(const struct timeval *, const struct timeval *,
                   struct timeval *);
@@ -223,7 +223,7 @@ void display_packet(host_entry *, arp_ether_ipv4 *, const unsigned char *,
 void advance_cursor(void);
 void dump_list(void);
 void print_times(void);
-void clean_up(void);
+void clean_up(pcap_t *);
 void arp_scan_version(void);
 char *make_message(const char *, ...);
 void callback(u_char *, const struct pcap_pkthdr *, const u_char *);

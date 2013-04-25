@@ -49,8 +49,6 @@ static unsigned responders = 0;		/* Number of hosts which responded */
 static unsigned live_count;		/* Number of entries awaiting reply */
 static int verbose=0;			/* Verbose level */
 static int debug = 0;			/* Debug flag */
-static pcap_t *pcap_handle;		/* pcap handle */
-static pcap_dumper_t *pcap_dump_handle = NULL;	/* pcap savefile handle */
 static char filename[MAXLINE];		/* Target list file name */
 static int filename_flag=0;		/* Set if using target list file */
 static int random_flag=0;		/* Randomise the list */
@@ -94,6 +92,7 @@ static int pkt_read_file_flag=0;	/* Read packet from file flag */
 static char pkt_filename[MAXLINE];	/* Read/Write packet to file filename */
 static int write_pkt_to_file=0;		/* Write packet to file for debugging */
 static int rtt_flag=0;			/* Display round-trip time */
+static pcap_dumper_t *pcap_dump_handle = NULL;	/* pcap savefile handle */
 
 int
 main(int argc, char *argv[]) {
@@ -122,6 +121,7 @@ main(int argc, char *argv[]) {
    int get_addr_status = 0;
    int pcap_fd;			/* Pcap file descriptor */
    unsigned char interface_mac[ETH_ALEN];
+   pcap_t *pcap_handle;		/* pcap handle */
 /*
  *      Initialise file names to the empty string.
  */
@@ -581,12 +581,12 @@ main(int argc, char *argv[]) {
          select_timeout = req_interval - loop_timediff;
          if (debug) {print_times(); printf("main: Can't send packet yet. loop_timediff=" ARP_UINT64_FORMAT "\n", loop_timediff);}
       } /* End If */
-      recvfrom_wto(pcap_fd, select_timeout);
+      recvfrom_wto(pcap_fd, select_timeout, pcap_handle);
    } /* End While */
 
    printf("\n");        /* Ensure we have a blank line */
 
-   clean_up();
+   clean_up(pcap_handle);
    if (write_pkt_to_file)
       close(write_pkt_to_file);
 
@@ -887,7 +887,7 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
  *      It does not have to do anything.
  */
 void
-clean_up(void) {
+clean_up(pcap_t *pcap_handle) {
    struct pcap_stat stats;
 
    if (pcap_handle && !pkt_read_file_flag) {
@@ -1560,8 +1560,9 @@ find_host(host_entry **he, struct in_addr *addr) {
  *
  *	Inputs:
  *
- *	s	= Socket file descriptor.
- *	tmo	= Select timeout in us.
+ *	sock_fd		= Socket file descriptor.
+ *	tmo		= Select timeout in us.
+ *	pcap_handle 	= pcap handle
  *
  *	Returns:
  *
@@ -1572,21 +1573,21 @@ find_host(host_entry **he, struct in_addr *addr) {
  *	device.
  */
 void
-recvfrom_wto(int s, int tmo) {
+recvfrom_wto(int sock_fd, int tmo, pcap_t *pcap_handle) {
    fd_set readset;
    struct timeval to;
    int n;
 
    FD_ZERO(&readset);
-   if (s >= 0)
-      FD_SET(s, &readset);
+   if (sock_fd >= 0)
+      FD_SET(sock_fd, &readset);
    to.tv_sec  = tmo/1000000;
    to.tv_usec = (tmo - 1000000*to.tv_sec);
-   n = select(s+1, &readset, NULL, NULL, &to);
+   n = select(sock_fd+1, &readset, NULL, NULL, &to);
    if (debug) {print_times(); printf("recvfrom_wto: select end, tmo=%d, n=%d\n", tmo, n);}
    if (n < 0) {
       err_sys("select");
-   } else if (n == 0 && s >= 0) {
+   } else if (n == 0 && sock_fd >= 0) {
 /*
  * For the BPF pcap implementation, we call pcap_dispatch() even if select
  * times out. This is because on many BPF implementations, select() doesn't
