@@ -154,6 +154,27 @@ dlpi_msg(int fd, union DL_primitives *dlp, int rlen, int flags, unsigned ack,
 }
 
 /*
+ *	link_close -- Close the link
+ *
+ *	Inputs:
+ *
+ *	handle		The handle for the link interface
+ *
+ *	Returns:
+ *
+ *	None
+ */
+static void
+link_close(link_t *handle) {
+   if (handle != NULL) {
+      if (handle->fd >= 0) {
+         close(handle->fd);
+      }
+      free(handle);
+   }
+}
+
+/*
  *	link_open -- Open the specified link-level device
  *
  *	Inputs:
@@ -248,27 +269,6 @@ link_open(const char *device) {
    }
 #endif
    return (handle);
-}
-
-/*
- *	link_close -- Close the link
- *
- *	Inputs:
- *
- *	handle		The handle for the link interface
- *
- *	Returns:
- *
- *	None
- */
-static void
-link_close(link_t *handle) {
-   if (handle != NULL) {
-      if (handle->fd >= 0) {
-         close(handle->fd);
-      }
-      free(handle);
-   }
 }
 
 /*
