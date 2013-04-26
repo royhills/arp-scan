@@ -58,90 +58,6 @@
 static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
 /*
- *	Link layer handle structure for BPF.
- *	This is typedef'ed as link_t.
- */
-typedef struct link_handle {
-   int fd;		/* Socket file descriptor */
-   char device[16];
-} link_t;
-
-/*
- *	link_open -- Open the specified link-level device
- *
- *	Inputs:
- *
- *	device		The name of the device to open
- *
- *	Returns:
- *
- *	A pointer to a link handle structure.
- */
-static link_t *
-link_open(const char *device) {
-   link_t *handle;
-   char dev_file[16];	/* /dev/bpfxxx */
-   struct ifreq ifr;
-   int i;
-
-   handle = Malloc(sizeof(*handle));
-   memset(handle, '\0', sizeof(*handle));
-
-   for (i=0; i<32; i++) {	/* The limit of 32 is arbitary */
-      snprintf(dev_file, sizeof(dev_file), "/dev/bpf%d", i);
-      handle->fd = open(dev_file, O_WRONLY);
-      if (handle->fd != -1 || errno != EBUSY)
-         break;
-   }
-
-   if (handle->fd == -1) {
-      free(handle);
-      return NULL;
-   }
-
-   memset(&ifr, '\0', sizeof(ifr));
-   strlcpy(ifr.ifr_name, device, sizeof(ifr.ifr_name));
-
-   if ((ioctl(handle->fd, BIOCSETIF, &ifr)) < 0) {
-      free(handle);
-      return NULL;
-   }
-
-/* Set "header complete" flag */
-#ifdef BIOCSHDRCMPLT
-   i = 0;
-   if (ioctl(handle->fd, BIOCSHDRCMPLT, &i) < 0) {
-      free(handle);
-      return NULL;
-   }
-#endif
-
-   strlcpy(handle->device, device, sizeof(handle->device));
-   
-   return handle;
-}
-
-/*
- *	link_close -- Close the link
- *
- *	Inputs:
- *
- *	handle		The handle for the link interface
- *
- *	Returns:
- *
- *	None
- */
-static void
-link_close(link_t *handle) {
-   if (handle != NULL) {
-      if (handle->fd != 0)
-         close(handle->fd);
-      free(handle);
-   }
-}
-
-/*
  *      get_hardware_address    -- Get the Ethernet MAC address associated
  *                                 with the given device.
  *      Inputs:
@@ -161,9 +77,6 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
    unsigned char *buf;
    size_t len;
    int mib[] = { CTL_NET, PF_ROUTE, 0, AF_LINK, NET_RT_IFLIST, 0 };
-   link_t *handle;
-
-   handle = link_open(if_name);
 /*
  *	Use sysctl to obtain interface list.
  *	We first call sysctl with the 3rd arg set to NULL to obtain the
@@ -191,15 +104,13 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
       if (sdl->sdl_family != AF_LINK || sdl->sdl_nlen == 0)
          continue;
 
-      if ((memcmp(sdl->sdl_data, handle->device, sdl->sdl_nlen)) == 0)
+      if ((memcmp(sdl->sdl_data, if_name, sdl->sdl_nlen)) == 0)
          break;
    }
 
    if (p >= buf + len)
       err_msg("Could not get hardware address for interface %s",
-              handle->device);
-
-   link_close(handle);
+              if_name);
 
    memcpy(hw_address, sdl->sdl_data + sdl->sdl_nlen, ETH_ALEN);
    free(buf);
