@@ -2,11 +2,7 @@ $Id$
 
 Code tidy up: reduce the number of global variables.
 
-Additional ARP fingerprinting options, e.g. arpsha != srcaddr.
-
-NetBSD doesn't run man pages through tbl. This may apply to other OSes as well.
-This used to be a problem with OpenBSD up to 4.8, but the mandoc formatter in
-OpenBSD 4.9 and later has integrated tbl support.
+NetBSD doesn't run man pages through tbl.
 
 Add support for win32 link-layer send and receive.
 
@@ -33,3 +29,10 @@ MPLS tag support.
 Use the new libpcap 1.0 API functions pcap_create(), pcap_set_XXX(), 
 pcap_activate() instead of the old pcap_open_live() once we can be sure that
 all supported OSes use libpcap 1.0 or later.
+
+Check for failure to obtain the interface MAC address. On FreeBSD, this will
+return zero for deviced that don't have a MAC address like lo0 and usbus0.
+
+Review the order of obtaining interface information, opening pcap, and
+setting the filter, to give informative warnings and errors under common
+cases such as no device, no priv, unsupported device type Etc.

@@ -278,7 +278,7 @@ main(int argc, char *argv[]) {
          warn_msg("DEBUG: pcap filter string: \"%s\"", filter_string);
       if ((pcap_compile(pcap_handle, &filter, filter_string, OPTIMISE,
            netmask)) < 0)
-         err_msg("pcap_geterr: %s", pcap_geterr(pcap_handle));
+         err_msg("pcap_compile: %s", pcap_geterr(pcap_handle));
       free(filter_string);
       if ((pcap_setfilter(pcap_handle, &filter)) < 0)
          err_msg("pcap_setfilter: %s", pcap_geterr(pcap_handle));

@@ -162,7 +162,7 @@ dnl work.
 dnl FreeBSD 5.2 needs sys/socket.h included for net/if, and
 dnl needs sys/types.h for sys/sysctl.h and net/bpf.h
 dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
-      AC_CHECK_HEADERS([net/if.h net/bpf.h sys/param.h sys/sysctl.h net/route.h net/if_dl.h],,,
+      AC_CHECK_HEADERS([net/if.h sys/param.h sys/sysctl.h net/route.h net/if_dl.h],,,
       [
       #include <sys/types.h>
       #ifdef HAVE_SYS_SOCKET_H
