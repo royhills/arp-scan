@@ -139,27 +139,36 @@ main(int argc, char *argv[]) {
    Gettimeofday(&start_time);
    if (debug) {print_times(); printf("main: Start\n");}
 /*
- *	Determine network interface to use if not reading from a pcap file
- *	or writing to a binary file.
- *	If the interface was specified with the --interface option then use
- *	that, otherwise use pcap_lookupdev() to pick a suitable interface.
+ *	Obtain network interface details unless we're reading
+ *	from a pcap file or writing to a binary file.
  */
-   if (!if_name && !pkt_read_file_flag && !pkt_write_file_flag) {
+   if (!pkt_read_file_flag && !pkt_write_file_flag) {
+/*
+ *	Determine network interface to use. If the interface was specified
+ *	with the --interface option then use that, otherwise use
+ *	pcap_lookupdev() to pick a suitable interface.
+ */
+   if (!if_name) {
       if (!(if_name=pcap_lookupdev(errbuf))) {
          err_msg("pcap_lookupdev: %s", errbuf);
       }
    }
 /*
- *	Obtain interface MAC address and IP address unless we're reading
- *	from a pcap file or writing to a binary file.
- */
-   if (!pkt_read_file_flag && !pkt_write_file_flag) {
-/*
  *	Obtain the MAC address for the selected interface, and use this
  *	as default for the source hardware addresses in the frame header
  *	and ARP packet if the user has not specified their values.
+ *
+ *	Die with an error if we can't get the MAC address, as this
+ *	indicates that the interface doesn't have a MAC address, so is
+ *	probably not a compatible interface type.
  */
       get_hardware_address(if_name, interface_mac);
+      if (interface_mac[0]==0 && interface_mac[1]==0 &&
+          interface_mac[2]==0 && interface_mac[3]==0 &&
+          interface_mac[4]==0 && interface_mac[5]==0) {
+         err_msg("ERROR: Could not obtain MAC address for interface %s",
+                 if_name);
+      }
       if (source_mac_flag == 0)
          memcpy(source_mac, interface_mac, ETH_ALEN);
       if (arp_sha_flag == 0)
@@ -180,7 +189,6 @@ main(int argc, char *argv[]) {
             memset(&arp_spa, '\0', sizeof(arp_spa));
          }
       }
-   }
 /*
  *	Open the network device for reading with pcap, or the pcap file if we
  *	have specified --readpktfromfile. If we are writing packets to a binary
@@ -198,7 +206,7 @@ main(int argc, char *argv[]) {
       pcap_handle = NULL;
    }
 /*
- *	If we are reading files with pcap, get and display the datalink details
+ *	If we are reading data with pcap, get and display the datalink details
  */
    if (pcap_handle) {
       if ((datalink=pcap_datalink(pcap_handle)) < 0)
@@ -2403,8 +2411,8 @@ get_source_ip(const char *interface_name, uint32_t *ip_addr) {
       device=device->next;
    }
    if (device == NULL) {
-      warn_msg("could not find interface: %s", interface_name);
-      return -1;
+      warn_msg("ERROR: Could not find interface: %s", interface_name);
+      err_msg("ERROR: Check that the interface exists and is up");
    }
 
    for (addr=device->addresses; addr != NULL; addr=addr->next) {
