@@ -189,6 +189,7 @@ main(int argc, char *argv[]) {
             memset(&arp_spa, '\0', sizeof(arp_spa));
          }
       }
+   }
 /*
  *	Open the network device for reading with pcap, or the pcap file if we
  *	have specified --readpktfromfile. If we are writing packets to a binary

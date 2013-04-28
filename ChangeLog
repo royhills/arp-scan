@@ -1,5 +1,11 @@
 $Id$
 
+2013-04-28 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* getopt.c, getopt1.c, getopt.h: New version of getopt_long_only from
+	  glibc 2.17 for those systems that don't include it in their own C
+	  library.
+
 2013-04-25 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c, arp-scan.h: Changed arp-scan to use the libpcap

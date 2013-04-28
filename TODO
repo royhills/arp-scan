@@ -2,8 +2,6 @@ $Id$
 
 Code tidy up: reduce the number of global variables.
 
-NetBSD doesn't run man pages through tbl.
-
 Add support for win32 link-layer send and receive.
 
 Add support for Token Ring.
