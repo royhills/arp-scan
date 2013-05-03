@@ -3,7 +3,13 @@ $Id$
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
-2012-05-20 arp-scan 1.8.2:
+2013-05-03 arp-scan 1.8.3:
+
+* Use libpcap functions to obtain the interace IP address and send the ARP
+  packet, instead of using our own link-layer specific functions. The only
+  link-layer specific function that we still need is get_hardware_address()
+  to obtain the interface MAC address. This means we now require libpcap 0.9.3
+  or later.
 
 * Added support for Dragonfly BSD.
 
@@ -28,6 +34,8 @@ release.  For more details please read the ChangeLog file.
 
 * Added data file "pkt-custom-request-vlan-llc.dat" to the tarball to allow
   the ARP request packet generation self test to complete successfully.
+
+* Various minor bug fixes and improvements.
 
 2011-03-01 arp-scan 1.8:
 
