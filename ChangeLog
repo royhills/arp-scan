@@ -1,5 +1,15 @@
 $Id$
 
+2013-05-03 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-fingerprint: Added FreeBSD 8.2, FreeBSD 9.1, DragonflyBSD 3.0,
+	  DragonflyBSD 3.2, Linux 3.2, Linux 3.8, NetBSD 5.1, NetBSD 6.0,
+	  OpenBSD 4.8, OpenBSD 5.1 and RiscOS 5.19.
+
+	* NEWS: Updated with changes since last release.
+
+	* configure.ac: Incremented version number to 1.8.4.
+
 2013-04-25 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c, arp-scan.h: Changed arp-scan to use the libpcap

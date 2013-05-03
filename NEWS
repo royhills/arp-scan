@@ -3,7 +3,7 @@ $Id$
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
-2013-05-03 arp-scan 1.8.3:
+2013-05-03 arp-scan 1.8.4:
 
 * Use libpcap functions to obtain the interace IP address and send the ARP
   packet, instead of using our own link-layer specific functions. The only
@@ -30,7 +30,8 @@ release.  For more details please read the ChangeLog file.
   problems on some BSD based operating systems.
 
 * Added arp-fingerprint patterns for GNU/Hurd, Amazon Kindle (Linux 2.6),
-  BeOS, Windows 8
+  BeOS, Windows 8, Recent Linux, FreeBSD, NetBSD and OpenBSD versions, and
+  RiscOS.
 
 * Added data file "pkt-custom-request-vlan-llc.dat" to the tarball to allow
   the ARP request packet generation self test to complete successfully.
