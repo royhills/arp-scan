@@ -1,5 +1,10 @@
 $Id$
 
+2013-05-09 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* ieee-oui.txt, ieee-iab.txt: Updated IEEE OUI and IAB listings from
+	  IEEE website using get-oui and get-iab Perl scripts.
+
 2013-05-03 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-fingerprint: Added FreeBSD 8.2, FreeBSD 9.1, DragonflyBSD 3.0,
