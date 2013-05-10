@@ -13,20 +13,12 @@ some Cisco.
 
 Add XML output format.
 
-./configure gives warnings on OS X Snow Leopard:
-
-   checking for ANSI C header files... rm: conftest.dSYM: is a directory
-   rm: conftest.dSYM: is a directory
-   yes
-
-   It is suspected that an upgrade to autoconf, automake and libtools will fix
-   this.
-
 MPLS tag support.
 
 Use the new libpcap 1.0 API functions pcap_create(), pcap_set_XXX(), 
 pcap_activate() instead of the old pcap_open_live() once we can be sure that
 all supported OSes use libpcap 1.0 or later.
 
-Upgrade to autoconf 2.69 or later to add support for ARM 64-bit CPU
-architecture. See https://bugzilla.redhat.com/show_bug.cgi?id=925026
+Use source_mac rather than interface_mac in the pcap filter, as suggested by
+Justin Keogh. This will allow arp-scan to receive packets with spoofed MAC
+source addresses.
