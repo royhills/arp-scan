@@ -22,3 +22,6 @@ all supported OSes use libpcap 1.0 or later.
 Use source_mac rather than interface_mac in the pcap filter, as suggested by
 Justin Keogh. This will allow arp-scan to receive packets with spoofed MAC
 source addresses.
+
+Add support for Cisco ISL VLANs in addition to 802.1Q VLANs. Suggested by
+Daniel at commonexploits.

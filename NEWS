@@ -3,10 +3,12 @@ $Id$
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
-2013-05-09 arp-scan 1.8.4:
+2013-07-24 arp-scan 1.9:
 
-* Updated IEEE OUI and IAB MAC/Vendor files.  There are now 17840 OUI entries
-  and 4333 IAB entries.
+* Updated IEEE OUI and IAB MAC/Vendor files.  There are now 18157 OUI entries
+  and 4414 IAB entries.
+
+* Use autoconf 2.69 and automake 1.11 to add support for ARM 64-bit CPUs.
 
 * Use libpcap functions to obtain the interace IP address and send the ARP
   packet, instead of using our own link-layer specific functions. The only
