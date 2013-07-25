@@ -1,5 +1,13 @@
 $Id$
 
+2013-07-25 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Released arp-scan version 1.9.
+	  tarball arp-scan-1.9.tar.gz, size 488442 bytes
+	  md5sum 38584d6c1edfa9f6b41d496e4a5539f1
+
+	* configure.ac: Incremented version to 1.9.1.
+
 2013-07-24 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* ieee-oui.txt, ieee-iab.txt: Updated IEEE OUI and IAB listings from
