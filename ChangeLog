@@ -1,5 +1,11 @@
 $Id$
 
+2013-08-15 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* ChangeLog: Removed pointless id keywords.
+
+	* Final SVN revision before migration to git.
+
 2013-07-25 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* Released arp-scan version 1.9.
@@ -582,14 +588,6 @@ $Id$
 
 	  -rw-rw-r--  1 rsh nta 298917 2006-07-26 13:50 arp-scan-1.5.tar.gz
 	  85b0e04323ce3a423f60ab905a589856  arp-scan-1.5.tar.gz
-
-	  Version details:
-
-	  $Id$
-	  $Id$
-	  $Id$
-	  $Id$
-	  $Id$
 
 	* configure.ac: Incremented version number to 1.5.1 in preparation
 	  for post-1.5 changes.
