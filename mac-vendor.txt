@@ -1,4 +1,3 @@
-# $Id$
 # mac-vendor.txt -- Ethernet vendor file for arp-scan
 #
 # This file contains Ethernet vendor mappings for arp-scan.  These are used

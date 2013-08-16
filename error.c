@@ -17,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
- *
  * error.c -- error routines for arp-scan
  *
  * Author:	Roy Hills
@@ -26,8 +24,6 @@
  */
 
 #include "arp-scan.h"
-
-static char rcsid[] = "$Id$"; /* RCS ID for ident(1) */
 
 int daemon_proc;	/* Non-zero if process is a daemon */
 
@@ -102,9 +98,4 @@ err_print (int errnoflag, const char *fmt, va_list ap) {
    fflush(stdout);	/* In case stdout and stderr are the same */
    fputs(buf, stderr);
    fflush(stderr);
-}
-
-void
-error_use_rcsid(void) {
-   fprintf(stderr, "%s\n", rcsid);	/* Use rcsid to stop compiler optimising away */
 }

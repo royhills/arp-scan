@@ -17,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
- *
  * link-bpf.c -- BPF link layer send functions for arp-scan
  *
  * Author:	Roy Hills
@@ -54,8 +52,6 @@
 #ifdef HAVE_NET_IF_DL_H
 #include <net/if_dl.h>
 #endif
-
-static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
 /*
  *      get_hardware_address    -- Get the Ethernet MAC address associated
@@ -114,11 +110,4 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
 
    memcpy(hw_address, sdl->sdl_data + sdl->sdl_nlen, ETH_ALEN);
    free(buf);
-}
-
-/*
- *	Use rcsid to prevent the compiler optimising it away.
- */
-void link_use_rcsid(void) {
-   fprintf(stderr, "%s\n", rcsid);      /* Use rcsid to stop compiler optimising away */
 }

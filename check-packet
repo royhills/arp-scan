@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
 #
-# $Id$
-#
 # check-packet - Shell script to test arp-scan packet creation
 #
 # Author: Roy Hills

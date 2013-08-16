@@ -17,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
- *
  * arp-scan -- The ARP Scanner
  *
  * Author:	Roy Hills
@@ -37,8 +35,6 @@
  */
 
 #include "arp-scan.h"
-
-static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
 /* Global variables */
 static host_entry *helist = NULL;	/* Array of host entries */
@@ -1955,12 +1951,6 @@ arp_scan_version (void) {
    fprintf(stderr, "For more information about these matters, see the file named COPYING.\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "%s\n", pcap_lib_version());
-/* We use rcsid here to prevent it being optimised away */
-   fprintf(stderr, "%s\n", rcsid);
-   error_use_rcsid();
-   wrappers_use_rcsid();
-   utils_use_rcsid();
-   link_use_rcsid();
 }
 
 /*

@@ -20,8 +20,6 @@
  * You are encouraged to send comments, improvements or suggestions to
  * me at arp-scan@nta-monitor.com.
  *
- * $Id$
- *
  * Author: Roy Hills
  * Date: 5 April 2004
  *
@@ -29,9 +27,6 @@
  */
 
 #include "arp-scan.h"
-
-static char rcsid[] = "$Id$";	/* RCS ID for ident(1) */
-
 
 /*
  *	timeval_diff -- Calculates the difference between two timevals
@@ -436,8 +431,4 @@ dupstr(const char *str) {
    cp = Malloc(len);
    strlcpy(cp, str, len);
    return cp;
-}
-
-void utils_use_rcsid(void) {
-   fprintf(stderr, "%s\n", rcsid);	/* Use rcsid to stop compiler optimising away */
 }

@@ -1,4 +1,4 @@
-/*  $Id$
+/*
 **
 **  Replacement for a missing inet_aton.
 **

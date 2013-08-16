@@ -1,5 +1,3 @@
-$Id$
-
 Code tidy up: reduce the number of global variables.
 
 Add support for win32 link-layer send and receive.

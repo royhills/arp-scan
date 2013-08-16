@@ -16,8 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
- *
  * arp-scan.h -- Header file for ARP scanner
  *
  * Author:	Roy Hills
@@ -260,8 +258,3 @@ double genrand_real1(void);
 double genrand_real2(void);
 double genrand_real3(void);
 double genrand_res53(void);
-/* The following functions are just to prevent rcsid being optimised away */
-void wrappers_use_rcsid(void);
-void error_use_rcsid(void);
-void utils_use_rcsid(void);
-void link_use_rcsid(void);

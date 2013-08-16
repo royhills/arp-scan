@@ -1,4 +1,3 @@
-dnl $Id$
 dnl NTA Monitor autoconf macros
 
 dnl	AC_NTA_CHECK_TYPE -- See if a type exists using reasonable includes

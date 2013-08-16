@@ -17,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
- *
  * link-packet-socket.c -- Packet socket link layer send functions for arp-scan
  *
  * Author:	Roy Hills
@@ -41,8 +39,6 @@
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
 #endif
-
-static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
 /*
  *	Link layer handle structure for packet socket.
@@ -130,11 +126,4 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
    link_close(handle);
 
    memcpy(hw_address, handle->ifr.ifr_ifru.ifru_hwaddr.sa_data, ETH_ALEN);
-}
-
-/*
- *	Use rcsid to prevent the compiler optimising it away.
- */
-void link_use_rcsid(void) {
-   fprintf(stderr, "%s\n", rcsid);      /* Use rcsid to stop compiler optimising away */
 }

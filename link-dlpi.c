@@ -17,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
- *
  * link-dlpi.c -- DLPI link layer send functions for arp-scan
  *
  * Author:	Roy Hills
@@ -69,8 +67,6 @@
 /* Neal Nuckolls' sample code defines MAXDLBUF as 8192 longwords, but we use
  * unsigned char for our buffers and so must multiply by four */
 #define MAXDLBUF 8192*4
-
-static char const rcsid[] = "$Id$";   /* RCS ID for ident(1) */
 
 /*
  *	Link layer handle structure for DLPI.
@@ -301,11 +297,4 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
 
    link_close(handle);
    memcpy(hw_address, buf + dlp->physaddr_ack.dl_addr_offset, ETH_ALEN);
-}
-
-/*
- *	Use rcsid to prevent the compiler optimising it away.
- */
-void link_use_rcsid(void) {
-   fprintf(stderr, "%s\n", rcsid);      /* Use rcsid to stop compiler optimising away */
 }

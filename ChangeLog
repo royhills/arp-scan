@@ -1,4 +1,17 @@
-$Id$
+2013-08-15 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Removed $Id$ keywords from all files, and associated rcsid variables
+	  from C source. These are not really needed and they don't work with
+	  git.
+
+	* check-run1: Added GPL licence text, which had been accidentally
+	  ommitted when the script was written.
+
+	* configure.ac: Incremented version to 1.9.2 to distinguish new
+	  version under git revision control.
+
+	* .gitignore: new file containing file patterns that should not be
+	  committed to the repository.
 
 2013-08-15 Roy Hills <Roy.Hills@nta-monitor.com>
 

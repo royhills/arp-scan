@@ -1,5 +1,3 @@
-$Id$
-
 Checks to perform on all supported platforms before release:
 
 1.  Build and check for no warnings or errors: ./configure; make
