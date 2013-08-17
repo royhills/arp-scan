@@ -2,3 +2,4 @@ language: c
 compiler:
   - gcc
   - clang
+script: autoreconf --install && ./configure && make && make check
