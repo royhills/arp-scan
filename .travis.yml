@@ -1,0 +1,12 @@
+language: c
+compiler:
+  - gcc
+  - clang
+env:
+  # Default build. Release.
+  - BUILD_ARGS=""
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install automake1.9
+script: 
+  - autoreconf --force --install && ./configure $BUILD_ARGS .. && make
