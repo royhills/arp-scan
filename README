@@ -5,12 +5,12 @@ information about installing and using arp-scan.
 Installation
 ------------
 
-You will need the make utility, an ANSI C compiler (for example gcc), the
-development header files and libraries, and libpcap version 0.8 or later.
+You will need the make utility, an ANSI C compiler (for example gcc or clang),
+the development header files and libraries, and libpcap version 0.9 or later.
 
 If you want to run the Perl scripts arp-fingerprint, get-oui and get-iab, you
 will need to have the Perl interpreter installed.  These scripts were tested
-on Perl 5.8, but will probably run on earlier versions of Perl 5 as well.
+on Perl 5.8 and 5.10, but will probably run on other versions of Perl 5 as well.
 In addition, for get-oui and get-iab, you will need the LWP::Simple Perl
 module.
 
@@ -26,27 +26,20 @@ installation process.  See the file INSTALL for more details.
 
 arp-scan is known to compile and run on the following platforms:
 
- 1. Linux (tested on Debian Sarge, Debian Etch and Fedora 9)
- 2. FreeBSD (tested on FreeBSD 6.1 and FreeBSD 7.0)
- 3. OpenBSD (tested on OpenBSD 3.9)
- 4. NetBSD (tested on NetBSD 3.0.1)
- 5. MacOS X (Darwin) (tested on MacOS 10.3.9)
- 6. Solaris (tested on Solaris 9/SPARC and Solaris 10/x86)
+ 1. Linux
+ 2. FreeBSD
+ 3. OpenBSD
+ 4. NetBSD
+ 5. DragonflyBSD
+ 6. MacOS X
+ 7. Solaris
 
-The ARP packets are sent using raw datalink access.  The mechanism for this
-varies between platforms, currently Packet Socket (Linux), BPF (BSD) and
-DLPI (Solaris) are supported.  It is planned to add support for Win32 in
-future releases.
+All platforms use libpcap (http://www.tcpdump.org/) to send the ARP packets
+and receive the responses.
 
-All platforms use libpcap (http://www.tcpdump.org/) to receive the ARP
-responses.
-
-It was decided to implement the sending functions directly rather than using
-libnet or libdnet because these libraries are not normally installed by
-default, and it was considered desirable to minimise the need to install
-additional packages.  By contrast, libpcap is a standard package on most
-modern systems.
-
+The only peice of the code that is implementation-specific is the function to
+obtain the interface MAC address. This uses Packet Socket on Linux, BPF on
+BSD and DLPI on Solaris.
 
 Documentation
 -------------
@@ -60,21 +53,3 @@ $ arp-scan --help
 
 For more detailed documentation, see the manual pages: arp-scan(1),
 arp-fingerprint(1), get-iab(1), get-oui(1) and mac-vendor(5).
-
-
-Known Bugs
-----------
-
-1.  Tables in arp-scan man page don't display correctly on NetBSD and OpenBSD
-
-The man page for arp-scan contains tbl tables.  These tables display OK on
-Linux, FreeBSD and MacOS X, but do not display correctly on NetBSD or OpenBSD.
-This is presumably because these OSes don't run man pages through tbl by
-default, and don't recognise the first line of the man page: '\" t
-
-2.  MacOS 10.3 gives warnings about functions pcap_datalink_val_to_name(),
-pcap_datalink_val_to_description() and pcap_setnonblock() not being defined,
-but it links and runs OK.
-
-This appears to be due to MacOS 10.3 having libpcap 0.8 libraries, but only
-0.7 headers.
