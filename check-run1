@@ -35,7 +35,7 @@ if test $? -ne 0; then
    echo "FAILED"
    exit 1
 fi
-grep '^Report bugs or send suggestions to ' $TMPFILE >/dev/null
+grep '^Report bugs or send suggestions at ' $TMPFILE >/dev/null
 if test $? -ne 0; then
    rm -f $TMPFILE
    echo "FAILED"
