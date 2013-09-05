@@ -17,8 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
- * You are encouraged to send comments, improvements or suggestions to
- * me at arp-scan@nta-monitor.com.
+ * You are encouraged to send comments, improvements or suggestions
+ * at the github repository https://github.com/royhills/arp-scan
  *
  * Author: Roy Hills
  * Date: 5 April 2004

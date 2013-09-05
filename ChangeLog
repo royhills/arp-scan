@@ -1,3 +1,13 @@
+2013-09-05 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* configure.ac: Change the bug-report string in AC_INIT from the
+	  arp-scan email address to the github URL.
+
+	* Added references to the github repository in various files in
+	  place of the arp-scan email address.
+
+	* Updated ieee-oui.txt and ieee-iab.txt files.
+
 2013-08-15 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* Removed $Id$ keywords from all files, and associated rcsid variables
