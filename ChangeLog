@@ -1,5 +1,10 @@
 2013-09-05 Roy Hills <Roy.Hills@nta-monitor.com>
 
+	* arp-fingerprint: Added fingerprint for WIZnet W5100 on Arduino
+	  Ethernet shield.
+
+2013-09-05 Roy Hills <Roy.Hills@nta-monitor.com>
+
 	* configure.ac: Change the bug-report string in AC_INIT from the
 	  arp-scan email address to the github URL.
 
