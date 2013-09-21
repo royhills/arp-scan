@@ -32,7 +32,7 @@
 use warnings;
 use strict;
 use Getopt::Std;
-use LWP::Simple;
+use LWP::UserAgent;
 #
 my $default_url = 'http://standards.ieee.org/develop/regauth/iab/iab.txt';
 my $default_filename='ieee-iab.txt';
@@ -87,8 +87,10 @@ if (-f $filename) {
 # Fetch the content from the URL
 #
 print "Fetching IAB data from $url\n" if $verbose;
-my $content = get $url;
-die "Could not get IAB data from $url\n" unless defined $content;
+my $ua = LWP::UserAgent->new;
+my $res = $ua->get($url);
+die "Could not get IAB data from $url\n" unless $res->is_success;
+my $content = $res->content;
 my $content_length = length($content);
 die "Zero-sized response from from $url\n" unless ($content_length > 0);
 print "Fetched $content_length bytes\n" if $verbose;

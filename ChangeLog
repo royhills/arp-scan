@@ -1,3 +1,13 @@
+2013-09-21 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* get-oui, get-iab: Use LWP::UserAgent instead of LWP::Simple to enable
+	  us to obtain the raw content rather than the decoded content. This
+	  avoids Unicode/UTF-8 issues caused by a change in behaviour between
+	  LWP 5.813 on Debian Lenny and 5.836 on Debian Squeeze.
+
+	* ieee-oui.txt, ieee-iab.txt: Updated from IEEE website using modified
+	  scripts.
+
 2013-09-05 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-fingerprint: Added fingerprint for WIZnet W5100 on Arduino

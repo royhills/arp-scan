@@ -23,7 +23,3 @@ source addresses.
 
 Add support for Cisco ISL VLANs in addition to 802.1Q VLANs. Suggested by
 Daniel at commonexploits.
-
-Investigate UTF-8 encoding of international characters in ieee-oui.txt and
-ieee-iab.txt. Recent versions of Perl, e.g. 5.14.2 on Debian Lenny seem to
-handle this differently to earlier versions, e.g. 5.10.0 on Debian Lenny.
