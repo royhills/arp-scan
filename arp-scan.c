@@ -89,6 +89,7 @@ static char pkt_filename[MAXLINE];	/* Read/Write packet to file filename */
 static int write_pkt_to_file=0;		/* Write packet to file for debugging */
 static int rtt_flag=0;			/* Display round-trip time */
 static pcap_dumper_t *pcap_dump_handle = NULL;	/* pcap savefile handle */
+static int plain_flag=0;		/* Only show host information */
 
 int
 main(int argc, char *argv[]) {
@@ -208,10 +209,12 @@ main(int argc, char *argv[]) {
    if (pcap_handle) {
       if ((datalink=pcap_datalink(pcap_handle)) < 0)
          err_msg("pcap_datalink: %s", pcap_geterr(pcap_handle));
-      printf("Interface: %s, datalink type: %s (%s)\n",
-             pkt_read_file_flag ? "savefile" : if_name,
-             pcap_datalink_val_to_name(datalink),
-             pcap_datalink_val_to_description(datalink));
+      if (!plain_flag) {
+         printf("Interface: %s, datalink type: %s (%s)\n",
+                pkt_read_file_flag ? "savefile" : if_name,
+                pcap_datalink_val_to_name(datalink),
+                pcap_datalink_val_to_description(datalink));
+      }
       if (datalink != DLT_EN10MB) {
          warn_msg("WARNING: Unsupported datalink type");
       }
@@ -315,6 +318,9 @@ main(int argc, char *argv[]) {
          err_msg("ERROR: You can not specify targets with the --localnet option");
       if (filename_flag)
          err_msg("ERROR: You can not specify both --file and --localnet options");
+   }
+   if (debug && plain_flag) {
+      err_msg("ERROR: You can not request both plain and debug output");
    }
 /*
  *      If we're not reading from a file, and --localnet was not specified, then
@@ -478,8 +484,10 @@ main(int argc, char *argv[]) {
 /*
  *      Display initial message.
  */
-   printf("Starting %s with %u hosts (http://www.nta-monitor.com/tools/arp-scan/)\n",
+   if (!plain_flag) {
+      printf("Starting %s with %u hosts (http://www.nta-monitor.com/tools/arp-scan/)\n",
           PACKAGE_STRING, num_hosts);
+   }
 /*
  *      Display the lists if verbose setting is 3 or more.
  */
@@ -589,7 +597,9 @@ main(int argc, char *argv[]) {
       recvfrom_wto(pcap_fd, select_timeout, pcap_handle);
    } /* End While */
 
-   printf("\n");        /* Ensure we have a blank line */
+   if (!plain_flag) {
+      printf("\n");        /* Ensure we have a blank line */
+   }
 
    clean_up(pcap_handle);
    if (write_pkt_to_file)
@@ -600,9 +610,11 @@ main(int argc, char *argv[]) {
    elapsed_seconds = (elapsed_time.tv_sec*1000 +
                       elapsed_time.tv_usec/1000) / 1000.0;
 
-   printf("Ending %s: %u hosts scanned in %.3f seconds (%.2f hosts/sec). %u responded\n",
-          PACKAGE_STRING, num_hosts, elapsed_seconds,
-          num_hosts/elapsed_seconds, responders);
+   if (!plain_flag) {
+      printf("Ending %s: %u hosts scanned in %.3f seconds (%.2f hosts/sec). %u responded\n",
+             PACKAGE_STRING, num_hosts, elapsed_seconds,
+             num_hosts/elapsed_seconds, responders);
+   }
    if (debug) {print_times(); printf("main: End\n");}
    return 0;
 }
@@ -895,12 +907,14 @@ void
 clean_up(pcap_t *pcap_handle) {
    struct pcap_stat stats;
 
-   if (pcap_handle && !pkt_read_file_flag) {
-      if ((pcap_stats(pcap_handle, &stats)) < 0)
-         err_msg("pcap_stats: %s", pcap_geterr(pcap_handle));
-
-      printf("%u packets received by filter, %u packets dropped by kernel\n",
-             stats.ps_recv, stats.ps_drop);
+   if (!plain_flag) {
+      if (pcap_handle && !pkt_read_file_flag) {
+         if ((pcap_stats(pcap_handle, &stats)) < 0)
+            err_msg("pcap_stats: %s", pcap_geterr(pcap_handle));
+   
+         printf("%u packets received by filter, %u packets dropped by kernel\n",
+                stats.ps_recv, stats.ps_drop);
+      }
    }
    if (pcap_dump_handle) {
       pcap_dump_close(pcap_dump_handle);
@@ -1044,10 +1058,16 @@ usage(int status, int detailed) {
       fprintf(stderr, "\t\t\tthe system interface list for the lowest numbered,\n");
       fprintf(stderr, "\t\t\tconfigured up interface (excluding loopback).\n");
       fprintf(stderr, "\t\t\tThe interface specified must support ARP.\n");
-      fprintf(stderr, "\n--quiet or -q\t\tOnly display minimal output.\n");
-      fprintf(stderr, "\t\t\tIf this option is specified, then only the minimum\n");
-      fprintf(stderr, "\t\t\tinformation is displayed. With this option, the\n");
-      fprintf(stderr, "\t\t\tOUI files are not used.\n");
+      fprintf(stderr, "\n--quiet or -q\t\tOnly display minimal output. No protocol decoding.\n");
+      fprintf(stderr, "\t\t\tIf this option is specified, then only the IP address\n");
+      fprintf(stderr, "\t\t\tand MAC address are displayed for each responding host.\n");
+      fprintf(stderr, "\t\t\tNo protocol decoding is performed and the OUI mapping\n");
+      fprintf(stderr, "\t\t\tfiles are not used.\n");
+      fprintf(stderr, "\n--plain or -x\t\tDisplay plain output showing only responding hosts.\n");
+      fprintf(stderr, "\t\t\tThis option supresses the printing of the header and\n");
+      fprintf(stderr, "\t\t\tfooter text, and only displays one line for each\n");
+      fprintf(stderr, "\t\t\tresponding host. Useful if the output will be\n");
+      fprintf(stderr, "\t\t\tparsed by a script. Cannot be used with --debug.\n");
       fprintf(stderr, "\n--ignoredups or -g\tDon't display duplicate packets.\n");
       fprintf(stderr, "\t\t\tBy default, duplicate packets are displayed and are\n");
       fprintf(stderr, "\t\t\tflagged with \"(DUP: n)\".\n");
@@ -1772,10 +1792,18 @@ process_options(int argc, char *argv[]) {
       {"writepkttofile", required_argument, 0, OPT_WRITEPKTTOFILE},
       {"readpktfromfile", required_argument, 0, OPT_READPKTFROMFILE},
       {"rtt", no_argument, 0, 'D'},
+      {"plain", no_argument, 0, 'x'},
       {0, 0, 0, 0}
    };
+/*
+ * available short option characters:
+ *
+ * lower:       --c-e----jk--------------z
+ * UPPER:       --C-E-G--JK-M-------U--XYZ
+ * Digits:      0123456789
+ */
    const char *short_options =
-      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:D";
+      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:Dx";
    int arg;
    int options_index=0;
 
@@ -1920,6 +1948,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'D':	/* --rtt */
             rtt_flag = 1;
+            break;
+         case 'x':	/* --plain */
+            plain_flag = 1;
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE, 0);

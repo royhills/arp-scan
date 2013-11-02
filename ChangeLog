@@ -1,3 +1,10 @@
+2013-11-02 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c, arp-scan.1: Added new --plain (-x) option to supress
+	  printing of header and footer text, and only display one output
+	  line for each responding host. Idea from Stefan Tomanek's arp-scan
+	  fork on github at https://github.com/wertarbyte/arp-scan.
+
 2013-09-21 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* get-oui, get-iab: Use LWP::UserAgent instead of LWP::Simple to enable

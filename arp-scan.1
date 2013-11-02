@@ -5,7 +5,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "December 30, 2011"
+.TH ARP-SCAN 1 "November 2, 2013"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -432,10 +432,18 @@ configured up interface (excluding loopback).
 The interface specified must support ARP.
 .TP
 .B --quiet or -q
-Only display minimal output.
-If this option is specified, then only the minimum
-information is displayed. With this option, the
-OUI files are not used.
+Only display minimal output. No protocol decoding.
+If this option is specified, then only the IP address
+and MAC address are displayed for each responding host.
+No protocol decoding is performed and the OUI mapping
+files are not used.
+.TP
+.B --plain or -x
+Display plain output showing only responding hosts.
+This option supresses the printing of the header and
+footer text, and only displays one line for each
+responding host. Useful if the output will be
+parsed by a script. Cannot be used with --debug.
 .TP
 .B --ignoredups or -g
 Don't display duplicate packets.
