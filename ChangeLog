@@ -1,3 +1,7 @@
+2013-11-12 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-fingerprint: Added fingerprint for Cisco IOS 15.0.
+
 2013-11-02 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c, arp-scan.1: Added new --plain (-x) option to supress
