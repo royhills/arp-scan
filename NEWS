@@ -1,6 +1,26 @@
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
+2013-11-24 arp-scan 1.9.2
+
+* Updated IEEE OUI and IAB MAC/Vendor files.  There are now XXXXX OUI entries
+  and XXXX IAB entries.
+
+* Added new --plain (-x) option to surpress printing of header and footer text,
+  and only display one output line for each responding host. Idea from Stefan
+  Tomanek's arp-scan fork on github at https://github.com/wertarbyte/arp-scan.
+
+* Use LWP::UserAgent instead of LWP::Simple in get-oui and get-iab to enable
+  the raw content to be obtained, which avoids Unicode/UTF-8 issues.
+
+* Added arp-finherprint patterns for WIZnet W5100 and Cisco IOS 15.0.
+
+* Moved arp-scan development from internal SVN repository to github at
+  https://github.com/royhills/arp-scan. The move to git means that the commit
+  object names are now SHA1 hashes instead of increasing integer values. So
+  they are longer suitable for internal file versions with rcsid variables.
+  Accordingly the rcsid varable have been removed.
+
 2013-07-24 arp-scan 1.9:
 
 * Updated IEEE OUI and IAB MAC/Vendor files.  There are now 18157 OUI entries
