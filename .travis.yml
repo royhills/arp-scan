@@ -5,4 +5,6 @@ compiler:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libpcap0.8-dev
-script: autoreconf --install && ./configure && make && make check
+  - sudo pip install cpp-coveralls --use-mirrors
+script: autoreconf --install && ./configure --enable-gcov && make && make check
+after_success: coveralls --exclude lib --exclude tests
