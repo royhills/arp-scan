@@ -1,6 +1,7 @@
 # arp-scan
 
 [![Build Status](https://secure.travis-ci.org/royhills/arp-scan.png)](http://travis-ci.org/royhills/arp-scan)
+[![Coverage Status](https://coveralls.io/repos/royhills/arp-scan/badge.png?branch=master)](https://coveralls.io/r/royhills/arp-scan?branch=master)
 
 The ARP scanner
 
