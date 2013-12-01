@@ -19,6 +19,9 @@ stamp-h1
 # Compiler output files
 *.o
 arp-scan
+*.gcno
+*.gcda
+*.gcov
 # IEEE OUI and IAB backup files
 ieee-iab.txt.bak
 ieee-oui.txt.bak

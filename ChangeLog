@@ -1,3 +1,8 @@
+2013-12-01 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* configure.ac, .gitignore: Added configure option --enable-gcov to
+	  enable gcov code coverage.
+
 2013-11-12 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-fingerprint: Added fingerprint for Cisco IOS 15.0.
