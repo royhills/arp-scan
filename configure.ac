@@ -17,11 +17,15 @@ AC_MSG_CHECKING([if gcov code coverage is enabled])
 AC_ARG_ENABLE(gcov,
    AS_HELP_STRING([--enable-gcov],[enable gcov code coverage analysis]),
    [
-   AC_MSG_RESULT(yes)
-   CFLAGS="-O0 -g -fno-inline -fprofile-arcs -ftest-coverage"
+      if test "x$enableval" != "xno" ; then
+         AC_MSG_RESULT(yes)
+         CFLAGS="-O0 -g -fno-inline -fprofile-arcs -ftest-coverage"
+      else
+         AC_MSG_RESULT(no)
+      fi
    ],
    [
-   AC_MSG_RESULT(no)
+      AC_MSG_RESULT(no)
    ] )
 dnl Checks for programs.
 AC_PROG_CC
