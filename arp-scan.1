@@ -5,7 +5,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "November 2, 2013"
+.TH ARP-SCAN 1 "December 2, 2013"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -412,6 +412,15 @@ This option randomises the order of the hosts in the
 host list, so the ARP packets are sent to the hosts in
 a random order. It uses the Knuth shuffle algorithm.
 .TP
+.B --randomseed=<i>
+Use <i> to seed the pseudo random number generator.
+This option seeds the PRNG with the specified number,
+which can be useful if you want to ensure that the
+random host list is reproducable. By default, the PRNG
+is seeded with an unpredictable value. This option is
+only effective in conjunction with the --random (-R)
+option.
+.TP
 .B --numeric or -N
 IP addresses only, no hostnames.
 With this option, all hosts must be specified as
@@ -443,7 +452,7 @@ Display plain output showing only responding hosts.
 This option supresses the printing of the header and
 footer text, and only displays one line for each
 responding host. Useful if the output will be
-parsed by a script. Cannot be used with --debug.
+parsed by a script.
 .TP
 .B --ignoredups or -g
 Don't display duplicate packets.

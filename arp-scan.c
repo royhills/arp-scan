@@ -44,7 +44,6 @@ static unsigned num_hosts = 0;		/* Number of entries in the list */
 static unsigned responders = 0;		/* Number of hosts which responded */
 static unsigned live_count;		/* Number of entries awaiting reply */
 static int verbose=0;			/* Verbose level */
-static int debug = 0;			/* Debug flag */
 static char filename[MAXLINE];		/* Target list file name */
 static int filename_flag=0;		/* Set if using target list file */
 static int random_flag=0;		/* Randomise the list */
@@ -90,6 +89,7 @@ static int write_pkt_to_file=0;		/* Write packet to file for debugging */
 static int rtt_flag=0;			/* Display round-trip time */
 static pcap_dumper_t *pcap_dump_handle = NULL;	/* pcap savefile handle */
 static int plain_flag=0;		/* Only show host information */
+unsigned int random_seed=0;
 
 int
 main(int argc, char *argv[]) {
@@ -134,7 +134,6 @@ main(int argc, char *argv[]) {
  *      Get program start time for statistics displayed on completion.
  */
    Gettimeofday(&start_time);
-   if (debug) {print_times(); printf("main: Start\n");}
 /*
  *	Obtain network interface details unless we're reading
  *	from a pcap file or writing to a binary file.
@@ -319,9 +318,6 @@ main(int argc, char *argv[]) {
       if (filename_flag)
          err_msg("ERROR: You can not specify both --file and --localnet options");
    }
-   if (debug && plain_flag) {
-      err_msg("ERROR: You can not request both plain and debug output");
-   }
 /*
  *      If we're not reading from a file, and --localnet was not specified, then
  *	we must have some hosts given as command line arguments.
@@ -440,13 +436,19 @@ main(int argc, char *argv[]) {
  *	Uses Knuth's shuffle algorithm.
  */
    if (random_flag) {
-      unsigned random_seed;
-      struct timeval tv;
       int r;
       host_entry *temp;
+/*
+ *      Seed random number generator.
+ *      If the random seed has been specified (is non-zero), then use that.
+ *      Otherwise, seed the RNG with an unpredictable value.
+ */
+      if (!random_seed) {
+         struct timeval tv;
 
-      Gettimeofday(&tv);
-      random_seed = tv.tv_usec ^ getpid();	/* Unpredictable value */
+         Gettimeofday(&tv);
+         random_seed = tv.tv_usec ^ getpid();	/* Unpredictable value */
+      }
       init_genrand(random_seed);
 
       for (i=num_hosts-1; i>0; i--) {
@@ -502,7 +504,6 @@ main(int argc, char *argv[]) {
    reset_cum_err = 1;
    req_interval = interval;
    while (live_count) {
-      if (debug) {print_times(); printf("main: Top of loop.\n");}
 /*
  *      Obtain current time and calculate deltas since last packet and
  *      last packet to this host.
@@ -515,7 +516,6 @@ main(int argc, char *argv[]) {
       timeval_diff(&now, &last_packet_time, &diff);
       loop_timediff = (ARP_UINT64)1000000*diff.tv_sec + diff.tv_usec;
       if (loop_timediff >= (unsigned)req_interval) {
-         if (debug) {print_times(); printf("main: Can send packet now. loop_timediff=" ARP_UINT64_FORMAT ", req_interval=%d, cum_err=%d\n", loop_timediff, req_interval, cum_err);}
 /*
  *      If the last packet to this host was sent more than the current
  *      timeout for this host us ago, then we can potentially send a packet
@@ -525,7 +525,6 @@ main(int argc, char *argv[]) {
          host_timediff = (ARP_UINT64)1000000*diff.tv_sec + diff.tv_usec;
          if (host_timediff >= (*cursor)->timeout) {
             if (reset_cum_err) {
-               if (debug) {print_times(); printf("main: Reset cum_err\n");}
                cum_err = 0;
                req_interval = interval;
                reset_cum_err = 0;
@@ -537,7 +536,6 @@ main(int argc, char *argv[]) {
                   req_interval = 0;
                }
             }
-            if (debug) {print_times(); printf("main: Can send packet to host %s now. host_timediff=" ARP_UINT64_FORMAT ", timeout=%u, req_interval=%d, cum_err=%d\n", my_ntoa((*cursor)->addr), host_timediff, (*cursor)->timeout, req_interval, cum_err);}
             select_timeout = req_interval;
 /*
  *      If we've exceeded our retry limit, then this host has timed out so
@@ -553,7 +551,6 @@ main(int argc, char *argv[]) {
                if (verbose > 1)
                   warn_msg("---\tRemoving host %s - Timeout",
                             my_ntoa((*cursor)->addr));
-               if (debug) {print_times(); printf("main: Timing out host %s.\n", my_ntoa((*cursor)->addr));}
                remove_host(cursor);     /* Automatically calls advance_cursor() */
                if (first_timeout) {
                   timeval_diff(&now, &((*cursor)->last_send_time), &diff);
@@ -588,11 +585,9 @@ main(int argc, char *argv[]) {
  */
             select_timeout = (*cursor)->timeout - host_timediff;
             reset_cum_err = 1;  /* Zero cumulative error */
-            if (debug) {print_times(); printf("main: Can't send packet to host %s yet. host_timediff=" ARP_UINT64_FORMAT "\n", my_ntoa((*cursor)->addr), host_timediff);}
          } /* End If */
       } else {          /* We can't send a packet yet */
          select_timeout = req_interval - loop_timediff;
-         if (debug) {print_times(); printf("main: Can't send packet yet. loop_timediff=" ARP_UINT64_FORMAT "\n", loop_timediff);}
       } /* End If */
       recvfrom_wto(pcap_fd, select_timeout, pcap_handle);
    } /* End While */
@@ -615,7 +610,6 @@ main(int argc, char *argv[]) {
              PACKAGE_STRING, num_hosts, elapsed_seconds,
              num_hosts/elapsed_seconds, responders);
    }
-   if (debug) {print_times(); printf("main: End\n");}
    return 0;
 }
 
@@ -873,7 +867,6 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
 /*
  *	Send the packet.
  */
-   if (debug) {print_times(); printf("send_packet: #%u to host %s tmo %d\n", he->num_sent, my_ntoa(he->addr), he->timeout);}
    if (verbose > 1)
       warn_msg("---\tSending packet #%u to host %s tmo %d", he->num_sent,
                my_ntoa(he->addr), he->timeout);
@@ -1045,6 +1038,13 @@ usage(int status, int detailed) {
       fprintf(stderr, "\t\t\tThis option randomises the order of the hosts in the\n");
       fprintf(stderr, "\t\t\thost list, so the ARP packets are sent to the hosts in\n");
       fprintf(stderr, "\t\t\ta random order. It uses the Knuth shuffle algorithm.\n");
+      fprintf(stderr, "\n--randomseed=<i>\tUse <i> to seed the pseudo random number generator.\n");
+      fprintf(stderr, "\t\t\tThis option seeds the PRNG with the specified number,\n");
+      fprintf(stderr, "\t\t\twhich can be useful if you want to ensure that the\n");
+      fprintf(stderr, "\t\t\trandom host list is reproducable. By default, the PRNG\n");
+      fprintf(stderr, "\t\t\tis seeded with an unpredictable value. This option is\n");
+      fprintf(stderr, "\t\t\tonly effective in conjunction with the --random (-R)\n");
+      fprintf(stderr, "\t\t\toption.\n");
       fprintf(stderr, "\n--numeric or -N\t\tIP addresses only, no hostnames.\n");
       fprintf(stderr, "\t\t\tWith this option, all hosts must be specified as\n");
       fprintf(stderr, "\t\t\tIP addresses. Hostnames are not permitted. No DNS\n");
@@ -1067,7 +1067,7 @@ usage(int status, int detailed) {
       fprintf(stderr, "\t\t\tThis option supresses the printing of the header and\n");
       fprintf(stderr, "\t\t\tfooter text, and only displays one line for each\n");
       fprintf(stderr, "\t\t\tresponding host. Useful if the output will be\n");
-      fprintf(stderr, "\t\t\tparsed by a script. Cannot be used with --debug.\n");
+      fprintf(stderr, "\t\t\tparsed by a script.\n");
       fprintf(stderr, "\n--ignoredups or -g\tDon't display duplicate packets.\n");
       fprintf(stderr, "\t\t\tBy default, duplicate packets are displayed and are\n");
       fprintf(stderr, "\t\t\tflagged with \"(DUP: n)\".\n");
@@ -1494,7 +1494,6 @@ remove_host(host_entry **he) {
       live_count--;
       if (*he == *cursor)
          advance_cursor();
-      if (debug) {print_times(); printf("remove_host: live_count now %d\n", live_count);}
    } else {
       if (verbose > 1)
          warn_msg("***\tremove_host called on non-live host: SHOULDN'T HAPPEN");
@@ -1524,7 +1523,6 @@ advance_cursor(void) {
             cursor++;
       } while (!(*cursor)->live);
    } /* End If */
-   if (debug) {print_times(); printf("advance_cursor: host now %s\n", my_ntoa((*cursor)->addr));}
 }
 
 /*
@@ -1572,7 +1570,6 @@ find_host(host_entry **he, struct in_addr *addr) {
       }
    } while (!found && p != he);
 
-   if (debug) {print_times(); printf("find_host: found=%d, iterations=%u\n", found, iterations);}
 
    if (found)
       return *p;
@@ -1609,7 +1606,6 @@ recvfrom_wto(int sock_fd, int tmo, pcap_t *pcap_handle) {
    to.tv_sec  = tmo/1000000;
    to.tv_usec = (tmo - 1000000*to.tv_sec);
    n = select(sock_fd+1, &readset, NULL, NULL, &to);
-   if (debug) {print_times(); printf("recvfrom_wto: select end, tmo=%d, n=%d\n", tmo, n);}
    if (n < 0) {
       err_sys("select");
    } else if (n == 0 && sock_fd >= 0) {
@@ -1762,7 +1758,6 @@ process_options(int argc, char *argv[]) {
       {"backoff", required_argument, 0, 'b'},
       {"verbose", no_argument, 0, 'v'},
       {"version", no_argument, 0, 'V'},
-      {"debug", no_argument, 0, 'd'},
       {"snap", required_argument, 0, 'n'},
       {"interface", required_argument, 0, 'I'},
       {"quiet", no_argument, 0, 'q'},
@@ -1793,17 +1788,18 @@ process_options(int argc, char *argv[]) {
       {"readpktfromfile", required_argument, 0, OPT_READPKTFROMFILE},
       {"rtt", no_argument, 0, 'D'},
       {"plain", no_argument, 0, 'x'},
+      {"randomseed", required_argument, 0, OPT_RANDOMSEED},
       {0, 0, 0, 0}
    };
 /*
  * available short option characters:
  *
- * lower:       --c-e----jk--------------z
+ * lower:       --cde----jk--------------z
  * UPPER:       --C-E-G--JK-M-------U--XYZ
  * Digits:      0123456789
  */
    const char *short_options =
-      "f:hr:t:i:b:vVdn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:Dx";
+      "f:hr:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:Dx";
    int arg;
    int options_index=0;
 
@@ -1838,9 +1834,6 @@ process_options(int argc, char *argv[]) {
             arp_scan_version();
             exit(0);
             break;	/* NOTREACHED */
-         case 'd':	/* --debug */
-            debug++;
-            break;
          case 'n':	/* --snap */
             snaplen=Strtol(optarg, 0);
             break;
@@ -1951,6 +1944,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'x':	/* --plain */
             plain_flag = 1;
+            break;
+         case OPT_RANDOMSEED: /* --randomseed */
+            random_seed=Strtoul(optarg, 0);
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE, 0);

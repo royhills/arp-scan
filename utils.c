@@ -228,52 +228,6 @@ hexstring(const unsigned char *data, size_t size) {
 }
 
 /*
- *	print_times -- Print absolute and delta time for debugging
- *
- *	Inputs:
- *
- *	None.
- *
- *	Returns:
- *
- *	None.
- *
- *	This function is only used for debugging.  It should not be called
- *	from production code.
- */
-void
-print_times(void) {
-   static struct timeval time_first;    /* When print_times() was first called */
-   static struct timeval time_last;     /* When print_times() was last called */
-   static int first_call=1;
-   struct timeval time_now;
-   struct timeval time_delta1;
-   struct timeval time_delta2;
-
-   Gettimeofday(&time_now);
-
-   if (first_call) {
-      first_call=0;
-      time_first.tv_sec  = time_now.tv_sec;
-      time_first.tv_usec = time_now.tv_usec;
-      printf("%lu.%.6lu (0.000000) [0.000000]\t",
-             (unsigned long)time_now.tv_sec, (unsigned long)time_now.tv_usec);
-   } else {
-      timeval_diff(&time_now, &time_last, &time_delta1);
-      timeval_diff(&time_now, &time_first, &time_delta2);
-      printf("%lu.%.6lu (%lu.%.6lu) [%lu.%.6lu]\t",
-             (unsigned long)time_now.tv_sec,
-             (unsigned long)time_now.tv_usec,
-             (unsigned long)time_delta1.tv_sec,
-             (unsigned long)time_delta1.tv_usec,
-             (unsigned long)time_delta2.tv_sec,
-             (unsigned long)time_delta2.tv_usec);
-   }
-   time_last.tv_sec  = time_now.tv_sec;
-   time_last.tv_usec = time_now.tv_usec;
-}
-
-/*
  * get_ether_addr -- Get Ethernet hardware address from text string
  *
  * Inputs:

@@ -161,6 +161,7 @@
 #define ARRAY_SIZE(a) (sizeof (a) / sizeof ((a)[0]))
 #define OPT_WRITEPKTTOFILE 256		/* --writepkttofile option */
 #define OPT_READPKTFROMFILE 257		/* --readpktfromfile option */
+#define OPT_RANDOMSEED 258		/* --randomseed option */
 
 /* Structures */
 
@@ -220,7 +221,6 @@ void display_packet(host_entry *, arp_ether_ipv4 *, const unsigned char *,
                     size_t, int, int, ether_hdr *, const struct pcap_pkthdr *);
 void advance_cursor(void);
 void dump_list(void);
-void print_times(void);
 void clean_up(pcap_t *);
 void arp_scan_version(void);
 char *make_message(const char *, ...);

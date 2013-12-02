@@ -1,3 +1,15 @@
+2013-12-02 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c, arp-scan.h arp-scan.1: Added new --randomseed option,
+	  which allows the random numer generator to be seeded with a specific
+	  value.
+
+	* arp-scan.c, arp-scan.h, utils.c: Removed --debug (-d) option. This
+	  has not been used for years, and the associated debug code was
+	  causing more clutter than it was worth.
+
+	* check-host-list: Added test to check generation of random host list.
+
 2013-12-01 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* configure.ac, .gitignore: Added configure option --enable-gcov to
