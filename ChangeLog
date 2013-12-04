@@ -1,5 +1,12 @@
 2013-12-02 Roy Hills <Roy.Hills@nta-monitor.com>
 
+	* link-packet-socket.c: Die with an error if we can't open a raw
+	  packet socket to obtain the interface MAC address.  This avoids
+	  a segmentation violation on Linux if we try to run arp-scan against
+	  a specific interface without the required privileges.
+
+2013-12-02 Roy Hills <Roy.Hills@nta-monitor.com>
+
 	* arp-scan.c, arp-scan.h arp-scan.1: Added new --randomseed option,
 	  which allows the random numer generator to be seeded with a specific
 	  value.
