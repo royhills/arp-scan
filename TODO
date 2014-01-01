@@ -23,3 +23,7 @@ source addresses.
 
 Add support for Cisco ISL VLANs in addition to 802.1Q VLANs. Suggested by
 Daniel at commonexploits.
+
+Modify the IEEE MAC/Vendor mapping code and scripts to cater for the
+forthcoming OUI registry restructuring detailed in:
+http://tools.ietf.org/html/draft-ieee-rac-oui-restructuring-01
