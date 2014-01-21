@@ -53,7 +53,10 @@ my %opts;
 my $verbose;
 my $filename;
 my $url;
+my @lines;
+my $line;
 my $lineno = 0;
+my $oui;
 my $iab_var;
 my $vendor;
 #
@@ -133,19 +136,30 @@ print OUTPUT $header_comments;
 #
 # Parse the content received from the URL, and write the IAB entries to the
 # output file.  Match lines that look like this:
-# 000000-000FFF   (base 16)       T.L.S. Corp.
+#  00-50-C2      (hex)           T.L.S. Corp.
+#  000000-000FFF (base 16)       T.L.S. Corp.
 # and write them to the output file looking like this:
 # 0050C2000	T.L.S. Corp.
 #
-# Note that the 0050C2 bit is a constant, and we take
-# the next three hex digits from the IEEE data.
+# We take the first 24 bits (six hex digits) from the first line containing
+# "(hex)" and the next 12 bits (three hex digits) from the second line
+# containing "(base 16)". These are then concatenated together to form the
+# 36-bit IAB.
 #
-while ($content =~ m/^\s*(\w+)-\w+\s+\(base 16\)[ 	]+(.*)$/gm) {
-   $iab_var = substr($1,0,3);
-   $vendor = $2;
-   $vendor = "PRIVATE" if length($vendor) == 0;
-   print OUTPUT "0050C2$iab_var\t$vendor\n";
-   $lineno++;
+@lines = split /\n/, $content;
+while (defined($line = shift @lines)) {
+   if ($line =~ m/^\s*(\w+)-(\w+)-(\w+)\s+\(hex\)\s+(.*)$/) {	# 1st line
+      $oui = "$1$2$3";
+      $vendor = $4;
+      $line = shift @lines;	# Read next line
+      if ($line =~ m/^\s*(\w+)-\w+\s+\(base 16\)/) {	# 2nd line
+         $iab_var = substr($1,0,3);
+         print OUTPUT "$oui$iab_var\t$vendor\n";
+         $lineno++;
+      } else {
+         die "ERROR: Unexpected input line in IEEE IAB data. Got: $line";
+      }
+   }
 }
 #
 # All done.  Close the output file and print IAB entry count
