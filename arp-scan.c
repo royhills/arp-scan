@@ -267,7 +267,7 @@ main(int argc, char *argv[]) {
          }
       }
 /*
- *	The filter string selects packets addressed to our interface address
+ *	The filter string selects packets addressed to the ARP source address
  *	that are Ethernet-II ARP packets, 802.3 LLC/SNAP ARP packets,
  *	802.1Q tagged ARP packets or 802.1Q tagged 802.3 LLC/SNAP ARP packets.
  */
@@ -278,9 +278,9 @@ main(int argc, char *argv[]) {
                                  "(ether[12:2]=0x8100 and "
                                  "ether[18:4]=0xaaaa0300 and "
                                  "ether[24:2]=0x0806))",
-                                 interface_mac[0], interface_mac[1],
-                                 interface_mac[2], interface_mac[3],
-                                 interface_mac[4], interface_mac[5]);
+                                 arp_sha[0], arp_sha[1],
+                                 arp_sha[2], arp_sha[3],
+                                 arp_sha[4], arp_sha[5]);
       if (verbose > 1)
          warn_msg("DEBUG: pcap filter string: \"%s\"", filter_string);
       if ((pcap_compile(pcap_handle, &filter, filter_string, OPTIMISE,
