@@ -2,17 +2,17 @@
  * ARP Scan is Copyright (C) 2005-2013 Roy Hills, NTA Monitor Ltd.
  *
  * This file is part of arp-scan.
- * 
+ *
  * arp-scan is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * arp-scan is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -130,7 +130,7 @@
 #define MAX_FRAME 2048			/* Maximum allowed frame size */
 #define REALLOC_COUNT 1000		/* Entries to realloc at once */
 #define DEFAULT_BANDWIDTH 256000	/* Default bandwidth in bits/sec */
-#define PACKET_OVERHEAD 18		/* layer 2 overhead (6+6+2 + 4) */ 
+#define PACKET_OVERHEAD 18		/* layer 2 overhead (6+6+2 + 4) */
 #define MINIMUM_FRAME_SIZE 46           /* Minimum layer 2 date size */
 #define DEFAULT_BACKOFF_FACTOR 1.5      /* Default timeout backoff factor */
 #define DEFAULT_RETRY 2                 /* Default number of retries */

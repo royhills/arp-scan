@@ -3,17 +3,17 @@
  * NTA Monitor Ltd.
  *
  * This file is part of arp-scan.
- * 
+ *
  * arp-scan is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * arp-scan is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -31,7 +31,7 @@
  * and displays any responses received.
  *
  * The ARP protocol is defined in RFC 826 Ethernet Address Resolution Protocol
- * 
+ *
  */
 
 #include "arp-scan.h"
@@ -904,7 +904,7 @@ clean_up(pcap_t *pcap_handle) {
       if (pcap_handle && !pkt_read_file_flag) {
          if ((pcap_stats(pcap_handle, &stats)) < 0)
             err_msg("pcap_stats: %s", pcap_geterr(pcap_handle));
-   
+
          printf("%u packets received by filter, %u packets dropped by kernel\n",
                 stats.ps_recv, stats.ps_drop);
       }
@@ -1703,10 +1703,10 @@ callback(u_char *args ATTRIBUTE_UNUSED,
    temp_cursor=find_host(cursor, &source_ip);
    if (temp_cursor) {
 /*
- *	We found an IP match for the packet. 
+ *	We found an IP match for the packet.
  */
 /*
- *	Display the packet and increment the number of responders if 
+ *	Display the packet and increment the number of responders if
  *	the entry is "live" or we are not ignoring duplicates.
  */
       temp_cursor->num_recv++;
