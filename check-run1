@@ -29,7 +29,7 @@
 TMPFILE=/tmp/arp-scan-test.$$.tmp
 #
 echo "Checking arp-scan --help ..."
-$srcdir/arp-scan --help 2> $TMPFILE
+$srcdir/arp-scan --help > $TMPFILE
 if test $? -ne 0; then
    rm -f $TMPFILE
    echo "FAILED"
@@ -44,7 +44,7 @@ fi
 echo "ok"
 #
 echo "Checking arp-scan --version ..."
-$srcdir/arp-scan --version 2> $TMPFILE
+$srcdir/arp-scan --version > $TMPFILE
 if test $? -ne 0; then
    rm -f $TMPFILE
    echo "FAILED"
