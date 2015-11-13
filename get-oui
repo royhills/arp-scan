@@ -131,7 +131,7 @@ print OUTPUT $header_comments;
 # and write them to the output file looking like this:
 # 000000	XEROX CORPORATION
 #
-while ($content =~ m/^\s*(\w+)-(\w+)-(\w+)\s+\(hex\)\s+(.*)$/gm) {
+while ($content =~ m/^\s*(\w{2})-(\w{2})-(\w{2})\s+\(hex\)\s+(.*?)\s*$/gm) {
    print OUTPUT "$1$2$3\t$4\n";
    $lineno++;
 }

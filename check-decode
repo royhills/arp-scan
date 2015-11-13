@@ -141,62 +141,62 @@ rm -f $EXAMPLEOUTPUT
 # 56 ARP responses from a Class-C sized network with various vendors
 echo "Checking 192.168.1.0/24 ARP response packet decode using $SAMPLE05 ..."
 cat >$EXAMPLEOUTPUT <<_EOF_
-192.168.1.3	00:0b:cd:26:aa:78	Hewlett-Packard Company
-192.168.1.4	00:08:02:e2:e3:2b	Hewlett-Packard Company
-192.168.1.7	00:0b:cd:3d:4f:2a	Hewlett-Packard Company
-192.168.1.5	00:02:a5:90:c3:e6	Hewlett-Packard Company
+192.168.1.3	00:0b:cd:26:aa:78	Hewlett Packard
+192.168.1.4	00:08:02:e2:e3:2b	Hewlett Packard
+192.168.1.7	00:0b:cd:3d:4f:2a	Hewlett Packard
+192.168.1.5	00:02:a5:90:c3:e6	Hewlett Packard
 192.168.1.6	00:c0:9f:3f:3d:70	QUANTA COMPUTER, INC.
-192.168.1.8	00:02:a5:a9:27:29	Hewlett-Packard Company
-192.168.1.9	00:02:a5:f9:33:8d	Hewlett-Packard Company
-192.168.1.10	00:08:02:89:b3:cb	Hewlett-Packard Company
-192.168.1.11	00:0f:1f:5c:d1:13	Dell Inc
-192.168.1.12	00:02:a5:de:c2:17	Hewlett-Packard Company
+192.168.1.8	00:02:a5:a9:27:29	Hewlett Packard
+192.168.1.9	00:02:a5:f9:33:8d	Hewlett Packard
+192.168.1.10	00:08:02:89:b3:cb	Hewlett Packard
+192.168.1.11	00:0f:1f:5c:d1:13	Dell Inc.
+192.168.1.12	00:02:a5:de:c2:17	Hewlett Packard
 192.168.1.14	00:c0:9f:0b:91:d1	QUANTA COMPUTER, INC.
-192.168.1.13	00:08:02:1f:0e:42	Hewlett-Packard Company
-192.168.1.16	00:18:8b:7a:fe:28	Dell Inc
-192.168.1.17	00:12:3f:d4:41:86	Dell Inc
-192.168.1.18	00:21:9b:18:bd:e2	Dell Inc
-192.168.1.20	00:21:70:0a:5d:42	Dell Inc
-192.168.1.22	00:12:3f:27:bb:ae	Dell Inc
+192.168.1.13	00:08:02:1f:0e:42	Hewlett Packard
+192.168.1.16	00:18:8b:7a:fe:28	Dell Inc.
+192.168.1.17	00:12:3f:d4:41:86	Dell Inc.
+192.168.1.18	00:21:9b:18:bd:e2	Dell Inc.
+192.168.1.20	00:21:70:0a:5d:42	Dell Inc.
+192.168.1.22	00:12:3f:27:bb:ae	Dell Inc.
 192.168.1.21	00:25:64:e7:ad:e2	Dell Inc.
-192.168.1.23	00:21:70:0b:34:c8	Dell Inc
-192.168.1.24	00:1a:a0:9e:fd:06	Dell Inc
-192.168.1.26	00:08:74:bb:2a:33	Dell Computer Corp.
+192.168.1.23	00:21:70:0b:34:c8	Dell Inc.
+192.168.1.24	00:1a:a0:9e:fd:06	Dell Inc.
+192.168.1.26	00:08:74:bb:2a:33	Dell Inc.
 192.168.1.25	00:25:64:e7:b3:d6	Dell Inc.
-192.168.1.28	00:18:8b:7a:fe:82	Dell Inc
-192.168.1.31	00:12:3f:d4:41:85	Dell Inc
-192.168.1.35	00:12:3f:26:72:eb	Dell Inc
-192.168.1.37	00:18:8b:7a:fe:10	Dell Inc
-192.168.1.43	00:12:3f:d4:40:ae	Dell Inc
-192.168.1.41	00:12:3f:ae:bd:02	Dell Inc
-192.168.1.48	00:12:3f:ae:a3:c5	Dell Inc
-192.168.1.51	00:08:74:c0:40:ce	Dell Computer Corp.
-192.168.1.49	00:0f:1f:5c:c2:ae	Dell Inc
+192.168.1.28	00:18:8b:7a:fe:82	Dell Inc.
+192.168.1.31	00:12:3f:d4:41:85	Dell Inc.
+192.168.1.35	00:12:3f:26:72:eb	Dell Inc.
+192.168.1.37	00:18:8b:7a:fe:10	Dell Inc.
+192.168.1.43	00:12:3f:d4:40:ae	Dell Inc.
+192.168.1.41	00:12:3f:ae:bd:02	Dell Inc.
+192.168.1.48	00:12:3f:ae:a3:c5	Dell Inc.
+192.168.1.51	00:08:74:c0:40:ce	Dell Inc.
+192.168.1.49	00:0f:1f:5c:c2:ae	Dell Inc.
 192.168.1.68	f0:4d:a2:84:7c:07	Dell Inc.
 192.168.1.73	00:11:25:83:92:e9	IBM Corp
-192.168.1.89	00:21:9b:18:a4:84	Dell Inc
+192.168.1.89	00:21:9b:18:a4:84	Dell Inc.
 192.168.1.102	00:25:64:3d:98:5a	Dell Inc.
 192.168.1.104	00:0c:29:ec:85:39	VMware, Inc.
-192.168.1.105	00:13:72:09:ad:76	Dell Inc
-192.168.1.148	00:90:27:9d:2a:0b	INTEL CORPORATION
-192.168.1.154	00:0c:30:85:58:9d	CISCO SYSTEMS, INC.
-192.168.1.155	00:10:db:74:d0:52	Juniper Networks, Inc.
+192.168.1.105	00:13:72:09:ad:76	Dell Inc.
+192.168.1.148	00:90:27:9d:2a:0b	Intel Corporation
+192.168.1.154	00:0c:30:85:58:9d	Cisco Systems, Inc
+192.168.1.155	00:10:db:74:d0:52	Juniper Networks
 192.168.1.187	00:00:aa:a1:b3:60	XEROX CORPORATION
-192.168.1.189	00:14:38:93:93:7e	Hewlett-Packard Company
+192.168.1.189	00:14:38:93:93:7e	Hewlett Packard
 192.168.1.196	00:15:99:5d:d5:26	Samsung Electronics Co., LTD
 192.168.1.195	00:15:99:61:08:30	Samsung Electronics Co., LTD
-192.168.1.202	00:d0:b7:25:61:6c	INTEL CORPORATION
-192.168.1.204	00:11:43:0f:f2:dd	Dell Inc
+192.168.1.202	00:d0:b7:25:61:6c	Intel Corporation
+192.168.1.204	00:11:43:0f:f2:dd	Dell Inc.
 192.168.1.205	00:02:b3:91:20:2a	Intel Corporation
-192.168.1.207	00:12:3f:ec:cf:a0	Dell Inc
+192.168.1.207	00:12:3f:ec:cf:a0	Dell Inc.
 192.168.1.206	00:c0:9f:39:f7:f2	QUANTA COMPUTER, INC.
-192.168.1.222	00:90:27:9d:48:90	INTEL CORPORATION
-192.168.1.192	00:01:e6:27:27:6e	Hewlett-Packard Company
+192.168.1.222	00:90:27:9d:48:90	Intel Corporation
+192.168.1.192	00:01:e6:27:27:6e	Hewlett Packard
 192.168.1.234	00:c0:9f:0d:00:9a	QUANTA COMPUTER, INC.
-192.168.1.245	00:0b:5f:d2:34:21	CISCO SYSTEMS, INC.
-192.168.1.246	00:13:80:53:cd:79	CISCO SYSTEMS, INC.
-192.168.1.250	00:12:00:2f:18:c0	CISCO SYSTEMS, INC.
-192.168.1.251	00:04:27:6a:5d:a1	CISCO SYSTEMS, INC.
+192.168.1.245	00:0b:5f:d2:34:21	Cisco Systems, Inc
+192.168.1.246	00:13:80:53:cd:79	Cisco Systems, Inc
+192.168.1.250	00:12:00:2f:18:c0	Cisco Systems, Inc
+192.168.1.251	00:04:27:6a:5d:a1	Cisco Systems, Inc
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"

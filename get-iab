@@ -35,6 +35,7 @@ use Getopt::Std;
 use LWP::UserAgent;
 #
 my $default_url = 'http://standards.ieee.org/develop/regauth/iab/iab.txt';
+# http://standards.ieee.org/develop/regauth/oui36/oui36.txt
 my $default_filename='ieee-iab.txt';
 #
 my $usage =
@@ -148,7 +149,7 @@ print OUTPUT $header_comments;
 #
 @lines = split /\n/, $content;
 while (defined($line = shift @lines)) {
-   if ($line =~ m/^\s*(\w+)-(\w+)-(\w+)\s+\(hex\)\s+(.*)$/) {	# 1st line
+   if ($line =~ m/^\s*(\w{2})-(\w{2})-(\w{2})\s+\(hex\)\s+(.*?)\s*$/) {	# 1st line
       $oui = "$1$2$3";
       $vendor = $4;
       $line = shift @lines;	# Read next line
