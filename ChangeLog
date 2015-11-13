@@ -1,3 +1,24 @@
+2015-11-13 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* get-iab: Read the OUI from the data in the file instead of using
+	  the constant 24-bit number 0050C2.  This is required because the
+	  0050C2 IEEE OUI has been fully used, and allocations have started
+	  from the 40D855 IEEE OUI.
+
+	* *.c: Removed unneeded trailing whitespace in source code.  Thanks
+	  to "jubalh" for this pull request.
+
+	* arp-scan.c, check-run1: Change --help and --version options to output
+	  to stdout (fd 0) instead of stderr (fd 1) in accordance with GNU
+	  Coding Standards section 4.7, "Standards for Command Line Interfaces".
+	  Thanks to "srdja" for this pull request.
+
+	* get-oui, get-iab: omit trailing whitespace from ieee-oui.txt and
+	  ieee-iab.txt files.
+
+	* ieee-oui.txt, ieee-iab.txt: Updated from IEEE website using modified
+	  scripts.
+
 2013-12-02 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* link-packet-socket.c: Die with an error if we can't open a raw
