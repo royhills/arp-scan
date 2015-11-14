@@ -16,6 +16,8 @@ depcomp
 install-sh
 missing
 stamp-h1
+compile
+test-driver
 # Compiler output files
 *.o
 arp-scan
