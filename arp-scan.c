@@ -487,7 +487,7 @@ main(int argc, char *argv[]) {
  *      Display initial message.
  */
    if (!plain_flag) {
-      printf("Starting %s with %u hosts (http://www.nta-monitor.com/tools/arp-scan/)\n",
+      printf("Starting %s with %u hosts (http://www.nta-monitor.com/tools-resources/security-tools/arp-scan/)\n",
           PACKAGE_STRING, num_hosts);
    }
 /*
@@ -1195,7 +1195,7 @@ usage(int status, int detailed) {
    }
    fprintf(stdout, "\n");
    fprintf(stdout, "Report bugs or send suggestions at %s\n", PACKAGE_BUGREPORT);
-   fprintf(stdout, "See the arp-scan homepage at http://www.nta-monitor.com/tools/arp-scan/\n");
+   fprintf(stdout, "See the arp-scan homepage at http://www.nta-monitor.com/tools-resources/security-tools/arp-scan/\n");
    exit(status);
 }
 
