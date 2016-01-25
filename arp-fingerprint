@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright 2006-2011 Roy Hills
+# Copyright 2006-2013 Roy Hills
 #
 # This file is part of arp-scan.
 # 
@@ -16,8 +16,6 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
-#
-# $Id: arp-fingerprint 18122 2011-02-22 09:00:52Z rsh $
 #
 # arp-fingerprint -- Perl script to fingerprint system with arp-scan
 #
@@ -43,15 +41,19 @@ my $arpscan="arp-scan -q -r 1";
 #
 # These fingerprints were observed on:
 #
-# FreeBSD 7.0	FreeBSD 7.0 on VMware
-# FreeBSD 5.3	FreeBSD 5.3 on VMware
-# FreeBSD 4.3	FreeBSD 4.3 on VMware
-# DragonflyBSD 2.0	Dragonfly BSD 2.0.0 on VMware
-# Win 3.11	Windows for Workgroups 3.11/DOS 6.22 on VMware
+# FreeBSD 9.1	FreeBSD 9.1 i386 on VMware
+# FreeBSD 8.2	FreeBSD 8.2 i386 on VMware
+# FreeBSD 7.0	FreeBSD 7.0 i386 on VMware
+# FreeBSD 5.3	FreeBSD 5.3 i386 on VMware
+# FreeBSD 4.3	FreeBSD 4.3 i386 on VMware
+# DragonflyBSD 2.0	Dragonfly BSD 2.0.0 i386 on VMware
+# DragonflyBSD 3.0	Dragonfly BSD 3.0.2 i386 on VMware
+# DragonflyBSD 3.2	Dragonfly BSD 3.2.2 amd64 on VMware# Win 3.11	Windows for Workgroups 3.11/DOS 6.22 on VMware
 # 95		Windows 95 OSR2 on VMware
 # Win98		Windows 98 SE on VMware
 # WinME		Windows ME on VMware
 # Windows7	Windows 7 Professional 6.1.7600 Build 7600 on Dell Vostro 220
+# Windows8	Windows 8 Pro x64 6.2.9200 Build 9200 on VMware
 # NT 3.51	Windows NT Server 3.51 SP0 on VMware
 # NT4		Windows NT Workstation 4.0 SP6a on Pentium
 # 2000		Windows 2000
@@ -63,14 +65,19 @@ my $arpscan="arp-scan -q -r 1";
 # Linux 2.0	Linux 2.0.29 on VMware (debian 1.3.1)
 # Linux 2.2	Linux 2.2.19 on VMware (debian potato)
 # Linux 2.4	Linux 2.4.29 on Intel P3 (debian sarge)
-# Linux 2.6	Linux 2.6.15.7 on Intel P3 (debian sarge)
-# Cisco IOS	IOS 11.2(17) on Cisco 2503
+# Linux 2.6	Linux 2.6.15.7 i686 on Intel P3 (debian sarge)
+# Linux 2.6	Kindle 3.1 on Amazon Kindle 3
+# Linux 2.6	Linux 2.6.32.60 x86_64 on VMware (debian squeeze)
+# Linux 3.2	Linux 3.2.0 686 on VMware (debian wheezy)
+# Linux 3.8	Linux 3.8.8 x86_64 on VMware (fedora 17) # Cisco IOS	IOS 11.2(17) on Cisco 2503
 # Cisco IOS	IOS 11.3(11b)T2 on Cisco 2503
 # Cisco IOS	IOS 12.0(8) on Cisco 1601
 # Cisco IOS	IOS 12.1(27b) on Cisco 2621
 # Cisco IOS	IOS 12.2(32) on Cisco 1603
 # Cisco IOS	IOS 12.3(15) on Cisco 2503
 # Cisco IOS	IOS 12.4(3) on Cisco 2811
+# Cisco IOS	IOS 12.4(24)T1 on Cisco 1841
+# Cisco IOS	IOS 15.0(1)M on Cisco 7206 (dynamips) 
 # Solaris 2.5.1	Solaris 2.5.1 (SPARC) on Sun SPARCstation 20
 # Solaris 2.6	Solaris 2.6 (SPARC) on Sun Ultra 5
 # Solaris 7	Solaris 7 (x86) on VMware
@@ -81,17 +88,22 @@ my $arpscan="arp-scan -q -r 1";
 # ScreenOS 5.1	Juniper ScreenOS 5.1.0r1.0 on NetScreen 5GT
 # ScreenOS 5.3	Juniper ScreenOS 5.3.0r4.0 on NetScreen 5GT
 # ScreenOS 5.4	Juniper ScreenOS 5.4.0r1.0 on NetScreen 5GT
+# ScreenOS 5.4	Juniper ScreenOS 5.4.0r22.0 on NetScreen 5GT
+# ScreenOS 6.2	Juniper ScreenOS 6.2.0r12.0 on Juniper SSG5
 # MacOS 10.4	MacOS 10.4.6 on powerbook G4
 # MacOS 10.3	MacOS 10.3.9 on imac G3
 # IRIX 6.5	IRIX64 IRIS 6.5 05190004 IP30 on SGI Octane
 # SCO OS 5.0.7	SCO OpenServer 5.0.7 on VMware
 # 2.11BSD	2.11BSD patch level 431 on PDP-11/73 (SIMH simulated)
 # 4.3BSD	4.3BSD (Quasijarus0c) on MicroVAX 3000 (SIMH simulated)
-# OpenBSD 3.1	OpenBSD 3.1 on VMware
-# OpenBSD 3.9	OpenBSD 3.9 on VMware
-# NetBSD 2.0.2	NetBSD 2.0.2 on VMware
-# NetBSD 4.0	NetBSD 4.0 on VMware
-# IPSO 3.2.1	IPSO 3.2.1-fcs1 on Nokia VPN 210
+# OpenBSD 3.1	OpenBSD 3.1 i386 on VMware
+# OpenBSD 3.9	OpenBSD 3.9 i386 on VMware
+# OpenBSD 4.8	OpenBSD 4.8 i386 on VMware
+# OpenBSD 5.1	OpenBSD 5.1 amd64 on VMware
+# NetBSD 2.0.2	NetBSD 2.0.2 i386 on VMware
+# NetBSD 4.0	NetBSD 4.0 i386 on VMware
+# NetBSD 5.1	NetBSD 5.1.2 i386 on VMware
+# NetBSD 6.0-amd64	NetBSD 6.0.1 amd64 on VMware# IPSO 3.2.1	IPSO 3.2.1-fcs1 on Nokia VPN 210
 # Netware 6.5	Novell NetWare 6.5 on VMware
 # HP-UX 11	HP-UX B.11.00 A 9000/712 (PA-RISC)
 # PIX OS	PIX OS (unknown vsn) on Cisco PIX 525
@@ -127,21 +139,27 @@ my $arpscan="arp-scan -q -r 1";
 # FortiOS 3.00	FortiGate 100A running FortiOS 3.00,build0406,070126
 # Plan9		Plan9 release 4 on VMware
 # Blackberry OS	Blackberry OS v5.0.0.681 on Blackberry 8900
+# GNU/Hurd	Debian GNU/Hurd (GNU-Mach 1.3.99/Hurd-0.3) on VMware
+# BeOS		BeOS 5.0.3 PE Max on VMware
+# RiscOS 5.19	RiscOS 5.19 on Raspberry Pi
+# WIZnet W5100	WIZnet W5100 on Ethernet chip on Arduino Ethernet shield
+# Android 4.1	Android 4.1.2 on Samsung Galaxy S3 Mini (wifi)
+# Android 4.4	Android 4.4.2 on Google Nexus 7 (wifi)
 #
 my %fp_hash = (
-   '11110100000' => 'FreeBSD 5.3, 7.0, DragonflyBSD 2.0, Win98, WinME, NT4, 2000, XP, 2003, Catalyst IOS 12.0, 12.1, 12.2, FortiOS 3.00',
+   '11110100000' => 'FreeBSD 5.3, 7.0, 8.2, 9.1, DragonflyBSD 2.0, 3.0, 3.2, Win98, WinME, NT4, 2000, XP, 2003, Catalyst IOS 12.0, 12.1, 12.2, FortiOS 3.00',
    '01000100000' => 'Linux 2.2, 2.4, 2.6',
-   '01010100000' => 'Linux 2.2, 2.4, 2.6, Vista, 2008, Windows7', # Linux only if non-local IP is routed
-   '00000100000' => 'Cisco IOS 11.2, 11.3, 12.0, 12.1, 12.2, 12.3, 12.4',
-   '11110110000' => 'Solaris 2.5.1, 2.6, 7, 8, 9, 10, HP-UX 11',
-   '01000111111' => 'ScreenOS 5.0, 5.1, 5.3, 5.4',
-   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1, Minix 3, Cisco VPN Concentrator 4.7, Catalyst 1900',
+   '01010100000' => 'Linux 2.2, 2.4, 2.6, 3.2, 3.8, Vista, 2008, Windows7, Windows8', # Linux only if non-local IP is routed
+   '00000100000' => 'Cisco IOS 11.2, 11.3, 12.0, 12.1, 12.2, 12.3, 12.4, 15.0',
+   '11110110000' => 'Solaris 2.5.1, 2.6, 7, 8, 9, 10, HP-UX 11, NetBSD 6.0-amd64',
+   '01000111111' => 'ScreenOS 5.0, 5.1, 5.3, 5.4, 6.2',
+   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1, Minix 3, Cisco VPN Concentrator 4.7, Catalyst 1900, BeOS, WIZnet W5100',
    '11110100011' => 'MacOS 10.3, FreeBSD 4.3, IRIX 6.5, AIX 4.3, AIX 5.3',
    '10010100011' => 'SCO OS 5.0.7',
    '10110100000' => 'Win 3.11, 95, NT 3.51',
-   '11110000011' => '2.11BSD, 4.3BSD, OpenBSD 3.1, OpenBSD 3.9, Nortel Contivity 6.00, 6.05',
-   '10110110000' => 'NetBSD 2.0.2, 4.0',
-   '10110111111' => 'PIX OS 4.4, 5.1, 5.2, 5.3',
+   '11110000011' => '2.11BSD, 4.3BSD, OpenBSD 3.1, OpenBSD 3.9, 4.8, 5.1, Nortel Contivity 6.00, 6.05, RiscOS 5.19',
+   '10110110000' => 'NetBSD 2.0.2, 4.0, 5.1',
+   '10110111111' => 'PIX OS 4.4, 5.1, 5.2, 5.3, Android 4.1',
    '11110111111' => 'PIX OS 6.0, 6.1, 6.2, ScreenOS 5.0 (transparent), Plan9, Blackberry OS',
    '00010110011' => 'PIX OS 6.3, 7.0(1), 7.0(2)',
    '01010110011' => 'PIX OS 7.0(4)-7.0(6), 7.1, 7.2, 8.0',
@@ -149,6 +167,7 @@ my %fp_hash = (
    '00010100000' => 'Unknown 1', # 14805 79.253 Cisco
    '00000110011' => 'Cisco IP Phone 79xx SIP 5.x,6.x,7.x',
    '11110110011' => 'Cisco IP Phone 79xx SIP 8.x', # Also 14805 63.11 Fujitsu Siemens
+   '01010000000' => 'GNU/Hurd, Android 4.4',
    );
 #
 my $usage =
