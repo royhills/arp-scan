@@ -1,3 +1,20 @@
+2016-08-13 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* get-oui, get-oui.1, arp-scan.1: Update IEEE OUI download location.
+
+	* ieee-oui.txt: Updated from IEEE website using modified script.
+
+	* check-decode: Updated manufacturer names to match updated OUI file.
+
+	* configure.ac: Increased version number from 1.9.2 to 1.9.3 to
+	  reflect the various changes made on github between Aug 2013 and
+	  Aug 2016.
+
+	* acinclude.m4: Assume long long int format is %lld if cross compiling.
+
+	* arp-scan.c: Correct warning message for invalid IP addresses to avoid
+	  segmentation violation.
+
 2015-11-13 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* get-iab: Read the OUI from the data in the file instead of using

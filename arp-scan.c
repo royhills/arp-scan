@@ -1439,7 +1439,7 @@ add_host(const char *host_name, unsigned host_timeout, int numeric_only) {
       if (result < 0) {
          err_sys("ERROR: inet_pton failed for %s", host_name);
       } else if (result == 0) {
-         warn_msg("WARNING: \"%s\" is not a valid IPv4 address - target ignored");
+         warn_msg("WARNING: \"%s\" is not a valid IPv4 address - target ignored", host_name);
          return;
       }
    } else {
