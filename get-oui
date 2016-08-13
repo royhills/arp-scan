@@ -30,7 +30,7 @@ use strict;
 use Getopt::Std;
 use LWP::UserAgent;
 #
-my $default_url = 'http://standards.ieee.org/develop/regauth/oui/oui.txt';
+my $default_url = 'http://standards-oui.ieee.org/oui/oui.txt';
 my $default_filename='ieee-oui.txt';
 #
 my $usage =

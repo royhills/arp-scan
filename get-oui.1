@@ -4,7 +4,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH GET-OUI 1 "March 30, 2007"
+.TH GET-OUI 1 "August 13, 2016"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 get-oui \- Fetch the arp-scan OUI file from the IEEE website
@@ -49,7 +49,7 @@ occasionally to keep the
 OUI file up to date.
 .PP
 The OUI data is fetched from the URL
-.I http://standards.ieee.org/regauth/oui/oui.txt
+.I http://standards-oui.ieee.org/oui/oui.txt
 and the output file is saved to the file
 .I ieee-oui.txt
 in the current directory. The URL to fetch the data from can be changed with
@@ -83,7 +83,7 @@ Write the output to the specified file instead of the default
 .TP
 .B -u <URL>
 Use the specified URL to fetch the raw OUI data from instead of the default
-.I http://standards.ieee.org/regauth/oui/oui.txt.
+.I http://standards-oui.ieee.org/oui/oui.txt.
 .TP
 .B -v
 Display verbose progress messages.
@@ -95,10 +95,10 @@ The default output file.
 .nf
 $ get-oui -v
 Renaming ieee-oui.txt to ieee-oui.txt.bak
-Fetching OUI data from http://standards.ieee.org/regauth/oui/oui.txt
-Fetched 1467278 bytes
+Fetching OUI data from http://standards-oui.ieee.org/oui/oui.txt
+Fetched 3467133 bytes
 Opening output file ieee-oui.txt
-9274 OUI entries written to file ieee-oui.txt
+22402 OUI entries written to file ieee-oui.txt
 .fi
 .SH NOTES
 .B get-oui
