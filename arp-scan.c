@@ -78,7 +78,6 @@ static unsigned char source_mac[6];
 static int source_mac_flag = 0;
 static unsigned char *padding=NULL;
 static size_t padding_len=0;
-static struct hash_control *hash_table;
 static int localnet_flag=0;		/* Scan local network */
 static int llc_flag=0;			/* Use 802.2 LLC with SNAP */
 static int ieee_8021q_vlan=-1;		/* Use 802.1Q VLAN tagging if >= 0 */
@@ -332,25 +331,25 @@ main(int argc, char *argv[]) {
       char *fn;
       int count;
 
-      if ((hash_table = hash_new()) == NULL)
-         err_sys("hash_new");
+      if ((hcreate(HASH_TABLE_SIZE)) == 0)
+         err_sys("hcreate");
 
       fn = get_mac_vendor_filename(ouifilename, DATADIR, OUIFILENAME);
-      count = add_mac_vendor(hash_table, fn);
+      count = add_mac_vendor(fn);
       if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d IEEE OUI/Vendor entries from %s.",
                   count, fn);
       free(fn);
 
       fn = get_mac_vendor_filename(iabfilename, DATADIR, IABFILENAME);
-      count = add_mac_vendor(hash_table, fn);
+      count = add_mac_vendor(fn);
       if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d IEEE IAB/Vendor entries from %s.",
                   count, fn);
       free(fn);
 
       fn = get_mac_vendor_filename(macfilename, DATADIR, MACFILENAME);
-      count = add_mac_vendor(hash_table, fn);
+      count = add_mac_vendor(fn);
       if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d MAC/Vendor entries from %s.",
                   count, fn);
@@ -681,13 +680,21 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       char oui_string[13];	/* Space for full hw addr plus NULL */
       const char *vendor=NULL;
       int oui_end=12;
+      ENTRY hash_query;
+      ENTRY *hash_result;
 
       snprintf(oui_string, 13, "%.2X%.2X%.2X%.2X%.2X%.2X",
                arpei->ar_sha[0], arpei->ar_sha[1], arpei->ar_sha[2],
                arpei->ar_sha[3], arpei->ar_sha[4], arpei->ar_sha[5]);
       while (vendor == NULL && oui_end > 1) {
          oui_string[oui_end] = '\0';	/* Truncate oui string */
-         vendor = hash_find(hash_table, oui_string);
+         hash_query.key = oui_string;
+         hash_result = hsearch(hash_query, FIND);
+         if (hash_result) {
+            vendor = hash_result->data;
+         } else {
+            vendor = NULL;
+         }
          oui_end--;
       }
       cp = msg;
@@ -2275,7 +2282,6 @@ unmarshal_arp_pkt(const unsigned char *buffer, size_t buf_len,
  *
  *	Inputs:
  *
- *	table		The handle of the hash table
  *	map_filename	The name of the file containing the mappings
  *
  *	Returns:
@@ -2283,7 +2289,7 @@ unmarshal_arp_pkt(const unsigned char *buffer, size_t buf_len,
  *	The number of entries added to the hash table.
  */
 int
-add_mac_vendor(struct hash_control *table, const char *map_filename) {
+add_mac_vendor(const char *map_filename) {
    static int first_call=1;
    FILE *fp;	/* MAC/Vendor file handle */
    static const char *oui_pat_str = "([^\t]+)\t[\t ]*([^\t\r\n]+)";
@@ -2296,7 +2302,7 @@ add_mac_vendor(struct hash_control *table, const char *map_filename) {
    char line[MAXLINE];
    int line_count;
    int result;
-   const char *result_str;
+   ENTRY hash_entry;
 /*
  *	Compile the regex pattern if this is the first time we
  *	have been called.
@@ -2345,11 +2351,10 @@ add_mac_vendor(struct hash_control *table, const char *map_filename) {
          key[key_len] = '\0';
          strncpy(data, line+pmatch[2].rm_so, data_len);
          data[data_len] = '\0';
-         if ((result_str = hash_insert(table, key, data)) != NULL) {
-/* Ignore "exists" because there are a few duplicates in the IEEE list */
-            if ((strcmp(result_str, "exists")) != 0) {
-               warn_msg("hash_insert(%s, %s): %s", key, data, result_str);
-            }
+         hash_entry.key = key;
+         hash_entry.data = data;
+         if ((hsearch(hash_entry, ENTER)) == NULL) {
+            warn_msg("hsearch([%s, %s], ENTER)", key, data);
          } else {
             line_count++;
          }

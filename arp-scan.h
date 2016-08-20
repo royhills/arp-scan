@@ -122,7 +122,9 @@
 #endif
 #endif
 
-#include "hash.h"		/* Hash table functions */
+#ifdef HAVE_SEARCH_H
+#include <search.h>
+#endif
 
 /* Defines */
 
@@ -162,6 +164,7 @@
 #define OPT_WRITEPKTTOFILE 256		/* --writepkttofile option */
 #define OPT_READPKTFROMFILE 257		/* --readpktfromfile option */
 #define OPT_RANDOMSEED 258		/* --randomseed option */
+#define HASH_TABLE_SIZE 50000		/* Max size of OUI/Vendor hash table */
 
 /* Structures */
 
@@ -238,7 +241,7 @@ unsigned char *hex2data(const char *, size_t *);
 unsigned int hstr_i(const char *);
 char *hexstring(const unsigned char *, size_t);
 int get_ether_addr(const char *, unsigned char *);
-int add_mac_vendor(struct hash_control *, const char *);
+int add_mac_vendor(const char *);
 char *get_mac_vendor_filename(const char *, const char *, const char *);
 /* Wrappers */
 int Gettimeofday(struct timeval *);

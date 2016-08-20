@@ -1,3 +1,10 @@
+2016-08-20 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c, arp-scan.h: Use posix hash table functions hcreate(),
+	  hsearch() and hdestroy() instead of the gas hash table code.
+
+	* hash.c, hash.h, obstack.c, obstack.h: Removed.
+
 2016-08-13 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* get-oui, get-oui.1, arp-scan.1: Update IEEE OUI download location.
