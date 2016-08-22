@@ -1,3 +1,12 @@
+2016-08-22 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* configure.ac: Remove function replacement for inet_aton, as all
+	  systems I'm aware of have this function now.  This replacement
+	  was needed for Solaris 8, but Solaris 10 does not need it and I
+	  doubt that anyone is still using versions of Solaris prior to 10.
+
+	* inet_aton.c: Removed.
+
 2016-08-20 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c, arp-scan.h: Use posix hash table functions hcreate(),

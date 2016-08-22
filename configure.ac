@@ -47,7 +47,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 
 dnl Checks for libraries.
-dnl Solaris 8 needs nsl and socket.  Linux and {Free,Open}BSD do not.
+dnl Solaris 10 needs nsl and socket.  Linux and {Free,Open}BSD do not.
 dnl Just about everything will need pcap.
 AC_SEARCH_LIBS([gethostbyname], [nsl])
 AC_SEARCH_LIBS([socket], [socket])
@@ -208,18 +208,12 @@ dnl   *cygwin* )
       ;;
 esac
 
-dnl GNU systems e.g. Linux have getopt_long_only, but many other systems
-dnl e.g. FreeBSD 4.3 and Solaris 8 do not.  For systems that don't have it,
-dnl use the GNU getopt sources (obtained from glibc).
+dnl Linux and most BSD systems have getopt_long_only, but NetBSD 7.0 doesn't.
+dnl For systems that don't have it, use the GNU getopt sources from glibc.
 AC_CHECK_FUNC([getopt_long_only], ,
   [ AC_LIBOBJ(getopt)
     AC_LIBOBJ(getopt1)
     AC_LIBSOURCE(getopt.h) ])
-
-dnl Do we have inet_aton?  Most systems do, but some e.g. Solaris don't
-dnl If we don't have it, then use Russ Allbery's implementation as a
-dnl replacement function.
-AC_CHECK_FUNC(inet_aton, , [ AC_LIBOBJ(inet_aton) ])
 
 dnl Check for strlcat and strlcpy.  If we don't have them, use the replacement
 dnl functions from OpenBSD.  Most modern C libraries have these functions,
