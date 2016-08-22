@@ -48,7 +48,8 @@ my $arpscan="arp-scan -q -r 1";
 # FreeBSD 4.3	FreeBSD 4.3 i386 on VMware
 # DragonflyBSD 2.0	Dragonfly BSD 2.0.0 i386 on VMware
 # DragonflyBSD 3.0	Dragonfly BSD 3.0.2 i386 on VMware
-# DragonflyBSD 3.2	Dragonfly BSD 3.2.2 amd64 on VMware# Win 3.11	Windows for Workgroups 3.11/DOS 6.22 on VMware
+# DragonflyBSD 3.2	Dragonfly BSD 3.2.2 amd64 on VMware
+# Win 3.11	Windows for Workgroups 3.11/DOS 6.22 on VMware
 # 95		Windows 95 OSR2 on VMware
 # Win98		Windows 98 SE on VMware
 # WinME		Windows ME on VMware
@@ -69,7 +70,8 @@ my $arpscan="arp-scan -q -r 1";
 # Linux 2.6	Kindle 3.1 on Amazon Kindle 3
 # Linux 2.6	Linux 2.6.32.60 x86_64 on VMware (debian squeeze)
 # Linux 3.2	Linux 3.2.0 686 on VMware (debian wheezy)
-# Linux 3.8	Linux 3.8.8 x86_64 on VMware (fedora 17) # Cisco IOS	IOS 11.2(17) on Cisco 2503
+# Linux 3.8	Linux 3.8.8 x86_64 on VMware (fedora 17)
+# Cisco IOS	IOS 11.2(17) on Cisco 2503
 # Cisco IOS	IOS 11.3(11b)T2 on Cisco 2503
 # Cisco IOS	IOS 12.0(8) on Cisco 1601
 # Cisco IOS	IOS 12.1(27b) on Cisco 2621
@@ -103,7 +105,8 @@ my $arpscan="arp-scan -q -r 1";
 # NetBSD 2.0.2	NetBSD 2.0.2 i386 on VMware
 # NetBSD 4.0	NetBSD 4.0 i386 on VMware
 # NetBSD 5.1	NetBSD 5.1.2 i386 on VMware
-# NetBSD 6.0-amd64	NetBSD 6.0.1 amd64 on VMware# IPSO 3.2.1	IPSO 3.2.1-fcs1 on Nokia VPN 210
+# NetBSD 6.0-amd64	NetBSD 6.0.1 amd64 on VMware
+# IPSO 3.2.1	IPSO 3.2.1-fcs1 on Nokia VPN 210
 # Netware 6.5	Novell NetWare 6.5 on VMware
 # HP-UX 11	HP-UX B.11.00 A 9000/712 (PA-RISC)
 # PIX OS	PIX OS (unknown vsn) on Cisco PIX 525
