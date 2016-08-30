@@ -4,7 +4,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-FINGERPRINT 1 "April 5, 2007"
+.TH ARP-FINGERPRINT 1 "August 20, 2016"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-fingerprint \- Fingerprint a system using ARP
@@ -102,6 +102,10 @@ Pass specified options to arp-scan. You need to enclose the options
 string in quotes if it contains spaces. e.g.
 -o "-I eth1".  The commonly used options are --interface (-I) and --numeric
 (-N).
+.TP
+.B -l
+Fingerprint all hosts on the local network. You do not need to specify any
+target hosts if this option is given.
 .SH EXAMPLES
 .nf
 $ arp-fingerprint 192.168.0.1

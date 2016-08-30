@@ -1,3 +1,10 @@
+2016-08-30 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-fingerprint: Merge changes by Rhig to add "-l" option.
+
+	* arp-fingerprint: Added patterns for FreeBSD 10.3, DragonflyBSD 4.6,
+	  Windows10, Linux 4.0, Linux 4.6, OpenBSD 5.9, NetBSD 7.0.
+
 2016-08-22 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* configure.ac: Remove function replacement for inet_aton, as all
