@@ -17,10 +17,6 @@ Use the new libpcap 1.0 API functions pcap_create(), pcap_set_XXX(),
 pcap_activate() instead of the old pcap_open_live() once we can be sure that
 all supported OSes use libpcap 1.0 or later.
 
-Use source_mac rather than interface_mac in the pcap filter, as suggested by
-Justin Keogh. This will allow arp-scan to receive packets with spoofed MAC
-source addresses.
-
 Add support for Cisco ISL VLANs in addition to 802.1Q VLANs. Suggested by
 Daniel at commonexploits.
 

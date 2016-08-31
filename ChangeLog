@@ -1,3 +1,13 @@
+2016-08-31 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c, arp-scan.h: Merge changes by tissieres to use
+	  source_mac rather than interface_mac in the pcap filter. This
+	  requires us to enable promiscuous mode to ensure that the
+	  ARP replies are received.
+
+	* configure.ac: Increment version number to 1.9.4 to reflect the
+	  changes made since 2016-08-13.
+
 2016-08-30 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-fingerprint: Merge changes by Rhig to add "-l" option.
