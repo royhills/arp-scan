@@ -138,7 +138,7 @@
 #define DEFAULT_RETRY 2                 /* Default number of retries */
 #define DEFAULT_TIMEOUT 500             /* Default per-host timeout in ms */
 #define SNAPLEN 64			/* 14 (ether) + 28 (ARP) + extra */
-#define PROMISC 0			/* Enable promiscuous mode */
+#define PROMISC 1			/* Enable promiscuous mode */
 #define TO_MS 0				/* Timeout for pcap_open_live() */
 #define OPTIMISE 1			/* Optimise pcap filter */
 #define ARPHRD_ETHER 1			/* Ethernet ARP type */
