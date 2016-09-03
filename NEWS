@@ -1,10 +1,34 @@
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
-2013-11-24 arp-scan 1.9.2
+2016-09-03 arp-scan 1.9.5
 
-* Updated IEEE OUI and IAB MAC/Vendor files.  There are now XXXXX OUI entries
-  and XXXX IAB entries.
+* Use posix hash table functions hcreate(), hsearch() and hdestroy() instead
+  of the gas hash table code. Thanks to nihilus for the suggestion.
+
+* Remove function replacement for inet_aton, as this was only required for
+  Solaris 8, which is now considered obsolete.
+
+* Added arp-fingerprint patterns for FreeBSD 10.3, DragonflyBSD 4.6, Windows10,
+  Linux 4.0, Linux 4.6, OpenBSD 5.9, NetBSD 7.0.
+
+* Added "-l" option to arp-fingerprint to support fingerpringing all hosts on
+  the local network. Thanks to Rhig for the pull request.
+
+* Use the source_mac rather than interface_mac in the pcap filter, to permit
+  reception of packets with spoofed MAC source address. Thanks to tissieres
+  for the pull request.
+
+* Use the libpcap 1.0 API functions pcap_create() instead of pcap_open_live().
+  This means that arp-scan now requires libpcap 1.0 or later and will not work
+  with earlier libpcap versions.
+
+* Updated IEEE OUI and IAB download locations to reflect IEEE website changes.
+
+* Updated IEEE OUI and IAB MAC/Vendor files.  There are now 22487 OUI entries
+  and 4575 IAB entries.
+
+2013-11-24 arp-scan 1.9.2
 
 * Added new --plain (-x) option to surpress printing of header and footer text,
   and only display one output line for each responding host. Idea from Stefan
@@ -13,7 +37,7 @@ release.  For more details please read the ChangeLog file.
 * Use LWP::UserAgent instead of LWP::Simple in get-oui and get-iab to enable
   the raw content to be obtained, which avoids Unicode/UTF-8 issues.
 
-* Added arp-finherprint patterns for WIZnet W5100 and Cisco IOS 15.0.
+* Added arp-fingerprint patterns for WIZnet W5100 and Cisco IOS 15.0.
 
 * Moved arp-scan development from internal SVN repository to github at
   https://github.com/royhills/arp-scan. The move to git means that the commit
