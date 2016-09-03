@@ -1,5 +1,5 @@
 /*
- * The ARP Scanner (arp-scan) is Copyright (C) 2005-2013 Roy Hills,
+ * The ARP Scanner (arp-scan) is Copyright (C) 2005-2016 Roy Hills,
  * NTA Monitor Ltd.
  *
  * This file is part of arp-scan.
@@ -195,9 +195,16 @@ main(int argc, char *argv[]) {
       if (!(pcap_handle = pcap_open_offline(pkt_filename, errbuf)))
          err_msg("pcap_open_offline: %s", errbuf);
    } else if (!pkt_write_file_flag) {
-      if (!(pcap_handle = pcap_open_live(if_name, snaplen, PROMISC, TO_MS,
-          errbuf)))
-         err_msg("pcap_open_live: %s", errbuf);
+      if (!(pcap_handle = pcap_create(if_name, errbuf)))
+         err_msg("pcap_create: %s", errbuf);
+      if ((pcap_set_snaplen(pcap_handle, snaplen)) < 0)
+         err_msg("pcap_set_snaplen: %s", pcap_geterr(pcap_handle));
+      if ((pcap_set_promisc(pcap_handle, PROMISC)) < 0)
+         err_msg("pcap_set_promisc: %s", pcap_geterr(pcap_handle));
+      if ((pcap_set_timeout(pcap_handle, TO_MS)) < 0)
+         err_msg("pcap_set_timeout: %s", pcap_geterr(pcap_handle));
+      if ((pcap_activate(pcap_handle)) < 0)
+         err_msg("pcap_activate: %s", pcap_geterr(pcap_handle));
    } else {
       pcap_handle = NULL;
    }
@@ -1978,7 +1985,7 @@ process_options(int argc, char *argv[]) {
 void
 arp_scan_version (void) {
    fprintf(stdout, "%s\n\n", PACKAGE_STRING);
-   fprintf(stdout, "Copyright (C) 2005-2013 Roy Hills, NTA Monitor Ltd.\n");
+   fprintf(stdout, "Copyright (C) 2005-2016 Roy Hills, NTA Monitor Ltd.\n");
    fprintf(stdout, "arp-scan comes with NO WARRANTY to the extent permitted by law.\n");
    fprintf(stdout, "You may redistribute copies of arp-scan under the terms of the GNU\n");
    fprintf(stdout, "General Public License.\n");

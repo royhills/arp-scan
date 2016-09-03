@@ -13,10 +13,6 @@ Add XML output format.
 
 MPLS tag support.
 
-Use the new libpcap 1.0 API functions pcap_create(), pcap_set_XXX(), 
-pcap_activate() instead of the old pcap_open_live() once we can be sure that
-all supported OSes use libpcap 1.0 or later.
-
 Add support for Cisco ISL VLANs in addition to 802.1Q VLANs. Suggested by
 Daniel at commonexploits.
 

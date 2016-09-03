@@ -1,3 +1,18 @@
+2016-09-03 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Use the new libpcap 1.0 API functions pcap_create(),
+	  pcap_set_XXX(), pcap_activate() instead of the old pcap_open_live().
+	  This requires libpcap 1.0 or later, so this and future versions of
+	  arp-scan will not work with libpcap 0.9 or earlier.
+
+	* configure.ac: Change pcap compatibility test to check for pcap_create
+	  instead of pcap_sendpacket to test for libpcap 1.0 or later.
+
+	* configure.ac: Increment version number to 1.9.5 to reflect the
+	  libpcap API change.
+
+	* Modified copyright statement in files to include up to 2016.
+
 2016-08-31 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c, arp-scan.h: Merge changes by tissieres to use

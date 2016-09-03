@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan],[1.9.4],[https://github.com/royhills/arp-scan])
+AC_INIT([arp-scan],[1.9.5],[https://github.com/royhills/arp-scan])
 AC_PREREQ(2.61)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -54,11 +54,11 @@ AC_SEARCH_LIBS([socket], [socket])
 AC_SEARCH_LIBS([pcap_open_live], [pcap], ,
    [
    AC_MSG_NOTICE([Cannot find pcap library containing pcap_open_live])
-   AC_MSG_ERROR([Check that you have libpcap version 0.9 or later installed])
+   AC_MSG_ERROR([Check that you have libpcap version 1.0 or later installed])
    ])
 
-dnl Check that the pcap library contains pcap_sendpacket
-dnl This was introduced in version 0.9, and our application requires it.
+dnl Check that the pcap library contains pcap_create
+dnl This was introduced in version 1.0, and our application requires it.
 dnl
 dnl We perform this check as a seperate step, rather than just checking for
 dnl pcap_lib_version in the earlier AC_SEARCH_LIBS call, because it
@@ -66,12 +66,12 @@ dnl allows us to provide different error messages for missing pcap and non
 dnl functional pcap and so avoids confusing generic error messages.
 dnl
 AC_MSG_CHECKING([for a compatible pcap library])
-AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_sendpacket])],
+AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_create])],
    [AC_MSG_RESULT([yes])],
    [
    AC_MSG_RESULT([no])
-   AC_MSG_NOTICE([Cannot find pcap_sendpacket in pcap library])
-   AC_MSG_ERROR([Check that the pcap library is at least version 0.9])
+   AC_MSG_NOTICE([Cannot find pcap_create in pcap library])
+   AC_MSG_ERROR([Check that the pcap library is at least version 1.0])
    ])
 
 dnl Checks for header files.
