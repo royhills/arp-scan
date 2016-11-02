@@ -118,6 +118,10 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
    link_t *handle;
 
    handle = link_open(if_name);
+   if(!handle) {
+       err_sys("link_open");
+       return;
+   }
 
 /* Obtain hardware address for specified interface */
    if ((ioctl(handle->fd, SIOCGIFHWADDR, &(handle->ifr))) != 0)
