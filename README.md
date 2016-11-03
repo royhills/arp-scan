@@ -22,7 +22,7 @@ arp-scan uses the standard GNU automake and autoconf tools, so the typical insta
 - Optionally run ```make check``` to verify that everything works as expected
 - Run ```make install``` to install (you'll need root or sudo for this part)
 
-You will need GNU automake and autoconf, the make utility, an ANSI C compiler (for example gcc or clang), the development header files and libraries, and libpcap version 0.9 or later.
+You will need GNU automake and autoconf, the make utility, an ANSI C compiler (for example gcc or clang), the development header files and libraries, and libpcap version 1.0 or later.
 
 If you want to run the Perl scripts arp-fingerprint, get-oui and get-iab, you
 will need to have the Perl interpreter installed.  These scripts were tested
