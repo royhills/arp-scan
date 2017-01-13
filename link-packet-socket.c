@@ -127,7 +127,7 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
    if ((ioctl(handle->fd, SIOCGIFHWADDR, &(handle->ifr))) != 0)
       err_sys("ioctl");
 
-   link_close(handle);
-
    memcpy(hw_address, handle->ifr.ifr_ifru.ifru_hwaddr.sa_data, ETH_ALEN);
+
+   link_close(handle);
 }
