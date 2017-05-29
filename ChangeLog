@@ -1,3 +1,7 @@
+2017-05-29 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Updated ieee-oui.txt and ieee-iab.txt files.
+
 2016-09-03 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Use the new libpcap 1.0 API functions pcap_create(),
