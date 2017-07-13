@@ -708,7 +708,11 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       if (vendor)
          msg = make_message("%s\t%s", cp, vendor);
       else
-         msg = make_message("%s\t%s", cp, "(Unknown)");
+         /* Of the first octet of the address, check the second-least-significant bit */
+         if (arpei->ar_sha[0] & (1<<1))
+             msg = make_message("%s\t%s", cp, "(Unknown: locally administered)");
+         else
+             msg = make_message("%s\t%s", cp, "(Unknown)");
       free(cp);
 /*
  *	Check that any data after the ARP packet is zero.
