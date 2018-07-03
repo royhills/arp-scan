@@ -1,3 +1,8 @@
+2017-07-19 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Print "locally administered" for qualifing OUIs.  Thanks to sanderjo
+	  for this pull request.
+
 2017-05-29 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* Updated ieee-oui.txt and ieee-iab.txt files.
