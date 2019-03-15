@@ -1,3 +1,12 @@
+2019-03-16 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* acinclude.m4: Use AC_TRY_LINK instead of AC_TRY_COMPILE when
+	  determining if tack protector support is supported, as some
+	  operating system may lack the libssp library.  Thanks to
+	  ffontaine for this pull request.
+
+	* Updated ieee-oui.txt and ieee-iab.txt files.
+
 2017-07-19 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* Print "locally administered" for qualifing OUIs.  Thanks to sanderjo

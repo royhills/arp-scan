@@ -222,6 +222,10 @@ dnl
 dnl Useful macros for autoconf to check for ssp-patched gcc
 dnl 1.0 - September 2003 - Tiago Sousa <mirage@kaotik.org>
 dnl
+dnl Modified by ffontaine pull request: use AC_TRY_LINK instead of
+dnl AC_TRY_COMPILE because some systems may be missing the libssp library
+dnl even though the compiler accepts the option.
+dnl
 dnl About ssp:
 dnl GCC extension for protecting applications from stack-smashing attacks
 dnl http://www.research.ibm.com/trl/projects/security/ssp/
