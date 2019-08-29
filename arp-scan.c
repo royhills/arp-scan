@@ -215,10 +215,12 @@ main(int argc, char *argv[]) {
       if ((datalink=pcap_datalink(pcap_handle)) < 0)
          err_msg("pcap_datalink: %s", pcap_geterr(pcap_handle));
       if (!plain_flag) {
-         printf("Interface: %s, datalink type: %s (%s)\n",
+         printf("Interface: %s, datalink type: %s (%s), MAC Addr: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
                 pkt_read_file_flag ? "savefile" : if_name,
                 pcap_datalink_val_to_name(datalink),
-                pcap_datalink_val_to_description(datalink));
+                pcap_datalink_val_to_description(datalink),
+                interface_mac[0], interface_mac[1], interface_mac[2],
+                interface_mac[3], interface_mac[4], interface_mac[5]);
       }
       if (datalink != DLT_EN10MB) {
          warn_msg("WARNING: Unsupported datalink type");

@@ -1,3 +1,12 @@
+2019-08-29 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: include the interface MAC address in the interface
+	  summary output.  E.g.
+
+          Interface: ens33, datalink type: EN10MB (Ethernet), MAC Addr: 00:0c:29:01:0d:21
+
+	* Updated ieee-oui.txt and ieee-iab.txt files.
+
 2019-03-16 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* acinclude.m4: Use AC_TRY_LINK instead of AC_TRY_COMPILE when
