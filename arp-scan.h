@@ -231,7 +231,7 @@ void callback(u_char *, const struct pcap_pkthdr *, const u_char *);
 void process_options(int, char *[]);
 struct in_addr *get_host_address(const char *, int, struct in_addr *, char **);
 const char *my_ntoa(struct in_addr);
-int get_source_ip(const char *, uint32_t *);
+int get_source_ip(const char *, struct in_addr *);
 void get_hardware_address(const char *, unsigned char []);
 void marshal_arp_pkt(unsigned char *, ether_hdr *, arp_ether_ipv4 *, size_t *,
                      const unsigned char *, size_t);

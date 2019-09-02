@@ -118,6 +118,7 @@ main(int argc, char *argv[]) {
    int pcap_fd;			/* Pcap file descriptor */
    unsigned char interface_mac[ETH_ALEN];
    pcap_t *pcap_handle;		/* pcap handle */
+   struct in_addr interface_ip_addr;
 /*
  *      Initialise file names to the empty string.
  */
@@ -143,11 +144,11 @@ main(int argc, char *argv[]) {
  *	with the --interface option then use that, otherwise use
  *	pcap_lookupdev() to pick a suitable interface.
  */
-   if (!if_name) {
-      if (!(if_name=pcap_lookupdev(errbuf))) {
-         err_msg("pcap_lookupdev: %s", errbuf);
+      if (!if_name) {
+         if (!(if_name=pcap_lookupdev(errbuf))) {
+            err_msg("pcap_lookupdev: %s", errbuf);
+         }
       }
-   }
 /*
  *	Obtain the MAC address for the selected interface, and use this
  *	as default for the source hardware addresses in the frame header
@@ -169,20 +170,20 @@ main(int argc, char *argv[]) {
       if (arp_sha_flag == 0)
          memcpy(arp_sha, interface_mac, ETH_ALEN);
 /*
- *	If the user has not specified the ARP source address, obtain the
- *	interface IP address and use that as the default value.
+ *	Obtain the interface IP address, and use that as the default value
+ *	if the user has not manually specified the ARP source address.
  */
+      get_addr_status = get_source_ip(if_name, &interface_ip_addr);
       if (arp_spa_flag == 0) {
-         get_addr_status = get_source_ip(if_name, &arp_spa);
          if (get_addr_status == -1) {
             warn_msg("WARNING: Could not obtain IP address for interface %s. "
                      "Using 0.0.0.0 for", if_name);
-            warn_msg("the source address, which is probably not what you want.");
+            warn_msg("the source address, which may not be what you want.");
             warn_msg("Either configure %s with an IP address, or manually specify"
                      " the address", if_name);
             warn_msg("with the --arpspa option.");
-            memset(&arp_spa, '\0', sizeof(arp_spa));
          }
+         memcpy(&arp_spa, &(interface_ip_addr.s_addr), sizeof(arp_spa));
       }
    }
 /*
@@ -215,12 +216,16 @@ main(int argc, char *argv[]) {
       if ((datalink=pcap_datalink(pcap_handle)) < 0)
          err_msg("pcap_datalink: %s", pcap_geterr(pcap_handle));
       if (!plain_flag) {
-         printf("Interface: %s, datalink type: %s (%s), MAC Addr: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
-                pkt_read_file_flag ? "savefile" : if_name,
-                pcap_datalink_val_to_name(datalink),
-                pcap_datalink_val_to_description(datalink),
-                interface_mac[0], interface_mac[1], interface_mac[2],
-                interface_mac[3], interface_mac[4], interface_mac[5]);
+         if (!pkt_read_file_flag) {
+            printf("Interface: %s, type: %s, "
+                   "MAC: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x, IPv4: %s\n",
+                   if_name, pcap_datalink_val_to_name(datalink),
+                   interface_mac[0], interface_mac[1], interface_mac[2],
+                   interface_mac[3], interface_mac[4], interface_mac[5],
+                   (interface_ip_addr.s_addr==0) ? "(none)" : my_ntoa(interface_ip_addr));
+         } else {
+            printf("Interface: pcap file\n");
+         }
       }
       if (datalink != DLT_EN10MB) {
          warn_msg("WARNING: Unsupported datalink type");
@@ -2430,7 +2435,7 @@ get_mac_vendor_filename(const char *specified_filename,
  *      Zero on success, or -1 on failure.
  */
 int
-get_source_ip(const char *interface_name, uint32_t *ip_addr) {
+get_source_ip(const char *interface_name, struct in_addr *ip_addr) {
    char errbuf[PCAP_ERRBUF_SIZE];
    pcap_if_t *alldevsp;
    pcap_if_t *device;
@@ -2459,10 +2464,12 @@ get_source_ip(const char *interface_name, uint32_t *ip_addr) {
       }
    }
    if (sin == NULL) {
+      memset(&(ip_addr->s_addr), '\0', sizeof(ip_addr->s_addr));
+      pcap_freealldevs(alldevsp);
       return -1;
    }
 
-   memcpy(ip_addr, &(sin->sin_addr.s_addr), sizeof(*ip_addr));
+   memcpy(ip_addr, &(sin->sin_addr), sizeof(*ip_addr));
 
    pcap_freealldevs(alldevsp);
 
