@@ -202,7 +202,9 @@ main(int argc, char *argv[]) {
          err_msg("pcap_set_snaplen: %s", pcap_geterr(pcap_handle));
       if ((pcap_set_promisc(pcap_handle, PROMISC)) < 0)
          err_msg("pcap_set_promisc: %s", pcap_geterr(pcap_handle));
-      if ((pcap_set_timeout(pcap_handle, TO_MS)) < 0)
+      if ((pcap_set_immediate_mode(pcap_handle, 1)) < 0)
+         err_msg("pcap_set_immediate_mode: %s", pcap_geterr(pcap_handle));
+      if ((pcap_set_timeout(pcap_handle, TO_MS)) < 0) /* Is this still needed? */
          err_msg("pcap_set_timeout: %s", pcap_geterr(pcap_handle));
       if ((pcap_activate(pcap_handle)) < 0)
          err_msg("pcap_activate: %s", pcap_geterr(pcap_handle));
@@ -244,33 +246,7 @@ main(int argc, char *argv[]) {
          err_msg("pcap_fileno: %s", pcap_geterr(pcap_handle));
       if ((pcap_setnonblock(pcap_handle, 1, errbuf)) < 0)
          err_msg("pcap_setnonblock: %s", errbuf);
-/*
- * For the BPF pcap implementation, set the BPF device into immediate mode,
- * otherwise it will buffer the responses.
- */
-#ifdef ARP_PCAP_BPF
-#ifdef BIOCIMMEDIATE
-      {
-         unsigned int one = 1;
 
-         if (ioctl(pcap_fd, BIOCIMMEDIATE, &one) < 0)
-            err_sys("ioctl BIOCIMMEDIATE");
-      }
-#endif /* BIOCIMMEDIATE */
-#endif /* ARP_PCAP_BPF */
-/*
- * For the DLPI pcap implementation on Solaris, set the bufmod timeout to
- * zero. This has the side-effect of setting the chunk size to zero as
- * well, so bufmod will pass all incoming messages on immediately.
- */
-#ifdef ARP_PCAP_DLPI
-      {
-         struct timeval time_zero = {0, 0};
-
-         if (ioctl(pcap_fd, SBIOCSTIME, &time_zero) < 0)
-            err_sys("ioctl SBIOCSTIME");
-      }
-#endif
       if (pcap_lookupnet(if_name, &localnet, &netmask, errbuf) < 0) {
          memset(&localnet, '\0', sizeof(localnet));
          memset(&netmask, '\0', sizeof(netmask));

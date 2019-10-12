@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan],[1.9.5],[https://github.com/royhills/arp-scan])
+AC_INIT([arp-scan],[1.9.6],[https://github.com/royhills/arp-scan])
 AC_PREREQ(2.61)
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -186,7 +186,6 @@ dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
       #include <sys/param.h>
       #endif
       ])
-      AC_DEFINE(ARP_PCAP_BPF, 1, [Define to 1 if pcap uses BPF])
       AC_LIBOBJ([link-bpf])
       ;;
    *solaris* )
@@ -199,7 +198,6 @@ dnl Solaris 9 needs sys/types.h and sys/socket.h included before net/if.h.
       #include <sys/socket.h>
       #endif
       ])
-      AC_DEFINE(ARP_PCAP_DLPI, 1, [Define to 1 if pcap uses DLPI])
       AC_LIBOBJ([link-dlpi])
       ;;
 dnl   *cygwin* )
