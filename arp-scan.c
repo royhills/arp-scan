@@ -1610,15 +1610,6 @@ recvfrom_wto(int sock_fd, int tmo, pcap_t *pcap_handle) {
    if (n < 0) {
       err_sys("select");
    } else if (n == 0 && sock_fd >= 0) {
-/*
- * For the BPF pcap implementation, we call pcap_dispatch() even if select
- * times out. This is because on many BPF implementations, select() doesn't
- * indicate if there is input waiting on a BPF device.
- */
-#ifdef ARP_PCAP_BPF
-      if ((pcap_dispatch(pcap_handle, -1, callback, NULL)) == -1)
-         err_sys("pcap_dispatch: %s\n", pcap_geterr(pcap_handle));
-#endif
       return;	/* Timeout */
    }
 /*

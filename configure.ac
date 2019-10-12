@@ -54,11 +54,11 @@ AC_SEARCH_LIBS([socket], [socket])
 AC_SEARCH_LIBS([pcap_open_live], [pcap], ,
    [
    AC_MSG_NOTICE([Cannot find pcap library containing pcap_open_live])
-   AC_MSG_ERROR([Check that you have libpcap version 1.0 or later installed])
+   AC_MSG_ERROR([Check that you have libpcap version 1.5 or later installed])
    ])
 
-dnl Check that the pcap library contains pcap_create
-dnl This was introduced in version 1.0, and our application requires it.
+dnl Check that the pcap library contains pcap_set_immediate_mode()
+dnl This was introduced in libpcap version 1.5, and our application requires it.
 dnl
 dnl We perform this check as a seperate step, rather than just checking for
 dnl pcap_lib_version in the earlier AC_SEARCH_LIBS call, because it
@@ -66,12 +66,12 @@ dnl allows us to provide different error messages for missing pcap and non
 dnl functional pcap and so avoids confusing generic error messages.
 dnl
 AC_MSG_CHECKING([for a compatible pcap library])
-AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_create])],
+AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_set_immediate_mode])],
    [AC_MSG_RESULT([yes])],
    [
    AC_MSG_RESULT([no])
-   AC_MSG_NOTICE([Cannot find pcap_create in pcap library])
-   AC_MSG_ERROR([Check that the pcap library is at least version 1.0])
+   AC_MSG_NOTICE([Cannot find pcap_set_immediate_mode in pcap library])
+   AC_MSG_ERROR([Check that the pcap library is at least version 1.5])
    ])
 
 dnl Checks for header files.
