@@ -1,6 +1,13 @@
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
+2019-10-13 arp-scan 1.9.6
+
+* Use libpcap function pcap_set_immediate_mode() instead of ioctl calls to
+  ensure packets are delivered immediately. This means that arp-scan now
+  requires libpcap 1.5.0 or later and will not work with earlier libpcap
+  versions.
+
 2016-09-03 arp-scan 1.9.5
 
 * Use posix hash table functions hcreate(), hsearch() and hdestroy() instead

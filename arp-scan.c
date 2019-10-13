@@ -142,11 +142,11 @@ main(int argc, char *argv[]) {
 /*
  *	Determine network interface to use. If the interface was specified
  *	with the --interface option then use that, otherwise use
- *	pcap_lookupdev() to pick a suitable interface.
+ *	my_lookupdev() to pick a suitable interface.
  */
       if (!if_name) {
-         if (!(if_name=pcap_lookupdev(errbuf))) {
-            err_msg("pcap_lookupdev: %s", errbuf);
+         if (!(if_name=my_lookupdev(errbuf))) {
+            err_msg("my_lookupdev: %s", errbuf);
          }
       }
 /*

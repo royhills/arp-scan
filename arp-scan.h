@@ -249,6 +249,7 @@ void *Malloc(size_t);
 void *Realloc(void *, size_t);
 unsigned long int Strtoul(const char *, int);
 long int Strtol(const char *, int);
+char *my_lookupdev(char *);
 unsigned str_to_bandwidth(const char *);
 unsigned str_to_interval(const char *);
 char *dupstr(const char *);

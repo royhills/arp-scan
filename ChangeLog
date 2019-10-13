@@ -1,3 +1,31 @@
+2019-10-13 Roy Hills <Roy.Hills@hotmail.com>
+
+	* arp-scan.c: Call pcap_set_immediate_mode() on the pcap handle so
+	  captured packets are processed immediately.  This pcap function was
+	  added in libpcap 1.5.0, so this and future versions of arp-scan
+	  require libpcap 1.5.0 or later.  Thanks for @cleoo for reporting the
+	  bug in arp-scan 1.9.5 on Arch Linux 2019.10.01 x64, and to
+	  @guyharris for providing the solution.
+
+	* arp-scan.c: Remove ioctl workarounds for BSD with BPF and Solaris
+	  with DLPI that were used to ensure immediate packet delivery.  These
+	  workarounds are superseded by pcap_set_immediate_mode().
+
+	* wrappers.c: New function my_lookupdev() to replace pcap_lookupdev()
+	  which is depreciated in libpcap 1.9.0 and later.
+
+	* configure.ac: Remove ARP_PCAP_BPF and ARP_PCAP_DLPI defines, as these
+	  are no longer used after the removal of the ioctl workarounds.
+
+	* configure.ac: Change pcap compatibility test to check for
+	  pcap_set_immediate_mode instead of pcap_create to test for libpcap
+	  1.5.0 or later.
+
+	* configure.ac: Increment version number to 1.9.6 to reflect the
+	  libpcap API change.
+
+	* Updated ieee-oui.txt and ieee-iab.txt files.
+
 2019-08-29 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: include the interface MAC address in the interface
