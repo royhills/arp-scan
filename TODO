@@ -2,14 +2,12 @@ Code tidy up: reduce the number of global variables.
 
 Add support for win32 link-layer send and receive.
 
-Add support for Token Ring.
-
 Find portable function to get interface MAC address.
 
 Investigate response packets >60 bytes long, e.g. Windows 2003 Server and
 some Cisco.
 
-Add XML output format.
+Add XML or JSON output format.
 
 MPLS tag support.
 
@@ -17,5 +15,5 @@ Add support for Cisco ISL VLANs in addition to 802.1Q VLANs. Suggested by
 Daniel at commonexploits.
 
 Modify the IEEE MAC/Vendor mapping code and scripts to cater for the
-forthcoming OUI registry restructuring detailed in:
+OUI registry restructuring detailed in:
 http://tools.ietf.org/html/draft-ieee-rac-oui-restructuring-01

@@ -135,67 +135,25 @@ main(int argc, char *argv[]) {
  */
    Gettimeofday(&start_time);
 /*
- *	Obtain network interface details unless we're reading
- *	from a pcap file or writing to a binary file.
- */
-   if (!pkt_read_file_flag && !pkt_write_file_flag) {
-/*
- *	Determine network interface to use. If the interface was specified
- *	with the --interface option then use that, otherwise use
- *	my_lookupdev() to pick a suitable interface.
- */
-      if (!if_name) {
-         if (!(if_name=my_lookupdev(errbuf))) {
-            err_msg("my_lookupdev: %s", errbuf);
-         }
-      }
-/*
- *	Obtain the MAC address for the selected interface, and use this
- *	as default for the source hardware addresses in the frame header
- *	and ARP packet if the user has not specified their values.
- *
- *	Die with an error if we can't get the MAC address, as this
- *	indicates that the interface doesn't have a MAC address, so is
- *	probably not a compatible interface type.
- */
-      get_hardware_address(if_name, interface_mac);
-      if (interface_mac[0]==0 && interface_mac[1]==0 &&
-          interface_mac[2]==0 && interface_mac[3]==0 &&
-          interface_mac[4]==0 && interface_mac[5]==0) {
-         err_msg("ERROR: Could not obtain MAC address for interface %s",
-                 if_name);
-      }
-      if (source_mac_flag == 0)
-         memcpy(source_mac, interface_mac, ETH_ALEN);
-      if (arp_sha_flag == 0)
-         memcpy(arp_sha, interface_mac, ETH_ALEN);
-/*
- *	Obtain the interface IP address, and use that as the default value
- *	if the user has not manually specified the ARP source address.
- */
-      get_addr_status = get_source_ip(if_name, &interface_ip_addr);
-      if (arp_spa_flag == 0) {
-         if (get_addr_status == -1) {
-            warn_msg("WARNING: Could not obtain IP address for interface %s. "
-                     "Using 0.0.0.0 for", if_name);
-            warn_msg("the source address, which may not be what you want.");
-            warn_msg("Either configure %s with an IP address, or manually specify"
-                     " the address", if_name);
-            warn_msg("with the --arpspa option.");
-         }
-         memcpy(&arp_spa, &(interface_ip_addr.s_addr), sizeof(arp_spa));
-      }
-   }
-/*
- *	Open the network device for reading with pcap, or the pcap file if we
- *	have specified --readpktfromfile. If we are writing packets to a binary
- *	file, then set pcap_handle to NULL as we don't need to read packets in
- *	this case.
+ * Open the network device for reading with pcap, or the pcap file if we
+ * have specified --readpktfromfile. If we are writing packets to a binary
+ * file, then set pcap_handle to NULL as we don't need to read packets in
+ * this case.
  */
    if (pkt_read_file_flag) {
       if (!(pcap_handle = pcap_open_offline(pkt_filename, errbuf)))
          err_msg("pcap_open_offline: %s", errbuf);
    } else if (!pkt_write_file_flag) {
+      /*
+       * Determine network interface to use. If the interface was specified
+       * with the --interface option then use that, otherwise use
+       * my_lookupdev() to pick a suitable interface.
+       */
+      if (!if_name) {
+         if (!(if_name=my_lookupdev(errbuf))) {
+            err_msg("my_lookupdev: %s", errbuf);
+         }
+      }
       if (!(pcap_handle = pcap_create(if_name, errbuf)))
          err_msg("pcap_create: %s", errbuf);
       if ((pcap_set_snaplen(pcap_handle, snaplen)) < 0)
@@ -208,6 +166,44 @@ main(int argc, char *argv[]) {
          err_msg("pcap_set_timeout: %s", pcap_geterr(pcap_handle));
       if ((pcap_activate(pcap_handle)) < 0)
          err_msg("pcap_activate: %s", pcap_geterr(pcap_handle));
+      /*
+       * Obtain the MAC address for the selected interface, and use this
+       * as the default value for the source hardware addresses in the frame
+       * header and ARP packet if the user has not specified their values.
+       *
+       * Die with an error if we can't get the MAC address, as this
+       * indicates that the interface doesn't have a MAC address, so is
+       * probably not a compatible interface type.
+       */
+      get_hardware_address(if_name, interface_mac);
+      if (interface_mac[0]==0 && interface_mac[1]==0 &&
+          interface_mac[2]==0 && interface_mac[3]==0 &&
+          interface_mac[4]==0 && interface_mac[5]==0) {
+         err_msg("ERROR: Could not obtain MAC address for interface %s",
+                 if_name);
+      }
+      if (source_mac_flag == 0)
+         memcpy(source_mac, interface_mac, ETH_ALEN);
+      if (arp_sha_flag == 0)
+         memcpy(arp_sha, interface_mac, ETH_ALEN);
+      /*
+       * Obtain the interface IP address, and use that as the default value
+       * if the user has not manually specified the ARP source address.
+       *
+       * Give a warning and use 0.0.0.0 if the interface has no IP address.
+       */
+      get_addr_status = get_source_ip(if_name, &interface_ip_addr);
+      if (arp_spa_flag == 0) {
+         if (get_addr_status == -1) {
+            warn_msg("WARNING: Could not obtain IP address for interface %s. "
+                     "Using 0.0.0.0 for", if_name);
+            warn_msg("the source address, which may not be what you want.");
+            warn_msg("Either configure %s with an IP address, or manually specify"
+                     " the address", if_name);
+            warn_msg("with the --arpspa option.");
+         }
+         memcpy(&arp_spa, &(interface_ip_addr.s_addr), sizeof(arp_spa));
+      }
    } else {
       pcap_handle = NULL;
    }
