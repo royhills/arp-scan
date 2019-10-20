@@ -1,3 +1,17 @@
+2019-10-20 Roy Hills <Roy.Hills@hotmail.com>
+
+	* arp-scan.c: Call the pcap functions before get_hardware_address() to
+	  ensure lack of permissions is reported by pcap_activate() rather
+          than by the link specific get_hardware_address().  This will give
+	  consistent error messages across different platforms.
+
+	  Improve diagnostic message for pcap_activate() errors and warnings.
+
+	* arp-scan.h: Changed pcap_set_timeout() value from 0 to 1000ms.
+          Removed ARRAY_SIZE macro which is no longer used.
+
+	* .gitignore: Added config.h.in~ to .gitignore.
+
 2019-10-13 Roy Hills <Roy.Hills@hotmail.com>
 
 	* arp-scan.c: Call pcap_set_immediate_mode() on the pcap handle so
