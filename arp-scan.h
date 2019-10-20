@@ -139,7 +139,7 @@
 #define DEFAULT_TIMEOUT 500             /* Default per-host timeout in ms */
 #define SNAPLEN 64			/* 14 (ether) + 28 (ARP) + extra */
 #define PROMISC 1			/* Enable promiscuous mode */
-#define TO_MS 0				/* Timeout for pcap_open_live() */
+#define TO_MS 1000			/* Timeout for pcap_set_timeout() */
 #define OPTIMISE 1			/* Optimise pcap filter */
 #define ARPHRD_ETHER 1			/* Ethernet ARP type */
 #define ARPOP_REQUEST 1			/* ARP Request */
@@ -160,7 +160,6 @@
 #define DEFAULT_ETH_PRO	ETH_P_ARP	/* Default Ethernet protocol */
 #define FRAMING_ETHERNET_II 0		/* Standard Ethernet-II Framing */
 #define FRAMING_LLC_SNAP 1		/* 802.3 with LLC/SNAP */
-#define ARRAY_SIZE(a) (sizeof (a) / sizeof ((a)[0]))
 #define OPT_WRITEPKTTOFILE 256		/* --writepkttofile option */
 #define OPT_READPKTFROMFILE 257		/* --readpktfromfile option */
 #define OPT_RANDOMSEED 258		/* --randomseed option */
