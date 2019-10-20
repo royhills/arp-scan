@@ -114,7 +114,7 @@ main(int argc, char *argv[]) {
    bpf_u_int32 netmask;
    bpf_u_int32 localnet;
    int datalink;
-   int get_addr_status = 0;
+   int ret_status = 0;
    int pcap_fd;			/* Pcap file descriptor */
    unsigned char interface_mac[ETH_ALEN];
    pcap_t *pcap_handle;		/* pcap handle */
@@ -164,8 +164,33 @@ main(int argc, char *argv[]) {
          err_msg("pcap_set_immediate_mode: %s", pcap_geterr(pcap_handle));
       if ((pcap_set_timeout(pcap_handle, TO_MS)) < 0) /* Is this still needed? */
          err_msg("pcap_set_timeout: %s", pcap_geterr(pcap_handle));
-      if ((pcap_activate(pcap_handle)) < 0)
-         err_msg("pcap_activate: %s", pcap_geterr(pcap_handle));
+      ret_status = pcap_activate(pcap_handle);
+      if (ret_status < 0) {		/* Error from pcap_activate() */
+         char *cp;
+
+         cp = pcap_geterr(pcap_handle);
+         if (ret_status == PCAP_ERROR)
+            err_msg("pcap_activate: %s", cp);
+         else if ((ret_status == PCAP_ERROR_NO_SUCH_DEVICE ||
+                   ret_status == PCAP_ERROR_PERM_DENIED) && *cp != '\0')
+            err_msg("pcap_activate: %s: %s\n(%s)", if_name,
+                    pcap_statustostr(ret_status), cp);
+         else
+            err_msg("pcap_activate: %s: %s", if_name,
+                    pcap_statustostr(ret_status));
+      } else if (ret_status > 0) {	/* Warning from pcap_activate() */
+         char *cp;
+
+         cp = pcap_geterr(pcap_handle);
+         if (ret_status == PCAP_WARNING)
+            warn_msg("pcap_activate: %s", cp);
+         else if (ret_status == PCAP_WARNING_PROMISC_NOTSUP && *cp != '\0')
+            warn_msg("pcap_activate: %s: %s\n(%s)", if_name,
+                     pcap_statustostr(ret_status), cp);
+         else
+            warn_msg("pcap_activate: %s: %s", if_name,
+                     pcap_statustostr(ret_status));
+      }
       /*
        * Obtain the MAC address for the selected interface, and use this
        * as the default value for the source hardware addresses in the frame
@@ -192,9 +217,9 @@ main(int argc, char *argv[]) {
        *
        * Give a warning and use 0.0.0.0 if the interface has no IP address.
        */
-      get_addr_status = get_source_ip(if_name, &interface_ip_addr);
+      ret_status = get_source_ip(if_name, &interface_ip_addr);
       if (arp_spa_flag == 0) {
-         if (get_addr_status == -1) {
+         if (ret_status == -1) {
             warn_msg("WARNING: Could not obtain IP address for interface %s. "
                      "Using 0.0.0.0 for", if_name);
             warn_msg("the source address, which may not be what you want.");
