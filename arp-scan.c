@@ -95,8 +95,8 @@ main(int argc, char *argv[]) {
    struct timeval now;
    struct timeval diff;         /* Difference between two timevals */
    int select_timeout;          /* Select timeout */
-   ARP_UINT64 loop_timediff;    /* Time since last packet sent in us */
-   ARP_UINT64 host_timediff; /* Time since last pkt sent to this host (us) */
+   uint64_t loop_timediff;    /* Time since last packet sent in us */
+   uint64_t host_timediff; /* Time since last pkt sent to this host (us) */
    struct timeval last_packet_time;     /* Time last packet was sent */
    int req_interval;		/* Requested per-packet interval */
    int cum_err=0;               /* Cumulative timing error */
@@ -487,7 +487,7 @@ main(int argc, char *argv[]) {
       if (packet_out_len < MINIMUM_FRAME_SIZE)
          packet_out_len = MINIMUM_FRAME_SIZE;   /* Adjust to minimum size */
       packet_out_len += PACKET_OVERHEAD;	/* Add layer 2 overhead */
-      interval = ((ARP_UINT64)packet_out_len * 8 * 1000000) / bandwidth;
+      interval = ((uint64_t)packet_out_len * 8 * 1000000) / bandwidth;
       if (verbose > 1) {
          warn_msg("DEBUG: pkt len=%u bytes, bandwidth=%u bps, interval=%u us",
                   packet_out_len, bandwidth, interval);
@@ -524,7 +524,7 @@ main(int argc, char *argv[]) {
  *      potentially send a packet to the current host.
  */
       timeval_diff(&now, &last_packet_time, &diff);
-      loop_timediff = (ARP_UINT64)1000000*diff.tv_sec + diff.tv_usec;
+      loop_timediff = (uint64_t)1000000*diff.tv_sec + diff.tv_usec;
       if (loop_timediff >= (unsigned)req_interval) {
 /*
  *      If the last packet to this host was sent more than the current
@@ -532,7 +532,7 @@ main(int argc, char *argv[]) {
  *      to it.
  */
          timeval_diff(&now, &((*cursor)->last_send_time), &diff);
-         host_timediff = (ARP_UINT64)1000000*diff.tv_sec + diff.tv_usec;
+         host_timediff = (uint64_t)1000000*diff.tv_sec + diff.tv_usec;
          if (host_timediff >= (*cursor)->timeout) {
             if (reset_cum_err) {
                cum_err = 0;
@@ -564,7 +564,7 @@ main(int argc, char *argv[]) {
                remove_host(cursor);     /* Automatically calls advance_cursor() */
                if (first_timeout) {
                   timeval_diff(&now, &((*cursor)->last_send_time), &diff);
-                  host_timediff = (ARP_UINT64)1000000*diff.tv_sec +
+                  host_timediff = (uint64_t)1000000*diff.tv_sec +
                                   diff.tv_usec;
                   while (host_timediff >= (*cursor)->timeout && live_count) {
                      if ((*cursor)->live) {
@@ -576,7 +576,7 @@ main(int argc, char *argv[]) {
                         advance_cursor();
                      }
                      timeval_diff(&now, &((*cursor)->last_send_time), &diff);
-                     host_timediff = (ARP_UINT64)1000000*diff.tv_sec +
+                     host_timediff = (uint64_t)1000000*diff.tv_sec +
                                      diff.tv_usec;
                   }
                   first_timeout=0;

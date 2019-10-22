@@ -46,8 +46,9 @@ fi
 AC_PROG_INSTALL
 
 dnl Checks for libraries.
-dnl Solaris 10 needs nsl and socket.  Linux and {Free,Open}BSD do not.
-dnl Just about everything will need pcap.
+dnl Solaris 10 needs -lnsl for gethostbyname() and -lsocket for socket().
+dnl Linux, {Free,Open,Net,Dragonfly}BSD and MacOS X do not.
+dnl Just about everything will need -lpcap for pcap_open_live().
 AC_SEARCH_LIBS([gethostbyname], [nsl])
 AC_SEARCH_LIBS([socket], [socket])
 AC_SEARCH_LIBS([pcap_open_live], [pcap], ,
@@ -64,7 +65,7 @@ dnl pcap_lib_version in the earlier AC_SEARCH_LIBS call, because it
 dnl allows us to provide different error messages for missing pcap and non
 dnl functional pcap and so avoids confusing generic error messages.
 dnl
-AC_MSG_CHECKING([for a compatible pcap library])
+AC_MSG_CHECKING([for a compatible pcap library with pcap_set_immediate_mode])
 AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_set_immediate_mode])],
    [AC_MSG_RESULT([yes])],
    [
@@ -79,62 +80,10 @@ AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unist
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
 
-dnl Check for the uint{8,16,32}_t types and, if we don't have them, define
-dnl them using types which will work on most systems.
-AC_NTA_CHECK_TYPE(uint8_t, unsigned char)
-AC_NTA_CHECK_TYPE(uint16_t, unsigned short)
-AC_NTA_CHECK_TYPE(uint32_t, unsigned int)
-
-dnl Checks for 64-bit integer types.  These checks are from postgresql.
-dnl Check to see if we have a working 64-bit integer type.
-dnl This breaks down into two steps:
-dnl (1) figure out if the compiler has a 64-bit int type with working
-dnl arithmetic, and if so
-dnl (2) see whether snprintf() can format the type correctly.
-
-PGAC_TYPE_64BIT_INT([long int])
-
-if test x"$HAVE_LONG_INT_64" = x"yes" ; then
-  INT64_TYPE="long int"
-  UINT64_TYPE="unsigned long int"
-else
-  PGAC_TYPE_64BIT_INT([long long int])
-    if test x"$HAVE_LONG_LONG_INT_64" = x"yes" ; then
-      INT64_TYPE="long long int"
-      UINT64_TYPE="unsigned long long int"
-    else
-      AC_MSG_ERROR([cannot determine 64-bit integer type])
-    fi
-fi
-
-AC_DEFINE_UNQUOTED(ARP_INT64, $INT64_TYPE,
-                   [Define to the appropriate type for 64-bit ints.])
-AC_DEFINE_UNQUOTED(ARP_UINT64, $UINT64_TYPE,
-                   [Define to the appropriate type for unsigned 64-bit ints.])
-
-dnl If we found "long int" is 64 bits, assume snprintf handles it.  If
-dnl we found we need to use "long long int", better check.  We cope with
-dnl snprintfs that use %lld, %qd, or %I64d as the format.
-dnl
-if test "$HAVE_LONG_LONG_INT_64" = yes ; then
-  PGAC_FUNC_SNPRINTF_LONG_LONG_INT_FORMAT
-  if test "$LONG_LONG_INT_FORMAT" = ""; then
-    AC_MSG_ERROR([cannot determine snprintf format string for long long int])
-  fi
-  LONG_LONG_UINT_FORMAT=`echo "$LONG_LONG_INT_FORMAT" | sed 's/d$/u/'`
-  INT64_FORMAT="\"$LONG_LONG_INT_FORMAT\""
-  UINT64_FORMAT="\"$LONG_LONG_UINT_FORMAT\""
-else
-  # Here if we are not using 'long long int' at all
-  INT64_FORMAT='"%ld"'
-  UINT64_FORMAT='"%lu"'
-fi
-
-AC_DEFINE_UNQUOTED(ARP_INT64_FORMAT, $INT64_FORMAT,
-                   [Define to the appropriate snprintf format for 64-bit ints.])
-
-AC_DEFINE_UNQUOTED(ARP_UINT64_FORMAT, $UINT64_FORMAT,
-                   [Define to the appropriate snprintf format for unsigned 64-bit ints.])
+AC_TYPE_UINT8_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
 
 dnl Checks for library functions.
 AC_CHECK_FUNCS([malloc gethostbyname gettimeofday inet_ntoa memset select socket strerror])
