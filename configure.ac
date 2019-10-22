@@ -44,7 +44,6 @@ else
              [Define to the compiler's unused pragma])
 fi
 AC_PROG_INSTALL
-AC_PROG_LN_S
 
 dnl Checks for libraries.
 dnl Solaris 10 needs nsl and socket.  Linux and {Free,Open}BSD do not.
@@ -75,13 +74,10 @@ AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_set_immediate_mode])],
    ])
 
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unistd.h getopt.h pcap.h sys/ioctl.h sys/stat.h fcntl.h search.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
 AC_TYPE_SIZE_T
-AC_HEADER_TIME
 
 dnl Check for the uint{8,16,32}_t types and, if we don't have them, define
 dnl them using types which will work on most systems.
