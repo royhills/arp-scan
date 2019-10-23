@@ -1,5 +1,5 @@
 /*
- * The ARP Scanner (arp-scan) is Copyright (C) 2005-2016 Roy Hills,
+ * The ARP Scanner (arp-scan) is Copyright (C) 2005-2019 Roy Hills,
  * NTA Monitor Ltd.
  *
  * This file is part of arp-scan.
@@ -17,14 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
- * link-dlpi.c -- DLPI link layer send functions for arp-scan
+ * link-dlpi.c -- DLPI link layer functions for arp-scan
  *
  * Author:	Roy Hills
  * Date:	22 July 2006
  *
  * Description:
  *
- * This contains the link layer sending functions using the DLPI (Data Link
+ * This contains the link layer functions using the DLPI (Data Link
  * Provider Interface) implementation.  DLPI is typically used on SysV systems
  * such as Solaris.
  *

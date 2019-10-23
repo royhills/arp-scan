@@ -1,5 +1,5 @@
 /*
- * The ARP Scanner (arp-scan) is Copyright (C) 2005-2016 Roy Hills,
+ * The ARP Scanner (arp-scan) is Copyright (C) 2005-2019 Roy Hills,
  * NTA Monitor Ltd.
  *
  * This file is part of arp-scan.
@@ -983,7 +983,7 @@ usage(int status, int detailed) {
       fprintf(stdout, "<s> A character string, e.g. --file=hostlist.txt.\n");
       fprintf(stdout, "\n");
       fprintf(stdout, "<i> An integer, which can be specified as a decimal number or as a hexadecimal\n");
-      fprintf(stdout, "    number if preceeded with 0x, e.g. --arppro=2048 or --arpro=0x0800.\n");
+      fprintf(stdout, "    number if preceded with 0x, e.g. --arppro=2048 or --arpro=0x0800.\n");
       fprintf(stdout, "\n");
       fprintf(stdout, "<f> A floating point decimal number, e.g. --backoff=1.5.\n");
       fprintf(stdout, "\n");
@@ -1063,7 +1063,7 @@ usage(int status, int detailed) {
       fprintf(stdout, "\n--randomseed=<i>\tUse <i> to seed the pseudo random number generator.\n");
       fprintf(stdout, "\t\t\tThis option seeds the PRNG with the specified number,\n");
       fprintf(stdout, "\t\t\twhich can be useful if you want to ensure that the\n");
-      fprintf(stdout, "\t\t\trandom host list is reproducable. By default, the PRNG\n");
+      fprintf(stdout, "\t\t\trandom host list is reproducible. By default, the PRNG\n");
       fprintf(stdout, "\t\t\tis seeded with an unpredictable value. This option is\n");
       fprintf(stdout, "\t\t\tonly effective in conjunction with the --random (-R)\n");
       fprintf(stdout, "\t\t\toption.\n");
@@ -1086,7 +1086,7 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tNo protocol decoding is performed and the OUI mapping\n");
       fprintf(stdout, "\t\t\tfiles are not used.\n");
       fprintf(stdout, "\n--plain or -x\t\tDisplay plain output showing only responding hosts.\n");
-      fprintf(stdout, "\t\t\tThis option supresses the printing of the header and\n");
+      fprintf(stdout, "\t\t\tThis option suppresses the printing of the header and\n");
       fprintf(stdout, "\t\t\tfooter text, and only displays one line for each\n");
       fprintf(stdout, "\t\t\tresponding host. Useful if the output will be\n");
       fprintf(stdout, "\t\t\tparsed by a script.\n");
@@ -1984,7 +1984,7 @@ process_options(int argc, char *argv[]) {
 void
 arp_scan_version (void) {
    fprintf(stdout, "%s\n\n", PACKAGE_STRING);
-   fprintf(stdout, "Copyright (C) 2005-2016 Roy Hills, NTA Monitor Ltd.\n");
+   fprintf(stdout, "Copyright (C) 2005-2019 Roy Hills, NTA Monitor Ltd.\n");
    fprintf(stdout, "arp-scan comes with NO WARRANTY to the extent permitted by law.\n");
    fprintf(stdout, "You may redistribute copies of arp-scan under the terms of the GNU\n");
    fprintf(stdout, "General Public License.\n");

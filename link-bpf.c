@@ -1,5 +1,5 @@
 /*
- * The ARP Scanner (arp-scan) is Copyright (C) 2005-2016 Roy Hills,
+ * The ARP Scanner (arp-scan) is Copyright (C) 2005-2019 Roy Hills,
  * NTA Monitor Ltd.
  *
  * This file is part of arp-scan.
@@ -17,14 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
- * link-bpf.c -- BPF link layer send functions for arp-scan
+ * link-bpf.c -- BPF link layer functions for arp-scan
  *
  * Author:	Roy Hills
  * Date:	1 July 2006
  *
  * Description:
  *
- * This contains the link layer sending functions using the BPF (Berkeley
+ * This contains the link layer functions using the BPF (Berkeley
  * Packet Filter) implementation.  BPF is typically used on BSD systems such
  * as FreeBSD See bpf(4) on a FreeBSD system for details.
  *
