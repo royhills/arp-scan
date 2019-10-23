@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([arp-scan],[1.9.6],[https://github.com/royhills/arp-scan])
-AC_PREREQ(2.61)
+AC_PREREQ([2.61])
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
 AM_INIT_AUTOMAKE
@@ -61,7 +61,7 @@ AC_SEARCH_LIBS([pcap_open_live], [pcap], ,
 dnl Check that the pcap library contains pcap_set_immediate_mode()
 dnl This was introduced in libpcap version 1.5, and our application requires it.
 dnl
-dnl We perform this check as a seperate step, rather than just checking for
+dnl We perform this check as a separate step, rather than just checking for
 dnl pcap_lib_version in the earlier AC_SEARCH_LIBS call, because it
 dnl allows us to provide different error messages for missing pcap and non
 dnl functional pcap and so avoids confusing generic error messages.
@@ -78,7 +78,7 @@ AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_set_immediate_mode])],
 dnl Checks for header files.
 
 dnl Check for C POSIX library header files
-dnl Are all valid targets POSIX complient?  If so, do we need to check these?
+dnl Are all valid targets POSIX compliant?  If so, do we need to check these?
 AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unistd.h sys/stat.h fcntl.h search.h regex.h])
 
 dnl Check for other required header files
@@ -136,7 +136,6 @@ dnl Solaris 9 needs sys/types.h and sys/socket.h included before net/if.h.
       ])
       AC_LIBOBJ([link-dlpi])
       ;;
-dnl   *cygwin* )
    * )
       AC_MSG_ERROR([Host operating system $host_os is not supported])
       ;;
