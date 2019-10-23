@@ -27,6 +27,7 @@ AC_ARG_ENABLE(gcov,
    [
       AC_MSG_RESULT(no)
    ] )
+
 dnl Checks for programs.
 AC_PROG_CC
 if test -n "$GCC"; then
@@ -75,7 +76,13 @@ AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_set_immediate_mode])],
    ])
 
 dnl Checks for header files.
-AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unistd.h getopt.h pcap.h sys/ioctl.h sys/stat.h fcntl.h search.h])
+
+dnl Check for C POSIX library header files
+dnl Are all valid targets POSIX complient?  If so, do we need to check these?
+AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unistd.h sys/stat.h fcntl.h search.h regex.h])
+
+dnl Check for other required header files
+AC_CHECK_HEADERS([getopt.h pcap.h sys/ioctl.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
@@ -86,24 +93,8 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
 
 dnl Checks for library functions.
+dnl All of these are defined by POSIX
 AC_CHECK_FUNCS([malloc gethostbyname gettimeofday inet_ntoa memset select socket strerror])
-
-dnl Check if the Posix regular expression functions "regcomp" and "regexec"
-dnl and the header file "regex.h" are present.
-AC_MSG_CHECKING([for posix regular expression support])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#include <sys/types.h>
-#include <regex.h>]],
-[[regcomp(0, 0, 0);
-regexec(0, 0, 0, 0, 0)]])],
-[ac_nta_posix_regex=yes],
-[ac_nta_posic_regex=no])
-AC_MSG_RESULT([$ac_nta_posix_regex])
-if test $ac_nta_posix_regex = no; then
-   AC_MSG_ERROR([You don't seem to have posix regular expression support])
-else
-   AC_DEFINE(HAVE_REGEX_H, 1, [Define to 1 if you have posix regex support])
-fi
 
 dnl Determine which link-layer sending functions to use
 dnl We base our choice on the operating system in $host_os
