@@ -19,6 +19,7 @@ missing
 stamp-h1
 compile
 test-driver
+configure.ac~
 # Compiler output files
 *.o
 arp-scan
