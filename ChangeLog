@@ -1,3 +1,13 @@
+2019-10-24 Roy Hills <Roy.Hills@hotmail.com>
+
+	* configure.ac: Increment version number to 1.9.7 in preparation for
+	  new release.
+
+	* configure.ac, acinclude.m4: Tidy up: remove obsolescent and unused
+          autoconf macros.
+
+	* Modified copyright statement in files to include up to 2019.
+
 2019-10-20 Roy Hills <Roy.Hills@hotmail.com>
 
 	* arp-scan.c: Call the pcap functions before get_hardware_address() to
