@@ -286,6 +286,8 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
    link_t *handle;
 
    handle = link_open(if_name);
+   if (!handle)
+      err_msg("ERROR: cannot open interface %s with DLPI", if_name);
 
    dlp = (union DL_primitives*) buf;
    dlp->physaddr_req.dl_primitive = DL_PHYS_ADDR_REQ;
