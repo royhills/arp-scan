@@ -1,12 +1,23 @@
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
+2019-11-10 arp-scan 1.9.7
+
+* Improved error messages from libpcap functions.
+
+* Remove obsolescent and unused autoconf macros.  arp-scan 1.9.7 assumes that
+  the C compiler is ANSI C (C89) compliant.
+
 2019-10-13 arp-scan 1.9.6
 
 * Use libpcap function pcap_set_immediate_mode() instead of ioctl calls to
-  ensure packets are delivered immediately. This means that arp-scan now
-  requires libpcap 1.5.0 or later and will not work with earlier libpcap
-  versions.
+  ensure packets are delivered immediately. This fixes the bug which caused
+  arp-scan on linux to not report any hosts with libpcap 1.9.1. This change
+  means arp-scan now requires libpcap 1.5.0 or later and will not work with
+  earlier versions.
+
+* Fix compiler warnings caused by the depreciated function pcap_lookupdev()
+  in libpcap 1.9.0 and later.
 
 2016-09-03 arp-scan 1.9.5
 

@@ -1,6 +1,5 @@
 /*
- * The ARP Scanner (arp-scan) is Copyright (C) 2005-2019 Roy Hills,
- * NTA Monitor Ltd.
+ * The ARP Scanner (arp-scan) is Copyright (C) 2005-2019 Roy Hills
  *
  * This file is part of arp-scan.
  *
@@ -1984,7 +1983,7 @@ process_options(int argc, char *argv[]) {
 void
 arp_scan_version (void) {
    fprintf(stdout, "%s\n\n", PACKAGE_STRING);
-   fprintf(stdout, "Copyright (C) 2005-2019 Roy Hills, NTA Monitor Ltd.\n");
+   fprintf(stdout, "Copyright (C) 2005-2019 Roy Hills\n");
    fprintf(stdout, "arp-scan comes with NO WARRANTY to the extent permitted by law.\n");
    fprintf(stdout, "You may redistribute copies of arp-scan under the terms of the GNU\n");
    fprintf(stdout, "General Public License.\n");

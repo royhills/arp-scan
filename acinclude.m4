@@ -1,4 +1,4 @@
-dnl NTA Monitor autoconf macros
+dnl autoconf macros
 
 dnl
 dnl Useful macros for autoconf to check for ssp-patched gcc

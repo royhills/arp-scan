@@ -1,6 +1,5 @@
 /*
- * The ARP Scanner (arp-scan) is Copyright (C) 2005-2019 Roy Hills,
- * NTA Monitor Ltd.
+ * The ARP Scanner (arp-scan) is Copyright (C) 2005-2019 Roy Hills
  *
  * This file is part of arp-scan.
  *
