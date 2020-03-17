@@ -88,6 +88,8 @@ static int rtt_flag=0;			/* Display round-trip time */
 static pcap_dumper_t *pcap_dump_handle = NULL;	/* pcap savefile handle */
 static int plain_flag=0;		/* Only show host information */
 unsigned int random_seed=0;
+static unsigned retry_send = DEFAULT_RETRY_SEND; /* Number of send packet retries */
+static unsigned retry_send_interval = DEFAULT_RETRY_SEND_INTERVAL; /* Interval in seconds between send packet retries */
 
 int
 main(int argc, char *argv[]) {
@@ -835,6 +837,7 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
    ether_hdr frame_hdr;
    arp_ether_ipv4 arpei;
    int nsent = 0;
+   unsigned i;
 /*
  *	Construct Ethernet frame header
  */
@@ -894,7 +897,15 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
    if (write_pkt_to_file) {
       nsent = write(write_pkt_to_file, buf, buflen);
    } else if (!pkt_read_file_flag) {
-      nsent = pcap_sendpacket(pcap_handle, buf, buflen);
+      for (i=0; i<retry_send; i++) {
+          nsent = pcap_sendpacket(pcap_handle, buf, buflen);
+          if (nsent >= 0) {
+              break;
+          }
+          if (retry_send_interval > 0) {
+              sleep(retry_send_interval);
+          }
+      }
    }
    if (nsent < 0)
       err_sys("ERROR: failed to send packet");
@@ -1015,6 +1026,11 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tchanged with the --interface option.\n");
       fprintf(stdout, "\n--retry=<i> or -r <i>\tSet total number of attempts per host to <i>,\n");
       fprintf(stdout, "\t\t\tdefault=%d.\n", DEFAULT_RETRY);
+      fprintf(stdout, "\n--retry-send=<i> or -Y <i> Set total number of send packet attempts to <i>,\n");
+      fprintf(stdout, "\t\t\tdefault=%d.\n", DEFAULT_RETRY_SEND);
+      fprintf(stdout, "\n--retry-send-interval=<i> or -E <i> Set interval between send packet attempts to <i>.\n");
+      fprintf(stdout, "\t\t\tThe interval specified is in seconds by default.\n");
+      fprintf(stdout, "\t\t\tdefault=%d.\n", DEFAULT_RETRY_SEND_INTERVAL);
       fprintf(stdout, "\n--timeout=<i> or -t <i>\tSet initial per host timeout to <i> ms, default=%d.\n", DEFAULT_TIMEOUT);
       fprintf(stdout, "\t\t\tThis timeout is for the first packet sent to each host.\n");
       fprintf(stdout, "\t\t\tsubsequent timeouts are multiplied by the backoff\n");
@@ -1765,6 +1781,8 @@ process_options(int argc, char *argv[]) {
       {"file", required_argument, 0, 'f'},
       {"help", no_argument, 0, 'h'},
       {"retry", required_argument, 0, 'r'},
+      {"retry-send", required_argument, 0, 'Y'},
+      {"retry-send-interval", required_argument, 0, 'E'},
       {"timeout", required_argument, 0, 't'},
       {"interval", required_argument, 0, 'i'},
       {"backoff", required_argument, 0, 'b'},
@@ -1807,11 +1825,11 @@ process_options(int argc, char *argv[]) {
  * available short option characters:
  *
  * lower:       --cde----jk--------------z
- * UPPER:       --C-E-G--JK-M-------U--XYZ
+ * UPPER:       --C---G--JK-M-------U--X-Z
  * Digits:      0123456789
  */
    const char *short_options =
-      "f:hr:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:Dx";
+      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:Dx";
    int arg;
    int options_index=0;
 
@@ -1829,6 +1847,12 @@ process_options(int argc, char *argv[]) {
             break;	/* NOTREACHED */
          case 'r':	/* --retry */
             retry=Strtoul(optarg, 10);
+            break;
+         case 'Y':	/* --retry-send */
+            retry_send=Strtoul(optarg, 10);
+            break;
+         case 'E':	/* --retry-send-interval */
+            retry_send_interval=Strtoul(optarg, 10);
             break;
          case 't':	/* --timeout */
             timeout=Strtoul(optarg, 10);
