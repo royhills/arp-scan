@@ -154,6 +154,9 @@
 #define OPT_READPKTFROMFILE 257		/* --readpktfromfile option */
 #define OPT_RANDOMSEED 258		/* --randomseed option */
 #define HASH_TABLE_SIZE 50000		/* Max size of OUI/Vendor hash table */
+#define DEFAULT_RETRY_SEND 1  /* Default number of send packet retries */
+#define DEFAULT_RETRY_SEND_INTERVAL 0  /* Default interval in seconds
+                                        * between send packet retries */
 
 /* Structures */
 
