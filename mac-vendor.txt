@@ -34,7 +34,7 @@
 # Blank lines and lines beginning with "#" are ignored.
 #
 # Additional information is available on the arp-scan wiki at
-# http://www.nta-monitor.com/wiki
+# http://www.royhills.co.uk/wiki
 #
 
 # From nmap Debian bug report #369681 dated 31 May 2006

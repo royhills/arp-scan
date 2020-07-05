@@ -52,7 +52,7 @@ Documentation
 -------------
 
 The primary source of documentation is the arp-scan wiki at
-http://www.nta-monitor.com/wiki/
+http://www.royhills.co.uk/wiki/
 
 For usage information, including details of all the options, use:
 

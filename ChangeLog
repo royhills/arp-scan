@@ -1,3 +1,9 @@
+2020-07-05 Roy Hills <Roy.Hills@hotmail.com>
+
+	* README.md, arp-fingerprint.1, arp-scan.1, get-iab.1, get-oui.1,
+	  mac-vendor.5, mac-vendor.txt: Update wiki references to use
+	  new URL http://www.royhills.co.uk/wiki/
+
 2019-10-24 Roy Hills <Roy.Hills@hotmail.com>
 
 	* configure.ac: Increment version number to 1.9.7 in preparation for
