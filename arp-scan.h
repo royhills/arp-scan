@@ -142,6 +142,7 @@
 #define OUIFILENAME "ieee-oui.txt"	/* Default IEEE OUI filename */
 #define IABFILENAME "ieee-iab.txt"	/* Default IEEE IAB filename */
 #define MACFILENAME "mac-vendor.txt"	/* Default MAC/Vendor filename */
+#define MACOVERRIDEFILENAME "mac-override.txt"  /* Default MAC/Override filename */
 #define DEFAULT_ARP_OP ARPOP_REQUEST	/* Default ARP operation */
 #define DEFAULT_ARP_HRD ARPHRD_ETHER	/* Default ARP hardware type */
 #define DEFAULT_ARP_PRO ETH_P_IP	/* Default ARP protocol */

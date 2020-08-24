@@ -64,6 +64,7 @@ static int arp_sha_flag=0;		/* Source MAC address specified */
 static char ouifilename[MAXLINE];	/* OUI filename */
 static char iabfilename[MAXLINE];	/* IAB filename */
 static char macfilename[MAXLINE];	/* MAC filename */
+static char overridefilename[MAXLINE];	/* Override filename */
 static char pcap_savefile[MAXLINE];	/* pcap savefile filename */
 static int arp_op=DEFAULT_ARP_OP;	/* ARP Operation code */
 static int arp_hrd=DEFAULT_ARP_HRD;	/* ARP hardware type */
@@ -126,6 +127,7 @@ main(int argc, char *argv[]) {
    ouifilename[0] = '\0';
    iabfilename[0] = '\0';
    macfilename[0] = '\0';
+   overridefilename[0] = '\0';
    pcap_savefile[0] = '\0';
 /*
  *      Process options.
@@ -346,6 +348,13 @@ main(int argc, char *argv[]) {
       if ((hcreate(HASH_TABLE_SIZE)) == 0)
          err_sys("hcreate");
 
+      fn = get_mac_vendor_filename(overridefilename, DATADIR, MACOVERRIDEFILENAME);
+      count = add_mac_vendor(fn);
+      if (verbose > 1 && count > 0)
+         warn_msg("DEBUG: Loaded %d MAC/Override entries from %s.",
+                  count, fn);
+
+      free(fn);
       fn = get_mac_vendor_filename(ouifilename, DATADIR, OUIFILENAME);
       count = add_mac_vendor(fn);
       if (verbose > 1 && count > 0)
@@ -1123,6 +1132,11 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tis %s in the current directory. If that is\n", MACFILENAME);
       fprintf(stdout, "\t\t\tnot found, then the file\n");
       fprintf(stdout, "\t\t\t%s/%s is used.\n", DATADIR, MACFILENAME);
+      fprintf(stdout, "\n--overridefile=<s> or -d <s> Override with a custom Ethernet MAC to vendor mapping file <s>.\n");
+      fprintf(stdout, "\t\t\tIf this option is not specified, the default filename\n");
+      fprintf(stdout, "\t\t\tis %s in the current directory. If that is\n", MACOVERRIDEFILENAME);
+      fprintf(stdout, "\t\t\tnot found, then the file\n");
+      fprintf(stdout, "\t\t\t%s/%s is used.\n", DATADIR, MACOVERRIDEFILENAME);
       fprintf(stdout, "\n--srcaddr=<m> or -S <m> Set the source Ethernet MAC address to <m>.\n");
       fprintf(stdout, "\t\t\tThis sets the 48-bit hardware address in the Ethernet\n");
       fprintf(stdout, "\t\t\tframe header for outgoing ARP packets. It does not\n");
@@ -1798,6 +1812,7 @@ process_options(int argc, char *argv[]) {
       {"ouifile", required_argument, 0, 'O'},
       {"iabfile", required_argument, 0, 'F'},
       {"macfile", required_argument, 0, 'm'},
+      {"overridefile", required_argument, 0, 'd'},
       {"arpspa", required_argument, 0, 's'},
       {"arpop", required_argument, 0, 'o'},
       {"arphrd", required_argument, 0, 'H'},
@@ -1899,6 +1914,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'm':	/* --macfile */
             strlcpy(macfilename, optarg, sizeof(macfilename));
+            break;
+         case 'd':	/* --overridefile */
+            strlcpy(overridefilename, optarg, sizeof(overridefilename));
             break;
          case 's':	/* --arpspa */
             arp_spa_flag = 1;

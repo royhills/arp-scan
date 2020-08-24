@@ -1,0 +1,41 @@
+# mac-custom.txt -- Ethernet vendor file for arp-scan, custom overrides
+# This file has precedence over other MAC vendor files
+#
+# This file contains Ethernet vendor mappings for arp-scan.  These are used
+# to determine the vendor for a give Ethernet interface given the MAC address.
+#
+# Each line of this file contains a MAC-vendor mapping in the form:
+#
+# <MAC-Prefix><TAB><Vendor>
+#
+# Where <MAC-Prefix> is the prefix of the MAC address in hex, and <Vendor>
+# is the name of the vendor.  The prefix can be of any length from two hex
+# digits (one octet) to twelve hex digits (six octets, the entire Ethernet
+# hardware address).
+#
+# For example:
+#
+# 012345	would match 01:23:45:xx:xx:xx, where xx represents any value;
+# 0123456	would match 01:23:45:6x:xx:xx; and
+# 01234567	would match 01:23:45:67:xx:xx.
+#
+# Do not include entries from the IEEE OUI or IAB listings, as these are
+# already in the files ieee-oui.txt and ieee-iab.txt, which are automatically
+# used by arp-scan.  See get-oui(1) and get-iab(1) for details of how to
+# update the OUI and IAB listings.  This file is for MAC addresses that are
+# not present in the IEEE listings.
+#
+# The alphabetic hex characters [A-F] must be entered in upper case.
+#
+# The order of entries in this file are not important.
+#
+# arp-scan will attempt to match larger prefixes before trying to match
+# smaller ones, and will stop at the first match.
+#
+# Blank lines and lines beginning with "#" are ignored.
+#
+# Additional information is available on the arp-scan wiki at
+# http://www.royhills.co.uk/wiki
+#
+
+
