@@ -30,7 +30,7 @@ release.  For more details please read the ChangeLog file.
 * Added arp-fingerprint patterns for FreeBSD 10.3, DragonflyBSD 4.6, Windows10,
   Linux 4.0, Linux 4.6, OpenBSD 5.9, NetBSD 7.0.
 
-* Added "-l" option to arp-fingerprint to support fingerpringing all hosts on
+* Added "-l" option to arp-fingerprint to support fingerprinting all hosts on
   the local network. Thanks to Rhig for the pull request.
 
 * Use the source_mac rather than interface_mac in the pcap filter, to permit
@@ -48,7 +48,7 @@ release.  For more details please read the ChangeLog file.
 
 2013-11-24 arp-scan 1.9.2
 
-* Added new --plain (-x) option to surpress printing of header and footer text,
+* Added new --plain (-x) option to suppress printing of header and footer text,
   and only display one output line for each responding host. Idea from Stefan
   Tomanek's arp-scan fork on github at https://github.com/wertarbyte/arp-scan.
 
@@ -61,7 +61,7 @@ release.  For more details please read the ChangeLog file.
   https://github.com/royhills/arp-scan. The move to git means that the commit
   object names are now SHA1 hashes instead of increasing integer values. So
   they are longer suitable for internal file versions with rcsid variables.
-  Accordingly the rcsid varable have been removed.
+  Accordingly the rcsid variables have been removed.
 
 2013-07-24 arp-scan 1.9:
 
@@ -70,7 +70,7 @@ release.  For more details please read the ChangeLog file.
 
 * Use autoconf 2.69 and automake 1.11 to add support for ARM 64-bit CPUs.
 
-* Use libpcap functions to obtain the interace IP address and send the ARP
+* Use libpcap functions to obtain the interface IP address and send the ARP
   packet, instead of using our own link-layer specific functions. The only
   link-layer specific function that we still need is get_hardware_address()
   to obtain the interface MAC address. This means we now require libpcap 0.9.3
