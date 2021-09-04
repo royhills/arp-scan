@@ -39,107 +39,107 @@ SAMPLE07="$srcdir/pkt-vlan-llc-response.pcap"
 
 # Simple ARP response packet
 echo "Checking simple ARP response packet decode using $SAMPLE01 ..."
-cat >$EXAMPLEOUTPUT <<_EOF_
+cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE01 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-rm -f $ARPSCANOUTPUT
-rm -f $EXAMPLEOUTPUT
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
 
 # Simple ARP response packet with non zero padding
 echo "Checking padded ARP response packet decode using $SAMPLE02 ..."
-cat >$EXAMPLEOUTPUT <<_EOF_
+cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION	Padding=55aa55aa55aa55aa55aa55aa55aa55aa55aa
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt --verbose"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE02 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE02" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-rm -f $ARPSCANOUTPUT
-rm -f $EXAMPLEOUTPUT
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
 
 # ARP response packet with 802.1Q VLAN tag
 echo "Checking 802.1Q ARP response packet decode using $SAMPLE03 ..."
-cat >$EXAMPLEOUTPUT <<_EOF_
+cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION (802.1Q VLAN=4095)
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE03 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE03" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-rm -f $ARPSCANOUTPUT
-rm -f $EXAMPLEOUTPUT
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
 
 # ARP response packet with 802.2 LLC/SNAP encapsulation
 echo "Checking LLC/SNAP ARP response packet decode using $SAMPLE04 ..."
-cat >$EXAMPLEOUTPUT <<_EOF_
+cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION (802.2 LLC/SNAP)
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE04 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE04" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-rm -f $ARPSCANOUTPUT
-rm -f $EXAMPLEOUTPUT
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
 
 # 56 ARP responses from a Class-C sized network with various vendors
 echo "Checking 192.168.1.0/24 ARP response packet decode using $SAMPLE05 ..."
-cat >$EXAMPLEOUTPUT <<_EOF_
+cat >"$EXAMPLEOUTPUT" <<_EOF_
 192.168.1.3	00:0b:cd:26:aa:78	Hewlett Packard
 192.168.1.4	00:08:02:e2:e3:2b	Hewlett Packard
 192.168.1.7	00:0b:cd:3d:4f:2a	Hewlett Packard
@@ -199,123 +199,123 @@ cat >$EXAMPLEOUTPUT <<_EOF_
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE05 192.168.1.0/24 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE05" 192.168.1.0/24 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-rm -f $ARPSCANOUTPUT
-rm -f $EXAMPLEOUTPUT
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
 
 # Simple ARP response packet using IPstart-IPend target syntax
 echo "Checking IP range ARP response packet decode using $SAMPLE01 ..."
-cat >$EXAMPLEOUTPUT <<_EOF_
+cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE01 127.0.0.1-127.0.0.9 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1-127.0.0.9 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-rm -f $ARPSCANOUTPUT
-rm -f $EXAMPLEOUTPUT
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
 
 # Simple ARP response packet using network:mask target syntax
 # We use a /22 (255.255.252.0) because this gives more than 1000 hosts, which
 # causes the list allocation code to call realloc().
 echo "Checking IP net:mask ARP response packet decode using $SAMPLE01 ..."
-cat >$EXAMPLEOUTPUT <<_EOF_
+cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE01 127.0.0.0:255.255.252.0 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.0:255.255.252.0 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-rm -f $ARPSCANOUTPUT
-rm -f $EXAMPLEOUTPUT
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
 
 # Simple ARP response packet with trailer ARP reply.
 echo "Checking trailer ARP response packet decode using $SAMPLE06 ..."
-cat >$EXAMPLEOUTPUT <<_EOF_
+cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:12:34:56	DIGITAL EQUIPMENT CORPORATION
 127.0.0.1	08:00:2b:12:34:56	DIGITAL EQUIPMENT CORPORATION (ARP Proto=0x1000) (DUP: 2)
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE06 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE06" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-rm -f $ARPSCANOUTPUT
-rm -f $EXAMPLEOUTPUT
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
 
 # 802.1Q LLC ARP response packet
 echo "Checking 802.1Q LLC ARP response packet decode using $SAMPLE07 ..."
-cat >$EXAMPLEOUTPUT <<_EOF_
+cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION (802.2 LLC/SNAP) (802.1Q VLAN=100)
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE07 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE07" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-rm -f $ARPSCANOUTPUT
-rm -f $EXAMPLEOUTPUT
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
