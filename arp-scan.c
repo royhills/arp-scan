@@ -906,6 +906,9 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
               break;
           }
           if (retry_send_interval > 0) {
+              if (verbose)
+                 warn_msg("---\tRetrying send after %d microsecond delay",
+                          retry_send_interval);
               select(0, NULL, NULL, NULL, &to); /* Delay */
           }
       }
@@ -1033,7 +1036,8 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tdefault=%d.\n", DEFAULT_RETRY_SEND);
       fprintf(stdout, "\n--retry-send-interval=<i> or -E <i> Set interval between send packet attempts to <i>.\n");
       fprintf(stdout, "\t\t\tThe interval specified is in milliseconds by default.\n");
-      fprintf(stdout, "\t\t\tdefault=%d.\n", DEFAULT_RETRY_SEND_INTERVAL);
+      fprintf(stdout, "\t\t\tor in microseconds if \"u\" is appended to the value.\n");
+      fprintf(stdout, "\t\t\tdefault=%d.\n", DEFAULT_RETRY_SEND_INTERVAL/1000);
       fprintf(stdout, "\n--timeout=<i> or -t <i>\tSet initial per host timeout to <i> ms, default=%d.\n", DEFAULT_TIMEOUT);
       fprintf(stdout, "\t\t\tThis timeout is for the first packet sent to each host.\n");
       fprintf(stdout, "\t\t\tsubsequent timeouts are multiplied by the backoff\n");
@@ -1855,7 +1859,7 @@ process_options(int argc, char *argv[]) {
             retry_send=Strtoul(optarg, 10);
             break;
          case 'E':	/* --retry-send-interval */
-            retry_send_interval=Strtoul(optarg, 10);
+            retry_send_interval=str_to_interval(optarg);
             break;
          case 't':	/* --timeout */
             timeout=Strtoul(optarg, 10);
