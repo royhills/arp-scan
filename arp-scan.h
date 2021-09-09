@@ -155,7 +155,7 @@
 #define OPT_RANDOMSEED 258		/* --randomseed option */
 #define HASH_TABLE_SIZE 50000		/* Max size of OUI/Vendor hash table */
 #define DEFAULT_RETRY_SEND 1  /* Default number of send packet retries */
-#define DEFAULT_RETRY_SEND_INTERVAL 0  /* Default interval in seconds
+#define DEFAULT_RETRY_SEND_INTERVAL 10  /* Default interval in milliseconds
                                         * between send packet retries */
 
 /* Structures */

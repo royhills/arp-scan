@@ -838,6 +838,7 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
    arp_ether_ipv4 arpei;
    int nsent = 0;
    unsigned i;
+   struct timeval to;
 /*
  *	Construct Ethernet frame header
  */
@@ -897,13 +898,15 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
    if (write_pkt_to_file) {
       nsent = write(write_pkt_to_file, buf, buflen);
    } else if (!pkt_read_file_flag) {
+      to.tv_sec  = retry_send_interval/1000000;
+      to.tv_usec = (retry_send_interval - 1000000*to.tv_sec);
       for (i=0; i<retry_send; i++) {
           nsent = pcap_sendpacket(pcap_handle, buf, buflen);
           if (nsent >= 0) {
               break;
           }
           if (retry_send_interval > 0) {
-              sleep(retry_send_interval);
+              select(0, NULL, NULL, NULL, &to); /* Delay */
           }
       }
    }
@@ -1029,7 +1032,7 @@ usage(int status, int detailed) {
       fprintf(stdout, "\n--retry-send=<i> or -Y <i> Set total number of send packet attempts to <i>,\n");
       fprintf(stdout, "\t\t\tdefault=%d.\n", DEFAULT_RETRY_SEND);
       fprintf(stdout, "\n--retry-send-interval=<i> or -E <i> Set interval between send packet attempts to <i>.\n");
-      fprintf(stdout, "\t\t\tThe interval specified is in seconds by default.\n");
+      fprintf(stdout, "\t\t\tThe interval specified is in milliseconds by default.\n");
       fprintf(stdout, "\t\t\tdefault=%d.\n", DEFAULT_RETRY_SEND_INTERVAL);
       fprintf(stdout, "\n--timeout=<i> or -t <i>\tSet initial per host timeout to <i> ms, default=%d.\n", DEFAULT_TIMEOUT);
       fprintf(stdout, "\t\t\tThis timeout is for the first packet sent to each host.\n");
