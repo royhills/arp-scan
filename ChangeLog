@@ -1,3 +1,20 @@
+2021-09-09 Roy Hills <Roy.Hills@hotmail.com>
+
+	* Retry sending an ARP packet if the packet send function fails with
+	  EAGAIN instead of aborting with an error message. High packet send
+	  rates can cause sendto() to fail occasionally with EAGAIN due to
+	  temporary resource starvation. Thanks to gessel for reporting this
+	  problem.
+
+	  --retry-send (default 3) specifies the number of retries.
+	  --retry-send-interval (default 10ms) sets the delay between retries.
+
+	* Minor code cleanup to fix spelling, remove trailing whitespace,
+	  fix shellcode warnings and update license file.  Thanks to a1346054
+	  for the pull request.
+
+	* Updated ieee-oui.txt and ieee-iab.txt files.
+
 2020-07-05 Roy Hills <Roy.Hills@hotmail.com>
 
 	* README.md, arp-fingerprint.1, arp-scan.1, get-iab.1, get-oui.1,

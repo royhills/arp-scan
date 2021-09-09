@@ -839,6 +839,7 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
    int nsent = 0;
    unsigned i;
    struct timeval to;
+   int n;
 /*
  *	Construct Ethernet frame header
  */
@@ -902,14 +903,17 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
       to.tv_usec = (retry_send_interval - 1000000*to.tv_sec);
       for (i=0; i<retry_send; i++) {
           nsent = pcap_sendpacket(pcap_handle, buf, buflen);
-          if (nsent >= 0) {
+          if (nsent >= 0) {	/* Successfully sent packet */
               break;
           }
           if (retry_send_interval > 0) {
               if (verbose)
                  warn_msg("---\tRetrying send after %d microsecond delay",
                           retry_send_interval);
-              select(0, NULL, NULL, NULL, &to); /* Delay */
+              n = select(0, NULL, NULL, NULL, &to); /* Delay */
+              if (n < 0) {
+                 err_sys("select");
+              }
           }
       }
    }
