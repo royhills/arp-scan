@@ -144,13 +144,13 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 192.168.1.4	00:08:02:e2:e3:2b	Hewlett Packard
 192.168.1.7	00:0b:cd:3d:4f:2a	Hewlett Packard
 192.168.1.5	00:02:a5:90:c3:e6	Hewlett Packard
-192.168.1.6	00:c0:9f:3f:3d:70	QUANTA COMPUTER INC.
+192.168.1.6	00:c0:9f:3f:3d:70	Quanta Computer Inc.
 192.168.1.8	00:02:a5:a9:27:29	Hewlett Packard
 192.168.1.9	00:02:a5:f9:33:8d	Hewlett Packard
 192.168.1.10	00:08:02:89:b3:cb	Hewlett Packard
 192.168.1.11	00:0f:1f:5c:d1:13	Dell Inc.
 192.168.1.12	00:02:a5:de:c2:17	Hewlett Packard
-192.168.1.14	00:c0:9f:0b:91:d1	QUANTA COMPUTER INC.
+192.168.1.14	00:c0:9f:0b:91:d1	Quanta Computer Inc.
 192.168.1.13	00:08:02:1f:0e:42	Hewlett Packard
 192.168.1.16	00:18:8b:7a:fe:28	Dell Inc.
 192.168.1.17	00:12:3f:d4:41:86	Dell Inc.
@@ -188,10 +188,10 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 192.168.1.204	00:11:43:0f:f2:dd	Dell Inc.
 192.168.1.205	00:02:b3:91:20:2a	Intel Corporation
 192.168.1.207	00:12:3f:ec:cf:a0	Dell Inc.
-192.168.1.206	00:c0:9f:39:f7:f2	QUANTA COMPUTER INC.
+192.168.1.206	00:c0:9f:39:f7:f2	Quanta Computer Inc.
 192.168.1.222	00:90:27:9d:48:90	Intel Corporation
 192.168.1.192	00:01:e6:27:27:6e	Hewlett Packard
-192.168.1.234	00:c0:9f:0d:00:9a	QUANTA COMPUTER INC.
+192.168.1.234	00:c0:9f:0d:00:9a	Quanta Computer Inc.
 192.168.1.245	00:0b:5f:d2:34:21	Cisco Systems, Inc
 192.168.1.246	00:13:80:53:cd:79	Cisco Systems, Inc
 192.168.1.250	00:12:00:2f:18:c0	Cisco Systems, Inc
