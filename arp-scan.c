@@ -872,7 +872,7 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
  */
    marshal_arp_pkt(buf, &frame_hdr, &arpei, &buflen, padding, padding_len);
 /*
- *	If he is NULL, just return with the packet length.
+ *	If host entry pointer is NULL, just return with the packet length.
  */
    if (he == NULL)
       return buflen;
@@ -891,25 +891,34 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
    he->last_send_time.tv_usec = last_packet_time->tv_usec;
    he->num_sent++;
 /*
+ *	If we are using the undocumented --readpktfromfile option, don't send
+ *	anything and just return with the number of bytes we would have sent.
+ */
+   if (pkt_read_file_flag) {
+      return buflen;
+   }
+/*
  *	Send the packet.
  */
    if (verbose > 1)
       warn_msg("---\tSending packet #%u to host %s tmo %d", he->num_sent,
                my_ntoa(he->addr), he->timeout);
-   if (write_pkt_to_file) {
+   if (write_pkt_to_file) {	/* Writing to file */
       nsent = write(write_pkt_to_file, buf, buflen);
-   } else if (!pkt_read_file_flag) {
+   } else {			/* Send packet to Ethernet adaptor */
       to.tv_sec  = retry_send_interval/1000000;
       to.tv_usec = (retry_send_interval - 1000000*to.tv_sec);
       for (i=0; i<retry_send; i++) {
           nsent = pcap_sendpacket(pcap_handle, buf, buflen);
           if (nsent >= 0) {	/* Successfully sent packet */
               break;
+          } else if (errno != EAGAIN) {	/* Unrecoverable error */
+              err_sys("ERROR: failed to send packet");
           }
           if (retry_send_interval > 0) {
               if (verbose)
-                 warn_msg("---\tRetrying send after %d microsecond delay",
-                          retry_send_interval);
+                 warn_msg("---\tRetrying send after %d microsecond delay (#%d of %d)",
+                          retry_send_interval, i, retry_send);
               n = select(0, NULL, NULL, NULL, &to); /* Delay */
               if (n < 0) {
                  err_sys("select");
