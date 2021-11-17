@@ -1,3 +1,15 @@
+2021-11-17 Roy Hills <Roy.Hills@hotmail.com>
+
+	* Use getifaddrs() to obtain the interface IP address if it is available
+	  and pcap_findalldevs() fails to find the address.
+
+	  This is typically needed for device aliases such as "eth0:0" on Linux
+	  which are not supported by pcap_findalldevs() and would previously
+	  cause an error.
+
+	* Increment version number to 1.9.8 to reflect code and autoconf
+	  changes.
+
 2021-09-09 Roy Hills <Roy.Hills@hotmail.com>
 
 	* Retry sending an ARP packet if the packet send function fails with
