@@ -116,6 +116,10 @@
 #include <search.h>
 #endif
 
+#ifdef HAVE_IFADDRS_H
+#include <ifaddrs.h>
+#endif
+
 /* Defines */
 
 #define MAXLINE 255			/* Max line length for input files */

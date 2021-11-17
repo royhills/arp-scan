@@ -2482,27 +2482,43 @@ get_source_ip(const char *interface_name, struct in_addr *ip_addr) {
    while (device != NULL && (strcmp(device->name,interface_name) != 0)) {
       device=device->next;
    }
-   if (device == NULL) {
-      warn_msg("ERROR: Could not find interface: %s", interface_name);
-      err_msg("ERROR: Check that the interface exists and is up");
-   }
-
-   for (addr=device->addresses; addr != NULL; addr=addr->next) {
-      sa = addr->addr;
-      if (sa->sa_family == AF_INET) {
-         sin = (struct sockaddr_in *) sa;
-         break;
+   if (device != NULL) { /* We found a device name match */
+      for (addr=device->addresses; addr != NULL; addr=addr->next) {
+         sa = addr->addr;
+         if (sa->sa_family == AF_INET) {
+            sin = (struct sockaddr_in *) sa;
+            break;
+         }
       }
-   }
-   if (sin == NULL) {
-      memset(&(ip_addr->s_addr), '\0', sizeof(ip_addr->s_addr));
+      if (sin == NULL) {
+         memset(&(ip_addr->s_addr), '\0', sizeof(ip_addr->s_addr));
+         pcap_freealldevs(alldevsp);
+         return -1;
+      }
+
+      memcpy(ip_addr, &(sin->sin_addr), sizeof(*ip_addr));
+
       pcap_freealldevs(alldevsp);
-      return -1;
+
+      return 0;
+   } else {	/* No match from pcap_findalldevs(), try getifaddrs() */
+#ifdef HAVE_GETIFADDRS
+      struct ifaddrs *ifap, *ifa;
+
+      if ((getifaddrs (&ifap)) != 0) {
+         err_sys("getifaddrs");
+      }
+      for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+         if (ifa->ifa_addr && ifa->ifa_addr->sa_family==AF_INET &&
+             strcmp(ifa->ifa_name,interface_name) == 0) {
+            sin = (struct sockaddr_in *) ifa->ifa_addr;
+            memcpy(ip_addr, &(sin->sin_addr), sizeof(*ip_addr));
+            return 0;
+         }
+      }
+      freeifaddrs(ifap);
+#endif
    }
-
-   memcpy(ip_addr, &(sin->sin_addr), sizeof(*ip_addr));
-
-   pcap_freealldevs(alldevsp);
-
-   return 0;
+/* If we reach here then we haven't found an IP address */
+   return -1;
 }
