@@ -2501,11 +2501,16 @@ get_source_ip(const char *interface_name, struct in_addr *ip_addr) {
       pcap_freealldevs(alldevsp);
 
       return 0;
-   } else {	/* No match from pcap_findalldevs(), try getifaddrs() */
+   } else {
+/* If we reach here then we have not found the interface name in the list
+ * supplied by pcap_findalldevs() so try getifaddrs() instead if available.
+ * This happens for legacy Linux alias interfaces with names like eth0:0.
+ * Ref: https://github.com/royhills/arp-scan/issues/3
+ */
 #ifdef HAVE_GETIFADDRS
       struct ifaddrs *ifap, *ifa;
 
-      if ((getifaddrs (&ifap)) != 0) {
+      if ((getifaddrs(&ifap)) != 0) {
          err_sys("getifaddrs");
       }
       for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
