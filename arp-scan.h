@@ -127,6 +127,11 @@
 #include "my_getopt.h"
 #endif
 
+#ifdef HAVE_SYS_CAPABILITY_H
+#include <sys/prctl.h>
+#include <sys/capability.h>
+#endif
+
 /* Defines */
 
 #define MAXLINE 255			/* Max line length for input files */

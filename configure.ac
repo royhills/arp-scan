@@ -77,6 +77,9 @@ AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_set_immediate_mode])],
    AC_MSG_ERROR([Check that the pcap library is at least version 1.5])
    ])
 
+# Check for POSIX capability support
+CHECK_LIBCAP
+
 dnl Checks for header files.
 
 dnl Check for C POSIX library header files
