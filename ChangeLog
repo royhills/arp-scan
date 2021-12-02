@@ -1,3 +1,13 @@
+2021-12-02 Roy Hills <Roy.Hills@hotmail.com>
+
+	* configure.ac, acinclude.m4: Add autoconf tests for Linux libcap POSIX
+	  capabilities
+
+	* utils.c, arp-scan.h: New functions limit_capabilities() to limit the
+	  permitted capabilities and set_capability() to enable and disable
+	  capabilities. This uses libcap if POSIX capabilities are present,
+	  otherwise it falls back to seteuid().
+
 2021-11-17 Roy Hills <Roy.Hills@hotmail.com>
 
 	* Use getifaddrs() to obtain the interface IP address if it is available
