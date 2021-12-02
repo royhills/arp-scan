@@ -139,7 +139,7 @@ dnl Check for libcap POSIX capabilities support
 AC_DEFUN([CHECK_LIBCAP],
 [
   AC_ARG_WITH(libcap,
-    [  --with-libcap=[auto/yes/no]  Add Libcap support [default=auto]],,
+    AS_HELP_STRING([--with-libcap=@<:@auto/yes/no@:>@],[Add Libcap support @<:@default=auto@:>@]),,
     with_libcap=auto)
 
   if test x$with_libcap = xno ; then
