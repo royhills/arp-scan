@@ -255,3 +255,5 @@ char *my_lookupdev(char *);
 unsigned str_to_bandwidth(const char *);
 unsigned str_to_interval(const char *);
 char *dupstr(const char *);
+void limit_capabilities(void);
+void set_capability(int);
