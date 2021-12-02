@@ -27,6 +27,11 @@
 
 #include "arp-scan.h"
 
+static uid_t uid;
+#ifndef HAVE_LIBCAP
+static uid_t euid;
+#endif
+
 /*
  *	timeval_diff -- Calculates the difference between two timevals
  *	and returns this difference in a third timeval.
@@ -385,3 +390,116 @@ dupstr(const char *str) {
    strlcpy(cp, str, len);
    return cp;
 }
+
+/*
+ *	limit_capabilities -- reduce process capabilities to minimum necessary
+ *
+ *	Inputs:
+ *
+ *	none
+ *
+ *	Returns:
+ *
+ *	none
+ *
+ *	This function reduces the capabilities of the current process to
+ *	the minimum necessary to run this program.
+ *
+ *	If we have POSIX capability support (e.g. Linux with libpcap) then
+ *	the macro HAVE_LIBCAP will be defined and this function will drop all
+ *	capabilities except for those that are required in the permitted set.
+ *	It will also permanantly drop SUID because the application doesn't
+ *	require SUID when capability support is present.
+ *
+ *	If we do not have capability support, then we temporarily drop SUID.
+ */
+void
+limit_capabilities(void) {
+#ifdef HAVE_LIBCAP
+   cap_t cap_cur_p;
+   cap_t cap_p;
+   cap_flag_value_t cap_ok;
+   cap_value_t cap_list[] = {CAP_NET_RAW};
+
+/*
+ *	Create a new capability state in "cap_p" containing only those
+ *	capabilities that are required by the application and present in the
+ *	processes' capability state.
+ */
+   if (!(cap_cur_p = cap_get_proc()))
+      err_sys("cap_get_proc()");
+   if (!(cap_p = cap_init()))
+      err_sys("cap_init()");
+
+   cap_ok = CAP_CLEAR;
+   cap_get_flag(cap_cur_p, CAP_NET_RAW, CAP_PERMITTED, &cap_ok);
+   if (cap_ok != CAP_CLEAR)
+      cap_set_flag(cap_p, CAP_PERMITTED, sizeof(cap_list)/sizeof(cap_list[0]),
+                   cap_list, CAP_SET);
+/*
+ *	Set the process capabilities to the new capability state.
+ */
+   if (cap_set_proc(cap_p) < 0)
+      err_sys("cap_set_proc()");
+/*
+ *	Permanently drop SUID but retain capability state.
+ *	We don't need root UID if we have the required capabilities.
+ */
+   if (prctl(PR_SET_KEEPCAPS, 1) < 0)
+      err_sys("prctl()");
+   if (setuid(getuid()) < 0)
+      err_sys("setuid()");
+   if (prctl(PR_SET_KEEPCAPS, 0) < 0)
+      err_sys("prctl()");
+/*
+ *	Free temporary capability state storage.
+ */
+   cap_free(cap_p);
+   cap_free(cap_cur_p);
+#else
+   euid = geteuid();
+#endif
+   uid = getuid();
+#ifndef HAVE_LIBCAP
+   if (seteuid(uid))
+      err_sys("seteuid()");
+#endif
+}
+
+/*
+ *	set_capability -- enable or disable process capabilities
+ *
+ *	Inputs:
+ *
+ *	enable = Set to 0 to disable or non-zero to enable capabilities
+ *
+ *	Returns:
+ *
+ *	none
+ *
+ *
+ */
+void set_capability(int enable) {
+#ifdef HAVE_LIBCAP
+   cap_t cap_p;
+   cap_flag_value_t cap_ok;
+   cap_value_t cap_list[] = {CAP_NET_RAW};
+
+   if (!(cap_p = cap_get_proc()))
+      err_sys("cap_get_proc()");
+
+   cap_ok = CAP_CLEAR;
+   cap_get_flag(cap_p, cap_list[0], CAP_PERMITTED, &cap_ok);
+   if (cap_ok == CAP_CLEAR && enable)
+      err_msg("Cannot enable CAP_NET_RAW capability");
+   cap_set_flag(cap_p, CAP_EFFECTIVE, sizeof(cap_list)/sizeof(cap_list[0]),
+                cap_list, enable?CAP_SET:CAP_CLEAR);
+   if (cap_set_proc(cap_p) < 0)
+      err_sys("cap_set_proc()");
+   cap_free(cap_p);
+#else
+   if (seteuid(enable ? euid : getuid()))
+      err_sys("seteuid()");
+#endif
+}
+

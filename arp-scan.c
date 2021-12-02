@@ -121,6 +121,10 @@ main(int argc, char *argv[]) {
    pcap_t *pcap_handle;		/* pcap handle */
    struct in_addr interface_ip_addr;
 /*
+ *	Limit process capabilities.
+ */
+   limit_capabilities();
+/*
  *      Initialise file names to the empty string.
  */
    ouifilename[0] = '\0';
@@ -150,6 +154,7 @@ main(int argc, char *argv[]) {
        * with the --interface option then use that, otherwise use
        * my_lookupdev() to pick a suitable interface.
        */
+      set_capability(1);
       if (!if_name) {
          if (!(if_name=my_lookupdev(errbuf))) {
             err_msg("my_lookupdev: %s", errbuf);
@@ -166,6 +171,7 @@ main(int argc, char *argv[]) {
       if ((pcap_set_timeout(pcap_handle, TO_MS)) < 0) /* Is this still needed? */
          err_msg("pcap_set_timeout: %s", pcap_geterr(pcap_handle));
       ret_status = pcap_activate(pcap_handle);
+      set_capability(0);
       if (ret_status < 0) {		/* Error from pcap_activate() */
          char *cp;
 
@@ -201,7 +207,9 @@ main(int argc, char *argv[]) {
        * indicates that the interface doesn't have a MAC address, so is
        * probably not a compatible interface type.
        */
+      set_capability(1);
       get_hardware_address(if_name, interface_mac);
+      set_capability(0);
       if (interface_mac[0]==0 && interface_mac[1]==0 &&
           interface_mac[2]==0 && interface_mac[3]==0 &&
           interface_mac[4]==0 && interface_mac[5]==0) {
@@ -302,12 +310,6 @@ main(int argc, char *argv[]) {
          err_msg("pcap_setfilter: %s", pcap_geterr(pcap_handle));
    } else {	/* Reading packets from file */
       pcap_fd = -1;
-   }
-/*
- *      Drop SUID privileges.
- */
-   if ((setuid(getuid())) < 0) {
-      err_sys("setuid");
    }
 /*
  *	Open pcap savefile is the --pcapsavefile (-W) option was specified
