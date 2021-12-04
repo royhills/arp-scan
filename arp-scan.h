@@ -256,6 +256,7 @@ unsigned str_to_interval(const char *);
 char *dupstr(const char *);
 void limit_capabilities(void);
 void set_capability(int);
+void drop_capabilities(void);
 /* MT19937 prototypes */
 void init_genrand(unsigned long);
 void init_by_array(unsigned long[], int);

@@ -406,8 +406,8 @@ dupstr(const char *str) {
  *	the minimum necessary to run this program.
  *
  *	If we have POSIX capability support (e.g. Linux with libpcap) then
- *	the macro HAVE_LIBCAP will be defined and this function will drop all
- *	capabilities except for those that are required in the permitted set.
+ *	this function will drop all capabilities except for those that are
+ *	required in the permitted set.
  *	It will also permanantly drop SUID because the application doesn't
  *	require SUID when capability support is present.
  *
@@ -491,7 +491,7 @@ void set_capability(int enable) {
    cap_ok = CAP_CLEAR;
    cap_get_flag(cap_p, cap_list[0], CAP_PERMITTED, &cap_ok);
    if (cap_ok == CAP_CLEAR && enable)
-      err_msg("Cannot enable CAP_NET_RAW capability");
+      return;	/* Cannot enable cap if it's not in the permitted set */
    cap_set_flag(cap_p, CAP_EFFECTIVE, sizeof(cap_list)/sizeof(cap_list[0]),
                 cap_list, enable?CAP_SET:CAP_CLEAR);
    if (cap_set_proc(cap_p) < 0)
@@ -503,3 +503,35 @@ void set_capability(int enable) {
 #endif
 }
 
+
+/*
+ *	drop_capabilities -- Permanently drop all capabilities
+ *
+ *	Inputs:
+ *
+ *	none
+ *
+ *	Returns:
+ *
+ *	none
+ *
+ *	This function permanently drops all process capabilities.
+ *
+ *	If we have capabilities support, then all capabilities are cleared.
+ *	Otherwise we permanently drop SUID.
+ *
+ */
+void drop_capabilities(void)
+{
+#ifdef HAVE_LIBCAP
+   cap_t cap;
+
+   cap = cap_init();
+   if (cap_set_proc(cap) < 0)
+      err_sys("cap_set_proc()");
+   cap_free(cap);
+#else
+   if (setuid(getuid()))
+      err_sys("setuid()");
+#endif
+}
