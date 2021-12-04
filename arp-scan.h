@@ -257,3 +257,4 @@ unsigned str_to_interval(const char *);
 char *dupstr(const char *);
 void limit_capabilities(void);
 void set_capability(int);
+void drop_capabilities(void);

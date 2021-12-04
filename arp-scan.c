@@ -205,13 +205,22 @@ main(int argc, char *argv[]) {
        * as the default value for the source hardware addresses in the frame
        * header and ARP packet if the user has not specified their values.
        *
-       * Die with an error if we can't get the MAC address, as this
-       * indicates that the interface doesn't have a MAC address, so is
-       * probably not a compatible interface type.
+       * enable capabilities for the get_hardware_address() call because it
+       * requires privileges on some operating systems.
        */
       set_capability(1);
       get_hardware_address(if_name, interface_mac);
       set_capability(0);
+      /*
+       * There should be no need for capabilities from this point on, so
+       * permanently drop all capabilities.
+       */
+      drop_capabilities();
+      /*
+       * Die with an error if we can't get the MAC address, as this
+       * indicates that the interface doesn't have a MAC address, so is
+       * probably not a compatible interface type.
+       */
       if (interface_mac[0]==0 && interface_mac[1]==0 &&
           interface_mac[2]==0 && interface_mac[3]==0 &&
           interface_mac[4]==0 && interface_mac[5]==0) {
