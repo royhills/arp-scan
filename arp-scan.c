@@ -337,7 +337,7 @@ main(int argc, char *argv[]) {
       if ((argc - optind) < 1)
          usage(EXIT_FAILURE, 0);
 /*
- * Create MAC/Vendor hash table if quiet if not in effect.
+ * Create MAC/Vendor hash table if quiet is not in effect.
  */
    if (!quiet_flag) {
       char *fn;
@@ -681,7 +681,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       free(cp);
    }
 /*
- *	Find vendor from hash table and add to message if quiet if not in
+ *	Find vendor from hash table and add to message if quiet is not in
  *	effect.
  *
  *	We start with more specific matches (against larger parts of the
@@ -1257,7 +1257,7 @@ usage(int status, int detailed) {
 }
 
 /*
- *      add_host_pattern -- Add one or more new host to the list.
+ *      add_host_pattern -- Add one or more new hosts to the list.
  *
  *      Inputs:
  *
@@ -1610,7 +1610,7 @@ find_host(host_entry **he, struct in_addr *addr) {
       return NULL;
    }
 /*
- *	Try to match against out host list.
+ *	Try to match against our host list.
  */
    p = he;
 
@@ -2393,7 +2393,7 @@ add_mac_vendor(const char *map_filename) {
          data=Malloc(data_len+1);
 /*
  * We cannot use strlcpy because the source is not guaranteed to be null
- * terminated. Therefore we use strncpy, specifying one less that the total
+ * terminated. Therefore we use strncpy, specifying one less than the total
  * length, and manually null terminate the destination.
  */
          strncpy(key, line+pmatch[1].rm_so, key_len);
