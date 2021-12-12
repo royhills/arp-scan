@@ -1,3 +1,10 @@
+2021-12-12 Roy Hills <Roy.Hills@hotmail.com>
+
+	* arp-scan.c: Limit packet length in callback() to prevent potential
+	  buffer overrun in unmarshal_arp_pkt() if network frames larger
+	  than expected are received by libpcap. Thanks to @mrquincle for
+	  reporting this issue.
+
 2021-11-17 Roy Hills <Roy.Hills@hotmail.com>
 
 	* Use getifaddrs() to obtain the interface IP address if it is available

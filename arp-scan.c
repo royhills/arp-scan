@@ -1732,6 +1732,13 @@ callback(u_char *args ATTRIBUTE_UNUSED,
       return;
    }
 /*
+ *	Limit packet size to the maximum Ethernet frame size we expect
+ *	to avoid potential buffer overruns later.
+ */
+   if (n > MAX_FRAME) {
+      n = MAX_FRAME;
+   }
+/*
  *	Unmarshal packet buffer into structures and determine framing type
  */
    framing = unmarshal_arp_pkt(packet_in, n, &frame_hdr, &arpei, extra_data,
@@ -2316,6 +2323,9 @@ unmarshal_arp_pkt(const unsigned char *buffer, size_t buf_len,
    if (extra_data != NULL) {
       int length;
 
+/*
+ * buf_len will not exceed MAX_FRAME
+ */
       length = buf_len - (cp - buffer);
       if (length > 0) {		/* Extra data after ARP packet */
          memcpy(extra_data, cp, length);
