@@ -34,8 +34,7 @@ use strict;
 use Getopt::Std;
 use LWP::UserAgent;
 #
-my $default_url = 'http://standards.ieee.org/develop/regauth/iab/iab.txt';
-# http://standards.ieee.org/develop/regauth/oui36/oui36.txt
+my $default_url = 'http://standards-oui.ieee.org/iab/iab.txt';
 my $default_filename='ieee-iab.txt';
 #
 my $usage =
