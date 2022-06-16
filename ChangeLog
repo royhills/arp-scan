@@ -1,5 +1,13 @@
 2021-12-12 Roy Hills <Roy.Hills@hotmail.com>
 
+	* get-iab: change IEEE IAB URL to
+	  http://standards-oui.ieee.org/iab/iab.txt. Thanks to silex for the
+	  pull request.
+
+	* Updated ieee-oui.txt and ieee-iab.txt files.
+
+2021-12-12 Roy Hills <Roy.Hills@hotmail.com>
+
 	* arp-scan.c: Limit packet length in callback() to prevent potential
 	  buffer overrun in unmarshal_arp_pkt() if network frames larger
 	  than expected are received by libpcap. Thanks to @mrquincle for
