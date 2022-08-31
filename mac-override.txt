@@ -1,4 +1,4 @@
-# mac-custom.txt -- Ethernet vendor file for arp-scan, custom overrides
+# mac-override.txt -- Ethernet vendor file for arp-scan, custom overrides
 # This file has precedence over other MAC vendor files
 #
 # This file contains Ethernet vendor mappings for arp-scan.  These are used
