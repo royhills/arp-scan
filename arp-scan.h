@@ -116,6 +116,10 @@
 #include <search.h>
 #endif
 
+#ifdef HAVE_IFADDRS_H
+#include <ifaddrs.h>
+#endif
+
 /* Defines */
 
 #define MAXLINE 255			/* Max line length for input files */
@@ -155,9 +159,9 @@
 #define OPT_READPKTFROMFILE 257		/* --readpktfromfile option */
 #define OPT_RANDOMSEED 258		/* --randomseed option */
 #define HASH_TABLE_SIZE 50000		/* Max size of OUI/Vendor hash table */
-#define DEFAULT_RETRY_SEND 1  /* Default number of send packet retries */
-#define DEFAULT_RETRY_SEND_INTERVAL 0  /* Default interval in seconds
-                                        * between send packet retries */
+#define DEFAULT_RETRY_SEND 20		/* Default no. of send packet retries */
+#define DEFAULT_RETRY_SEND_INTERVAL 5000  /* Default interval between send
+                                        * packet retries in microseconds */
 
 /* Structures */
 

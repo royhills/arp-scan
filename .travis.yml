@@ -9,7 +9,7 @@ env:
 matrix:
   exclude:
     - compiler: clang
-      env: GCOV_OPT="--enable-gcov" 
+      env: GCOV_OPT="--enable-gcov"
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libpcap0.8-dev

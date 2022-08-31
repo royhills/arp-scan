@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan],[1.9.7],[https://github.com/royhills/arp-scan])
+AC_INIT([arp-scan],[1.9.8],[https://github.com/royhills/arp-scan])
 AC_PREREQ([2.61])
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -82,7 +82,7 @@ dnl Are all valid targets POSIX compliant?  If so, do we need to check these?
 AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unistd.h sys/stat.h fcntl.h search.h regex.h])
 
 dnl Check for other required header files
-AC_CHECK_HEADERS([getopt.h pcap.h sys/ioctl.h])
+AC_CHECK_HEADERS([getopt.h pcap.h sys/ioctl.h ifaddrs.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
@@ -95,6 +95,8 @@ AC_TYPE_UINT64_T
 dnl Checks for library functions.
 dnl All of these are defined by POSIX
 AC_CHECK_FUNCS([malloc gethostbyname gettimeofday inet_ntoa memset select socket strerror])
+dnl These functions might not be present on all systems
+AC_CHECK_FUNCS([getifaddrs])
 
 dnl Determine which link-layer implementation to use
 dnl We base our choice on the operating system in $host_os

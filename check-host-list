@@ -33,7 +33,7 @@ SAMPLE01="$srcdir/pkt-net1921681-response.pcap"
 
 # 56 ARP responses from a Class-C sized network with various vendors
 echo "Checking host list creation using $SAMPLE01 ..."
-cat >$EXAMPLEOUTPUT <<_EOF_
+cat >"$EXAMPLEOUTPUT" <<_EOF_
 Host List:
 
 Entry	IP Address
@@ -297,26 +297,26 @@ Entry	IP Address
 Total of 256 host entries.
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt -v -v -v"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE01 192.168.1.0/24 2>&1 | sed -n -e '/^Host List:/,/^Total of /p' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 192.168.1.0/24 2>&1 | sed -n -e '/^Host List:/,/^Total of /p' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-rm -f $ARPSCANOUTPUT
-rm -f $EXAMPLEOUTPUT
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
 #
 echo "Checking random host list creation using $SAMPLE01 ..."
-cat >$EXAMPLEOUTPUT <<_EOF_
+cat >"$EXAMPLEOUTPUT" <<_EOF_
 Host List:
 
 Entry	IP Address
@@ -580,20 +580,20 @@ Entry	IP Address
 Total of 256 host entries.
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt -v -v -v --random --randomseed=0xdeadbeef"
-$srcdir/arp-scan $ARPARGS --readpktfromfile=$SAMPLE01 192.168.1.0/24 2>&1 | sed -n -e '/^Host List:/,/^Total of /p' > $ARPSCANOUTPUT 2>&1
+$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 192.168.1.0/24 2>&1 | sed -n -e '/^Host List:/,/^Total of /p' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s $ARPSCANOUTPUT $EXAMPLEOUTPUT
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
 if test $? -ne 0; then
-   rm -f $ARPSCANOUTPUT
-   rm -f $EXAMPLEOUTPUT
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-rm -f $ARPSCANOUTPUT
-rm -f $EXAMPLEOUTPUT
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"

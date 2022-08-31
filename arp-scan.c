@@ -339,7 +339,7 @@ main(int argc, char *argv[]) {
       if ((argc - optind) < 1)
          usage(EXIT_FAILURE, 0);
 /*
- * Create MAC/Vendor hash table if quiet if not in effect.
+ * Create MAC/Vendor hash table if quiet is not in effect.
  */
    if (!quiet_flag) {
       char *fn;
@@ -690,7 +690,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       free(cp);
    }
 /*
- *	Find vendor from hash table and add to message if quiet if not in
+ *	Find vendor from hash table and add to message if quiet is not in
  *	effect.
  *
  *	We start with more specific matches (against larger parts of the
@@ -847,6 +847,8 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
    arp_ether_ipv4 arpei;
    int nsent = 0;
    unsigned i;
+   struct timeval to;
+   int n;
 /*
  *	Construct Ethernet frame header
  */
@@ -879,7 +881,7 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
  */
    marshal_arp_pkt(buf, &frame_hdr, &arpei, &buflen, padding, padding_len);
 /*
- *	If he is NULL, just return with the packet length.
+ *	If host entry pointer is NULL, just return with the packet length.
  */
    if (he == NULL)
       return buflen;
@@ -898,21 +900,38 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
    he->last_send_time.tv_usec = last_packet_time->tv_usec;
    he->num_sent++;
 /*
+ *	If we are using the undocumented --readpktfromfile option, don't send
+ *	anything and just return with the number of bytes we would have sent.
+ */
+   if (pkt_read_file_flag) {
+      return buflen;
+   }
+/*
  *	Send the packet.
  */
    if (verbose > 1)
       warn_msg("---\tSending packet #%u to host %s tmo %d", he->num_sent,
                my_ntoa(he->addr), he->timeout);
-   if (write_pkt_to_file) {
+   if (write_pkt_to_file) {	/* Writing to file */
       nsent = write(write_pkt_to_file, buf, buflen);
-   } else if (!pkt_read_file_flag) {
+   } else {			/* Send packet to Ethernet adaptor */
+      to.tv_sec  = retry_send_interval/1000000;
+      to.tv_usec = (retry_send_interval - 1000000*to.tv_sec);
       for (i=0; i<retry_send; i++) {
           nsent = pcap_sendpacket(pcap_handle, buf, buflen);
-          if (nsent >= 0) {
+          if (nsent >= 0) {	/* Successfully sent packet */
               break;
+          } else if (errno != EAGAIN) {	/* Unrecoverable error */
+              err_sys("ERROR: failed to send packet");
           }
           if (retry_send_interval > 0) {
-              sleep(retry_send_interval);
+              if (verbose)
+                 warn_msg("---\tRetrying send after %d microsecond delay (#%d of %d)",
+                          retry_send_interval, i, retry_send);
+              n = select(0, NULL, NULL, NULL, &to); /* Delay */
+              if (n < 0) {
+                 err_sys("select");
+              }
           }
       }
    }
@@ -1038,8 +1057,9 @@ usage(int status, int detailed) {
       fprintf(stdout, "\n--retry-send=<i> or -Y <i> Set total number of send packet attempts to <i>,\n");
       fprintf(stdout, "\t\t\tdefault=%d.\n", DEFAULT_RETRY_SEND);
       fprintf(stdout, "\n--retry-send-interval=<i> or -E <i> Set interval between send packet attempts to <i>.\n");
-      fprintf(stdout, "\t\t\tThe interval specified is in seconds by default.\n");
-      fprintf(stdout, "\t\t\tdefault=%d.\n", DEFAULT_RETRY_SEND_INTERVAL);
+      fprintf(stdout, "\t\t\tThe interval specified is in milliseconds by default.\n");
+      fprintf(stdout, "\t\t\tor in microseconds if \"u\" is appended to the value.\n");
+      fprintf(stdout, "\t\t\tdefault=%d.\n", DEFAULT_RETRY_SEND_INTERVAL/1000);
       fprintf(stdout, "\n--timeout=<i> or -t <i>\tSet initial per host timeout to <i> ms, default=%d.\n", DEFAULT_TIMEOUT);
       fprintf(stdout, "\t\t\tThis timeout is for the first packet sent to each host.\n");
       fprintf(stdout, "\t\t\tsubsequent timeouts are multiplied by the backoff\n");
@@ -1251,7 +1271,7 @@ usage(int status, int detailed) {
 }
 
 /*
- *      add_host_pattern -- Add one or more new host to the list.
+ *      add_host_pattern -- Add one or more new hosts to the list.
  *
  *      Inputs:
  *
@@ -1604,7 +1624,7 @@ find_host(host_entry **he, struct in_addr *addr) {
       return NULL;
    }
 /*
- *	Try to match against out host list.
+ *	Try to match against our host list.
  */
    p = he;
 
@@ -1724,6 +1744,13 @@ callback(u_char *args ATTRIBUTE_UNUSED,
    if (n < ETHER_HDR_SIZE + ARP_PKT_SIZE) {
       printf("%d byte packet too short to decode\n", n);
       return;
+   }
+/*
+ *	Limit packet size to the maximum Ethernet frame size we expect
+ *	to avoid potential buffer overruns later.
+ */
+   if (n > MAX_FRAME) {
+      n = MAX_FRAME;
    }
 /*
  *	Unmarshal packet buffer into structures and determine framing type
@@ -1867,7 +1894,7 @@ process_options(int argc, char *argv[]) {
             retry_send=Strtoul(optarg, 10);
             break;
          case 'E':	/* --retry-send-interval */
-            retry_send_interval=Strtoul(optarg, 10);
+            retry_send_interval=str_to_interval(optarg);
             break;
          case 't':	/* --timeout */
             timeout=Strtoul(optarg, 10);
@@ -2314,6 +2341,9 @@ unmarshal_arp_pkt(const unsigned char *buffer, size_t buf_len,
    if (extra_data != NULL) {
       int length;
 
+/*
+ * buf_len will not exceed MAX_FRAME
+ */
       length = buf_len - (cp - buffer);
       if (length > 0) {		/* Extra data after ARP packet */
          memcpy(extra_data, cp, length);
@@ -2391,7 +2421,7 @@ add_mac_vendor(const char *map_filename) {
          data=Malloc(data_len+1);
 /*
  * We cannot use strlcpy because the source is not guaranteed to be null
- * terminated. Therefore we use strncpy, specifying one less that the total
+ * terminated. Therefore we use strncpy, specifying one less than the total
  * length, and manually null terminate the destination.
  */
          strncpy(key, line+pmatch[1].rm_so, key_len);
@@ -2480,27 +2510,48 @@ get_source_ip(const char *interface_name, struct in_addr *ip_addr) {
    while (device != NULL && (strcmp(device->name,interface_name) != 0)) {
       device=device->next;
    }
-   if (device == NULL) {
-      warn_msg("ERROR: Could not find interface: %s", interface_name);
-      err_msg("ERROR: Check that the interface exists and is up");
-   }
-
-   for (addr=device->addresses; addr != NULL; addr=addr->next) {
-      sa = addr->addr;
-      if (sa->sa_family == AF_INET) {
-         sin = (struct sockaddr_in *) sa;
-         break;
+   if (device != NULL) { /* We found a device name match */
+      for (addr=device->addresses; addr != NULL; addr=addr->next) {
+         sa = addr->addr;
+         if (sa->sa_family == AF_INET) {
+            sin = (struct sockaddr_in *) sa;
+            break;
+         }
       }
-   }
-   if (sin == NULL) {
-      memset(&(ip_addr->s_addr), '\0', sizeof(ip_addr->s_addr));
+      if (sin == NULL) {
+         memset(&(ip_addr->s_addr), '\0', sizeof(ip_addr->s_addr));
+         pcap_freealldevs(alldevsp);
+         return -1;
+      }
+
+      memcpy(ip_addr, &(sin->sin_addr), sizeof(*ip_addr));
+
       pcap_freealldevs(alldevsp);
-      return -1;
+
+      return 0;
+   } else {
+/* If we reach here then we have not found the interface name in the list
+ * supplied by pcap_findalldevs() so try getifaddrs() instead if available.
+ * This happens for legacy Linux alias interfaces with names like eth0:0.
+ * Ref: https://github.com/royhills/arp-scan/issues/3
+ */
+#ifdef HAVE_GETIFADDRS
+      struct ifaddrs *ifap, *ifa;
+
+      if ((getifaddrs(&ifap)) != 0) {
+         err_sys("getifaddrs");
+      }
+      for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+         if (ifa->ifa_addr && ifa->ifa_addr->sa_family==AF_INET &&
+             strcmp(ifa->ifa_name,interface_name) == 0) {
+            sin = (struct sockaddr_in *) ifa->ifa_addr;
+            memcpy(ip_addr, &(sin->sin_addr), sizeof(*ip_addr));
+            return 0;
+         }
+      }
+      freeifaddrs(ifap);
+#endif
    }
-
-   memcpy(ip_addr, &(sin->sin_addr), sizeof(*ip_addr));
-
-   pcap_freealldevs(alldevsp);
-
-   return 0;
+/* If we reach here then we haven't found an IP address */
+   return -1;
 }

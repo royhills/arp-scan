@@ -28,33 +28,33 @@
 TMPFILE=/tmp/arp-scan-test.$$.tmp
 #
 echo "Checking arp-scan --help ..."
-$srcdir/arp-scan --help > $TMPFILE
+$srcdir/arp-scan --help > "$TMPFILE"
 if test $? -ne 0; then
-   rm -f $TMPFILE
+   rm -f "$TMPFILE"
    echo "FAILED"
    exit 1
 fi
-grep '^Report bugs or send suggestions at ' $TMPFILE >/dev/null
+grep '^Report bugs or send suggestions at ' "$TMPFILE" >/dev/null
 if test $? -ne 0; then
-   rm -f $TMPFILE
+   rm -f "$TMPFILE"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
 #
 echo "Checking arp-scan --version ..."
-$srcdir/arp-scan --version > $TMPFILE
+$srcdir/arp-scan --version > "$TMPFILE"
 if test $? -ne 0; then
-   rm -f $TMPFILE
+   rm -f "$TMPFILE"
    echo "FAILED"
    exit 1
 fi
-grep '^Copyright (C) ' $TMPFILE >/dev/null
+grep '^Copyright (C) ' "$TMPFILE" >/dev/null
 if test $? -ne 0; then
-   rm -f $TMPFILE
+   rm -f "$TMPFILE"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
 #
-rm -f $TMPFILE
+rm -f "$TMPFILE"

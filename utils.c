@@ -323,7 +323,7 @@ str_to_bandwidth(const char *bandwidth_string) {
  *
  *	Returns:
  *
- *	The interval in microsecons as an unsigned integer
+ *	The interval in microseconds as an unsigned integer
  */
 unsigned
 str_to_interval(const char *interval_string) {
@@ -363,7 +363,7 @@ str_to_interval(const char *interval_string) {
  *
  *	Inputs:
  *
- *	str	The string to duplcate
+ *	str	The string to duplicate
  *
  *	Returns:
  *
