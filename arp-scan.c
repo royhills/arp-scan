@@ -2049,7 +2049,7 @@ arp_scan_version (void) {
  *	Inputs:
  *
  *	name		The name to lookup
- *	af		The address family
+ *	af		The address family, typically AF_INET
  *	addr		Pointer to the IP address buffer
  *	error_msg	The error message, or NULL if no problem.
  *
