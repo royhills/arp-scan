@@ -54,3 +54,5 @@ B0C420	Bochs
 
 # Ethernet broadcast address
 FFFFFFFFFFFF	Broadcast
+
+# Put any local additions after this line.

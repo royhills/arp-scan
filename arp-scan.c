@@ -2358,6 +2358,8 @@ add_mac_vendor(const char *map_filename) {
    size_t data_len;
    char *key;
    char *data;
+   char *linep;
+   char *keyp;
    char line[MAXLINE];
    int line_count;
    int result;
@@ -2402,12 +2404,22 @@ add_mac_vendor(const char *map_filename) {
          key=Malloc(key_len+1);
          data=Malloc(data_len+1);
 /*
+ * Copy MAC address from line into key, ommitting any non-hex characters and
+ * folding any lowercase alphabetic characters to uppercase.
+ */
+         linep = line+pmatch[1].rm_so;
+         keyp = key;
+         while (linep != line+pmatch[1].rm_eo) {
+            if (isxdigit(*linep))
+               *keyp++ = toupper(*linep);
+            linep++;
+         }
+         *keyp = '\0';
+/*
  * We cannot use strlcpy because the source is not guaranteed to be null
  * terminated. Therefore we use strncpy, specifying one less than the total
  * length, and manually null terminate the destination.
  */
-         strncpy(key, line+pmatch[1].rm_so, key_len);
-         key[key_len] = '\0';
          strncpy(data, line+pmatch[2].rm_so, data_len);
          data[data_len] = '\0';
          hash_entry.key = key;
