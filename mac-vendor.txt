@@ -12,6 +12,10 @@
 # digits (one octet) to twelve hex digits (six octets, the entire Ethernet
 # hardware address).
 #
+# Alphabetic hex characters [A-F] may use either upper or lower case, and
+# seperator symbols such as ":", "-" and "." are ignored. This permits the
+# use of standard format MAC addresses in this file.
+#
 # For example:
 #
 # 012345	would match 01:23:45:xx:xx:xx, where xx represents any value;
@@ -24,7 +28,6 @@
 # update the OUI and IAB listings.  This file is for MAC addresses that are
 # not present in the IEEE listings.
 #
-# The alphabetic hex characters [A-F] must be entered in upper case.
 #
 # The order of entries in this file are not important.
 #
@@ -55,4 +58,7 @@ B0C420	Bochs
 # Ethernet broadcast address
 FFFFFFFFFFFF	Broadcast
 
+# You can add local MAC address/name mappings to this file. There should be
+# a TAB character between the MAC address and the name.
+#
 # Put any local additions after this line.

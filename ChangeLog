@@ -1,4 +1,13 @@
-2021-12-12 Roy Hills <Roy.Hills@hotmail.com>
+2022-09-03 Roy Hills <Roy.Hills@hotmail.com>
+
+	* arp-scan.c: Allow MAC addresses in mac-vendor.txt to use either lower
+	  or uppercase hex digits and ignore any seperator characters e.g. ":"
+	  or "-". This allows normal format MAC addresses such as those output
+	  by arp-scan to be used directly in the mac-vendor.txt file.
+
+	* mac-vendor.txt: Update comments to reflect code changes.
+
+2022-06-16 Roy Hills <Roy.Hills@hotmail.com>
 
 	* get-iab: change IEEE IAB URL to
 	  http://standards-oui.ieee.org/iab/iab.txt. Thanks to silex for the
