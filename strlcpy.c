@@ -18,6 +18,7 @@
 
 #include <sys/types.h>
 #include <string.h>
+#include "strlcpy.h"
 
 /*
  * Copy string src to buffer dst of size dsize.  At most dsize-1

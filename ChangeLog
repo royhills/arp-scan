@@ -10,6 +10,8 @@
 
 	* strlcat.c, strlcpy.c: Updated from latest OpenBSD source.
 
+	* strlcat.h: New file containing function prototypes for strlcat() and strlcpy().
+
 2022-09-03 Roy Hills <Roy.Hills@hotmail.com>
 
 	* arp-scan.c: Allow MAC addresses in mac-vendor.txt to use either lower

@@ -123,6 +123,11 @@
 /* Mersenne Twister random number generator prototypes */
 #include "mt19937ar.h"
 
+/* OpenBSD strlcat and strlcpy prototypes */
+#ifndef HAVE_STRLCPY
+#include "strlcpy.h"
+#endif
+
 /* Defines */
 
 #define MAXLINE 255			/* Max line length for input files */
@@ -197,13 +202,6 @@ typedef struct {
 } arp_ether_ipv4;
 
 /* Functions */
-
-#ifndef HAVE_STRLCAT
-size_t strlcat(char *dst, const char *src, size_t siz);
-#endif
-#ifndef HAVE_STRLCPY
-size_t strlcpy(char *dst, const char *src, size_t siz);
-#endif
 
 void err_sys(const char *, ...);
 void warn_sys(const char *, ...);

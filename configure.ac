@@ -39,7 +39,9 @@ if test -n "$GCC"; then
    GCC_FORTIFY_SOURCE
    GCC_FORMAT_SECURITY
 dnl Uncomment the line below to compile with additional warnings enabled.
-dnl CFLAGS="$CFLAGS -pedantic -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs"
+dnl CFLAGS="$CFLAGS -pedantic -Wpointer-arith -Wcast-qual -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs"
+dnl These warning options will cause warnings to be issued.
+dnl CFLAGS="$CFLAGS -Wconversion"
 else
    AC_DEFINE([ATTRIBUTE_UNUSED], [],
              [Define to the compiler's unused pragma])
@@ -155,12 +157,11 @@ AC_CHECK_FUNC([getopt_long_only], ,
 dnl Check for strlcat and strlcpy.  If we don't have them, use the replacement
 dnl functions from OpenBSD.  Most modern C libraries have these functions,
 dnl but some such as as glibc don't.
-AC_CHECK_FUNC([strlcat],
-              [AC_DEFINE(HAVE_STRLCAT, 1, [Define to 1 if the C library includes the strlcat function])],
-              [AC_LIBOBJ(strlcat)])
 AC_CHECK_FUNC([strlcpy],
               [AC_DEFINE(HAVE_STRLCPY, 1, [Define to 1 if the C library includes the strlcpy function])],
-              [AC_LIBOBJ(strlcpy)])
+              [ AC_LIBOBJ(strlcat)
+                AC_LIBOBJ(strlcpy)
+                AC_LIBSOURCE(strlcpy.h) ])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
