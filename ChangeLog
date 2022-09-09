@@ -1,3 +1,15 @@
+2022-09-09 Roy Hills <Roy.Hills@hotmail.com>
+
+	* arp-scan.c: Die with error message if hsearch() fails when adding a
+	  new entry to the hash table. Previous behaviour was to issue a
+	  warning and continue.
+
+	* mt19937ar.c, mt19937ar.h, Makefile.am, arp-scan.h: Update Mersenne Twister
+	  random number generator source code to latest version from
+	  https://github.com/clibs/mt19937ar
+
+	* strlcat.c, strlcpy.c: Updated from latest OpenBSD source.
+
 2022-09-03 Roy Hills <Roy.Hills@hotmail.com>
 
 	* arp-scan.c: Allow MAC addresses in mac-vendor.txt to use either lower
