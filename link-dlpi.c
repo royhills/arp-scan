@@ -27,6 +27,9 @@
  * Provider Interface) implementation.  DLPI is typically used on SysV systems
  * such as Solaris.
  *
+ * Note: The DLPI functions have been tested with Solaris 8, 9 and 10. However
+ *       they do not work with Solaris 11. See github issue
+ *       https://github.com/royhills/arp-scan/issues/31 for details.
  */
 
 #include "arp-scan.h"

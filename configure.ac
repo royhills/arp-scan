@@ -98,8 +98,9 @@ AC_CHECK_FUNCS([malloc gethostbyname gettimeofday inet_ntoa memset select socket
 dnl These functions might not be present on all systems
 AC_CHECK_FUNCS([getifaddrs])
 
-dnl Determine which link-layer implementation to use
-dnl We base our choice on the operating system in $host_os
+dnl
+dnl Determine link-layer implementation to use based on the $host_os variable
+dnl
 case $host_os in
    *linux* )
       AC_MSG_NOTICE([Using packet socket link layer implementation.]);
@@ -128,6 +129,7 @@ dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
       ;;
    *solaris* )
       AC_MSG_NOTICE([Using DLPI link layer implementation.]);
+      AC_MSG_NOTICE([NOTE: This works on Solaris 8,9 and 10 but fails on Solaris 11.]);
 dnl Solaris 9 needs sys/types.h and sys/socket.h included before net/if.h.
       AC_CHECK_HEADERS([sys/dlpi.h sys/dlpihdr.h stropts.h sys/ioctl.h sys/sockio.h net/if.h sys/bufmod.h],,,
       [
