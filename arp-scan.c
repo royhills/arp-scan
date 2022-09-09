@@ -2425,7 +2425,7 @@ add_mac_vendor(const char *map_filename) {
          hash_entry.key = key;
          hash_entry.data = data;
          if ((hsearch(hash_entry, ENTER)) == NULL) {
-            warn_msg("hsearch([%s, %s], ENTER)", key, data);
+            err_sys("ERROR: hsearch([%s, %s], ENTER) failed", key, data);
          } else {
             line_count++;
          }
