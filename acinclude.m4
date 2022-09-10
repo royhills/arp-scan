@@ -4,8 +4,8 @@ dnl
 dnl Useful macros for autoconf to check for ssp-patched gcc
 dnl 1.0 - September 2003 - Tiago Sousa <mirage@kaotik.org>
 dnl
-dnl Modified by ffontaine pull request: use AC_TRY_LINK instead of
-dnl AC_TRY_COMPILE because some systems may be missing the libssp library
+dnl Modified by ffontaine pull request: use AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],[]) instead of
+dnl AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],[]) because some systems may be missing the libssp library
 dnl even though the compiler accepts the option.
 dnl
 dnl About ssp:
@@ -29,7 +29,7 @@ AC_DEFUN([GCC_STACK_PROTECT_CC],[
     AC_MSG_CHECKING([whether ${CC} accepts -fstack-protector])
     ssp_old_cflags="$CFLAGS"
     CFLAGS="$CFLAGS -fstack-protector"
-    AC_TRY_LINK(,,, ssp_cc=no)
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],[ssp_cc=no])
     echo $ssp_cc
     if test "X$ssp_cc" = "Xno"; then
       CFLAGS="$ssp_old_cflags"
@@ -45,7 +45,7 @@ AC_DEFUN([GCC_STACK_PROTECT_CXX],[
     AC_MSG_CHECKING([whether ${CXX} accepts -fstack-protector])
     ssp_old_cxxflags="$CXXFLAGS"
     CXXFLAGS="$CXXFLAGS -fstack-protector"
-    AC_TRY_LINK(,,, ssp_cxx=no)
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],[ssp_cxx=no])
     echo $ssp_cxx
     if test "X$ssp_cxx" = "Xno"; then
         CXXFLAGS="$ssp_old_cxxflags"
@@ -67,7 +67,7 @@ dnl
 AC_DEFUN([GCC_FORTIFY_SOURCE],[
    if test "x$CC" != "X"; then
       AC_MSG_CHECKING([whether ${CC} accepts -D_FORTIFY_SOURCE])
-      AC_TRY_COMPILE(,[
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
          #define GNUC_PREREQ(maj, min) ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
          #if !(GNUC_PREREQ (4, 1) \
             || (defined __GNUC_RH_RELEASE__ && GNUC_PREREQ (4, 0)) \
@@ -77,10 +77,10 @@ AC_DEFUN([GCC_FORTIFY_SOURCE],[
                   || (__GNUC_PATCHLEVEL__ == 2 && __GNUC_RH_RELEASE__ >= 8))))
          #error No FORTIFY_SOURCE support
          #endif
-      ], [
+      ]])],[
          AC_MSG_RESULT(yes)
          CFLAGS="$CFLAGS -D_FORTIFY_SOURCE=2"
-      ], [
+      ],[
          AC_MSG_RESULT(no)
       ])
    fi
@@ -102,14 +102,14 @@ AC_DEFUN([GCC_FORMAT_SECURITY],[
       AC_MSG_CHECKING([whether ${CC} accepts -Wformat-security])
       wfs_old_cflags="$CFLAGS"
       CFLAGS="$CFLAGS -Wall -Werror -Wformat -Wformat-security"
-      AC_TRY_COMPILE([#include <stdio.h>], [
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>]], [[
          char *fmt=NULL;
          printf(fmt);
          return 0;
-      ], [
+      ]])],[
          AC_MSG_RESULT(no)
          CFLAGS="$wfs_old_cflags"
-      ], [
+      ],[
          AC_MSG_RESULT(yes)
          CFLAGS="$wfs_old_cflags -Wformat -Wformat-security"
       ])
@@ -125,7 +125,7 @@ AC_DEFUN([GCC_WEXTRA],[
     AC_MSG_CHECKING([whether ${CC} accepts -Wextra])
     gcc_old_cflags="$CFLAGS"
     CFLAGS="$CFLAGS -Wextra"
-    AC_TRY_COMPILE(,,[
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[
        AC_MSG_RESULT(yes)
     ],[
        AC_MSG_RESULT(no)
