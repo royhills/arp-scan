@@ -4,8 +4,8 @@ dnl
 dnl Useful macros for autoconf to check for ssp-patched gcc
 dnl 1.0 - September 2003 - Tiago Sousa <mirage@kaotik.org>
 dnl
-dnl Modified by ffontaine pull request: use AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],[]) instead of
-dnl AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],[]) because some systems may be missing the libssp library
+dnl Modified by ffontaine pull request: use AC_LINK_IFELSE instead of
+dnl AC_COMPILE_IFELSE because some systems may be missing the libssp library
 dnl even though the compiler accepts the option.
 dnl
 dnl About ssp:
