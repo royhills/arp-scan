@@ -77,6 +77,7 @@ static unsigned char source_mac[6];
 static int source_mac_flag = 0;
 static unsigned char *padding=NULL;
 static size_t padding_len=0;
+static int discover_flag=0;		/* Discover local networks */
 static int localnet_flag=0;		/* Scan local network */
 static int llc_flag=0;			/* Use 802.2 LLC with SNAP */
 static int ieee_8021q_vlan=-1;		/* Use 802.1Q VLAN tagging if >= 0 */
@@ -109,6 +110,7 @@ main(int argc, char *argv[]) {
    int pass_no = 0;
    int first_timeout=1;
    unsigned i;
+   unsigned j;
    char errbuf[PCAP_ERRBUF_SIZE];
    struct bpf_program filter;
    char *filter_string;
@@ -323,17 +325,25 @@ main(int argc, char *argv[]) {
  */
    if (interval && bandwidth != DEFAULT_BANDWIDTH)
       err_msg("ERROR: You cannot specify both --bandwidth and --interval.");
+   if (discover_flag && localnet_flag)
+      err_msg("ERROR: You cannot specify both --localnet and --discover.");
    if (localnet_flag) {
       if ((argc - optind) > 0)
          err_msg("ERROR: You can not specify targets with the --localnet option");
       if (filename_flag)
          err_msg("ERROR: You can not specify both --file and --localnet options");
    }
+   if (discover_flag) {
+      if ((argc - optind) > 0)
+         err_msg("ERROR: You can not specify targets with the --discover option");
+      if (filename_flag)
+         err_msg("ERROR: You can not specify both --file and --discover options");
+   }
 /*
  *      If we're not reading from a file, and --localnet was not specified, then
  *	we must have some hosts given as command line arguments.
  */
-   if (!filename_flag && !localnet_flag)
+   if (!filename_flag && !localnet_flag && !discover_flag)
       if ((argc - optind) < 1)
          usage(EXIT_FAILURE, 0);
 /*
@@ -369,8 +379,10 @@ main(int argc, char *argv[]) {
    }
 /*
  *      Populate the list from the specified file if --file was specified, or
- *	from the interface address and mask if --localnet was specified, or
- *      otherwise from the remaining command line arguments.
+ *      from the interface address and mask if --localnet was specified, or
+ *      from the first IP address within each /24 subnet within the RFC1918
+ *      local address space if --discover was specified, or otherwise from
+ *      the remaining command line arguments.
  */
    if (filename_flag) { /* Populate list from file */
       FILE *fp;
@@ -416,6 +428,25 @@ main(int argc, char *argv[]) {
          warn_msg("Using %s for localnet", localnet_descr);
       }
       add_host_pattern(localnet_descr, timeout);
+   } else if (discover_flag) {  /* Populate list from common local addresses */
+      char ip[16];
+
+      for (i=0; i<=254; ++i) {
+         for (j=0; j<255; ++j) {
+            snprintf(ip, 16, "10.%d.%d.1", i, j);
+            add_host_pattern(ip, timeout);
+         }
+      }
+      for (i=16; i<=32; ++i) {
+         for (j=0; j<255; ++j) {
+            snprintf(ip, 16, "172.%d.%d.1", i, j);
+            add_host_pattern(ip, timeout);
+         }
+      }
+      for (i=0; i<255; ++i) {
+         snprintf(ip, 16, "192.168.%d.1", i);
+         add_host_pattern(ip, timeout);
+      }
    } else {             /* Populate list from command line arguments */
       argv=&argv[optind];
       while (*argv) {
@@ -987,7 +1018,9 @@ usage(int status, int detailed) {
    fprintf(stdout, "Target hosts must be specified on the command line unless the --file option is\n");
    fprintf(stdout, "given, in which case the targets are read from the specified file instead, or\n");
    fprintf(stdout, "the --localnet option is used, in which case the targets are generated from\n");
-   fprintf(stdout, "the network interface IP address and netmask.\n");
+   fprintf(stdout, "the network interface IP address and netmask, or the --discover option is used,\n");
+   fprintf(stdout, "in which case the first IP address within each /24 subnet within the RFC1918\n");
+   fprintf(stdout, "local address space is used.\n");
    fprintf(stdout, "\n");
    fprintf(stdout, "You will need to be root, or arp-scan must be SUID root, in order to run\n");
    fprintf(stdout, "arp-scan, because the functions that it uses to read and write packets\n");
@@ -1031,6 +1064,7 @@ usage(int status, int detailed) {
       fprintf(stdout, "\n--file=<s> or -f <s>\tRead hostnames or addresses from the specified file\n");
       fprintf(stdout, "\t\t\tinstead of from the command line. One name or IP\n");
       fprintf(stdout, "\t\t\taddress per line. Use \"-\" for standard input.\n");
+      fprintf(stdout, "\n--discover or -d\tDiscover networks using common RF1918 local addresses.\n");
       fprintf(stdout, "\n--localnet or -l\tGenerate addresses from network interface configuration.\n");
       fprintf(stdout, "\t\t\tUse the network interface IP address and network mask\n");
       fprintf(stdout, "\t\t\tto generate the list of target host addresses.\n");
@@ -1837,6 +1871,7 @@ process_options(int argc, char *argv[]) {
       {"arpsha", required_argument, 0, 'u'},
       {"arptha", required_argument, 0, 'w'},
       {"srcaddr", required_argument, 0, 'S'},
+      {"discover", no_argument, 0, 'd'},
       {"localnet", no_argument, 0, 'l'},
       {"llc", no_argument, 0, 'L'},
       {"vlan", required_argument, 0, 'Q'},
@@ -1851,12 +1886,12 @@ process_options(int argc, char *argv[]) {
 /*
  * available short option characters:
  *
- * lower:       --cde----jk--------------z
+ * lower:       --c-e----jk--------------z
  * UPPER:       --C---G--JK-M-------U--X-Z
  * Digits:      0123456789
  */
    const char *short_options =
-      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:Dx";
+      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:dlLQ:W:Dx";
    int arg;
    int options_index=0;
 
@@ -1981,6 +2016,9 @@ process_options(int argc, char *argv[]) {
             if (result != 0)
                err_msg("Invalid target MAC address: %s", optarg);
             source_mac_flag = 1;
+            break;
+         case 'd':	/* --discover */
+            discover_flag = 1;
             break;
          case 'l':	/* --localnet */
             localnet_flag = 1;
