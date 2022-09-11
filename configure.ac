@@ -149,19 +149,20 @@ esac
 
 dnl Linux and most BSD systems have getopt_long_only, but NetBSD 7.0 doesn't.
 dnl For systems that don't have it, use the GNU getopt sources from glibc.
-AC_CHECK_FUNC([getopt_long_only], ,
-  [ AC_LIBOBJ(getopt)
-    AC_LIBOBJ(getopt1)
-    AC_LIBSOURCE(getopt.h) ])
+AC_CHECK_FUNC([getopt_long_only],
+              [AC_DEFINE(HAVE_GETOPT_LONG_ONLY, 1, [Define to 1 if the C library includes getopt_long_only])],
+              [ AC_LIBOBJ([getopt])
+                AC_LIBOBJ([getopt1])
+                AC_LIBSOURCE([my_getopt.h]) ])
 
 dnl Check for strlcat and strlcpy.  If we don't have them, use the replacement
 dnl functions from OpenBSD.  Most modern C libraries have these functions,
 dnl but some such as as glibc don't.
 AC_CHECK_FUNC([strlcpy],
               [AC_DEFINE(HAVE_STRLCPY, 1, [Define to 1 if the C library includes the strlcpy function])],
-              [ AC_LIBOBJ(strlcat)
-                AC_LIBOBJ(strlcpy)
-                AC_LIBSOURCE(strlcpy.h) ])
+              [ AC_LIBOBJ([strlcat])
+                AC_LIBOBJ([strlcpy])
+                AC_LIBSOURCE([strlcpy.h]) ])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

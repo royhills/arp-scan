@@ -59,17 +59,6 @@
 #include <netdb.h>
 #endif
 
-#ifdef HAVE_GETOPT_H
-#include <getopt.h>
-#else
-/* Include getopt.h for the sake of getopt_long.
-   We don't need the declaration of getopt, and it could conflict
-   with something from a system header file, so effectively nullify that.  */
-#define getopt getopt_loser
-#include "getopt.h"
-#undef getopt
-#endif
-
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif
@@ -126,6 +115,16 @@
 /* OpenBSD strlcat and strlcpy prototypes */
 #ifndef HAVE_STRLCPY
 #include "strlcpy.h"
+#endif
+
+/* Include the system getopt.h if getopt_long_only() is supported. Otherwise
+ * include our replacement my_getopt.h */
+#ifdef HAVE_GETOPT_LONG_ONLY
+#ifdef HAVE_GETOPT_H
+#include <getopt.h>
+#endif
+#else
+#include "my_getopt.h"
 #endif
 
 /* Defines */
