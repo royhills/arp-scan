@@ -25,7 +25,7 @@
 #ifdef _LIBC
 # include <getopt.h>
 #else
-# include "getopt.h"
+# include "my_getopt.h"
 #endif
 
 #if !defined __STDC__ || !__STDC__
