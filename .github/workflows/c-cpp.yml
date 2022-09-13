@@ -20,7 +20,7 @@ jobs:
       if: matrix.os == 'macos-latest'
     - name: install libpcap on linux
       run: |
-        sudo apt-get update -qq \
+        sudo apt-get update -qq
         sudo apt-get install -qq libpcap0.8-dev
       if: matrix.os == 'ubuntu-latest'
     - name: autoreconf
