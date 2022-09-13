@@ -7,11 +7,17 @@ on:
 
 jobs:
   build:
+    runs-on: ${{ matrix.os }}
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v3
+    - name: install autotools
+      run: brew install automake
+      if: matrix.os == 'macos-latest'
     - name: apt-get-update
       run: sudo apt-get update -qq
     - name: install-libpcap
