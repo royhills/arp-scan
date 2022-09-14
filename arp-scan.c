@@ -490,7 +490,7 @@ main(int argc, char *argv[]) {
       packet_out_len += PACKET_OVERHEAD;	/* Add layer 2 overhead */
       interval = ((uint64_t)packet_out_len * 8 * 1000000) / bandwidth;
       if (verbose > 1) {
-         warn_msg("DEBUG: pkt len=%u bytes, bandwidth=%u bps, interval=%u us",
+         warn_msg("DEBUG: pkt len=%zu bytes, bandwidth=%u bps, interval=%u us",
                   packet_out_len, bandwidth, interval);
       }
    }
