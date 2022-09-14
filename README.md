@@ -1,7 +1,7 @@
 # arp-scan
 
 [![Build](https://github.com/royhills/arp-scan/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/royhills/arp-scan/actions/workflows/c-cpp.yml)
-[![Coverage Status](https://coveralls.io/repos/royhills/arp-scan/badge.png?branch=master)](https://coveralls.io/r/royhills/arp-scan?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/royhills/arp-scan/badge.svg?branch=master)](https://coveralls.io/github/royhills/arp-scan?branch=master)
 
 The ARP scanner
 

@@ -1,3 +1,10 @@
+2022-09-14 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* README.md, .github/workflows/*: Migrated from travis-ci to github
+	  actions for CI/CD build check and code coverage report.
+
+	* .travis.yml: removed as no longer needed.
+
 2022-09-11 Roy Hills <Roy.Hills@hotmail.com>
 
 	* arp-scan.h, configure.ac, getopt.c, getopt1.c: only include

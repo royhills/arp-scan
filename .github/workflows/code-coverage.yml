@@ -1,0 +1,35 @@
+name: coverage
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: install libpcap and lcov
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq libpcap0.8-dev lcov
+      - name: autoreconf
+        run: autoreconf --install
+      - name: configure with gcov
+        run: ./configure --enable-gcov
+      - name: make
+        run: make
+      - name: make check
+        run: make check
+      - name: create lcov.info
+        run: lcov --directory . --capture --output-file lcov.info
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./lcov.info
