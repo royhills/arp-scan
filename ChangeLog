@@ -1,3 +1,12 @@
+2022-09-11 Roy Hills <Roy.Hills@hotmail.com>
+
+	* arp-scan.h, configure.ac, getopt.c, getopt1.c: only include
+	  the local replacement getopt header file if the system doesn't
+	  support getopt_long_only.  Previously it was being included even
+	  if it wasn't required.
+
+	* getopt.h: rename to my_getopt.h.
+
 2022-09-10 Roy Hills <Roy.Hills@hotmail.com>
 
 	* acinclude.m4: Replaced obsolete autoconf macros AC_TRY_COMPILE with
