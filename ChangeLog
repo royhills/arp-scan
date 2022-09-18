@@ -1,3 +1,11 @@
+2022-09-18 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* check-decode, check-host-list, check-packet, check-run1: Changed
+	  "$srcdir/arp-scan" to "./arp-scan" in test scripts so
+	  "make distcheck" succeeds.
+
+	* .github/workflows/c-cpp.yml: Enable "make distcheck" step.
+
 2022-09-14 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* README.md, .github/workflows/*: Migrated from travis-ci to github

@@ -31,10 +31,10 @@ jobs:
       run: make
     - name: make check
       run: make check
+    - name: make distcheck
+      run: make distcheck
     - name: print info
       run: |
         uname -a
         gcc --version
         ./arp-scan --version
-#    - name: make distcheck
-#      run: make distcheck

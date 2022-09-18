@@ -37,7 +37,7 @@ SAMPLE06="$srcdir/pkt-custom-request-vlan-llc.dat"
 
 echo "Checking simple ARP request packet against $SAMPLE01 ..."
 ARPARGS="--retry=1 --file=- --srcaddr=00:01:02:03:04:05 --arpsha=00:01:02:03:04:05 --arpspa=127.0.0.1"
-echo "127.0.0.1" | $srcdir/arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
+echo "127.0.0.1" | ./arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
 if test $? -ne 0; then
    rm -f "$TMPFILE"
    echo "FAILED"
@@ -54,7 +54,7 @@ rm -f "$TMPFILE"
 
 echo "Checking custom ARP request packet against $SAMPLE02 ..."
 ARPARGS="--retry=1 --file=- --destaddr=11:11:11:11:11:11 --srcaddr=22:22:22:22:22:22 --prototype=0x3333 --arphrd=0x4444 --arppro=0x5555 --arphln=0x66 --arppln=0x77 --arpop=0x8888 --arpsha=99:99:99:99:99:99 --arpspa=170.170.170.170 --arptha=bb:bb:bb:bb:bb:bb"
-echo "204.204.204.204" | $srcdir/arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
+echo "204.204.204.204" | ./arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
 if test $? -ne 0; then
    rm -f "$TMPFILE"
    echo "FAILED"
@@ -71,7 +71,7 @@ rm -f "$TMPFILE"
 
 echo "Checking custom ARP request packet with padding against $SAMPLE03 ..."
 ARPARGS="--retry=1 --file=- --destaddr=11:11:11:11:11:11 --srcaddr=22:22:22:22:22:22 --prototype=0x3333 --arphrd=0x4444 --arppro=0x5555 --arphln=0x66 --arppln=0x77 --arpop=0x8888 --arpsha=99:99:99:99:99:99 --arpspa=170.170.170.170 --arptha=bb:bb:bb:bb:bb:bb --padding=dddddddddddddddd"
-echo "204.204.204.204" | $srcdir/arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
+echo "204.204.204.204" | ./arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
 if test $? -ne 0; then
    rm -f "$TMPFILE"
    echo "FAILED"
@@ -88,7 +88,7 @@ rm -f "$TMPFILE"
 
 echo "Checking custom ARP request packet with LLC/SNAP framing against $SAMPLE04 ..."
 ARPARGS="--retry=1 --file=- --destaddr=11:11:11:11:11:11 --srcaddr=22:22:22:22:22:22 --prototype=0x3333 --arphrd=0x4444 --arppro=0x5555 --arphln=0x66 --arppln=0x77 --arpop=0x8888 --arpsha=99:99:99:99:99:99 --arpspa=170.170.170.170 --arptha=bb:bb:bb:bb:bb:bb --llc"
-echo "204.204.204.204" | $srcdir/arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
+echo "204.204.204.204" | ./arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
 if test $? -ne 0; then
    rm -f "$TMPFILE"
    echo "FAILED"
@@ -105,7 +105,7 @@ rm -f "$TMPFILE"
 
 echo "Checking custom ARP request packet with VLAN tag against $SAMPLE05 ..."
 ARPARGS="--retry=1 --file=- --destaddr=11:11:11:11:11:11 --srcaddr=22:22:22:22:22:22 --prototype=0x3333 --arphrd=0x4444 --arppro=0x5555 --arphln=0x66 --arppln=0x77 --arpop=0x8888 --arpsha=99:99:99:99:99:99 --arpspa=170.170.170.170 --arptha=bb:bb:bb:bb:bb:bb --vlan=0xddd"
-echo "204.204.204.204" | $srcdir/arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
+echo "204.204.204.204" | ./arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
 if test $? -ne 0; then
    rm -f "$TMPFILE"
    echo "FAILED"
@@ -122,7 +122,7 @@ rm -f "$TMPFILE"
 
 echo "Checking custom ARP request packet with VLAN tag and LLC/SNAP framing against $SAMPLE06 ..."
 ARPARGS="--retry=1 --file=- --destaddr=11:11:11:11:11:11 --srcaddr=22:22:22:22:22:22 --prototype=0x3333 --arphrd=0x4444 --arppro=0x5555 --arphln=0x66 --arppln=0x77 --arpop=0x8888 --arpsha=99:99:99:99:99:99 --arpspa=170.170.170.170 --arptha=bb:bb:bb:bb:bb:bb --vlan=0xddd --llc"
-echo "204.204.204.204" | $srcdir/arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
+echo "204.204.204.204" | ./arp-scan $ARPARGS --writepkttofile="$TMPFILE" >/dev/null 2>&1
 if test $? -ne 0; then
    rm -f "$TMPFILE"
    echo "FAILED"

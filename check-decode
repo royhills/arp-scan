@@ -44,7 +44,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    rm -f "$EXAMPLEOUTPUT"
@@ -69,7 +69,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt --verbose"
-$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE02" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE02" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    rm -f "$EXAMPLEOUTPUT"
@@ -94,7 +94,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE03" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE03" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    rm -f "$EXAMPLEOUTPUT"
@@ -119,7 +119,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE04" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE04" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    rm -f "$EXAMPLEOUTPUT"
@@ -199,7 +199,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE05" 192.168.1.0/24 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE05" 192.168.1.0/24 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    rm -f "$EXAMPLEOUTPUT"
@@ -224,7 +224,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1-127.0.0.9 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1-127.0.0.9 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    rm -f "$EXAMPLEOUTPUT"
@@ -251,7 +251,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.0:255.255.252.0 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.0:255.255.252.0 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    rm -f "$EXAMPLEOUTPUT"
@@ -277,7 +277,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE06" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE06" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    rm -f "$EXAMPLEOUTPUT"
@@ -302,7 +302,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 
 _EOF_
 ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
-$srcdir/arp-scan $ARPARGS --readpktfromfile="$SAMPLE07" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE07" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    rm -f "$EXAMPLEOUTPUT"
