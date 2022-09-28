@@ -1,3 +1,9 @@
+2022-09-28 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: Added --limit (-M) option. When this option is
+	  given, arp-scan will exit after the specified number of target
+	  hosts have responded.
+
 2022-09-18 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* check-decode, check-host-list, check-packet, check-run1: Changed

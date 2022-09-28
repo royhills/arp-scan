@@ -90,6 +90,7 @@ static int plain_flag=0;		/* Only show host information */
 unsigned int random_seed=0;
 static unsigned retry_send = DEFAULT_RETRY_SEND; /* Number of send packet retries */
 static unsigned retry_send_interval = DEFAULT_RETRY_SEND_INTERVAL; /* Interval in seconds between send packet retries */
+static unsigned int host_limit=0;	/* Exit after n responders if nonzero */
 
 int
 main(int argc, char *argv[]) {
@@ -510,11 +511,13 @@ main(int argc, char *argv[]) {
  *      Main loop: send packets to all hosts in order until a response
  *      has been received or the host has exhausted its retry limit.
  *
- *      The loop exits when all hosts have either responded or timed out.
+ *      The loop exits when all hosts have either responded or timed out;
+ *	or if the number of responders reaches host_limit when host_limit is
+ *	non zero.
  */
    reset_cum_err = 1;
    req_interval = interval;
-   while (live_count) {
+   while (live_count && !(host_limit != 0 && responders >= host_limit)) {
 /*
  *      Obtain current time and calculate deltas since last packet and
  *      last packet to this host.
@@ -1247,6 +1250,7 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tprograms that understand the pcap file format, such as\n");
       fprintf(stdout, "\t\t\t\"tcpdump\" and \"wireshark\".\n");
       fprintf(stdout, "\n--rtt or -D\t\tDisplay the packet round-trip time.\n");
+      fprintf(stdout, "\n--limit=<i> or -M <i>\tExit after the specified number of hosts have responded.\n");
    } else {
       fprintf(stdout, "use \"arp-scan --help\" for detailed information on the available options.\n");
    }
@@ -1846,17 +1850,18 @@ process_options(int argc, char *argv[]) {
       {"rtt", no_argument, 0, 'D'},
       {"plain", no_argument, 0, 'x'},
       {"randomseed", required_argument, 0, OPT_RANDOMSEED},
+      {"limit", required_argument, 0, 'M'},
       {0, 0, 0, 0}
    };
 /*
  * available short option characters:
  *
  * lower:       --cde----jk--------------z
- * UPPER:       --C---G--JK-M-------U--X-Z
+ * UPPER:       --C---G--JK---------U--X-Z
  * Digits:      0123456789
  */
    const char *short_options =
-      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:Dx";
+      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:DxM:";
    int arg;
    int options_index=0;
 
@@ -2010,6 +2015,9 @@ process_options(int argc, char *argv[]) {
             break;
          case OPT_RANDOMSEED: /* --randomseed */
             random_seed=Strtoul(optarg, 0);
+            break;
+         case 'M':	/* --limit */
+            host_limit = Strtoul(optarg, 10);
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE, 0);
