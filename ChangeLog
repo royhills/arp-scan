@@ -2,7 +2,19 @@
 
 	* arp-scan.c: Added --limit (-M) option. When this option is
 	  given, arp-scan will exit after the specified number of target
-	  hosts have responded.
+	  hosts have responded. Thanks to mirfatif for suggesting this
+	  enhancement.
+
+	* arp-scan.c: Don't increment number of responders for duplicate
+	  response packets. The number of responders now represents the
+	  number of responding hosts rather than the number of response
+	  packets.
+
+	* pkt-dup-response.pcap: new file
+
+	* check-decode: Added duplicate response packet checks
+
+	* arp-scan.1: Updated manpage to reflect new --limit option.
 
 2022-09-18 Roy Hills <Roy.Hills@nta-monitor.com>
 

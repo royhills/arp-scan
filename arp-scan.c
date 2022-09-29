@@ -1778,7 +1778,8 @@ callback(u_char *args ATTRIBUTE_UNUSED,
          }
          display_packet(temp_cursor, &arpei, extra_data, extra_data_len,
                         framing, vlan_id, &frame_hdr, header);
-         responders++;
+         if (temp_cursor->live)
+            responders++;
       }
       if (verbose > 1)
          warn_msg("---\tRemoving host %s - Received %d bytes",
