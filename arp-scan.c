@@ -624,7 +624,7 @@ main(int argc, char *argv[]) {
              PACKAGE_STRING, num_hosts, elapsed_seconds,
              num_hosts/elapsed_seconds, responders);
    }
-   return 0;
+   return (host_limit == 0 || responders >= host_limit) ? 0 : 1;
 }
 
 /*
