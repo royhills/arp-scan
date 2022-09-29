@@ -36,6 +36,7 @@ SAMPLE04="$srcdir/pkt-llc-response.pcap"
 SAMPLE05="$srcdir/pkt-net1921681-response.pcap"
 SAMPLE06="$srcdir/pkt-trailer-response.pcap"
 SAMPLE07="$srcdir/pkt-vlan-llc-response.pcap"
+SAMPLE08="$srcdir/pkt-dup-response.pcap"
 
 # Simple ARP response packet
 echo "Checking simple ARP response packet decode using $SAMPLE01 ..."
@@ -319,3 +320,72 @@ fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
 rm -f "$EXAMPLEOUTPUT"
+
+# ARP response packets with duplicates
+echo "Checking ARP responses packets with duplicates using $SAMPLE08 ..."
+cat >"$EXAMPLEOUTPUT" <<_EOF_
+192.168.14.2	00:50:56:e4:9a:83	VMware, Inc.
+192.168.14.1	00:50:56:c0:00:08	VMware, Inc.
+192.168.14.1	00:50:56:c0:00:08	VMware, Inc. (DUP: 2)
+192.168.14.135	00:0c:29:54:fc:75	VMware, Inc.
+192.168.14.135	00:0c:29:54:fc:75	VMware, Inc. (DUP: 2)
+192.168.14.135	00:0c:29:54:fc:75	VMware, Inc. (DUP: 3)
+192.168.14.136	00:0c:29:80:62:77	VMware, Inc.
+192.168.14.136	00:0c:29:80:62:77	VMware, Inc. (DUP: 2)
+192.168.14.136	00:0c:29:80:62:77	VMware, Inc. (DUP: 3)
+192.168.14.136	00:0c:29:80:62:77	VMware, Inc. (DUP: 4)
+192.168.14.254	00:50:56:ed:35:d5	VMware, Inc.
+192.168.14.254	00:50:56:ed:35:d5	VMware, Inc. (DUP: 2)
+192.168.14.254	00:50:56:ed:35:d5	VMware, Inc. (DUP: 3)
+192.168.14.254	00:50:56:ed:35:d5	VMware, Inc. (DUP: 4)
+192.168.14.254	00:50:56:ed:35:d5	VMware, Inc. (DUP: 5)
+
+_EOF_
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE08" 192.168.14.1 192.168.14.2 192.168.14.135 192.168.14.136 192.168.14.254 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
+
+# ARP response packets with ignored duplicates
+echo "Checking ARP responses packets with ignored duplicates using $SAMPLE08 ..."
+cat >"$EXAMPLEOUTPUT" <<_EOF_
+192.168.14.2	00:50:56:e4:9a:83	VMware, Inc.
+192.168.14.1	00:50:56:c0:00:08	VMware, Inc.
+192.168.14.135	00:0c:29:54:fc:75	VMware, Inc.
+192.168.14.136	00:0c:29:80:62:77	VMware, Inc.
+192.168.14.254	00:50:56:ed:35:d5	VMware, Inc.
+
+_EOF_
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt --ignoredups"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE08" 192.168.14.1 192.168.14.2 192.168.14.135 192.168.14.136 192.168.14.254 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
+
