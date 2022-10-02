@@ -1,3 +1,7 @@
+2022-10-02 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* acinclude.m4: fix typo in 'if test "X$CC" != "X"' checks.
+
 2022-09-28 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: Added --limit (-M) option. When this option is
