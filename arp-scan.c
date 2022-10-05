@@ -624,6 +624,10 @@ main(int argc, char *argv[]) {
              PACKAGE_STRING, num_hosts, elapsed_seconds,
              num_hosts/elapsed_seconds, responders);
    }
+/*
+ * exit with status 1 if host_limit has been set with the --limit option and the
+ * number of responding hosts is less than this limit. Otherwise exit with status 0.
+ */
    return (host_limit == 0 || responders >= host_limit) ? 0 : 1;
 }
 
@@ -1251,6 +1255,10 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\t\"tcpdump\" and \"wireshark\".\n");
       fprintf(stdout, "\n--rtt or -D\t\tDisplay the packet round-trip time.\n");
       fprintf(stdout, "\n--limit=<i> or -M <i>\tExit after the specified number of hosts have responded.\n");
+      fprintf(stdout, "\t\t\tWhen this option is used arp-scan will exit with status 1 if\n");
+      fprintf(stdout, "\t\t\tthe number of responding hosts is less then the specified\n");
+      fprintf(stdout, "\t\t\tlimit. This can be used in scripts to check if fewer hosts\n");
+      fprintf(stdout, "\t\t\trespond without having to parse the program output.\n");
    } else {
       fprintf(stdout, "use \"arp-scan --help\" for detailed information on the available options.\n");
    }

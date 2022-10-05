@@ -1,3 +1,8 @@
+2022-10-05 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c, arp-scan.1: Documented the exit status when --limit
+	  is specified and fewer than the specified number of hosts respond.
+
 2022-10-02 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* acinclude.m4: fix typo in 'if test "X$CC" != "X"' checks.
