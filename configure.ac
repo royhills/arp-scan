@@ -151,8 +151,7 @@ dnl Linux and most BSD systems have getopt_long_only, but NetBSD 7.0 doesn't.
 dnl For systems that don't have it, use the GNU getopt sources from glibc.
 AC_CHECK_FUNC([getopt_long_only],
               [AC_DEFINE(HAVE_GETOPT_LONG_ONLY, 1, [Define to 1 if the C library includes getopt_long_only])],
-              [ AC_LIBOBJ([getopt])
-                AC_LIBOBJ([getopt1])
+              [ AC_LIBOBJ([my_getopt])
                 AC_LIBSOURCE([my_getopt.h]) ])
 
 dnl Check for strlcat and strlcpy.  If we don't have them, use the replacement

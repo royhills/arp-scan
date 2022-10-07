@@ -1,3 +1,10 @@
+2022-10-07 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* my_getopt.c, my_getopt.h: New getopt implementation using bsittler's version
+	  from http://xent.com/~bsittler/geocities/.
+
+	* configure.ac: Modified to use new getopt implementation.
+
 2022-10-05 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c, arp-scan.1: Documented the exit status when --limit
