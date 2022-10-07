@@ -87,6 +87,7 @@ static int write_pkt_to_file=0;		/* Write packet to file for debugging */
 static int rtt_flag=0;			/* Display round-trip time */
 static pcap_dumper_t *pcap_dump_handle = NULL;	/* pcap savefile handle */
 static int plain_flag=0;		/* Only show host information */
+static int resolve_flag=0;		/* Resolve IP addresses to hostnames */
 unsigned int random_seed=0;
 static unsigned retry_send = DEFAULT_RETRY_SEND; /* Number of send packet retries */
 static unsigned retry_send_interval = DEFAULT_RETRY_SEND_INTERVAL; /* Interval in seconds between send packet retries */
@@ -660,11 +661,23 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
    char *msg;
    char *cp;
    char *cp2;
+   char *ga_err_msg;
    int nonzero=0;
 /*
  *	Set msg to the IP address of the host entry and a tab.
  */
-   msg = make_message("%s\t", my_ntoa(he->addr));
+   if (resolve_flag) {
+      cp2 = get_host_name(he->addr, &ga_err_msg);
+      if (cp2) {
+         msg = make_message("%s\t", cp2);
+      } else {
+         warn_msg("WARNING: get_host_name failed for \"%s\": %s",
+                  my_ntoa(he->addr), ga_err_msg);
+         msg = make_message("%s\t", my_ntoa(he->addr)); /* Fallback to IP address */
+      }
+   } else {
+      msg = make_message("%s\t", my_ntoa(he->addr));
+   }
 /*
  *	Decode ARP packet
  */
@@ -1132,6 +1145,7 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tfooter text, and only displays one line for each\n");
       fprintf(stdout, "\t\t\tresponding host. Useful if the output will be\n");
       fprintf(stdout, "\t\t\tparsed by a script.\n");
+      fprintf(stdout, "\n--resolve or -d\t\tResolve IP addresses to hostnames.\n");
       fprintf(stdout, "\n--ignoredups or -g\tDon't display duplicate packets.\n");
       fprintf(stdout, "\t\t\tBy default, duplicate packets are displayed and are\n");
       fprintf(stdout, "\t\t\tflagged with \"(DUP: n)\".\n");
@@ -1860,17 +1874,18 @@ process_options(int argc, char *argv[]) {
       {"plain", no_argument, 0, 'x'},
       {"randomseed", required_argument, 0, OPT_RANDOMSEED},
       {"limit", required_argument, 0, 'M'},
+      {"resolve", no_argument, 0, 'd'},
       {0, 0, 0, 0}
    };
 /*
  * available short option characters:
  *
- * lower:       --cde----jk--------------z
+ * lower:       --c-e----jk--------------z
  * UPPER:       --C---G--JK---------U--X-Z
  * Digits:      0123456789
  */
    const char *short_options =
-      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:DxM:";
+      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:DxM:d";
    int arg;
    int options_index=0;
 
@@ -2028,6 +2043,9 @@ process_options(int argc, char *argv[]) {
          case 'M':	/* --limit */
             host_limit = Strtoul(optarg, 10);
             break;
+         case 'd':	/* --resolve */
+            resolve_flag = 1;
+            break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE, 0);
             break;	/* NOTREACHED */
@@ -2111,6 +2129,43 @@ get_host_address(const char *name, int af, struct in_addr *addr,
 
    *error_msg = NULL;
    return addr;
+}
+
+/*
+ *	get_host_name -- Obtain target host name from IP address
+ *
+ *	Inputs:
+ *
+ *	addr		The IP address to lookup
+ *	name		Pointer to the name buffer
+ *	error_msg	The error message, or NULL if no problem.
+ *
+ *	Returns:
+ *
+ *	Pointer to the host name, or NULL if an error occurred.
+ *
+ *	This function is basically a wrapper for getnameinfo().
+ */
+char *
+get_host_name(const struct in_addr addr, char **error_msg) {
+   static char err[MAXLINE];
+   static char name[MAXLINE];
+
+   struct sockaddr_in sa_in;
+   int result;
+
+   sa_in.sin_family = AF_INET;
+   sa_in.sin_addr = addr;
+   result = getnameinfo((struct sockaddr *)&sa_in, sizeof(sa_in), name,
+                        MAXLINE, NULL, 0, 0);
+   if (result != 0) {	/* Error occurred */
+      snprintf(err, MAXLINE, "%s", gai_strerror(result));
+      *error_msg = err;
+      return NULL;
+   }
+
+   *error_msg = NULL;
+   return name;
 }
 
 /*

@@ -226,6 +226,7 @@ char *make_message(const char *, ...);
 void callback(u_char *, const struct pcap_pkthdr *, const u_char *);
 void process_options(int, char *[]);
 struct in_addr *get_host_address(const char *, int, struct in_addr *, char **);
+char *get_host_name(const struct in_addr, char **);
 const char *my_ntoa(struct in_addr);
 int get_source_ip(const char *, struct in_addr *);
 void get_hardware_address(const char *, unsigned char []);

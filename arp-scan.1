@@ -5,7 +5,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "October 5, 2022"
+.TH ARP-SCAN 1 "October 7, 2022"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -453,6 +453,9 @@ This option suppresses the printing of the header and
 footer text, and only displays one line for each
 responding host. Useful if the output will be
 parsed by a script.
+.TP
+.B --resolve or -d
+Resolve IP addresses to hostnames.
 .TP
 .B --ignoredups or -g
 Don't display duplicate packets.

@@ -1,5 +1,9 @@
 2022-10-07 Roy Hills <Roy.Hills@nta-monitor.com>
 
+	* arp-scan.c, arp.scan.h: New option --resolve (-d) to resolve IP addresses to hostnames. When this option
+	  is specified, responding hosts will be displayed as hostnames instead of IP addresses if they can be
+	  resolved.
+
 	* my_getopt.c, my_getopt.h: New getopt implementation using bsittler's version
 	  from http://xent.com/~bsittler/geocities/.
 
