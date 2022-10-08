@@ -456,11 +456,14 @@ parsed by a script.
 .TP
 .B --resolve or -d
 Resolve IP addresses to hostnames.
+Displays the hostname instead of IP address if name
+resolution succeeds.
 .TP
 .B --ignoredups or -g
 Don't display duplicate packets.
 By default, duplicate packets are displayed and are
-flagged with "(DUP: n)".
+flagged with "(DUP: n)" where n is the number of
+times this host has responded.
 .TP
 .B --ouifile=<s> or -O <s>
 Use IEEE Ethernet OUI to vendor mapping file <s>.

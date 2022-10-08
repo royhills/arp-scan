@@ -671,7 +671,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       if (cp2) {
          msg = make_message("%s\t", cp2);
       } else {
-         warn_msg("WARNING: get_host_name failed for \"%s\": %s",
+         warn_msg("WARNING: getnameinfo() failed for \"%s\": %s",
                   my_ntoa(he->addr), ga_err_msg);
          msg = make_message("%s\t", my_ntoa(he->addr)); /* Fallback to IP address */
       }
@@ -1146,9 +1146,12 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tresponding host. Useful if the output will be\n");
       fprintf(stdout, "\t\t\tparsed by a script.\n");
       fprintf(stdout, "\n--resolve or -d\t\tResolve IP addresses to hostnames.\n");
+      fprintf(stdout, "\t\t\tDisplays the hostname instead of IP address if name\n");
+      fprintf(stdout, "\t\t\tresolution succeeds.\n");
       fprintf(stdout, "\n--ignoredups or -g\tDon't display duplicate packets.\n");
       fprintf(stdout, "\t\t\tBy default, duplicate packets are displayed and are\n");
-      fprintf(stdout, "\t\t\tflagged with \"(DUP: n)\".\n");
+      fprintf(stdout, "\t\t\tflagged with \"(DUP: n)\" where n is the number of\n");
+      fprintf(stdout, "\t\t\ttimes this host has responded.\n");
       fprintf(stdout, "\n--ouifile=<s> or -O <s>\tUse IEEE Ethernet OUI to vendor mapping file <s>.\n");
       fprintf(stdout, "\t\t\tIf this option is not specified, the default filename\n");
       fprintf(stdout, "\t\t\tis %s in the current directory. If that is\n", OUIFILENAME);
@@ -1269,10 +1272,11 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\t\"tcpdump\" and \"wireshark\".\n");
       fprintf(stdout, "\n--rtt or -D\t\tDisplay the packet round-trip time.\n");
       fprintf(stdout, "\n--limit=<i> or -M <i>\tExit after the specified number of hosts have responded.\n");
-      fprintf(stdout, "\t\t\tWhen this option is used arp-scan will exit with status 1 if\n");
-      fprintf(stdout, "\t\t\tthe number of responding hosts is less then the specified\n");
-      fprintf(stdout, "\t\t\tlimit. This can be used in scripts to check if fewer hosts\n");
-      fprintf(stdout, "\t\t\trespond without having to parse the program output.\n");
+      fprintf(stdout, "\t\t\tWhen this option is used arp-scan will exit with status\n");
+      fprintf(stdout, "\t\t\t1 if the number of responding hosts is less than the\n");
+      fprintf(stdout, "\t\t\tspecified limit. This can be used in scripts to check\n");
+      fprintf(stdout, "\t\t\tif fewer hosts respond without having to parse the\n");
+      fprintf(stdout, "\t\t\tprogram output.\n");
    } else {
       fprintf(stdout, "use \"arp-scan --help\" for detailed information on the available options.\n");
    }
