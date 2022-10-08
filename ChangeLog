@@ -1,11 +1,19 @@
+2022-10-08 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* arp-scan.c: fix bug reported by mrquincle where ARP responses for
+	  a host that had timed out was being incorrectly flagged as a
+	  duplicate with the warning message "remove_host called on non-live
+	  host: SHOULDN'T HAPPEN".
+
 2022-10-07 Roy Hills <Roy.Hills@nta-monitor.com>
 
-	* arp-scan.c, arp.scan.h: New option --resolve (-d) to resolve IP addresses to hostnames. When this option
-	  is specified, responding hosts will be displayed as hostnames instead of IP addresses if they can be
-	  resolved.
+	* arp-scan.c, arp.scan.h: New option --resolve (-d) to resolve IP
+	  addresses to hostnames. When this option is specified, responding
+	  hosts will be displayed as hostnames instead of IP addresses if they
+	  can be resolved.
 
-	* my_getopt.c, my_getopt.h: New getopt implementation using bsittler's version
-	  from http://xent.com/~bsittler/geocities/.
+	* my_getopt.c, my_getopt.h: New getopt implementation using bsittler's
+	  version from http://xent.com/~bsittler/geocities/.
 
 	* configure.ac: Modified to use new getopt implementation.
 

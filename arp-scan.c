@@ -789,9 +789,9 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
          free(cp);
       }
 /*
- *      If the host entry is not live, then flag this as a duplicate.
+ *	Flag this as a duplicate if it's not the first response.
  */
-      if (!he->live) {
+      if (he->num_recv > 1) {
          cp = msg;
          msg = make_message("%s (DUP: %u)", cp, he->num_recv);
          free(cp);
@@ -1789,28 +1789,35 @@ callback(u_char *args ATTRIBUTE_UNUSED,
    if (temp_cursor) {
 /*
  *	We found an IP match for the packet.
- */
-/*
- *	Display the packet and increment the number of responders if
- *	the entry is "live" or we are not ignoring duplicates.
+ *	Increment number of responses received for this host and increment
+ *	total number of responding hosts if this is the first response for
+ *	this host (i.e. it is not a duplicate response).
  */
       temp_cursor->num_recv++;
+      if (temp_cursor->num_recv == 1)
+         responders++;	/* Increment responders if not a dup response */
       if (verbose > 1)
          warn_msg("---\tReceived packet #%u from %s",
-                  temp_cursor->num_recv ,my_ntoa(source_ip));
-      if ((temp_cursor->live || !ignore_dups)) {
+                  temp_cursor->num_recv, my_ntoa(source_ip));
+/*
+ *	Display the packet if this is the first response for this host
+ *	or if we are not ignoring duplicates.
+ */
+      if ((temp_cursor->num_recv == 1 || !ignore_dups)) {
          if (pcap_dump_handle) {
             pcap_dump((unsigned char *)pcap_dump_handle, header, packet_in);
          }
          display_packet(temp_cursor, &arpei, extra_data, extra_data_len,
                         framing, vlan_id, &frame_hdr, header);
-         if (temp_cursor->live)
-            responders++;
       }
       if (verbose > 1)
          warn_msg("---\tRemoving host %s - Received %d bytes",
                   my_ntoa(source_ip), n);
-      remove_host(&temp_cursor);
+/*
+ *	Remove the responding host from the list if it is marked as "live".
+ */
+      if (temp_cursor->live)
+         remove_host(&temp_cursor);
    } else {
 /*
  *	The received packet is not from an IP address in the list
