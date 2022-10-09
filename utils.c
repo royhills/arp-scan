@@ -405,13 +405,17 @@ dupstr(const char *str) {
  *	This function reduces the capabilities of the current process to
  *	the minimum necessary to run this program.
  *
- *	If we have POSIX capability support (e.g. Linux with libpcap) then
+ *	If we have POSIX.1e capability support (e.g. Linux with libcap) then
  *	this function will drop all capabilities except for those that are
- *	required in the permitted set.
+ *	required for normal operation and are also in the permitted set.
+ *
  *	It will also permanantly drop SUID because the application doesn't
  *	require SUID when capability support is present.
  *
  *	If we do not have capability support, then we temporarily drop SUID.
+ *
+ *	This function was adapted from ping_common.c in the Debian iputils-ping
+ *	package.
  */
 void
 limit_capabilities(void) {
@@ -420,11 +424,10 @@ limit_capabilities(void) {
    cap_t cap_p;
    cap_flag_value_t cap_ok;
    cap_value_t cap_list[] = {CAP_NET_RAW};
-
 /*
  *	Create a new capability state in "cap_p" containing only those
- *	capabilities that are required by the application and present in the
- *	processes' capability state.
+ *	capabilities that are required by the application and are present in the
+ *	process permitted capability set.
  */
    if (!(cap_cur_p = cap_get_proc()))
       err_sys("cap_get_proc()");
@@ -477,7 +480,12 @@ limit_capabilities(void) {
  *
  *	none
  *
+ *	If we have POSIX.1e capability support then this function will
+ *	enable or disable the required process capability in the effective
+ *	set.
  *
+ *	If we do not have capability support, then we temporarily enable
+ *	or disable suid.
  */
 void set_capability(int enable) {
 #ifdef HAVE_LIBCAP

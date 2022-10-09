@@ -123,7 +123,11 @@ main(int argc, char *argv[]) {
    pcap_t *pcap_handle;		/* pcap handle */
    struct in_addr interface_ip_addr;
 /*
- *	Limit process capabilities.
+ *	Limit process capabilities to the minimum necessary to run this program.
+ *
+ *	If we have POSIX.1e capability support, this will drop all capabilities
+ *	except those in the permitted set and will also permanently drop SUID.
+ *	If we do not have capability support, then we temporarily drop SUID.
  */
    limit_capabilities();
 /*
@@ -152,11 +156,15 @@ main(int argc, char *argv[]) {
          err_msg("pcap_open_offline: %s", errbuf);
    } else if (!pkt_write_file_flag) {
       /*
+       * Enable process capabilities for pcap network device enumeration and opening.
+       */
+      set_capability(1);
+      /*
        * Determine network interface to use. If the interface was specified
        * with the --interface option then use that, otherwise use
        * my_lookupdev() to pick a suitable interface.
+       *
        */
-      set_capability(1);
       if (!if_name) {
          if (!(if_name=my_lookupdev(errbuf))) {
             err_msg("my_lookupdev: %s", errbuf);
@@ -173,7 +181,6 @@ main(int argc, char *argv[]) {
       if ((pcap_set_timeout(pcap_handle, TO_MS)) < 0) /* Is this still needed? */
          err_msg("pcap_set_timeout: %s", pcap_geterr(pcap_handle));
       ret_status = pcap_activate(pcap_handle);
-      set_capability(0);
       if (ret_status < 0) {		/* Error from pcap_activate() */
          char *cp;
 
@@ -204,12 +211,11 @@ main(int argc, char *argv[]) {
        * Obtain the MAC address for the selected interface, and use this
        * as the default value for the source hardware addresses in the frame
        * header and ARP packet if the user has not specified their values.
-       *
-       * enable capabilities for the get_hardware_address() call because it
-       * requires privileges on some operating systems.
        */
-      set_capability(1);
       get_hardware_address(if_name, interface_mac);
+      /*
+       * Disable process capabilities.
+       */
       set_capability(0);
       /*
        * There should be no need for capabilities from this point on, so
@@ -2098,6 +2104,9 @@ arp_scan_version (void) {
    fprintf(stdout, "For more information about these matters, see the file named COPYING.\n");
    fprintf(stdout, "\n");
    fprintf(stdout, "%s\n", pcap_lib_version());
+#ifdef HAVE_LIBCAP
+   fprintf(stdout, "Built with libcap process capability support.\n");
+#endif
 }
 
 /*

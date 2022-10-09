@@ -1,3 +1,16 @@
+2021-10-09 Roy Hills <Roy.Hills@hotmail.com>
+
+	* arp-scan.c: Added POSIX.1e capabilities support.
+
+	* configure.ac, acinclude.m4: Add autoconf tests for Linux libcap
+	  POSIX.1e capabilities support.
+
+	* utils.c, arp-scan.h: New functions limit_capabilities() to limit the
+	  permitted capabilities, set_capability() to enable and disable
+	  capabilities, and drop_capabilities() to permanently drop all
+	  capabilities. These functions use libcap if POSIX.1e capabilities
+	  are supported otherwise they fall back to setuid() and seteuid().
+
 2022-10-08 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c: fix bug reported by mrquincle where ARP responses for
@@ -114,16 +127,6 @@
 	  buffer overrun in unmarshal_arp_pkt() if network frames larger
 	  than expected are received by libpcap. Thanks to @mrquincle for
 	  reporting this issue.
-
-2021-12-02 Roy Hills <Roy.Hills@hotmail.com>
-
-	* configure.ac, acinclude.m4: Add autoconf tests for Linux libcap POSIX
-	  capabilities
-
-	* utils.c, arp-scan.h: New functions limit_capabilities() to limit the
-	  permitted capabilities and set_capability() to enable and disable
-	  capabilities. This uses libcap if POSIX capabilities are present,
-	  otherwise it falls back to seteuid().
 
 2021-11-17 Roy Hills <Roy.Hills@hotmail.com>
 
