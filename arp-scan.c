@@ -123,6 +123,17 @@ main(int argc, char *argv[]) {
    pcap_t *pcap_handle;		/* pcap handle */
    struct in_addr interface_ip_addr;
 /*
+ *	Limit process capabilities to the minimum necessary to run this program.
+ *
+ *	If we have POSIX.1e capability support, this removes all capabilities
+ *	from the effective set and reduces the capabilities in the permitted
+ *	set to the miniumum needed.
+ *
+ *	If we do not have capability support, then drop any SUID root privs
+ *	by setting the effective user id to the real uid.
+ */
+   limit_capabilities();
+/*
  *      Initialise file names to the empty string.
  */
    ouifilename[0] = '\0';
@@ -148,9 +159,16 @@ main(int argc, char *argv[]) {
          err_msg("pcap_open_offline: %s", errbuf);
    } else if (!pkt_write_file_flag) {
       /*
+       * enable CAP_NET_RAW in the effective set if we have POSIX.1e capability
+       * support. If we don't have capability support then restore SUID root
+       * privs by setting the effective user id to the saved euid.
+       */
+      set_capability(1);
+      /*
        * Determine network interface to use. If the interface was specified
        * with the --interface option then use that, otherwise use
        * my_lookupdev() to pick a suitable interface.
+       *
        */
       if (!if_name) {
          if (!(if_name=my_lookupdev(errbuf))) {
@@ -198,12 +216,28 @@ main(int argc, char *argv[]) {
        * Obtain the MAC address for the selected interface, and use this
        * as the default value for the source hardware addresses in the frame
        * header and ARP packet if the user has not specified their values.
+       */
+      get_hardware_address(if_name, interface_mac);
+      /*
+       * Disable CAP_NET_RAW in the effective set if we have POSIX.1e capability
+       * support. If we don't have capability support then drop SUID root
+       * privs by setting the effective user id to the real uid.
+       */
+      set_capability(0);
+      /*
+       * Permanently remove all capabilities or SUID root privilege as we
+       * don't need any special privileges after this point.
        *
+       * We disable all capabilities in both the effective and permitted sets
+       * if we have POSIX.1e capability support, otherwise we permanently drop
+       * SUID root privs by setting the user ID to the real user ID.
+       */
+      drop_capabilities();
+      /*
        * Die with an error if we can't get the MAC address, as this
        * indicates that the interface doesn't have a MAC address, so is
        * probably not a compatible interface type.
        */
-      get_hardware_address(if_name, interface_mac);
       if (interface_mac[0]==0 && interface_mac[1]==0 &&
           interface_mac[2]==0 && interface_mac[3]==0 &&
           interface_mac[4]==0 && interface_mac[5]==0) {
@@ -304,12 +338,6 @@ main(int argc, char *argv[]) {
          err_msg("pcap_setfilter: %s", pcap_geterr(pcap_handle));
    } else {	/* Reading packets from file */
       pcap_fd = -1;
-   }
-/*
- *      Drop SUID privileges.
- */
-   if ((setuid(getuid())) < 0) {
-      err_sys("setuid");
    }
 /*
  *	Open pcap savefile is the --pcapsavefile (-W) option was specified
@@ -1009,9 +1037,16 @@ usage(int status, int detailed) {
    fprintf(stdout, "the --localnet option is used, in which case the targets are generated from\n");
    fprintf(stdout, "the network interface IP address and netmask.\n");
    fprintf(stdout, "\n");
-   fprintf(stdout, "You will need to be root, or arp-scan must be SUID root, in order to run\n");
-   fprintf(stdout, "arp-scan, because the functions that it uses to read and write packets\n");
-   fprintf(stdout, "require root privilege.\n");
+   fprintf(stdout, "arp-scan needs privileges to send and receive raw packets. It can be run as\n");
+   fprintf(stdout, "root or be installed SUID root on any system, but other options are available\n");
+   fprintf(stdout, "depending on the operating system:\n");
+   fprintf(stdout, "\n");
+   fprintf(stdout, "Linux with POSIX.1e capabilities support using libcap:\n");
+   fprintf(stdout, "       arp-scan is capabilities aware and requires CAP_NET_RAW in the permitted\n");
+   fprintf(stdout, "       set. it will automatically enable CAP_NET_RAW to open the network socket\n");
+   fprintf(stdout, "       and drop the capability immediately after the open.\n");
+   fprintf(stdout, "BSD and MacOS:\n");
+   fprintf(stdout, "       You need read/write access to /dev/bpf*\n");
    fprintf(stdout, "\n");
    fprintf(stdout, "The target hosts can be specified as IP addresses or hostnames. You can also\n");
    fprintf(stdout, "specify the target as IPnetwork/bits (e.g. 192.168.1.0/24) to specify all hosts\n");
@@ -2087,6 +2122,9 @@ arp_scan_version (void) {
    fprintf(stdout, "For more information about these matters, see the file named COPYING.\n");
    fprintf(stdout, "\n");
    fprintf(stdout, "%s\n", pcap_lib_version());
+#ifdef HAVE_LIBCAP
+   fprintf(stdout, "Built with libcap POSIX.1e capability support.\n");
+#endif
 }
 
 /*

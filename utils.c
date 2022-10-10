@@ -27,6 +27,11 @@
 
 #include "arp-scan.h"
 
+static uid_t uid;
+#ifndef HAVE_LIBCAP
+static uid_t euid;
+#endif
+
 /*
  *	timeval_diff -- Calculates the difference between two timevals
  *	and returns this difference in a third timeval.
@@ -384,4 +389,161 @@ dupstr(const char *str) {
    cp = Malloc(len);
    strlcpy(cp, str, len);
    return cp;
+}
+
+/*
+ *	limit_capabilities -- reduce process capabilities to minimum necessary
+ *
+ *	Inputs:
+ *
+ *	none
+ *
+ *	Returns:
+ *
+ *	none
+ *
+ *	This function reduces the capabilities of the current process to
+ *	the minimum necessary to run this program.
+ *
+ *	If we have POSIX.1e capability support (e.g. Linux with libcap) then
+ *	remove all capabilities from the effective set and also remove all
+ *	capabilities except those required by the program from the permitted
+ *	set.  It will also permanantly drop SUID because SUID is not needed
+ *	if capability support is present.
+ *
+ *	If we do not have capability support, we drop SUID by saving the
+ *	effective user ID and then setting the effective user id to the real
+ *	user id.
+ *
+ *	This function was adapted from ping_common.c in the Debian iputils-ping
+ *	package.
+ */
+void
+limit_capabilities(void) {
+#ifdef HAVE_LIBCAP
+   cap_t cap_cur_p;
+   cap_t cap_p;
+   cap_flag_value_t cap_ok;
+   cap_value_t cap_list[] = {CAP_NET_RAW};
+/*
+ *	Create a new capability state in "cap_p" containing only those
+ *	capabilities that are required by the application and are present in the
+ *	permitted capability set.
+ */
+   if (!(cap_cur_p = cap_get_proc()))
+      err_sys("cap_get_proc()");
+   if (!(cap_p = cap_init()))
+      err_sys("cap_init()");
+
+   cap_ok = CAP_CLEAR;
+   cap_get_flag(cap_cur_p, CAP_NET_RAW, CAP_PERMITTED, &cap_ok);
+   if (cap_ok != CAP_CLEAR)
+      cap_set_flag(cap_p, CAP_PERMITTED, sizeof(cap_list)/sizeof(cap_list[0]),
+                   cap_list, CAP_SET);
+/*
+ *	Set the process capabilities to the new capability state.
+ */
+   if (cap_set_proc(cap_p) < 0)
+      err_sys("cap_set_proc()");
+/*
+ *	Permanently drop SUID but retain capability state.
+ *	We don't need root UID if we have the required capabilities.
+ */
+   if (prctl(PR_SET_KEEPCAPS, 1) < 0)
+      err_sys("prctl()");
+   if (setuid(getuid()) < 0)
+      err_sys("setuid()");
+   if (prctl(PR_SET_KEEPCAPS, 0) < 0)
+      err_sys("prctl()");
+/*
+ *	Free temporary capability state storage.
+ */
+   cap_free(cap_p);
+   cap_free(cap_cur_p);
+#else
+   euid = geteuid();	/* Save effective user ID for later restore */
+#endif
+   uid = getuid();
+#ifndef HAVE_LIBCAP
+   if (seteuid(uid))	/* Drop SUID: Set effective user ID to real user ID */
+      err_sys("seteuid()");
+#endif
+}
+
+/*
+ *	set_capability -- enable or disable process capabilities
+ *
+ *	Inputs:
+ *
+ *	enable = Set to 0 to disable or 1 to enable capabilities
+ *
+ *	Returns:
+ *
+ *	none
+ *
+ *	If we have POSIX.1e capability support this function will enable
+ *	or disable the required process capability in the effective set
+ *
+ *	If we do not have capability support, we set the effective user ID
+ *	to the saved euid to enable privs or set it to the real user ID to
+ *	remove root privs.
+ */
+void set_capability(int enable) {
+#ifdef HAVE_LIBCAP
+   cap_t cap_p;
+   cap_flag_value_t cap_ok;
+   cap_value_t cap_list[] = {CAP_NET_RAW};
+
+   if (!(cap_p = cap_get_proc()))
+      err_sys("cap_get_proc()");
+
+   cap_ok = CAP_CLEAR;
+   cap_get_flag(cap_p, cap_list[0], CAP_PERMITTED, &cap_ok);
+   if (cap_ok == CAP_CLEAR && enable)
+      return;	/* Cannot enable cap if it's not in the permitted set */
+   cap_set_flag(cap_p, CAP_EFFECTIVE, sizeof(cap_list)/sizeof(cap_list[0]),
+                cap_list, enable?CAP_SET:CAP_CLEAR);
+   if (cap_set_proc(cap_p) < 0)
+      err_sys("cap_set_proc()");
+   cap_free(cap_p);
+#else
+   if (seteuid(enable ? euid : getuid()))
+      err_sys("seteuid()");
+#endif
+}
+
+
+/*
+ *	drop_capabilities -- Permanently drop all capabilities
+ *
+ *	Inputs:
+ *
+ *	none
+ *
+ *	Returns:
+ *
+ *	none
+ *
+ *	This function permanently drops all process capabilities.
+ *
+ *	If we have POSIX.1e capabilities support, all capabilities are removed
+ *	from both effective and permitted sets.
+ *
+ *	If we do not have capability support, we set the user ID to the real
+ *	user ID in a way that makes it impossible for the program to regain
+ *	root privs.
+ */
+void drop_capabilities(void)
+{
+#ifdef HAVE_LIBCAP
+   cap_t cap;
+
+   cap = cap_init();	/* Create capability state with all flags cleared */
+   if (cap_set_proc(cap) < 0)
+      err_sys("cap_set_proc()");
+   cap_free(cap);
+#else
+   if (setuid(getuid()))
+      err_sys("setuid()");
+#endif
 }

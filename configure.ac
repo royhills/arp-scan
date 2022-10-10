@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan],[1.9.8],[https://github.com/royhills/arp-scan])
+AC_INIT([arp-scan],[1.9.9],[https://github.com/royhills/arp-scan])
 AC_PREREQ([2.61])
 AC_REVISION($Revision$)
 AC_CONFIG_SRCDIR([arp-scan.c])
@@ -76,6 +76,9 @@ AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_set_immediate_mode])],
    AC_MSG_NOTICE([Cannot find pcap_set_immediate_mode in pcap library])
    AC_MSG_ERROR([Check that the pcap library is at least version 1.5])
    ])
+
+# Check for POSIX capability support
+CHECK_LIBCAP
 
 dnl Checks for header files.
 

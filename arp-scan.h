@@ -127,6 +127,11 @@
 #include "my_getopt.h"
 #endif
 
+#ifdef HAVE_SYS_CAPABILITY_H
+#include <sys/prctl.h>
+#include <sys/capability.h>
+#endif
+
 /* Defines */
 
 #define MAXLINE 255			/* Max line length for input files */
@@ -250,3 +255,6 @@ char *my_lookupdev(char *);
 unsigned str_to_bandwidth(const char *);
 unsigned str_to_interval(const char *);
 char *dupstr(const char *);
+void limit_capabilities(void);
+void set_capability(int);
+void drop_capabilities(void);
