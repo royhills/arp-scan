@@ -406,13 +406,14 @@ dupstr(const char *str) {
  *	the minimum necessary to run this program.
  *
  *	If we have POSIX.1e capability support (e.g. Linux with libcap) then
- *	this function will drop all capabilities except for those that are
- *	required for normal operation and are also in the permitted set.
+ *	remove all capabilities from the effective set and also remove all
+ *	capabilities except those required by the program from the permitted
+ *	set.  It will also permanantly drop SUID because SUID is not needed
+ *	if capability support is present.
  *
- *	It will also permanantly drop SUID because the application doesn't
- *	require SUID when capability support is present.
- *
- *	If we do not have capability support, then we temporarily drop SUID.
+ *	If we do not have capability support, we drop SUID by saving the
+ *	effective user ID and then setting the effective user id to the real
+ *	user id.
  *
  *	This function was adapted from ping_common.c in the Debian iputils-ping
  *	package.
@@ -427,7 +428,7 @@ limit_capabilities(void) {
 /*
  *	Create a new capability state in "cap_p" containing only those
  *	capabilities that are required by the application and are present in the
- *	process permitted capability set.
+ *	permitted capability set.
  */
    if (!(cap_cur_p = cap_get_proc()))
       err_sys("cap_get_proc()");
@@ -460,11 +461,11 @@ limit_capabilities(void) {
    cap_free(cap_p);
    cap_free(cap_cur_p);
 #else
-   euid = geteuid();
+   euid = geteuid();	/* Save effective user ID for later restore */
 #endif
    uid = getuid();
 #ifndef HAVE_LIBCAP
-   if (seteuid(uid))
+   if (seteuid(uid))	/* Drop SUID: Set effective user ID to real user ID */
       err_sys("seteuid()");
 #endif
 }
@@ -474,18 +475,18 @@ limit_capabilities(void) {
  *
  *	Inputs:
  *
- *	enable = Set to 0 to disable or non-zero to enable capabilities
+ *	enable = Set to 0 to disable or 1 to enable capabilities
  *
  *	Returns:
  *
  *	none
  *
- *	If we have POSIX.1e capability support then this function will
- *	enable or disable the required process capability in the effective
- *	set.
+ *	If we have POSIX.1e capability support this function will enable
+ *	or disable the required process capability in the effective set
  *
- *	If we do not have capability support, then we temporarily enable
- *	or disable suid.
+ *	If we do not have capability support, we set the effective user ID
+ *	to the saved euid to enable privs or set it to the real user ID to
+ *	remove root privs.
  */
 void set_capability(int enable) {
 #ifdef HAVE_LIBCAP
@@ -525,16 +526,19 @@ void set_capability(int enable) {
  *
  *	This function permanently drops all process capabilities.
  *
- *	If we have capabilities support, then all capabilities are cleared.
- *	Otherwise we permanently drop SUID.
+ *	If we have POSIX.1e capabilities support, all capabilities are removed
+ *	from both effective and permitted sets.
  *
+ *	If we do not have capability support, we set the user ID to the real
+ *	user ID in a way that makes it impossible for the program to regain
+ *	root privs.
  */
 void drop_capabilities(void)
 {
 #ifdef HAVE_LIBCAP
    cap_t cap;
 
-   cap = cap_init();
+   cap = cap_init();	/* Create capability state with all flags cleared */
    if (cap_set_proc(cap) < 0)
       err_sys("cap_set_proc()");
    cap_free(cap);

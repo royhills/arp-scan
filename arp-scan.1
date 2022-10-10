@@ -5,7 +5,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "October 7, 2022"
+.TH ARP-SCAN 1 "October 10, 2022"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -20,13 +20,6 @@ instead, or the
 .B --localnet
 option is used, in which case the targets are generated from the network
 interface IP address and netmask.
-.PP
-You will need to be root, or
-.B arp-scan
-must be SUID root, in order to run
-.BR arp-scan ,
-because the functions that it uses to read and write packets require root
-privilege.
 .PP
 The target hosts can be specified as IP addresses or hostnames.  You can also
 specify the target as
@@ -51,6 +44,23 @@ interface (excluding loopback).  By default, the ARP packets are sent to the
 Ethernet broadcast address, ff:ff:ff:ff:ff:ff, but that can be changed with the
 .B --destaddr
 option.
+.PP
+.B arp-scan
+needs privileges to send and receive raw packets. It can be run as root or be
+installed SUID root on any system, but other options are available depending
+on the operating system:
+.TP
+Linux with POSIX.1e capabilities support using libcap:
+.B arp-scan
+is capabilities aware and requires CAP_NET_RAW in the permitted set.
+It will automatically enable CAP_NET_RAW to open the network socket and drop
+the capability immediately after the open. You can use
+.I setcap cap_net_raw+p /path/to/arp-scan
+to add CAP_NET_RAW to the permitted set of the arp-scan executable.
+.TP
+BSD and MacOS:
+You need read/write access to
+.I /dev/bpf*
 .PP
 The target hosts to scan may be specified in one of three ways: by specifying
 the targets on the command line; by specifying a file containing the targets
