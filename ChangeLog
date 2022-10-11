@@ -3,7 +3,8 @@
 	* arp-scan.c: Added POSIX.1e capabilities support.
 
 	* configure.ac, acinclude.m4: Add autoconf tests for Linux libcap
-	  POSIX.1e capabilities support.
+	  POSIX.1e capabilities support. Incremented version to 1.9.9 to
+	  reflect addition of POSIX.1e capabilities support.
 
 	* utils.c, arp-scan.h: New functions limit_capabilities() to limit the
 	  permitted capabilities, set_capability() to enable and disable
@@ -12,6 +13,8 @@
 	  are supported otherwise they fall back to setuid() and seteuid().
 
 2022-10-08 Roy Hills <Roy.Hills@nta-monitor.com>
+
+	* Tagged as 1.9.8
 
 	* arp-scan.c: fix bug reported by mrquincle where ARP responses for
 	  a host that had timed out was being incorrectly flagged as a
