@@ -135,11 +135,11 @@ AC_DEFUN([GCC_WEXTRA],[
   fi
 ])
 
-dnl Check for libcap POSIX capabilities support
+dnl Check for POSIX.1e capabilities support with libcap
 AC_DEFUN([CHECK_LIBCAP],
 [
   AC_ARG_WITH(libcap,
-    AS_HELP_STRING([--with-libcap=@<:@auto/yes/no@:>@],[Add Libcap support @<:@default=auto@:>@]),,
+    AS_HELP_STRING([--with-libcap=@<:@auto/yes/no@:>@],[Build with libcap POSIX.1e capabilities support @<:@default=auto@:>@]),,
     with_libcap=auto)
 
   if test "X$with_libcap" = "Xno" ; then

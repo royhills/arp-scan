@@ -127,7 +127,7 @@ main(int argc, char *argv[]) {
  *
  *	If we have POSIX.1e capability support, this removes all capabilities
  *	from the effective set and reduces the capabilities in the permitted
- *	set to the miniumum needed.
+ *	set to the minimum needed.
  *
  *	If we do not have capability support, then drop any SUID root privs
  *	by setting the effective user id to the real uid.
