@@ -314,8 +314,8 @@ main(int argc, char *argv[]) {
          }
       }
 /*
- *	The filter string selects packets addressed to the ARP source address
- *	that are Ethernet-II ARP packets, 802.3 LLC/SNAP ARP packets,
+ *	The pcap filter string selects packets addressed to the ARP source
+ *	address that are Ethernet-II ARP packets, 802.3 LLC/SNAP ARP packets,
  *	802.1Q tagged ARP packets or 802.1Q tagged 802.3 LLC/SNAP ARP packets.
  */
       filter_string=make_message("ether dst %.2x:%.2x:%.2x:%.2x:%.2x:%.2x and "
@@ -2298,12 +2298,15 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
       cp += sizeof(vlan_tag);
       packet_size += sizeof(vlan_tag);
    }
+/*
+ *	Add EtherType / Size field
+ */
    if (llc_flag) {	/* With 802.2 LLC framing, type field is frame size */
       uint16_t frame_size;
 
       frame_size=htons(packet_size + sizeof(llc_snap));
       memcpy(cp, &(frame_size), sizeof(frame_size));
-   } else {		/* Normal Ethernet-II framing */
+   } else {		/* With Ethernet-II framing, type field is ether type */
       memcpy(cp, &(frame_hdr->frame_type), sizeof(frame_hdr->frame_type));
    }
    cp += sizeof(frame_hdr->frame_type);
