@@ -1563,7 +1563,7 @@ add_host(const char *host_name, unsigned host_timeout, int numeric_only) {
          return;
       }
    } else {
-      hp = get_host_address(host_name, AF_INET, &addr, &ga_err_msg);
+      hp = get_host_address(host_name, &addr, &ga_err_msg);
       if (hp == NULL) {
          warn_msg("WARNING: get_host_address failed for \"%s\": %s - target ignored",
                   host_name, ga_err_msg);
@@ -2131,7 +2131,6 @@ arp_scan_version (void) {
  *	Inputs:
  *
  *	name		The name to lookup
- *	af		The address family, typically AF_INET
  *	addr		Pointer to the IP address buffer
  *	error_msg	The error message, or NULL if no problem.
  *
@@ -2142,8 +2141,7 @@ arp_scan_version (void) {
  *	This function is basically a wrapper for getaddrinfo().
  */
 struct in_addr *
-get_host_address(const char *name, int af, struct in_addr *addr,
-                 char **error_msg) {
+get_host_address(const char *name, struct in_addr *addr, char **error_msg) {
    static char err[MAXLINE];
    static struct in_addr ipa;
 
@@ -2156,11 +2154,7 @@ get_host_address(const char *name, int af, struct in_addr *addr,
       addr = &ipa;
 
    memset(&hints, '\0', sizeof(hints));
-   if (af == AF_INET) {
-      hints.ai_family = AF_INET;
-   } else {
-      err_msg("get_host_address: unknown address family: %d", af);
-   }
+   hints.ai_family = AF_INET;
 
    result = getaddrinfo(name, NULL, &hints, &res);
    if (result != 0) {	/* Error occurred */
