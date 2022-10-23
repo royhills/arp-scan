@@ -145,42 +145,54 @@ hex2data(const char *string, size_t *data_len) {
 }
 
 /*
- * make_message -- allocate a sufficiently large string and print into it.
+ *	make_message -- allocate a sufficiently large string and print into it.
  *
- * Inputs:
+ *	Inputs:
  *
- * Format and variable number of arguments.
+ *	Format and variable number of arguments.
  *
- * Outputs:
+ *	Outputs:
  *
- * Pointer to the string,
+ *	Pointer to the string,
  *
- * The code for this function is from the Debian Linux "woody" sprintf man
- * page.  Modified slightly to use wrapper functions for malloc and realloc.
+ *	This function was adapted from the example in the printf() man page
+ *	from The Linux man-pages project. Modified slightly to use wrapper
+ *	function for malloc.
+ *
+ *	The pointer returned points to malloc'ed storage which should be
+ *	free'ed by the caller when it's no longer needed.
  */
 char *
 make_message(const char *fmt, ...) {
-   int n;
-   /* Guess we need no more than 100 bytes. */
-   size_t size = 100;
-   char *p;
+   int n = 0;
+   size_t size = 0;
+   char *p = NULL;
    va_list ap;
-   p = Malloc (size);
-   while (1) {
-      /* Try to print in the allocated space. */
-      va_start(ap, fmt);
-      n = vsnprintf (p, size, fmt, ap);
-      va_end(ap);
-      /* If that worked, return the string. */
-      if (n > -1 && n < (int) size)
-         return p;
-      /* Else try again with more space. */
-      if (n > -1)    /* glibc 2.1 */
-         size = n+1; /* precisely what is needed */
-      else           /* glibc 2.0 */
-         size *= 2;  /* twice the old size */
-      p = Realloc (p, size);
+/*
+ * Determine required size for the resultant string.
+*/
+   va_start(ap, fmt);
+   n = vsnprintf(p, size, fmt, ap);
+   va_end(ap);
+
+   if (n < 0)
+      return NULL;	/* vsnprintf output error */
+
+   size = (size_t) n + 1;      /* One extra byte for '\0' */
+   p = Malloc(size);
+/*
+ * Print into the allocated space.
+ */
+   va_start(ap, fmt);
+   n = vsnprintf(p, size, fmt, ap);
+   va_end(ap);
+
+   if (n < 0) {
+      free(p);
+      return NULL;
    }
+
+   return p;
 }
 
 /*

@@ -1,4 +1,12 @@
-2021-10-09 Roy Hills <Roy.Hills@hotmail.com>
+2021-10-23 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.c, error.c
+
+	* utils.c: Changed make_message() to assume vsnprintf() behaves
+	  according to POSIX. No need to accomodate bugs in ancient glibc
+	  versions.
+
+2021-10-09 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Added POSIX.1e capabilities support.
 
@@ -12,7 +20,7 @@
 	  capabilities. These functions use libcap if POSIX.1e capabilities
 	  are supported otherwise they fall back to setuid() and seteuid().
 
-2022-10-08 Roy Hills <Roy.Hills@nta-monitor.com>
+2022-10-08 Roy Hills <royhills@hotmail.com>
 
 	* Tagged as 1.9.8
 
@@ -21,7 +29,7 @@
 	  duplicate with the warning message "remove_host called on non-live
 	  host: SHOULDN'T HAPPEN".
 
-2022-10-07 Roy Hills <Roy.Hills@nta-monitor.com>
+2022-10-07 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c, arp.scan.h: New option --resolve (-d) to resolve IP
 	  addresses to hostnames. When this option is specified, responding
@@ -33,16 +41,16 @@
 
 	* configure.ac: Modified to use new getopt implementation.
 
-2022-10-05 Roy Hills <Roy.Hills@nta-monitor.com>
+2022-10-05 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c, arp-scan.1: Documented the exit status when --limit
 	  is specified and fewer than the specified number of hosts respond.
 
-2022-10-02 Roy Hills <Roy.Hills@nta-monitor.com>
+2022-10-02 Roy Hills <royhills@hotmail.com>
 
 	* acinclude.m4: fix typo in 'if test "X$CC" != "X"' checks.
 
-2022-09-28 Roy Hills <Roy.Hills@nta-monitor.com>
+2022-09-28 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Added --limit (-M) option. When this option is
 	  given, arp-scan will exit after the specified number of target
@@ -60,7 +68,7 @@
 
 	* arp-scan.1: Updated manpage to reflect new --limit option.
 
-2022-09-18 Roy Hills <Roy.Hills@nta-monitor.com>
+2022-09-18 Roy Hills <royhills@hotmail.com>
 
 	* check-decode, check-host-list, check-packet, check-run1: Changed
 	  "$srcdir/arp-scan" to "./arp-scan" in test scripts so
@@ -68,14 +76,14 @@
 
 	* .github/workflows/c-cpp.yml: Enable "make distcheck" step.
 
-2022-09-14 Roy Hills <Roy.Hills@nta-monitor.com>
+2022-09-14 Roy Hills <royhills@hotmail.com>
 
 	* README.md, .github/workflows/*: Migrated from travis-ci to github
 	  actions for CI/CD build check and code coverage report.
 
 	* .travis.yml: removed as no longer needed.
 
-2022-09-11 Roy Hills <Roy.Hills@hotmail.com>
+2022-09-11 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.h, configure.ac, getopt.c, getopt1.c: only include
 	  the local replacement getopt header file if the system doesn't
@@ -84,7 +92,7 @@
 
 	* getopt.h: rename to my_getopt.h.
 
-2022-09-10 Roy Hills <Roy.Hills@hotmail.com>
+2022-09-10 Roy Hills <royhills@hotmail.com>
 
 	* acinclude.m4: Replaced obsolete autoconf macros AC_TRY_COMPILE with
 	  AC_COMPILE_IFELSE and AC_TRY_LINK with AC_LINK_IFELSE. These macros
@@ -93,7 +101,7 @@
 	* strlcat.h: included this new file that was missed out of the previous
 	  commit.
 
-2022-09-09 Roy Hills <Roy.Hills@hotmail.com>
+2022-09-09 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Die with error message if hsearch() fails when adding a
 	  new entry to the hash table. Previous behaviour was to issue a
@@ -107,7 +115,7 @@
 
 	* strlcat.h: New file containing function prototypes for strlcat() and strlcpy().
 
-2022-09-03 Roy Hills <Roy.Hills@hotmail.com>
+2022-09-03 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Allow MAC addresses in mac-vendor.txt to use either lower
 	  or uppercase hex digits and ignore any seperator characters e.g. ":"
@@ -116,7 +124,7 @@
 
 	* mac-vendor.txt: Update comments to reflect code changes.
 
-2022-06-16 Roy Hills <Roy.Hills@hotmail.com>
+2022-06-16 Roy Hills <royhills@hotmail.com>
 
 	* get-iab: change IEEE IAB URL to
 	  http://standards-oui.ieee.org/iab/iab.txt. Thanks to silex for the
@@ -124,14 +132,14 @@
 
 	* Updated ieee-oui.txt and ieee-iab.txt files.
 
-2021-12-12 Roy Hills <Roy.Hills@hotmail.com>
+2021-12-12 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Limit packet length in callback() to prevent potential
 	  buffer overrun in unmarshal_arp_pkt() if network frames larger
 	  than expected are received by libpcap. Thanks to @mrquincle for
 	  reporting this issue.
 
-2021-11-17 Roy Hills <Roy.Hills@hotmail.com>
+2021-11-17 Roy Hills <royhills@hotmail.com>
 
 	* Use getifaddrs() to obtain the interface IP address if it is available
 	  and pcap_findalldevs() fails to find the address.
@@ -143,7 +151,7 @@
 	* Increment version number to 1.9.8 to reflect code and autoconf
 	  changes.
 
-2021-09-09 Roy Hills <Roy.Hills@hotmail.com>
+2021-09-09 Roy Hills <royhills@hotmail.com>
 
 	* Retry sending an ARP packet if the packet send function fails with
 	  EAGAIN instead of aborting with an error message. High packet send
@@ -160,13 +168,13 @@
 
 	* Updated ieee-oui.txt and ieee-iab.txt files.
 
-2020-07-05 Roy Hills <Roy.Hills@hotmail.com>
+2020-07-05 Roy Hills <royhills@hotmail.com>
 
 	* README.md, arp-fingerprint.1, arp-scan.1, get-iab.1, get-oui.1,
 	  mac-vendor.5, mac-vendor.txt: Update wiki references to use
 	  new URL http://www.royhills.co.uk/wiki/
 
-2019-10-24 Roy Hills <Roy.Hills@hotmail.com>
+2019-10-24 Roy Hills <royhills@hotmail.com>
 
 	* configure.ac: Increment version number to 1.9.7 in preparation for
 	  new release.
@@ -176,7 +184,7 @@
 
 	* Modified copyright statement in files to include up to 2019.
 
-2019-10-20 Roy Hills <Roy.Hills@hotmail.com>
+2019-10-20 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Call the pcap functions before get_hardware_address() to
 	  ensure lack of permissions is reported by pcap_activate() rather
@@ -190,7 +198,7 @@
 
 	* .gitignore: Added config.h.in~ to .gitignore.
 
-2019-10-13 Roy Hills <Roy.Hills@hotmail.com>
+2019-10-13 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Call pcap_set_immediate_mode() on the pcap handle so
 	  captured packets are processed immediately.  This pcap function was
@@ -218,7 +226,7 @@
 
 	* Updated ieee-oui.txt and ieee-iab.txt files.
 
-2019-08-29 Roy Hills <Roy.Hills@nta-monitor.com>
+2019-08-29 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: include the interface MAC address in the interface
 	  summary output.  E.g.
@@ -227,7 +235,7 @@
 
 	* Updated ieee-oui.txt and ieee-iab.txt files.
 
-2019-03-16 Roy Hills <Roy.Hills@nta-monitor.com>
+2019-03-16 Roy Hills <royhills@hotmail.com>
 
 	* acinclude.m4: Use AC_TRY_LINK instead of AC_TRY_COMPILE when
 	  determining if tack protector support is supported, as some

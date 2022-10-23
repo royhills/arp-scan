@@ -43,7 +43,7 @@ static unsigned num_hosts = 0;		/* Number of entries in the list */
 static unsigned responders = 0;		/* Number of hosts which responded */
 static unsigned live_count;		/* Number of entries awaiting reply */
 static int verbose=0;			/* Verbose level */
-static char filename[MAXLINE];		/* Target list file name */
+static char *filename;			/* Target list file name */
 static int filename_flag=0;		/* Set if using target list file */
 static int random_flag=0;		/* Randomise the list */
 static int numeric_flag=0;		/* IP addresses only */
@@ -61,10 +61,10 @@ static int arp_spa_flag=0;		/* Source IP address specified */
 static int arp_spa_is_tpa=0;		/* Source IP is dest IP */
 static unsigned char arp_sha[ETH_ALEN];	/* Source Ethernet MAC Address */
 static int arp_sha_flag=0;		/* Source MAC address specified */
-static char ouifilename[MAXLINE];	/* OUI filename */
-static char iabfilename[MAXLINE];	/* IAB filename */
-static char macfilename[MAXLINE];	/* MAC filename */
-static char pcap_savefile[MAXLINE];	/* pcap savefile filename */
+static char *ouifilename = NULL;	/* OUI filename */
+static char *iabfilename = NULL;	/* IAB filename */
+static char *macfilename = NULL;	/* MAC filename */
+static char *pcap_savefile = NULL;	/* pcap savefile filename */
 static int arp_op=DEFAULT_ARP_OP;	/* ARP Operation code */
 static int arp_hrd=DEFAULT_ARP_HRD;	/* ARP hardware type */
 static int arp_pro=DEFAULT_ARP_PRO;	/* ARP protocol */
@@ -82,7 +82,7 @@ static int llc_flag=0;			/* Use 802.2 LLC with SNAP */
 static int ieee_8021q_vlan=-1;		/* Use 802.1Q VLAN tagging if >= 0 */
 static int pkt_write_file_flag=0;	/* Write packet to file flag */
 static int pkt_read_file_flag=0;	/* Read packet from file flag */
-static char pkt_filename[MAXLINE];	/* Read/Write packet to file filename */
+static char *pkt_filename = NULL;	/* Read/Write packet to file filename */
 static int write_pkt_to_file=0;		/* Write packet to file for debugging */
 static int rtt_flag=0;			/* Display round-trip time */
 static pcap_dumper_t *pcap_dump_handle = NULL;	/* pcap savefile handle */
@@ -133,13 +133,6 @@ main(int argc, char *argv[]) {
  *	by setting the effective user id to the real uid.
  */
    limit_capabilities();
-/*
- *      Initialise file names to the empty string.
- */
-   ouifilename[0] = '\0';
-   iabfilename[0] = '\0';
-   macfilename[0] = '\0';
-   pcap_savefile[0] = '\0';
 /*
  *      Process options.
  */
@@ -342,7 +335,7 @@ main(int argc, char *argv[]) {
 /*
  *	Open pcap savefile is the --pcapsavefile (-W) option was specified
  */
-   if (*pcap_savefile != '\0') {
+   if (pcap_savefile) {
       if (!(pcap_dump_handle=pcap_dump_open(pcap_handle, pcap_savefile))) {
          err_msg("pcap_dump_open: %s", pcap_geterr(pcap_handle));
       }
@@ -411,7 +404,7 @@ main(int argc, char *argv[]) {
          fp = stdin;
       } else {
          if ((fp = fopen(filename, "r")) == NULL) {
-            err_sys("fopen");
+            err_sys("Cannot open %s", filename);
          }
       }
 
@@ -1368,26 +1361,31 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
  */
    if (first_call) {
       int result;
+      char *errbuf;
+      size_t size;
 
       first_call = 0;
       if ((result=regcomp(&iprange_pat, iprange_pat_str,
                           REG_EXTENDED|REG_NOSUB))) {
-         char errbuf[MAXLINE];
-         regerror(result, &iprange_pat, errbuf, MAXLINE);
+         size = regerror(result, &iprange_pat, NULL, 0);
+         errbuf = Malloc(size);
+         regerror(result, &iprange_pat, errbuf, size);
          err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
                  iprange_pat_str, errbuf);
       }
       if ((result=regcomp(&ipslash_pat, ipslash_pat_str,
                           REG_EXTENDED|REG_NOSUB))) {
-         char errbuf[MAXLINE];
-         regerror(result, &ipslash_pat, errbuf, MAXLINE);
+         size = regerror(result, &ipslash_pat, NULL, 0);
+         errbuf = Malloc(size);
+         regerror(result, &ipslash_pat, errbuf, size);
          err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
                  ipslash_pat_str, errbuf);
       }
       if ((result=regcomp(&ipmask_pat, ipmask_pat_str,
                           REG_EXTENDED|REG_NOSUB))) {
-         char errbuf[MAXLINE];
-         regerror(result, &ipmask_pat, errbuf, MAXLINE);
+         size = regerror(result, &ipmask_pat, NULL, 0);
+         errbuf = Malloc(size);
+         regerror(result, &ipmask_pat, errbuf, size);
          err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
                  ipmask_pat_str, errbuf);
       }
@@ -1941,7 +1939,7 @@ process_options(int argc, char *argv[]) {
          int result;
 
          case 'f':	/* --file */
-            strlcpy(filename, optarg, sizeof(filename));
+            filename=make_message("%s",optarg);
             filename_flag=1;
             break;
          case 'h':	/* --help */
@@ -1994,13 +1992,13 @@ process_options(int argc, char *argv[]) {
             bandwidth=str_to_bandwidth(optarg);
             break;
          case 'O':	/* --ouifile */
-            strlcpy(ouifilename, optarg, sizeof(ouifilename));
+            ouifilename = make_message("%s", optarg);
             break;
          case 'F':	/* --iabfile */
-            strlcpy(iabfilename, optarg, sizeof(iabfilename));
+            iabfilename = make_message("%s", optarg);
             break;
          case 'm':	/* --macfile */
-            strlcpy(macfilename, optarg, sizeof(macfilename));
+            macfilename = make_message("%s", optarg);
             break;
          case 's':	/* --arpspa */
             arp_spa_flag = 1;
@@ -2067,14 +2065,14 @@ process_options(int argc, char *argv[]) {
             ieee_8021q_vlan = Strtol(optarg, 0);
             break;
          case 'W':	/* --pcapsavefile */
-            strlcpy(pcap_savefile, optarg, sizeof(pcap_savefile));
+            pcap_savefile = make_message("%s", optarg);
             break;
          case OPT_WRITEPKTTOFILE: /* --writepkttofile */
-            strlcpy(pkt_filename, optarg, sizeof(pkt_filename));
+            pkt_filename = make_message("%s", optarg);
             pkt_write_file_flag=1;
             break;
          case OPT_READPKTFROMFILE: /* --readpktfromfile */
-            strlcpy(pkt_filename, optarg, sizeof(pkt_filename));
+            pkt_filename = make_message("%s", optarg);
             pkt_read_file_flag=1;
             break;
          case 'D':	/* --rtt */
@@ -2495,10 +2493,13 @@ add_mac_vendor(const char *map_filename) {
    if (first_call) {
       first_call=0;
       if ((result=regcomp(&oui_pat, oui_pat_str, REG_EXTENDED))) {
-         char reg_errbuf[MAXLINE];
-         regerror(result, &oui_pat, reg_errbuf, MAXLINE);
+         char *errbuf;
+         size_t size;
+         size = regerror(result, &oui_pat, NULL, 0);
+         errbuf = Malloc(size);
+         regerror(result, &oui_pat, errbuf, size);
          err_msg("ERROR: cannot compile regex pattern \"%s\": %s",
-                 oui_pat_str, reg_errbuf);
+                 oui_pat_str, errbuf);
       }
    }
 /*
@@ -2519,9 +2520,12 @@ add_mac_vendor(const char *map_filename) {
       if (result == REG_NOMATCH || pmatch[1].rm_so < 0 || pmatch[2].rm_so < 0) {
          warn_msg("WARNING: Could not parse oui: %s", line);
       } else if (result != 0) {
-         char reg_errbuf[MAXLINE];
-         regerror(result, &oui_pat, reg_errbuf, MAXLINE);
-         err_msg("ERROR: oui regexec failed: %s", reg_errbuf);
+         char *errbuf;
+         size_t size;
+         size = regerror(result, &oui_pat, NULL, 0);
+         errbuf = Malloc(size);
+         regerror(result, &oui_pat, errbuf, size);
+         err_msg("ERROR: oui regexec failed: %s", errbuf);
       } else {
          key_len = pmatch[1].rm_eo - pmatch[1].rm_so;
          data_len = pmatch[2].rm_eo - pmatch[2].rm_so;
@@ -2586,7 +2590,7 @@ get_mac_vendor_filename(const char *specified_filename,
    int status;
    char *file_name;
 
-   if (*specified_filename == '\0') {	/* No filename specified */
+   if (!specified_filename) {	/* No filename specified */
       file_name = make_message("%s", default_filename);
       status = stat(file_name, &statbuf);
       if (status == -1 && errno == ENOENT) {

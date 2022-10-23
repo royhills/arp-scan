@@ -83,17 +83,37 @@ warn_msg(const char *fmt,...) {
  */
 void
 err_print (int errnoflag, const char *fmt, va_list ap) {
+   int n = 0;
+   size_t size = 0;
    int errno_save;
-   size_t n;
-   char buf[MAXLINE];
+   char *buf;
+   va_list ap_copy;
+   char *cp;
 
    errno_save=errno;
+/*
+ * Determine required size for the resultant string using copy
+ * arg ptr.
+*/
+   va_copy(ap_copy, ap);
+   n = vsnprintf(NULL, 0, fmt, ap_copy);
+   va_end(ap_copy);
+   if (n < 0)
+      return;	/* vsnprintf output error */
 
-   vsnprintf(buf, MAXLINE, fmt, ap);
-   n=strlen(buf);
-   if (errnoflag)
-     snprintf(buf+n, MAXLINE-n, ": %s", strerror(errno_save));
-   strlcat(buf, "\n", sizeof(buf));
+   size = (size_t) n + 1;	/* One extra byte for '\0' */
+
+   buf = Malloc(size);
+
+   vsnprintf(buf, size, fmt, ap);
+   size=strlen(buf);
+   cp = buf;
+   if (errnoflag) {
+      buf = make_message("%s: %s\n", cp, strerror(errno_save));
+   } else {
+      buf = make_message("%s\n", cp);
+   }
+   free(cp);
 
    fflush(stdout);	/* In case stdout and stderr are the same */
    fputs(buf, stderr);
