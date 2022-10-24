@@ -679,11 +679,39 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
                const unsigned char *extra_data, size_t extra_data_len,
                int framing, int vlan_id, ether_hdr *frame_hdr,
                const struct pcap_pkthdr *pcap_header) {
+   typedef struct {
+      const char *name;
+      char *value;
+   } field;
+   static field fields[NUMFIELDS] = {
+      {"IP",NULL},
+      {"Name",NULL},
+      {"MAC",NULL},
+      {"HeaderMAC",NULL},	// Need to test this
+      {"Vendor",NULL},
+      {"Padding",NULL},
+      {"Framing",NULL},
+      {"VLAN",NULL},
+      {"ARPProto",NULL},
+      {"DUP",NULL},
+      {"RTT",NULL}
+   };
    char *msg;
    char *cp;
    char *cp2;
    char *ga_err_msg;
    int nonzero=0;
+
+fields[0].value = make_message("%s", my_ntoa(he->addr));
+if (resolve_flag) {
+   cp = get_host_name(he->addr, &ga_err_msg);
+   if (cp) {
+      fields[1].value = make_message("%s", cp);
+   } else {
+      warn_msg("WARNING: getnameinfo() failed for \"%s\": %s",
+               my_ntoa(he->addr), ga_err_msg);
+   }
+}
 /*
  *	Set msg to the IP address of the host entry and a tab.
  */
@@ -843,7 +871,13 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
  *	Print the message.
  */
    printf("%s\n", msg);
+
    free(msg);
+   for (int i=0; i<NUMFIELDS; i++)
+      if (fields[i].value) {
+         free(fields[i].value);
+         fields[i].value = NULL;
+      }
 }
 
 /*

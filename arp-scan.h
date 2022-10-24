@@ -173,6 +173,7 @@
 #define DEFAULT_RETRY_SEND 20		/* Default no. of send packet retries */
 #define DEFAULT_RETRY_SEND_INTERVAL 5000  /* Default interval between send
                                         * packet retries in microseconds */
+#define NUMFIELDS 11			/* Number of output fields */
 
 /* Structures */
 
