@@ -687,7 +687,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       {"IP",NULL},
       {"Name",NULL},
       {"MAC",NULL},
-      {"HeaderMAC",NULL},	// Need to test this
+      {"HeaderMAC",NULL},
       {"Vendor",NULL},
       {"Padding",NULL},
       {"Framing",NULL},
@@ -702,16 +702,132 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
    char *ga_err_msg;
    int nonzero=0;
 
-fields[0].value = make_message("%s", my_ntoa(he->addr));
-if (resolve_flag) {
-   cp = get_host_name(he->addr, &ga_err_msg);
-   if (cp) {
-      fields[1].value = make_message("%s", cp);
-   } else {
-      warn_msg("WARNING: getnameinfo() failed for \"%s\": %s",
-               my_ntoa(he->addr), ga_err_msg);
+   fields[0].value = make_message("%s", my_ntoa(he->addr));
+
+   if (resolve_flag) {
+      cp = get_host_name(he->addr, &ga_err_msg);
+      if (cp) {
+         fields[1].value = make_message("%s", cp);
+      } else {
+         warn_msg("WARNING: getnameinfo() failed for \"%s\": %s",
+                  my_ntoa(he->addr), ga_err_msg);
+      }
    }
-}
+
+   fields[2].value = make_message("%.2x:%.2x:%.2x:%.2x:%.2x:%.2x",
+                      arpei->ar_sha[0], arpei->ar_sha[1],
+                      arpei->ar_sha[2], arpei->ar_sha[3],
+                      arpei->ar_sha[4], arpei->ar_sha[5]);
+
+   if ((memcmp(arpei->ar_sha, frame_hdr->src_addr, ETH_ALEN)) != 0) {
+      fields[3].value = make_message("%.2x:%.2x:%.2x:%.2x:%.2x:%.2x",
+                         frame_hdr->src_addr[0], frame_hdr->src_addr[1],
+                         frame_hdr->src_addr[2], frame_hdr->src_addr[3],
+                         frame_hdr->src_addr[4], frame_hdr->src_addr[5]);
+
+   }
+
+/*
+ *      Find vendor from hash table and add to message if quiet is not in
+ *      effect.
+ *
+ *      We start with more specific matches (against larger parts of the
+ *      hardware address), and work towards less specific matches until
+ *      we find a match or exhaust all possible matches.
+ */
+   if (!quiet_flag) {
+      char oui_string[13];      /* Space for full hw addr plus NULL */
+      const char *vendor=NULL;
+      int oui_end=12;
+      ENTRY hash_query;
+      ENTRY *hash_result;
+
+      snprintf(oui_string, 13, "%.2X%.2X%.2X%.2X%.2X%.2X",
+               arpei->ar_sha[0], arpei->ar_sha[1], arpei->ar_sha[2],
+               arpei->ar_sha[3], arpei->ar_sha[4], arpei->ar_sha[5]);
+      while (vendor == NULL && oui_end > 1) {
+         oui_string[oui_end] = '\0';    /* Truncate oui string */
+         hash_query.key = oui_string;
+         hash_result = hsearch(hash_query, FIND);
+         if (hash_result) {
+            vendor = hash_result->data;
+         } else {
+            vendor = NULL;
+         }
+         oui_end--;
+      }
+      if (vendor)
+         fields[4].value = make_message("%s", vendor);
+      else
+         /* Check the second-least-significant bit of first octet */
+         if (arpei->ar_sha[0] & (1<<1))
+             fields[4].value = make_message("%s", "(Unknown: locally administered)");
+         else
+             fields[4].value = make_message("%s", "(Unknown)");
+/*
+ *      Check that any data after the ARP packet is zero.
+ *      If it is non-zero, and verbose is selected, then print the padding.
+ */
+      if (extra_data_len > 0) {
+         unsigned i;
+         const unsigned char *ucp = extra_data;
+
+         for (i=0; i<extra_data_len; i++) {
+            if (ucp[i] != '\0') {
+               nonzero=1;
+               break;
+            }
+         }
+      }
+      if (nonzero) {
+         fields[5].value = hexstring(extra_data, extra_data_len);
+      }
+/*
+ *      If the framing type is not Ethernet II, then report the framing type.
+ */
+      if (framing == FRAMING_LLC_SNAP) {
+         fields[6].value = make_message("802.2 LLC/SNAP");
+      }
+/*
+ *      If the packet uses 802.1Q VLAN tagging, report the VLAN ID.
+ */
+      if (vlan_id != -1) {
+         fields[7].value = make_message("%d", vlan_id);
+      }
+/*
+ *      If the ARP protocol type is not IP (0x0800), report it.
+ *      This can occur with trailer encapsulation ARP replies.
+ */
+      if (ntohs(arpei->ar_pro) != 0x0800) {
+         fields[8].value = make_message("0x%04x", ntohs(arpei->ar_pro));
+      }
+/*
+ *      Flag this as a duplicate if it's not the first response.
+ */
+      if (he->num_recv > 1) {
+         fields[9].value = make_message("%u", he->num_recv);
+      }
+/*
+ *      If the rtt_flag is set, calculate and report the packet round-trip
+ *      time.
+ */
+      if (rtt_flag) {
+         struct timeval rtt;
+         struct timeval pcap_timestamp;
+         unsigned long rtt_us; /* round-trip time in microseconds */
+/*
+ * We can't pass a pointer to pcap_header->ts directly to timeval_diff
+ * because it's not guaranteed to have the same size as a struct timeval.
+ * E.g. OpenBSD 5.1 on amd64.
+ */
+         pcap_timestamp.tv_sec = pcap_header->ts.tv_sec;
+         pcap_timestamp.tv_usec = pcap_header->ts.tv_usec;
+         timeval_diff(&pcap_timestamp, &(he->last_send_time), &rtt);
+         rtt_us = rtt.tv_sec * 1000000 + rtt.tv_usec;
+         fields[10].value=make_message("%lu.%03lu", rtt_us/1000, rtt_us%1000);
+      }
+   }    /* End if (!quiet_flag) */
+
 /*
  *	Set msg to the IP address of the host entry and a tab.
  */
