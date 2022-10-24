@@ -1,6 +1,16 @@
+2021-10-24 Roy Hills <royhills@hotmail.com>
+
+	* Makefile.am, check-decode: Added checks to test output format with
+	  --rtt, --resolve, different ARP/header address, and locally
+	  administered MAC address.
+
+	* pkt-diff-frame-addr.pcap, pkt-local-admin.pcap: New files for
+	  above tests.
+
 2021-10-23 Roy Hills <royhills@hotmail.com>
 
-	* arp-scan.c, error.c
+	* arp-scan.c, error.c arp-scan.c, error.c: Changed most fixed-length
+	  strings to use dynamic length strings.
 
 	* utils.c: Changed make_message() to assume vsnprintf() behaves
 	  according to POSIX. No need to accomodate bugs in ancient glibc
