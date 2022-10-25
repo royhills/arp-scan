@@ -111,21 +111,6 @@ parsestring(format_element *node, const char *fmt, const char *fmtend) {
    *write = '\0';
 }
 
-void
-format_free(format_element *head) {
-
-   format_element *node;
-
-   while (head) {
-      node = head;
-      head = node->next;
-
-      free(node->data);
-      free(node);
-   }
-}
-
-
 format_element *
 format_parse(const char *fmt) {
 
@@ -143,11 +128,8 @@ format_parse(const char *fmt) {
 
       if (fmt[0] == '$' && fmt[1] == '{') {	/* Field starting ${ */
          fmtend = strchr(fmt, '}');	/* Check for closing brace */
-         if (!fmtend) {
+         if (!fmtend)
             err_msg("ERROR: incorrect show format: missing closing brace");
-            format_free(head);
-            return NULL;
-         }
          parsefield(node, fmt + 2, fmtend - 1);
          fmt = fmtend + 1;
       } else {	/* Not a field so presumably a string */
