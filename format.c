@@ -131,6 +131,7 @@ format_parse(const char *fmt) {
 
    format_element *head, *node;
    const char *fmtend;
+   const char *cp;
 
    head = node = NULL;
 
@@ -153,7 +154,9 @@ format_parse(const char *fmt) {
          fmtend = fmt;
          do {
             fmtend += 1;
-            fmtend = strchrnul(fmtend, '$');	// XXXX GNU Extension XXXX
+            cp = strchr(fmtend, '$');
+            if (!cp)
+               fmtend = strchr(fmtend, '\0');
          } while (fmtend[0] && fmtend[1] != '{');
 
          parsestring(node, fmt, fmtend - 1);

@@ -22,8 +22,6 @@
  * Date:	11 October 2005
  *
  */
-#define _GNU_SOURCE
-
 /* Includes */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
