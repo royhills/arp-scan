@@ -1433,6 +1433,32 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tif fewer hosts respond without having to parse the\n");
       fprintf(stdout, "\t\t\tprogram output.\n");
       fprintf(stdout, "\n--format=<s> or -k <s>\tSpecify output format string.\n");
+      fprintf(stdout, "\t\t\tThis option specifies the output format. The format\n");
+      fprintf(stdout, "\t\t\tstring consists of fields using the syntax\n");
+      fprintf(stdout, "\t\t\t\"${field[;width]}\". Fields are displayed right-\n");
+      fprintf(stdout, "\t\t\taligned unless the width is negative in which case\n");
+      fprintf(stdout, "\t\t\tleft alignment will be used. The following case-\n");
+      fprintf(stdout, "\t\t\tinsensitive field name are recognised:\n");
+      fprintf(stdout, "\n");
+      fprintf(stdout, "\t\t\tIP\tHost IP address\n");
+      fprintf(stdout, "\t\t\tName\tHost name if --resolve option given\n");
+      fprintf(stdout, "\t\t\tMAC\tHost MAC address\n");
+      fprintf(stdout, "\t\t\tHeaderMAC\tEthernet source addr if different\n");
+      fprintf(stdout, "\t\t\tVendor\tVendor details\n");
+      fprintf(stdout, "\t\t\tPadding\tPadding after ARP packet in hex\n");
+      fprintf(stdout, "\t\t\tFraming\tFraming type if not Ethernet_II\n");
+      fprintf(stdout, "\t\t\tVLAN\tVLAD ID if present\n");
+      fprintf(stdout, "\t\t\tARPProto\tARP protocol if not 0x0800\n");
+      fprintf(stdout, "\t\t\tDUP\tPacket number for duplicate packets\n");
+      fprintf(stdout, "\t\t\tRTT\tRound trip time if --rtt option given\n");
+      fprintf(stdout, "\t\t\t\n");
+      fprintf(stdout, "\t\t\tAny characters that are not fields are output\n");
+      fprintf(stdout, "\t\t\tverbatim. \"\\\" introduces escapes:\n");
+      fprintf(stdout, "\t\t\t\n");
+      fprintf(stdout, "\t\t\t\\n newline\n");
+      fprintf(stdout, "\t\t\t\\r carriage return\n");
+      fprintf(stdout, "\t\t\t\\t tab\n");
+      fprintf(stdout, "\t\t\t\\  suppress special meaning for following char\n");
    } else {
       fprintf(stdout, "use \"arp-scan --help\" for detailed information on the available options.\n");
    }
