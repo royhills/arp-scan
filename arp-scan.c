@@ -688,12 +688,12 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       {"IP",NULL},
       {"Name",NULL},
       {"MAC",NULL},
-      {"HeaderMAC",NULL},
+      {"HdrMAC",NULL},
       {"Vendor",NULL},
       {"Padding",NULL},
       {"Framing",NULL},
       {"VLAN",NULL},
-      {"ARPProto",NULL},
+      {"Proto",NULL},
       {"DUP",NULL},
       {"RTT",NULL}
    };
@@ -701,14 +701,15 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       {0, "IP"},
       {1, "Name"},
       {2, "MAC"},
-      {3, "HeaderMAC"},
+      {3, "HdrMAC"},
       {4, "Vendor"},
       {5, "Padding"},
       {6, "Framing"},
       {7, "VLAN"},
-      {8, "ARPProto"},
+      {8, "Proto"},
       {9, "DUP"},
-      {10, "RTT"}
+      {10, "RTT"},
+      {-1, NULL}
    };
    char *msg;
    char *cp;
@@ -742,7 +743,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
                       arpei->ar_sha[2], arpei->ar_sha[3],
                       arpei->ar_sha[4], arpei->ar_sha[5]);
 /*
- *	HeaderMAC field, present if source MAC in the ARP packet is different
+ *	HdrMAC field, present if source MAC in the ARP packet is different
  *	to source MAC in the Ethernet frame header.
  */
    if ((memcmp(arpei->ar_sha, frame_hdr->src_addr, ETH_ALEN)) != 0) {
@@ -827,7 +828,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
          fields[7].value = make_message("%d", vlan_id);
       }
 /*
- *      ARPProto field, present if the ARP protocol type is not IP (0x0800)
+ *      Proto field, present if the ARP protocol type is not IP (0x0800)
  *      This can occur with trailer encapsulation ARP replies on 4.2BSD VAX
  */
       if (ntohs(arpei->ar_pro) != 0x0800) {
@@ -878,7 +879,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       msg = make_message("%s\t%s", cp, fields[2].value);
       free(cp);
 /*
- *	Output HeaderMAC field if present
+ *	Output HdrMAC field if present
  */
       if (fields[3].value) {
          cp = msg;
@@ -918,7 +919,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
          free(cp);
       }
 /*
- *	Output ARPProto field if present.
+ *	Output Proto field if present.
  */
       if (fields[8].value) {
          cp = msg;
@@ -952,6 +953,8 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
                cp = msg;
                msg = make_message("%s%*s", cp, fmt->width, fields[idx].value);
                free(cp);
+            } else {	/* Field name not found in map */
+               warn_msg("WARNING: Field name ${%s} is not known", fmt->data);
             }
          } else if (fmt->type == FORMAT_STRING) {
             cp = msg;
@@ -1432,7 +1435,7 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tspecified limit. This can be used in scripts to check\n");
       fprintf(stdout, "\t\t\tif fewer hosts respond without having to parse the\n");
       fprintf(stdout, "\t\t\tprogram output.\n");
-      fprintf(stdout, "\n--format=<s> or -k <s>\tSpecify output format string.\n");
+      fprintf(stdout, "\n--format=<s> or -k <s>\tSpecify the output format string.\n");
       fprintf(stdout, "\t\t\tThis option specifies the output format. The format\n");
       fprintf(stdout, "\t\t\tstring consists of fields using the syntax\n");
       fprintf(stdout, "\t\t\t\"${field[;width]}\". Fields are displayed right-\n");
@@ -1440,16 +1443,16 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tleft alignment will be used. The following case-\n");
       fprintf(stdout, "\t\t\tinsensitive field name are recognised:\n");
       fprintf(stdout, "\n");
-      fprintf(stdout, "\t\t\tIP\tHost IP address\n");
+      fprintf(stdout, "\t\t\tIP\tHost IP address in dotted quad format\n");
       fprintf(stdout, "\t\t\tName\tHost name if --resolve option given\n");
-      fprintf(stdout, "\t\t\tMAC\tHost MAC address\n");
-      fprintf(stdout, "\t\t\tHeaderMAC\tEthernet source addr if different\n");
-      fprintf(stdout, "\t\t\tVendor\tVendor details\n");
-      fprintf(stdout, "\t\t\tPadding\tPadding after ARP packet in hex\n");
+      fprintf(stdout, "\t\t\tMAC\tHost MAC address xx:xx:xx:xx:xx:xx\n");
+      fprintf(stdout, "\t\t\tHdrMAC\tEthernet source addr if different\n");
+      fprintf(stdout, "\t\t\tVendor\tVendor details string\n");
+      fprintf(stdout, "\t\t\tPadding\tPadding after ARP packet in hex if nonzero\n");
       fprintf(stdout, "\t\t\tFraming\tFraming type if not Ethernet_II\n");
-      fprintf(stdout, "\t\t\tVLAN\tVLAD ID if present\n");
-      fprintf(stdout, "\t\t\tARPProto\tARP protocol if not 0x0800\n");
-      fprintf(stdout, "\t\t\tDUP\tPacket number for duplicate packets\n");
+      fprintf(stdout, "\t\t\tVLAN\t802.1Q VLAD ID if present\n");
+      fprintf(stdout, "\t\t\tProto\tARP protocol if not 0x0800\n");
+      fprintf(stdout, "\t\t\tDUP\tPacket number for duplicate packets (>1)\n");
       fprintf(stdout, "\t\t\tRTT\tRound trip time if --rtt option given\n");
       fprintf(stdout, "\t\t\t\n");
       fprintf(stdout, "\t\t\tAny characters that are not fields are output\n");
@@ -1458,7 +1461,10 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\t\\n newline\n");
       fprintf(stdout, "\t\t\t\\r carriage return\n");
       fprintf(stdout, "\t\t\t\\t tab\n");
-      fprintf(stdout, "\t\t\t\\  suppress special meaning for following char\n");
+      fprintf(stdout, "\t\t\t\\  suppress special meaning for following character\n");
+      fprintf(stdout, "\t\t\t\n");
+      fprintf(stdout, "\t\t\tYou should enclose the --format argument in 'single\n");
+      fprintf(stdout, "\t\t\tquotes' to protect special characters from the shell.\n");
    } else {
       fprintf(stdout, "use \"arp-scan --help\" for detailed information on the available options.\n");
    }
