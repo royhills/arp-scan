@@ -559,3 +559,76 @@ void drop_capabilities(void)
       err_sys("setuid()");
 #endif
 }
+
+/*
+ *      name_to_id -- Return id associated with given name
+ *
+ *      Inputs:
+ *
+ *      name            The name to find in the map
+ *      id_name_map     Pointer to the id-to-name map
+ *
+ *      Returns:
+ *
+ *      The id associated with the name if an association is found in the
+ *      map, otherwise -1.
+ *
+ *      This function uses a sequential search through the map to find the
+ *      ID and associated name.  This is OK when the map is relatively small,
+ *      but could be time consuming if the map contains a large number of
+ *      entries.
+ *
+ *      The search is case-blind.
+ */
+int
+name_to_id(const char *name, const id_name_map map[]) {
+   int found = 0;
+   int i = 0;
+
+   if (map == NULL)
+      return -1;
+
+   while (map[i].id != -1) {
+      if ((str_ccmp(name,map[i].name)) == 0) {
+         found = 1;
+         break;
+      }
+      i++;
+   }
+
+   if (found)
+      return map[i].id;
+   else
+      return -1;
+}
+
+/*
+ *      str_ccmp  -- Case-blind string comparison
+ *
+ *      Inputs:
+ *
+ *      s1 -- The first input string
+ *      s2 -- The second input string
+ *
+ *      Returns:
+ *
+ *      An integer indicating whether s1 is less than (-1), the same as (0),
+ *      or greater than (1) s2.
+ *
+ *      This function performs the same function, and takes the same arguments
+ *      as the common library function strcasecmp.  This function is used
+ *      instead because strcasecmp is not portable.
+ */
+int
+str_ccmp( const char *s1, const char *s2 ) {
+   int c1, c2;
+
+   for( ; ; s1++, s2++ ){
+      c1 = tolower( (unsigned char) *s1 );
+      c2 = tolower( (unsigned char) *s2 );
+
+      if( c1 > c2            )  return   1;
+      if( c1 < c2            )  return  -1;
+      if( c1 == 0 && c2 == 0 )  return   0;
+   }
+}
