@@ -92,6 +92,7 @@ unsigned int random_seed=0;
 static unsigned retry_send = DEFAULT_RETRY_SEND; /* Number of send packet retries */
 static unsigned retry_send_interval = DEFAULT_RETRY_SEND_INTERVAL; /* Interval in seconds between send packet retries */
 static unsigned int host_limit=0;	/* Exit after n responders if nonzero */
+static format_element *format=NULL;	/* Output format linked list */
 
 int
 main(int argc, char *argv[]) {
@@ -696,6 +697,19 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       {"DUP",NULL},
       {"RTT",NULL}
    };
+   static const id_name_map fields_map[] = {
+      {0, "IP"},
+      {1, "Name"},
+      {2, "MAC"},
+      {3, "HeaderMAC"},
+      {4, "Vendor"},
+      {5, "Padding"},
+      {6, "Framing"},
+      {7, "VLAN"},
+      {8, "ARPProto"},
+      {9, "DUP"},
+      {10, "RTT"}
+   };
    char *msg;
    char *cp;
    char *ga_err_msg;
@@ -845,95 +859,113 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       }
    }    /* End if (!quiet_flag) */
 /*
- *	Display fields.
+ *	Output fields.
  */
-
+   if (!format) {	/* If --format option not given */
 /*
  *	Output IP field or Name field depending on whether --resolve option
  *	was given.
  */
-   if (resolve_flag) {
-      msg = make_message("%s", fields[1].value);
-   } else {
-      msg = make_message("%s", fields[0].value);
-   }
+      if (resolve_flag) {
+         msg = make_message("%s", fields[1].value);
+      } else {
+         msg = make_message("%s", fields[0].value);
+      }
 /*
  *	Output MAC field
  */
-   cp = msg;
-   msg = make_message("%s\t%s", cp, fields[2].value);
-   free(cp);
+      cp = msg;
+      msg = make_message("%s\t%s", cp, fields[2].value);
+      free(cp);
 /*
  *	Output HeaderMAC field if present
  */
-   if (fields[3].value) {
-      cp = msg;
-      msg = make_message("%s (%s)", cp, fields[3].value);
-      free(cp);
-   }
-
+      if (fields[3].value) {
+         cp = msg;
+         msg = make_message("%s (%s)", cp, fields[3].value);
+         free(cp);
+      }
 /*
  *	Output Vendor field.
  */
-   cp = msg;
-   msg = make_message("%s\t%s", cp, fields[4].value);
-   free(cp);
+      cp = msg;
+      msg = make_message("%s\t%s", cp, fields[4].value);
+      free(cp);
 /*
  *	Output Padding field if present and --verbose is given
  */
-   if (fields[5].value && verbose) {
-      cp = msg;
-      msg = make_message("%s\tPadding=%s", cp, fields[5].value);
-      free(cp);
-   }
+      if (fields[5].value && verbose) {
+         cp = msg;
+         msg = make_message("%s\tPadding=%s", cp, fields[5].value);
+         free(cp);
+      }
 /*
  *	Output Framing field if present.
  */
-   if (fields[6].value) {
-      cp = msg;
-      if (framing == FRAMING_LLC_SNAP) {
-         msg = make_message("%s (%s)", cp, fields[6].value);
+      if (fields[6].value) {
+         cp = msg;
+         if (framing == FRAMING_LLC_SNAP) {
+            msg = make_message("%s (%s)", cp, fields[6].value);
+         }
+         free(cp);
       }
-      free(cp);
-   }
 /*
  *	Output VLAN ID if the VLAN field is present.
  */
-   if (fields[7].value) {
-      cp = msg;
-      msg = make_message("%s (802.1Q VLAN=%s)", cp, fields[7].value);
-      free(cp);
-   }
+      if (fields[7].value) {
+         cp = msg;
+         msg = make_message("%s (802.1Q VLAN=%s)", cp, fields[7].value);
+         free(cp);
+      }
 /*
  *	Output ARPProto field if present.
  */
-   if (fields[8].value) {
-      cp = msg;
-      msg = make_message("%s (ARP Proto=%s)", cp, fields[8].value);
-      free(cp);
-   }
+      if (fields[8].value) {
+         cp = msg;
+         msg = make_message("%s (ARP Proto=%s)", cp, fields[8].value);
+         free(cp);
+      }
 /*
  *	Output DUP field if present.
  */
-   if (fields[9].value) {
-      cp = msg;
-      msg = make_message("%s (DUP: %s)", cp, fields[9].value);
-      free(cp);
-   }
+      if (fields[9].value) {
+         cp = msg;
+         msg = make_message("%s (DUP: %s)", cp, fields[9].value);
+         free(cp);
+      }
 /*
  *	Output RTT field if present.
  */
-   if (fields[10].value) {
-      cp=msg;
-      msg=make_message("%s\tRTT=%s ms", cp, fields[10].value);
-      free(cp);
+      if (fields[10].value) {
+         cp=msg;
+         msg=make_message("%s\tRTT=%s ms", cp, fields[10].value);
+         free(cp);
+      }
+   } else {	/* --format option given */
+      format_element *fmt;
+      int idx;
+
+      msg=dupstr("");	/* Set msg to empty string */
+      for (fmt=format; fmt; fmt=fmt->next) {
+         if (fmt->type == FORMAT_FIELD) {
+            if ((idx=name_to_id(fmt->data, fields_map)) != -1) {
+               cp = msg;
+               msg = make_message("%s%*s", cp, fmt->width, fields[idx].value);
+               free(cp);
+            }
+         } else if (fmt->type == FORMAT_STRING) {
+            cp = msg;
+            msg = make_message("%s%s", cp, fmt->data);
+            free(cp);
+         }
+      }
    }
 /*
  *	Display the message on stdout.
  */
    printf("%s\n", msg);
-
    free(msg);
+
    for (int i=0; i<NUMFIELDS; i++)
       if (fields[i].value) {
          free(fields[i].value);
@@ -1400,6 +1432,7 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tspecified limit. This can be used in scripts to check\n");
       fprintf(stdout, "\t\t\tif fewer hosts respond without having to parse the\n");
       fprintf(stdout, "\t\t\tprogram output.\n");
+      fprintf(stdout, "\n--format=<s> or -k <s>\tSpecify output format string.\n");
    } else {
       fprintf(stdout, "use \"arp-scan --help\" for detailed information on the available options.\n");
    }
@@ -2014,17 +2047,18 @@ process_options(int argc, char *argv[]) {
       {"randomseed", required_argument, 0, OPT_RANDOMSEED},
       {"limit", required_argument, 0, 'M'},
       {"resolve", no_argument, 0, 'd'},
+      {"format", required_argument, 0, 'k'},
       {0, 0, 0, 0}
    };
 /*
  * available short option characters:
  *
- * lower:       --c-e----jk--------------z
+ * lower:       --c-e----j---------------z
  * UPPER:       --C---G--JK---------U--X-Z
  * Digits:      0123456789
  */
    const char *short_options =
-      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:DxM:d";
+      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:DxM:dk:";
    int arg;
    int options_index=0;
 
@@ -2184,6 +2218,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'd':	/* --resolve */
             resolve_flag = 1;
+            break;
+         case 'k':	/* --format */
+            format=format_parse(optarg);
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE, 0);

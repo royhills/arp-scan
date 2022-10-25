@@ -41,7 +41,7 @@ format_element_new(void) {
    return buf;
 }
 
-static int
+static void
 parsefield(format_element *node, const char *fmt, const char *fmtend) {
 
    int len;
@@ -71,11 +71,9 @@ parsefield(format_element *node, const char *fmt, const char *fmtend) {
    node->data = Malloc(len + 1);
    memcpy(node->data, fmt, len);
    node->data[len] = '\0';
-
-   return 0;
 }
 
-static int
+static void
 parsestring(format_element *node, const char *fmt, const char *fmtend) {
 
    int len;
@@ -111,8 +109,6 @@ parsestring(format_element *node, const char *fmt, const char *fmtend) {
       fmt++;
    }
    *write = '\0';
-
-   return 0;
 }
 
 void
@@ -144,20 +140,16 @@ format_parse(const char *fmt) {
       else
          head = node = format_element_new();
 
-      if (fmt[0] == '$' && fmt[1] == '{') {
-         fmtend = strchr(fmt, '}');
+      if (fmt[0] == '$' && fmt[1] == '{') {	/* Field starting ${ */
+         fmtend = strchr(fmt, '}');	/* Check for closing brace */
          if (!fmtend) {
             err_msg("ERROR: incorrect show format: missing closing brace");
             format_free(head);
             return NULL;
          }
-
-         if (!parsefield(node, fmt + 2, fmtend - 1)) {
-            format_free(head);
-            return NULL;
-         }
+         parsefield(node, fmt + 2, fmtend - 1);
          fmt = fmtend + 1;
-      } else {
+      } else {	/* Not a field so presumably a string */
          fmtend = fmt;
          do {
             fmtend += 1;
