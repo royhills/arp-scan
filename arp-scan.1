@@ -5,7 +5,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "October 10, 2022"
+.TH ARP-SCAN 1 "October 25, 2022"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -639,6 +639,9 @@ When this option is used arp-scan will exit with status 1 if
 the number of responding hosts is less then the specified
 limit. This can be used in scripts to check if fewer hosts
 respond without having to parse the program output.
+.TP
+.B --format=<s> or -k <s>
+Specify output format string.
 .SH FILES
 .TP
 .I /usr/local/share/arp-scan/ieee-oui.txt
