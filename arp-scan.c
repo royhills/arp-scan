@@ -1455,6 +1455,9 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tDUP\tPacket number for duplicate packets (>1)\n");
       fprintf(stdout, "\t\t\tRTT\tRound trip time if --rtt option given\n");
       fprintf(stdout, "\t\t\t\n");
+      fprintf(stdout, "\t\t\tOnly the \"ip\" and \"mac\" fields are available if the\n");
+      fprintf(stdout, "\t\t\t--quiet option is specified.\n");
+      fprintf(stdout, "\t\t\t\n");
       fprintf(stdout, "\t\t\tAny characters that are not fields are output\n");
       fprintf(stdout, "\t\t\tverbatim. \"\\\" introduces escapes:\n");
       fprintf(stdout, "\t\t\t\n");
@@ -1465,6 +1468,8 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\t\n");
       fprintf(stdout, "\t\t\tYou should enclose the --format argument in 'single\n");
       fprintf(stdout, "\t\t\tquotes' to protect special characters from the shell.\n");
+      fprintf(stdout, "\t\t\t\n");
+      fprintf(stdout, "\t\t\tExample: --format='${ip}\\t${mac}\\t${vendor}'\n");
    } else {
       fprintf(stdout, "use \"arp-scan --help\" for detailed information on the available options.\n");
    }

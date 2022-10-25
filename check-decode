@@ -492,3 +492,28 @@ fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
 rm -f "$EXAMPLEOUTPUT"
+
+# Simple ARP response with custom formatting
+echo "Checking custom formatting using $SAMPLE01 ..."
+cat >"$EXAMPLEOUTPUT" <<_EOF_
+127.0.0.1|08:00:2b:06:07:08|DIGITAL EQUIPMENT CORPORATION
+
+_EOF_
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt --format=\${ip}|\${mac}|\${vendor}"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"
