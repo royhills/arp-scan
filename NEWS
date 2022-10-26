@@ -1,6 +1,42 @@
 This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.
 
+YYYY-MM-DD arp-scan 1.9.9 (in progress)
+
+* New Features:
+
+  - Added POSIX.1e capabilities support for systems with libcap (Linux only)
+  - --format option provides flexible output format (see manpage or help)
+
+2021-10-08 arp-scan 1.9.8 (git tag 1.9.8)
+
+* New Features:
+
+  - Allow the use of Linux IP aliases such as eth0:0 for the interface name.
+  - Permit regular MAC addresses e.g. 00:0c:29:b9:43:1b in mac-vendor.txt.
+  - --limit=n option exits after n of hosts have responded, exit 1 for <n
+  - --resolve option to resolve responding IP addresses to hostnames
+
+* Fixed bugs:
+
+  - Potential buffer overrun in unmarshal_arp_pkt().
+  - arp-scan aborts with EAGAIN on busy network or using high bandwidth
+  - late ARP responses could sometimes be incorrectly flagged as duplicate
+
+* General improvements:
+
+  - Updated IEEE URLs in download perl scripts.
+  - Updated source for Mersenne RNG and replacement strlcat/strlcpy & getopt.
+  - Updated for compatability with autoconf 2.71
+  - "make distcheck" works now
+  - Number of responding hosts reported no longer counts duplicate packets.
+  - Many typos corrected and edge cases fixed.
+
+* Misc Changes:
+
+  - CI framework migrated from travis-ci to github actions.
+  - Several new tests for "make check"
+
 2019-11-10 arp-scan 1.9.7
 
 * Improved error messages from libpcap functions.
