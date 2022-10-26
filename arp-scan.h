@@ -22,7 +22,6 @@
  * Date:	11 October 2005
  *
  */
-
 /* Includes */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,20 +34,17 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include <errno.h>
+#include <limits.h>
 
 #include <sys/types.h>
 
-/* Integer types */
+/* Integer types (C99) */
 #ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
 #else
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif
-#endif
-
-#ifdef __CYGWIN__
-#include <windows.h>	/* Include windows.h if compiling under Cygwin */
 #endif
 
 #ifdef HAVE_UNISTD_H
@@ -107,6 +103,10 @@
 
 #ifdef HAVE_IFADDRS_H
 #include <ifaddrs.h>
+#endif
+
+#ifdef __CYGWIN__
+#include <windows.h>	/* Include windows.h if compiling under Cygwin */
 #endif
 
 /* Mersenne Twister random number generator prototypes */
@@ -173,6 +173,7 @@
 #define DEFAULT_RETRY_SEND 20		/* Default no. of send packet retries */
 #define DEFAULT_RETRY_SEND_INTERVAL 5000  /* Default interval between send
                                         * packet retries in microseconds */
+#define NUMFIELDS 11			/* Number of output fields */
 
 /* Structures */
 
@@ -204,6 +205,26 @@ typedef struct {
    uint8_t ar_tha[ETH_ALEN];	/* Target hardware address */
    uint32_t ar_tip;		/* Target IP address */
 } arp_ether_ipv4;
+
+/* name to ID lookup map */
+typedef struct {
+   int id;
+   const char *name;
+} id_name_map;
+
+/* output format */
+enum format_type {
+   FORMAT_INVALID,
+   FORMAT_STRING,
+   FORMAT_FIELD
+};
+
+typedef struct format_element {
+        struct format_element *next;
+        enum format_type type;
+        int width;
+        char *data;
+} format_element;
 
 /* Functions */
 
@@ -258,3 +279,6 @@ char *dupstr(const char *);
 void limit_capabilities(void);
 void set_capability(int);
 void drop_capabilities(void);
+int name_to_id(const char *, const id_name_map[]);
+int str_ccmp(const char *, const char *);
+format_element *format_parse(const char *);

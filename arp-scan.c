@@ -92,6 +92,7 @@ unsigned int random_seed=0;
 static unsigned retry_send = DEFAULT_RETRY_SEND; /* Number of send packet retries */
 static unsigned retry_send_interval = DEFAULT_RETRY_SEND_INTERVAL; /* Interval in seconds between send packet retries */
 static unsigned int host_limit=0;	/* Exit after n responders if nonzero */
+static format_element *format=NULL;	/* Output format linked list */
 
 int
 main(int argc, char *argv[]) {
@@ -679,58 +680,91 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
                const unsigned char *extra_data, size_t extra_data_len,
                int framing, int vlan_id, ether_hdr *frame_hdr,
                const struct pcap_pkthdr *pcap_header) {
+   typedef struct {
+      const char *name;
+      char *value;
+   } field;
+   static field fields[NUMFIELDS] = {
+      {"IP",NULL},
+      {"Name",NULL},
+      {"MAC",NULL},
+      {"HdrMAC",NULL},
+      {"Vendor",NULL},
+      {"Padding",NULL},
+      {"Framing",NULL},
+      {"VLAN",NULL},
+      {"Proto",NULL},
+      {"DUP",NULL},
+      {"RTT",NULL}
+   };
+   static const id_name_map fields_map[] = {
+      {0, "IP"},
+      {1, "Name"},
+      {2, "MAC"},
+      {3, "HdrMAC"},
+      {4, "Vendor"},
+      {5, "Padding"},
+      {6, "Framing"},
+      {7, "VLAN"},
+      {8, "Proto"},
+      {9, "DUP"},
+      {10, "RTT"},
+      {-1, NULL}
+   };
    char *msg;
    char *cp;
-   char *cp2;
    char *ga_err_msg;
    int nonzero=0;
 /*
- *	Set msg to the IP address of the host entry and a tab.
+ *	Assign output fields based on response packet and options.
+ */
+
+/*
+ *	IP field, always present.
+ */
+   fields[0].value = make_message("%s", my_ntoa(he->addr));
+/*
+ *	Name field, present if --resolve option given.
  */
    if (resolve_flag) {
-      cp2 = get_host_name(he->addr, &ga_err_msg);
-      if (cp2) {
-         msg = make_message("%s\t", cp2);
+      cp = get_host_name(he->addr, &ga_err_msg);
+      if (cp) {
+         fields[1].value = make_message("%s", cp);
       } else {
          warn_msg("WARNING: getnameinfo() failed for \"%s\": %s",
                   my_ntoa(he->addr), ga_err_msg);
-         msg = make_message("%s\t", my_ntoa(he->addr)); /* Fallback to IP address */
       }
-   } else {
-      msg = make_message("%s\t", my_ntoa(he->addr));
    }
 /*
- *	Decode ARP packet
+ *	MAC field, always present.
  */
-   cp = msg;
-   msg = make_message("%s%.2x:%.2x:%.2x:%.2x:%.2x:%.2x", cp,
+   fields[2].value = make_message("%.2x:%.2x:%.2x:%.2x:%.2x:%.2x",
                       arpei->ar_sha[0], arpei->ar_sha[1],
                       arpei->ar_sha[2], arpei->ar_sha[3],
                       arpei->ar_sha[4], arpei->ar_sha[5]);
-   free(cp);
 /*
- *	Check that the source address in the Ethernet frame header is the same
- *	as ar$sha in the ARP packet, and display the Ethernet source address
- *	if it is different.
+ *	HdrMAC field, present if source MAC in the ARP packet is different
+ *	to source MAC in the Ethernet frame header.
  */
    if ((memcmp(arpei->ar_sha, frame_hdr->src_addr, ETH_ALEN)) != 0) {
-      cp = msg;
-      msg = make_message("%s (%.2x:%.2x:%.2x:%.2x:%.2x:%.2x)", cp,
+      fields[3].value = make_message("%.2x:%.2x:%.2x:%.2x:%.2x:%.2x",
                          frame_hdr->src_addr[0], frame_hdr->src_addr[1],
                          frame_hdr->src_addr[2], frame_hdr->src_addr[3],
                          frame_hdr->src_addr[4], frame_hdr->src_addr[5]);
-      free(cp);
+
    }
 /*
- *	Find vendor from hash table and add to message if quiet is not in
- *	effect.
- *
- *	We start with more specific matches (against larger parts of the
- *	hardware address), and work towards less specific matches until
- *	we find a match or exhaust all possible matches.
+ *	Vendor field, present if --quiet option not given
  */
    if (!quiet_flag) {
-      char oui_string[13];	/* Space for full hw addr plus NULL */
+/*
+ *      Find vendor in hash table.
+ *
+ *      We start with more specific matches (against larger parts of the
+ *      hardware address), and work towards less specific matches until
+ *      we find a match or exhaust all possible matches.
+ */
+      char oui_string[13];      /* Space for full hw addr plus NULL */
       const char *vendor=NULL;
       int oui_end=12;
       ENTRY hash_query;
@@ -740,7 +774,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
                arpei->ar_sha[0], arpei->ar_sha[1], arpei->ar_sha[2],
                arpei->ar_sha[3], arpei->ar_sha[4], arpei->ar_sha[5]);
       while (vendor == NULL && oui_end > 1) {
-         oui_string[oui_end] = '\0';	/* Truncate oui string */
+         oui_string[oui_end] = '\0';    /* Truncate oui string */
          hash_query.key = oui_string;
          hash_result = hsearch(hash_query, FIND);
          if (hash_result) {
@@ -750,19 +784,22 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
          }
          oui_end--;
       }
-      cp = msg;
       if (vendor)
-         msg = make_message("%s\t%s", cp, vendor);
+         fields[4].value = make_message("%s", vendor);
       else
-         /* Of the first octet of the address, check the second-least-significant bit */
+         /* Check the second-least-significant bit of first octet */
          if (arpei->ar_sha[0] & (1<<1))
-             msg = make_message("%s\t%s", cp, "(Unknown: locally administered)");
+             fields[4].value = make_message("%s", "(Unknown: locally administered)");
          else
-             msg = make_message("%s\t%s", cp, "(Unknown)");
-      free(cp);
+             fields[4].value = make_message("%s", "(Unknown)");
 /*
- *	Check that any data after the ARP packet is zero.
- *	If it is non-zero, and verbose is selected, then print the padding.
+ *	Padding field, present if --quiet option not given and frame padding
+ *	is non zero
+ */
+/*
+ *      Check that any data after the ARP packet is zero.
+ *      If it is non-zero, and verbose is selected, then set the Padding
+ *	field to the hex representation of the padding.
  */
       if (extra_data_len > 0) {
          unsigned i;
@@ -775,51 +812,36 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
             }
          }
       }
-      if (nonzero && verbose) {
-         cp = msg;
-         cp2 = hexstring(extra_data, extra_data_len);
-         msg = make_message("%s\tPadding=%s", cp, cp2);
-         free(cp2);
-         free(cp);
+      if (nonzero) {
+         fields[5].value = hexstring(extra_data, extra_data_len);
       }
 /*
- *	If the framing type is not Ethernet II, then report the framing type.
+ *      Framing field, present if the framing type is 802.2 LLC/SNAP
  */
-      if (framing != FRAMING_ETHERNET_II) {
-         cp = msg;
-         if (framing == FRAMING_LLC_SNAP) {
-            msg = make_message("%s (802.2 LLC/SNAP)", cp);
-         }
-         free(cp);
+      if (framing == FRAMING_LLC_SNAP) {
+         fields[6].value = make_message("802.2 LLC/SNAP");
       }
 /*
- *	If the packet uses 802.1Q VLAN tagging, report the VLAN ID.
+ *      VLAN field, present if the packet uses 802.1Q VLAN tagging.
  */
       if (vlan_id != -1) {
-         cp = msg;
-         msg = make_message("%s (802.1Q VLAN=%d)", cp, vlan_id);
-         free(cp);
+         fields[7].value = make_message("%d", vlan_id);
       }
 /*
- *	If the ARP protocol type is not IP (0x0800), report it.
- *	This can occur with trailer encapsulation ARP replies.
+ *      Proto field, present if the ARP protocol type is not IP (0x0800)
+ *      This can occur with trailer encapsulation ARP replies on 4.2BSD VAX
  */
       if (ntohs(arpei->ar_pro) != 0x0800) {
-         cp = msg;
-         msg = make_message("%s (ARP Proto=0x%04x)", cp, ntohs(arpei->ar_pro));
-         free(cp);
+         fields[8].value = make_message("0x%04x", ntohs(arpei->ar_pro));
       }
 /*
- *	Flag this as a duplicate if it's not the first response.
+ *      DUP field, present if this is not the first response from this host.
  */
       if (he->num_recv > 1) {
-         cp = msg;
-         msg = make_message("%s (DUP: %u)", cp, he->num_recv);
-         free(cp);
+         fields[9].value = make_message("%u", he->num_recv);
       }
 /*
- *	If the rtt_flag is set, calculate and report the packet round-trip
- *	time.
+ *	RTT field, present if the --rtt option is given
  */
       if (rtt_flag) {
          struct timeval rtt;
@@ -834,16 +856,124 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
          pcap_timestamp.tv_usec = pcap_header->ts.tv_usec;
          timeval_diff(&pcap_timestamp, &(he->last_send_time), &rtt);
          rtt_us = rtt.tv_sec * 1000000 + rtt.tv_usec;
-         cp=msg;
-         msg=make_message("%s\tRTT=%lu.%03lu ms", cp, rtt_us/1000, rtt_us%1000);
+         fields[10].value=make_message("%lu.%03lu", rtt_us/1000, rtt_us%1000);
+      }
+   }    /* End if (!quiet_flag) */
+/*
+ *	Output fields.
+ */
+   if (!format) {	/* If --format option not given */
+/*
+ *	Output IP field or Name field depending on whether --resolve option
+ *	was given.
+ */
+      if (resolve_flag) {
+         msg = make_message("%s", fields[1].value);
+      } else {
+         msg = make_message("%s", fields[0].value);
+      }
+/*
+ *	Output MAC field
+ */
+      cp = msg;
+      msg = make_message("%s\t%s", cp, fields[2].value);
+      free(cp);
+/*
+ *	Output HdrMAC field if present
+ */
+      if (fields[3].value) {
+         cp = msg;
+         msg = make_message("%s (%s)", cp, fields[3].value);
          free(cp);
       }
-   }	/* End if (!quiet_flag) */
 /*
- *	Print the message.
+ *	Output Vendor field.
+ */
+      cp = msg;
+      msg = make_message("%s\t%s", cp, fields[4].value);
+      free(cp);
+/*
+ *	Output Padding field if present and --verbose is given
+ */
+      if (fields[5].value && verbose) {
+         cp = msg;
+         msg = make_message("%s\tPadding=%s", cp, fields[5].value);
+         free(cp);
+      }
+/*
+ *	Output Framing field if present.
+ */
+      if (fields[6].value) {
+         cp = msg;
+         if (framing == FRAMING_LLC_SNAP) {
+            msg = make_message("%s (%s)", cp, fields[6].value);
+         }
+         free(cp);
+      }
+/*
+ *	Output VLAN ID if the VLAN field is present.
+ */
+      if (fields[7].value) {
+         cp = msg;
+         msg = make_message("%s (802.1Q VLAN=%s)", cp, fields[7].value);
+         free(cp);
+      }
+/*
+ *	Output Proto field if present.
+ */
+      if (fields[8].value) {
+         cp = msg;
+         msg = make_message("%s (ARP Proto=%s)", cp, fields[8].value);
+         free(cp);
+      }
+/*
+ *	Output DUP field if present.
+ */
+      if (fields[9].value) {
+         cp = msg;
+         msg = make_message("%s (DUP: %s)", cp, fields[9].value);
+         free(cp);
+      }
+/*
+ *	Output RTT field if present.
+ */
+      if (fields[10].value) {
+         cp=msg;
+         msg=make_message("%s\tRTT=%s ms", cp, fields[10].value);
+         free(cp);
+      }
+   } else {	/* --format option given */
+      format_element *fmt;
+      int idx;
+
+      msg=dupstr("");	/* Set msg to empty string */
+      for (fmt=format; fmt; fmt=fmt->next) {
+         if (fmt->type == FORMAT_FIELD) {
+            if ((idx=name_to_id(fmt->data, fields_map)) != -1) {
+               cp = msg;
+               msg = make_message("%s%*s", cp, fmt->width, fields[idx].value);
+               free(cp);
+            } else {	/* Field name not found in map */
+               warn_msg("WARNING: Field name ${%s} is not known", fmt->data);
+            }
+         } else if (fmt->type == FORMAT_STRING) {
+            cp = msg;
+            msg = make_message("%s%s", cp, fmt->data);
+            free(cp);
+         }
+      }
+   }
+/*
+ *	Display the message on stdout.
  */
    printf("%s\n", msg);
    free(msg);
+
+   for (int i=0; i<NUMFIELDS; i++)
+      if (fields[i].value) {
+         free(fields[i].value);
+         fields[i].value = NULL;
+      }
 }
 
 /*
@@ -1305,6 +1435,41 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tspecified limit. This can be used in scripts to check\n");
       fprintf(stdout, "\t\t\tif fewer hosts respond without having to parse the\n");
       fprintf(stdout, "\t\t\tprogram output.\n");
+      fprintf(stdout, "\n--format=<s> or -k <s>\tSpecify the output format string.\n");
+      fprintf(stdout, "\t\t\tThis option specifies the output format. The format\n");
+      fprintf(stdout, "\t\t\tstring consists of fields using the syntax\n");
+      fprintf(stdout, "\t\t\t\"${field[;width]}\". Fields are displayed right-\n");
+      fprintf(stdout, "\t\t\taligned unless the width is negative in which case\n");
+      fprintf(stdout, "\t\t\tleft alignment will be used. The following case-\n");
+      fprintf(stdout, "\t\t\tinsensitive field name are recognised:\n");
+      fprintf(stdout, "\n");
+      fprintf(stdout, "\t\t\tIP\tHost IP address in dotted quad format\n");
+      fprintf(stdout, "\t\t\tName\tHost name if --resolve option given\n");
+      fprintf(stdout, "\t\t\tMAC\tHost MAC address xx:xx:xx:xx:xx:xx\n");
+      fprintf(stdout, "\t\t\tHdrMAC\tEthernet source addr if different\n");
+      fprintf(stdout, "\t\t\tVendor\tVendor details string\n");
+      fprintf(stdout, "\t\t\tPadding\tPadding after ARP packet in hex if nonzero\n");
+      fprintf(stdout, "\t\t\tFraming\tFraming type if not Ethernet_II\n");
+      fprintf(stdout, "\t\t\tVLAN\t802.1Q VLAD ID if present\n");
+      fprintf(stdout, "\t\t\tProto\tARP protocol if not 0x0800\n");
+      fprintf(stdout, "\t\t\tDUP\tPacket number for duplicate packets (>1)\n");
+      fprintf(stdout, "\t\t\tRTT\tRound trip time if --rtt option given\n");
+      fprintf(stdout, "\t\t\t\n");
+      fprintf(stdout, "\t\t\tOnly the \"ip\" and \"mac\" fields are available if the\n");
+      fprintf(stdout, "\t\t\t--quiet option is specified.\n");
+      fprintf(stdout, "\t\t\t\n");
+      fprintf(stdout, "\t\t\tAny characters that are not fields are output\n");
+      fprintf(stdout, "\t\t\tverbatim. \"\\\" introduces escapes:\n");
+      fprintf(stdout, "\t\t\t\n");
+      fprintf(stdout, "\t\t\t\\n newline\n");
+      fprintf(stdout, "\t\t\t\\r carriage return\n");
+      fprintf(stdout, "\t\t\t\\t tab\n");
+      fprintf(stdout, "\t\t\t\\  suppress special meaning for following character\n");
+      fprintf(stdout, "\t\t\t\n");
+      fprintf(stdout, "\t\t\tYou should enclose the --format argument in 'single\n");
+      fprintf(stdout, "\t\t\tquotes' to protect special characters from the shell.\n");
+      fprintf(stdout, "\t\t\t\n");
+      fprintf(stdout, "\t\t\tExample: --format='${ip}\\t${mac}\\t${vendor}'\n");
    } else {
       fprintf(stdout, "use \"arp-scan --help\" for detailed information on the available options.\n");
    }
@@ -1919,17 +2084,18 @@ process_options(int argc, char *argv[]) {
       {"randomseed", required_argument, 0, OPT_RANDOMSEED},
       {"limit", required_argument, 0, 'M'},
       {"resolve", no_argument, 0, 'd'},
+      {"format", required_argument, 0, 'k'},
       {0, 0, 0, 0}
    };
 /*
  * available short option characters:
  *
- * lower:       --c-e----jk--------------z
+ * lower:       --c-e----j---------------z
  * UPPER:       --C---G--JK---------U--X-Z
  * Digits:      0123456789
  */
    const char *short_options =
-      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:DxM:d";
+      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:DxM:dk:";
    int arg;
    int options_index=0;
 
@@ -2089,6 +2255,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'd':	/* --resolve */
             resolve_flag = 1;
+            break;
+         case 'k':	/* --format */
+            format=format_parse(optarg);
             break;
          default:	/* Unknown option */
             usage(EXIT_FAILURE, 0);

@@ -1,3 +1,14 @@
+2021-10-25 Roy Hills <royhills@hotmail.com>
+
+	* format.c: New file containing output format functions.
+
+	* Makefile.am: Added format.c source file to arp_scan_SOURCES
+
+	* utils.c: Added name_to_id() and str_ccmp() functions.
+
+	* arp-scan.c, arp-scan.h, arp-scan.1: Add --format option and output
+	  fields processing code.
+
 2021-10-24 Roy Hills <royhills@hotmail.com>
 
 	* Makefile.am, check-decode: Added checks to test output format with
