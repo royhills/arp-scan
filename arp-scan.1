@@ -5,7 +5,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "October 25, 2022"
+.TH ARP-SCAN 1 "October 26, 2022"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- The ARP scanner
@@ -641,7 +641,47 @@ limit. This can be used in scripts to check if fewer hosts
 respond without having to parse the program output.
 .TP
 .B --format=<s> or -k <s>
-Specify output format string.
+Specify the output format string.
+This option specifies the output format. The format
+string consists of fields using the syntax
+"${field[;width]}". Fields are displayed right-
+aligned unless the width is negative in which case
+left alignment will be used. The following case-
+insensitive field name are recognised:
+.sp
+.TS
+L L .
+IP      Host IP address in dotted quad format
+Name    Host name if --resolve option given
+MAC     Host MAC address xx:xx:xx:xx:xx:xx
+HdrMAC  Ethernet source addr if different
+Vendor  Vendor details string
+Padding Padding after ARP packet in hex if nonzero
+Framing Framing type if not Ethernet_II
+VLAN    802.1Q VLAD ID if present
+Proto   ARP protocol if not 0x0800
+DUP     Packet number for duplicate packets (>1)
+RTT     Round trip time if --rtt option given
+.TE
+.sp
+Only the "ip" and "mac" fields are available if the
+--quiet option is specified.
+.sp
+Any characters that are not fields are output
+verbatim. "\\" introduces escapes:
+.sp
+.TS
+L L .
+\\n	newline
+\\r	carriage return
+\\t	tab
+\\	suppress special meaning for following character
+.TE
+.sp
+You should enclose the --format argument in 'single
+quotes' to protect special characters from the shell.
+.sp
+Example: --format='${ip}\\t${mac}\\t${vendor}'
 .SH FILES
 .TP
 .I /usr/local/share/arp-scan/ieee-oui.txt
