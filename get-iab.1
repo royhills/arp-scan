@@ -40,7 +40,7 @@ to see Ethernet addresses from IAB registrations, so the IAB file is not
 as important as the OUI file.
 .PP
 The IAB data is fetched from the URL
-.I http://standards.ieee.org/regauth/oui/iab.txt
+.I http://standards-oui.ieee.org/iab/iab.txt
 and the output file is saved to the file
 .I ieee-iab.txt
 in the current directory. The URL to fetch the data from can be changed with
@@ -68,13 +68,13 @@ built using the default options, then it will look in
 .B -h
 Display a brief usage message and exit.
 .TP
-.B -f <fn>
+\fB-f \fI<fn>\fR
 Write the output to the specified file instead of the default
 .I ieee-iab.txt.
 .TP
-.B -u <URL>
+\fB-u \fI<URL>\fR
 Use the specified URL to fetch the raw IAB data from instead of the default
-.I http://standards.ieee.org/regauth/oui/iab.txt
+.I http://standards-oui.ieee.org/iab/iab.txt
 .TP
 .B -v
 Display verbose progress messages.
@@ -84,12 +84,12 @@ Display verbose progress messages.
 The default output file.
 .SH EXAMPLES
 .nf
-$ get-iab -v
+$ ./get-iab -v
 Renaming ieee-iab.txt to ieee-iab.txt.bak
-Fetching IAB data from http://standards.ieee.org/regauth/oui/iab.txt
-Fetched 230786 bytes
+Fetching IAB data from http://standards-oui.ieee.org/iab/iab.txt
+Fetched 2453481 bytes
 Opening output file ieee-iab.txt
-1535 IAB entries written to file ieee-iab.txt
+4575 IAB entries written to file ieee-iab.txt
 .fi
 .SH NOTES
 .B get-iab
@@ -108,8 +108,6 @@ It is also available in source form from CPAN.
 You can use a proxy server by defining the
 .I http_proxy
 environment variable.
-.SH AUTHOR
-Roy Hills <Roy.Hills@nta-monitor.com>
 .SH "SEE ALSO"
 .TP
 .BR arp-scan (1)

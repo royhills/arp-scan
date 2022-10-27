@@ -74,21 +74,8 @@ either because they are likely to cause disruption to the target system, or
 because they require knowledge of the target's configuration that may not
 always be available.
 .PP
-.B arp-fingerprint
-is still being developed, and the results should not be relied on. As most
-of the ARP requests that it sends are non-standard, it is possible that it
-may disrupt some systems, so caution is advised.
-.PP
-If you find a system that
-.B arp-fingerprint
-reports as
-.IR UNKNOWN ,
-and you know what operating system it is running, could you please send
-details of the operating system and fingerprint to
-.I arp-scan@nta-monitor.com
-so I can include it in future versions. Please include the exact version
-of the operating system if you know it, as fingerprints sometimes change
-between versions.
+Most of the ARP requests that \fBarp-fingerprint\fP sends are non-standard,
+so it could disrupt systems that don't have a robust TCP/IP stack.
 .SH OPTIONS
 .TP
 .B -h
@@ -120,8 +107,6 @@ $ arp-fingerprint -o "-N -I eth1" 192.168.0.202
 .B arp-fingerprint
 is implemented in Perl, so you need to have the Perl interpreter installed on
 your system to use it.
-.SH AUTHOR
-Roy Hills <Roy.Hills@nta-monitor.com>
 .SH "SEE ALSO"
 .TP
 .BR arp-scan (1)

@@ -77,11 +77,11 @@ built using the default options, then it will look in
 .B -h
 Display a brief usage message and exit.
 .TP
-.B -f <fn>
+\fB-f \fI<fn>\fR
 Write the output to the specified file instead of the default
 .I ieee-oui.txt.
 .TP
-.B -u <URL>
+\fB-u \fI<URL>\fR
 Use the specified URL to fetch the raw OUI data from instead of the default
 .I http://standards-oui.ieee.org/oui/oui.txt.
 .TP
@@ -93,12 +93,12 @@ Display verbose progress messages.
 The default output file.
 .SH EXAMPLES
 .nf
-$ get-oui -v
+$ ./get-oui -v
 Renaming ieee-oui.txt to ieee-oui.txt.bak
 Fetching OUI data from http://standards-oui.ieee.org/oui/oui.txt
-Fetched 3467133 bytes
+Fetched 5293585 bytes
 Opening output file ieee-oui.txt
-22402 OUI entries written to file ieee-oui.txt
+32812 OUI entries written to file ieee-oui.txt
 .fi
 .SH NOTES
 .B get-oui
@@ -117,8 +117,6 @@ It is also available in source form from CPAN.
 You can use a proxy server by defining the
 .I http_proxy
 environment variable.
-.SH AUTHOR
-Roy Hills <Roy.Hills@nta-monitor.com>
 .SH "SEE ALSO"
 .TP
 .BR arp-scan (1)
