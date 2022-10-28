@@ -18,16 +18,14 @@
 #
 # For example:
 #
-# 012345	would match 01:23:45:xx:xx:xx, where xx represents any value;
-# 0123456	would match 01:23:45:6x:xx:xx; and
-# 01234567	would match 01:23:45:67:xx:xx.
+# 01:23:45	matches 01:23:45:xx:xx:xx, where xx represents any value;
+# 01:23:45:6	matches 01:23:45:6x:xx:xx; and
+# 01:23:45:67	matches 01:23:45:67:xx:xx.
 #
 # Do not include entries from the IEEE OUI or IAB listings, as these are
 # already in the files ieee-oui.txt and ieee-iab.txt, which are automatically
 # used by arp-scan.  See get-oui(1) and get-iab(1) for details of how to
-# update the OUI and IAB listings.  This file is for MAC addresses that are
-# not present in the IEEE listings.
-#
+# update the OUI and IAB listings.
 #
 # The order of entries in this file are not important.
 #
@@ -41,22 +39,22 @@
 #
 
 # From nmap Debian bug report #369681 dated 31 May 2006
-525400	QEMU
-B0C420	Bochs
+52:54:00	QEMU
+b0:c4:20	Bochs
 
 # From RFC 2338: 00-00-5E-00-01-{VRID}
-00005E0001	VRRP (last octet is VRID)
+00:00:5e:00:01	VRRP (last octet is VRID)
 
 # Microsoft WLBS (Windows NT Load Balancing Service)
 # http://www.microsoft.com/technet/prodtechnol/acs/reskit/acrkappb.mspx
-02BF	Microsoft WLBS (last four octets are IP address)
+02:bf	Microsoft WLBS (last four octets are IP address)
 
 # Cisco HSRP (Hot Standby Routing Protocol)
 # 00-00-0c-07-ac-XX, where XX is the HSRP group number (0 to 255)
-00000C07AC	HSRP (last octet is group number)
+00:00:0c:07:ac	HSRP (last octet is group number)
 
 # Ethernet broadcast address
-FFFFFFFFFFFF	Broadcast
+ff:ff:ff:ff:ff:ff	Broadcast
 
 # You can add local MAC address/name mappings to this file. There should be
 # a TAB character between the MAC address and the name.
