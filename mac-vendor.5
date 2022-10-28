@@ -1,10 +1,11 @@
+'\" t
 .\" Copyright (C) Roy Hills
 .\"
 .\" Copying and distribution of this file, with or without modification,
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH MAC-VENDOR 5 "July 5, 2020"
+.TH MAC-VENDOR 5 "October 28, 2022"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 mac-vendor \- Ethernet vendor file for arp-scan
@@ -33,19 +34,28 @@ file contains a MAC-vendor mapping in the form:
 Where <MAC-Prefix> is the prefix of the MAC address in hex, and <Vendor>
 is the name of the vendor.  The prefix can be of any length from two hex
 digits (one octet) to twelve hex digits (six octets, the entire Ethernet
-hardware address).  The alphabetic hex characters [A-F] must be entered
-in upper case.
+hardware address).
+.PP
+Alphabetic hex characters [A-F] may use either upper or lower case, and
+seperator symbols such as ":", "-" and "." are ignored. This permits the
+use of standard format MAC addresses in this file.
 .PP
 For example:
-.nf
-012345    would match 01:23:45:xx:xx:xx, where xx represents any value;
-0123456   would match 01:23:45:6x:xx:xx; and
-01234567  would match 01:23:45:67:xx:xx.
-.fi
+.TS
+L L .
+01:23:45      matches 01:23:45:xx:xx:xx, where xx represents any value;
+01:23:45:6    matches 01:23:45:6x:xx:xx; and
+01:23:45:67   matches 01:23:45:67:xx:xx.
+.TE
 .PP
-Blank lines and lines beginning with "#" are ignored.
+Do not include entries from the IEEE OUI or IAB listings, as these are
+already in the files ieee-oui.txt and ieee-iab.txt, which are automatically
+used by arp-scan.  See get-oui(1) and get-iab(1) for details of how to
+update the OUI and IAB listings.
 .PP
 The order of entries in the file is not important.
+.PP
+Blank lines and lines beginning with "#" are ignored.
 .B arp-scan
 will attempt to match larger prefixes before trying to match smaller ones, and
 will stop at the first match.
@@ -54,15 +64,19 @@ will stop at the first match.
 .SH EXAMPLE
 .nf
 # From nmap Debian bug report #369681 dated 31 May 2006
-525400  QEMU
-B0C420  Bochs
+52:54:00        QEMU
+b0:c4:20        Bochs
 
 # From RFC 2338: 00-00-5E-00-01-{VRID}
-00005E0001      VRRP (last octet is VRID)
+00:00:5e:00:01  VRRP (last octet is VRID)
 
 # Microsoft WLBS (Windows NT Load Balancing Service)
 # http://www.microsoft.com/technet/prodtechnol/acs/reskit/acrkappb.mspx
-02BF    Microsoft WLBS (last four octets are IP address)
+02:bf   Microsoft WLBS (last four octets are IP address)
+
+# Cisco HSRP (Hot Standby Routing Protocol)
+# 00-00-0c-07-ac-XX, where XX is the HSRP group number (0 to 255)
+00:00:0c:07:ac  HSRP (last octet is group number)
 .fi
 .SH "SEE ALSO"
 .TP
@@ -73,6 +87,3 @@ B0C420  Bochs
 .BR get-iab (1)
 .TP
 .BR arp-fingerprint (1)
-.PP
-.I http://www.royhills.co.uk/wiki/
-The arp-scan wiki page.
