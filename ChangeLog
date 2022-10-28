@@ -1,7 +1,8 @@
 2021-10-27 Roy Hills <royhills@hotmail.com>
 
 	* arp-fingerprint.1, arp-scan.1, get-iab.1, get-oui.1, mac-vendor.5:
-	  Standardised man page fonts and corrected some inaccuracies.
+	  Standardised man page fonts, corrected some inaccuracies and removed
+	  author section.
 
 	* Updated ieee-oui.txt and ieee-iab.txt files.
 
