@@ -1268,7 +1268,10 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\t    are removed from the list, the pcap filter string,\n");
       fprintf(stdout, "\t\t\t    and counts of MAC/Vendor mapping entries.\n");
       fprintf(stdout, "\t\t\t3 - Display the host list before scanning starts.\n");
-      fprintf(stdout, "\n--version or -V\t\tDisplay program version and exit.\n");
+      fprintf(stdout, "\n--version or -V\t\tDisplay program version details and exit.\n");
+      fprintf(stdout, "\t\t\tThis displays the version, copyright information,\n");
+      fprintf(stdout, "\t\t\tlicense details, libpcap version, and whether POSIX.1e\n");
+      fprintf(stdout, "\t\t\tcapability support is included.\n");
       fprintf(stdout, "\n--random or -R\t\tRandomise the host list.\n");
       fprintf(stdout, "\t\t\tThis option randomises the order of the hosts in the\n");
       fprintf(stdout, "\t\t\thost list, so the ARP packets are sent to the hosts in\n");
@@ -2283,10 +2286,9 @@ void
 arp_scan_version (void) {
    fprintf(stdout, "%s\n\n", PACKAGE_STRING);
    fprintf(stdout, "Copyright (C) 2005-2022 Roy Hills\n");
-   fprintf(stdout, "arp-scan comes with NO WARRANTY to the extent permitted by law.\n");
-   fprintf(stdout, "You may redistribute copies of arp-scan under the terms of the GNU\n");
-   fprintf(stdout, "General Public License.\n");
-   fprintf(stdout, "For more information about these matters, see the file named COPYING.\n");
+   fprintf(stdout, "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\n");
+   fprintf(stdout, "This is free software: you are free to change and redistribute it.\n");
+   fprintf(stdout, "There is NO WARRANTY, to the extent permitted by law.\n");
    fprintf(stdout, "\n");
    fprintf(stdout, "%s\n", pcap_lib_version());
 #ifdef HAVE_LIBCAP
