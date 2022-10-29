@@ -487,7 +487,7 @@ limit_capabilities(void) {
  *
  *	Inputs:
  *
- *	enable = Set to 0 to disable or 1 to enable capabilities
+ *	enable = DISABLE or ENABLE capabilities
  *
  *	Returns:
  *
@@ -500,7 +500,7 @@ limit_capabilities(void) {
  *	to the saved euid to enable privs or set it to the real user ID to
  *	remove root privs.
  */
-void set_capability(int enable) {
+void set_capability(cap_status enable) {
 #ifdef HAVE_LIBCAP
    cap_t cap_p;
    cap_flag_value_t cap_ok;

@@ -157,7 +157,7 @@ main(int argc, char *argv[]) {
        * support. If we don't have capability support then restore SUID root
        * privs by setting the effective user id to the saved euid.
        */
-      set_capability(1);
+      set_capability(ENABLE);
       /*
        * Determine network interface to use. If the interface was specified
        * with the --interface option then use that, otherwise use
@@ -217,7 +217,7 @@ main(int argc, char *argv[]) {
        * support. If we don't have capability support then drop SUID root
        * privs by setting the effective user id to the real uid.
        */
-      set_capability(0);
+      set_capability(DISABLE);
       /*
        * Permanently remove all capabilities or SUID root privilege as we
        * don't need any special privileges after this point.

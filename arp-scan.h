@@ -226,6 +226,12 @@ typedef struct format_element {
         char *data;
 } format_element;
 
+/* POSIX.1e Capability status */
+typedef enum {
+   DISABLE,
+   ENABLE
+} cap_status;
+
 /* Functions */
 
 void err_sys(const char *, ...);
@@ -277,7 +283,7 @@ unsigned str_to_bandwidth(const char *);
 unsigned str_to_interval(const char *);
 char *dupstr(const char *);
 void limit_capabilities(void);
-void set_capability(int);
+void set_capability(cap_status);
 void drop_capabilities(void);
 int name_to_id(const char *, const id_name_map[]);
 int str_ccmp(const char *, const char *);
