@@ -480,21 +480,21 @@ Use IEEE Ethernet OUI to vendor mapping file \fI<s>\fP.
 If this option is not specified, the default filename
 is \fIieee-oui.txt\fP in the current directory. If that is
 not found, then the file
-\fI/usr/local/share/arp-scan/ieee-oui.txt\fP is used.
+\fI@pkgdatadir@/ieee-oui.txt\fP is used.
 .TP
 \fB--iabfile\fP=\fI<s>\fP or \fB-O \fI<s>\fR
 Use IEEE Ethernet IAB to vendor mapping file \fI<s>\fP.
 If this option is not specified, the default filename
 is \fIieee-iab.txt\fP in the current directory. If that is
 not found, then the file
-\fI/usr/local/share/arp-scan/ieee-iab.txt\fP is used.
+\fI@pkgdatadir@/ieee-iab.txt\fP is used.
 .TP
 \fB--macfile\fP=\fI<s>\fP or \fB-O \fI<s>\fR
 Use custom Ethernet MAC to vendor mapping file \fI<s>\fP.
 If this option is not specified, the default filename
 is \fImac-vendor.txt\fP in the current directory. If that is
 not found, then the file
-\fI/usr/local/share/arp-scan/mac-vendor.txt\fP is used.
+\fI@pkgdatadir@/mac-vendor.txt\fP is used.
 .TP
 \fB--srcaddr\fP=\fI<m>\fP or \fB-S \fI<m>\fR
 Set the source Ethernet MAC address to \fI<m>\fP.
@@ -684,13 +684,13 @@ quotes' to protect special characters from the shell.
 Example: --format='${ip}\\t${mac}\\t${vendor}'
 .SH FILES
 .TP
-.I /usr/local/share/arp-scan/ieee-oui.txt
+.I @pkgdatadir@/ieee-oui.txt
 List of IEEE OUI (Organisationally Unique Identifier) to vendor mappings.
 .TP
-.I /usr/local/share/arp-scan/ieee-iab.txt
+.I @pkgdatadir@/ieee-iab.txt
 List of IEEE IAB (Individual Address Block) to vendor mappings.
 .TP
-.I /usr/local/share/arp-scan/mac-vendor.txt
+.I @pkgdatadir@/mac-vendor.txt
 List of other Ethernet MAC to vendor mappings.
 .SH EXAMPLES
 The example below shows

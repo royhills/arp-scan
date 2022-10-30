@@ -1,3 +1,13 @@
+2021-10-30 Roy Hills <royhills@hotmail.com>
+
+	* Makefile.am: Build man page "arp-scan.1" from "arp-scan.dist"
+	  replacing all occurances of @pkgdatadir@ with the $pkgdatadir
+	  variable that is set by configure. This ensures that the file
+	  paths in the manpage arp-scan.1 reflect the paths on the system
+	  where ./configure was run.
+	* arp-scan.1: removed
+	* arp-scan.1.dist: New file
+
 2021-10-27 Roy Hills <royhills@hotmail.com>
 
 	* arp-fingerprint.1, arp-scan.1, get-iab.1, get-oui.1, mac-vendor.5:
