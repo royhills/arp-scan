@@ -370,21 +370,21 @@ main(int argc, char *argv[]) {
       if ((hcreate(HASH_TABLE_SIZE)) == 0)
          err_sys("hcreate");
 
-      fn = get_mac_vendor_filename(ouifilename, DATADIR, OUIFILENAME);
+      fn = get_mac_vendor_filename(ouifilename, PKGDATADIR, OUIFILENAME);
       count = add_mac_vendor(fn);
       if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d IEEE OUI/Vendor entries from %s.",
                   count, fn);
       free(fn);
 
-      fn = get_mac_vendor_filename(iabfilename, DATADIR, IABFILENAME);
+      fn = get_mac_vendor_filename(iabfilename, PKGDATADIR, IABFILENAME);
       count = add_mac_vendor(fn);
       if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d IEEE IAB/Vendor entries from %s.",
                   count, fn);
       free(fn);
 
-      fn = get_mac_vendor_filename(macfilename, DATADIR, MACFILENAME);
+      fn = get_mac_vendor_filename(macfilename, PKGDATADIR, MACFILENAME);
       count = add_mac_vendor(fn);
       if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d MAC/Vendor entries from %s.",
@@ -1317,17 +1317,17 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tIf this option is not specified, the default filename\n");
       fprintf(stdout, "\t\t\tis %s in the current directory. If that is\n", OUIFILENAME);
       fprintf(stdout, "\t\t\tnot found, then the file\n");
-      fprintf(stdout, "\t\t\t%s/%s is used.\n", DATADIR, OUIFILENAME);
+      fprintf(stdout, "\t\t\t%s/%s is used.\n", PKGDATADIR, OUIFILENAME);
       fprintf(stdout, "\n--iabfile=<s> or -O <s>\tUse IEEE Ethernet IAB to vendor mapping file <s>.\n");
       fprintf(stdout, "\t\t\tIf this option is not specified, the default filename\n");
       fprintf(stdout, "\t\t\tis %s in the current directory. If that is\n", IABFILENAME);
       fprintf(stdout, "\t\t\tnot found, then the file\n");
-      fprintf(stdout, "\t\t\t%s/%s is used.\n", DATADIR, IABFILENAME);
+      fprintf(stdout, "\t\t\t%s/%s is used.\n", PKGDATADIR, IABFILENAME);
       fprintf(stdout, "\n--macfile=<s> or -O <s>\tUse custom Ethernet MAC to vendor mapping file <s>.\n");
       fprintf(stdout, "\t\t\tIf this option is not specified, the default filename\n");
       fprintf(stdout, "\t\t\tis %s in the current directory. If that is\n", MACFILENAME);
       fprintf(stdout, "\t\t\tnot found, then the file\n");
-      fprintf(stdout, "\t\t\t%s/%s is used.\n", DATADIR, MACFILENAME);
+      fprintf(stdout, "\t\t\t%s/%s is used.\n", PKGDATADIR, MACFILENAME);
       fprintf(stdout, "\n--srcaddr=<m> or -S <m> Set the source Ethernet MAC address to <m>.\n");
       fprintf(stdout, "\t\t\tThis sets the 48-bit hardware address in the Ethernet\n");
       fprintf(stdout, "\t\t\tframe header for outgoing ARP packets. It does not\n");

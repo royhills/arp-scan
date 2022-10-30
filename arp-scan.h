@@ -1,5 +1,5 @@
 /*
- * ARP Scan is Copyright (C) 2005-2016 Roy Hills
+ * ARP Scan is Copyright (C) 2005-2022 Roy Hills
  *
  * This file is part of arp-scan.
  *
