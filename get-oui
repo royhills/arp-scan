@@ -92,7 +92,7 @@ print "Fetched $content_length bytes\n" if $verbose;
 # Open the output file for writing.
 #
 print "Opening output file $filename\n" if $verbose;
-open OUTPUT, ">$filename" || die "Could not open $filename for writing";
+open OUTPUT, '>', $filename || die "Could not open $filename for writing";
 #
 # Write the header comments to the output file.
 #
