@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
 #
-# get-oui -- Fetch the MAC/Vendor registry data the IEEE website
+# get-oui -- Fetch the MAC/Vendor registry data from the IEEE website
 #
 # Author: Roy Hills
 # Date: 16 March 2006
@@ -37,14 +37,14 @@ use Text::CSV;
 # The entries will be written to the output in alphabetical key order, not
 # the order they are listed in the hash.
 my %ieee_reg_urls = (
-   OUI   => 'file:///usr/share/ieee-data/oui.csv',
-   MAM   => 'file:///usr/share/ieee-data/mam.csv',
-   OUI36 => 'file:///usr/share/ieee-data/oui36.csv',
-   IAB   => 'file:///usr/share/ieee-data/iab.csv',
-#   OUI   => 'http://standards-oui.ieee.org/oui/oui.csv',
-#   MAM   => 'http://standards-oui.ieee.org/oui28/mam.csv',
-#   OUI36 => 'http://standards-oui.ieee.org/oui36/oui36.csv',
-#   IAB   => 'http://standards-oui.ieee.org/iab/iab.csv'
+#   OUI   => 'file:///usr/share/ieee-data/oui.csv',
+#   MAM   => 'file:///usr/share/ieee-data/mam.csv',
+#   OUI36 => 'file:///usr/share/ieee-data/oui36.csv',
+#   IAB   => 'file:///usr/share/ieee-data/iab.csv',
+   OUI   => 'http://standards-oui.ieee.org/oui/oui.csv',
+   MAM   => 'http://standards-oui.ieee.org/oui28/mam.csv',
+   OUI36 => 'http://standards-oui.ieee.org/oui36/oui36.csv',
+   IAB   => 'http://standards-oui.ieee.org/iab/iab.csv'
 );
 my $default_filename='ieee-oui.txt';
 #

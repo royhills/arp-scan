@@ -13,49 +13,37 @@ get-oui \- Fetch the arp-scan OUI file from the IEEE website
 .RI [ options ]
 .SH DESCRIPTION
 .B get-oui
-fetches the Ethernet OUI file from the IEEE website, and saves it in the
-format used by arp-scan.
+fetches the MAC/Vendor registry data from the IEEE website
+and converts it to the format used by arp-scan.
 .PP
-The OUI file contains all of the OUIs (Organizationally Unique Identifiers)
-that have been registered with IEEE.  Each OUI entry in the file specifies
-the first 24-bits of the 48-bit Ethernet hardware address, leaving the
-remaining 24-bits for use by the registering organisation.  For example
-the OUI entry "080020", registered to Sun Microsystems, applies to any
-Ethernet hardware address from
-.I 08:00:20:00:00:00
-to
-.I 08:00:20:ff:ff:ff
-inclusive.  Each OUI assignment represents a total of 2^24 (16,777,216)
-Ethernet addresses.
+.B get-oui
+will fetch data from the following IEEE Ethernet MAC address
+registries:
+.sp
+.TS
+L L L .
+MA-L	24-bit	The original OUI registry
+MA-M	28-bit	Medium address block registry
+MA-S	36-bit	Small address block registry (OUI-36)
+IAB	36-bit	The IAB registry (closed for new applications)
+.TE
 .PP
-Every major Ethernet hardware vendor registers an OUI for their equipment,
-and larger vendors will need to register more than one.  For example, 3Com
-have a total of 37 OUI entries.  Organisations that only produce a small
-number of Ethernet devices will often obtain an IAB registration instead.
-See
-.BR get-iab (1)
-for details.
+The OUI file contains the MAC/Vendor mappings from all of these registries.
 .PP
 This script can be used to update the
 .B arp-scan
-OUI file from the latest data on the IEEE website.  Most of the Ethernet
-addresses in use belong to an OUI registration, so this is the most
-important of the files that
-.B arp-scan
-uses to decode Ethernet hardware addresses.  You should therefore run
+OUI file from the latest data on the IEEE website.
+You can run
 .B get-oui
 occasionally to keep the
 .B arp-scan
 OUI file up to date.
 .PP
-The OUI data is fetched from the URL
-.I http://standards-oui.ieee.org/oui/oui.txt
+The OUI data is fetched from the URLs specified in the \fBget-oui\fP script
 and the output file is saved to the file
 .I ieee-oui.txt
-in the current directory. The URL to fetch the data from can be changed with
-the
-.B -u
-option, and the output file name can be changed with the
+in the current directory.
+The output file name can be changed with the
 .B -f
 option.
 .PP
@@ -65,13 +53,11 @@ file that is produced by this script is used by
 .B arp-scan
 to determine the Ethernet card vendor from its hardware address.
 .PP
-The directory that
 .B arp-scan
-will look for the
+will first look for
 .I ieee-oui.txt
-file depends on the options used when it was built.  If it was
-built using the default options, then it will look in
-.IR /usr/local/share/arp-scan .
+in the current directory.  If that fails, it will use the system wide file
+\fI@PKGDATADIR@/ieee-oui.txt\fP.
 .SH OPTIONS
 .TP
 .B -h
@@ -80,10 +66,6 @@ Display a brief usage message and exit.
 \fB-f \fI<fn>\fR
 Write the output to the specified file instead of the default
 .I ieee-oui.txt.
-.TP
-\fB-u \fI<URL>\fR
-Use the specified URL to fetch the raw OUI data from instead of the default
-.I http://standards-oui.ieee.org/oui/oui.txt.
 .TP
 .B -v
 Display verbose progress messages.
@@ -95,10 +77,19 @@ The default output file.
 .nf
 $ ./get-oui -v
 Renaming ieee-oui.txt to ieee-oui.txt.bak
-Fetching OUI data from http://standards-oui.ieee.org/oui/oui.txt
-Fetched 5293585 bytes
 Opening output file ieee-oui.txt
-32812 OUI entries written to file ieee-oui.txt
+Fetching IEEE IAB data from http://standards-oui.ieee.org/iab/iab.csv
+Fetched 381454 bytes
+4575 IAB entries written to ieee-oui.txt
+Fetching IEEE MAM data from http://standards-oui.ieee.org/oui28/mam.csv
+Fetched 492368 bytes
+4474 MAM entries written to ieee-oui.txt
+Fetching IEEE OUI data from http://standards-oui.ieee.org/oui/oui.csv
+Fetched 3051812 bytes
+32845 OUI entries written to ieee-oui.txt
+Fetching IEEE OUI36 data from http://standards-oui.ieee.org/oui36/oui36.csv
+Fetched 89060 bytes
+980 OUI36 entries written to ieee-oui.txt
 .fi
 .SH NOTES
 .B get-oui
@@ -108,11 +99,15 @@ your system to use it.
 .B get-oui
 uses the
 .I LWP::UserAgent
-Perl module to fetch the data from the IEEE website. You must have this module
-installed on your system for
-it to work. This module is available on most distributions, often called
-.IR libwww-perl .
-It is also available in source form from CPAN.
+and
+.I Text::CSV
+Perl modules to fetch and process the IEEE registry data. You must have
+these modules installed on your system for
+it to work. These modules are available on most distributions, often called
+.I libwww-perl
+and
+.IR libtext-csv-perl .
+They are also available in source form from CPAN.
 .PP
 You can use a proxy server by defining the
 .I http_proxy
@@ -120,7 +115,5 @@ environment variable.
 .SH "SEE ALSO"
 .TP
 .BR arp-scan (1)
-.TP
-.BR get-iab (1)
 .TP
 .BR arp-fingerprint (1)

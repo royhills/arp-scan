@@ -62,7 +62,6 @@ static int arp_spa_is_tpa=0;		/* Source IP is dest IP */
 static unsigned char arp_sha[ETH_ALEN];	/* Source Ethernet MAC Address */
 static int arp_sha_flag=0;		/* Source MAC address specified */
 static char *ouifilename = NULL;	/* OUI filename */
-static char *iabfilename = NULL;	/* IAB filename */
 static char *macfilename = NULL;	/* MAC filename */
 static char *pcap_savefile = NULL;	/* pcap savefile filename */
 static int arp_op=DEFAULT_ARP_OP;	/* ARP Operation code */
@@ -374,13 +373,6 @@ main(int argc, char *argv[]) {
       count = add_mac_vendor(fn);
       if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d IEEE OUI/Vendor entries from %s.",
-                  count, fn);
-      free(fn);
-
-      fn = get_mac_vendor_filename(iabfilename, PKGDATADIR, IABFILENAME);
-      count = add_mac_vendor(fn);
-      if (verbose > 1 && count > 0)
-         warn_msg("DEBUG: Loaded %d IEEE IAB/Vendor entries from %s.",
                   count, fn);
       free(fn);
 
@@ -1318,11 +1310,6 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tis %s in the current directory. If that is\n", OUIFILENAME);
       fprintf(stdout, "\t\t\tnot found, then the file\n");
       fprintf(stdout, "\t\t\t%s/%s is used.\n", PKGDATADIR, OUIFILENAME);
-      fprintf(stdout, "\n--iabfile=<s> or -O <s>\tUse IEEE Ethernet IAB to vendor mapping file <s>.\n");
-      fprintf(stdout, "\t\t\tIf this option is not specified, the default filename\n");
-      fprintf(stdout, "\t\t\tis %s in the current directory. If that is\n", IABFILENAME);
-      fprintf(stdout, "\t\t\tnot found, then the file\n");
-      fprintf(stdout, "\t\t\t%s/%s is used.\n", PKGDATADIR, IABFILENAME);
       fprintf(stdout, "\n--macfile=<s> or -O <s>\tUse custom Ethernet MAC to vendor mapping file <s>.\n");
       fprintf(stdout, "\t\t\tIf this option is not specified, the default filename\n");
       fprintf(stdout, "\t\t\tis %s in the current directory. If that is\n", MACFILENAME);
@@ -2062,7 +2049,6 @@ process_options(int argc, char *argv[]) {
       {"numeric", no_argument, 0, 'N'},
       {"bandwidth", required_argument, 0, 'B'},
       {"ouifile", required_argument, 0, 'O'},
-      {"iabfile", required_argument, 0, 'F'},
       {"macfile", required_argument, 0, 'm'},
       {"arpspa", required_argument, 0, 's'},
       {"arpop", required_argument, 0, 'o'},
@@ -2094,7 +2080,7 @@ process_options(int argc, char *argv[]) {
  * available short option characters:
  *
  * lower:       --c-e----j---------------z
- * UPPER:       --C---G--JK---------U--X-Z
+ * UPPER:       --C--FG--JK---------U--X-Z
  * Digits:      0123456789
  */
    const char *short_options =
@@ -2162,9 +2148,6 @@ process_options(int argc, char *argv[]) {
             break;
          case 'O':	/* --ouifile */
             ouifilename = make_message("%s", optarg);
-            break;
-         case 'F':	/* --iabfile */
-            iabfilename = make_message("%s", optarg);
             break;
          case 'm':	/* --macfile */
             macfilename = make_message("%s", optarg);

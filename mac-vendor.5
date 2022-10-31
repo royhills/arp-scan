@@ -16,10 +16,8 @@ The
 .I mac-vendor.txt
 contains Ethernet MAC to vendor string mappings for
 .BR arp-scan .
-It is used in addition to the IEEE OUI and IAB listings in
-.I ieee-oui.txt
-and
-.IR ieee-iab.txt .
+It is used in addition to the IEEE OUI listings in
+.IR ieee-oui.txt .
 It is for MAC-vendor mappings that are not covered by the IEEE manufacturer
 listings.
 .PP
@@ -48,10 +46,10 @@ L L .
 01:23:45:67   matches 01:23:45:67:xx:xx.
 .TE
 .PP
-Do not include entries from the IEEE OUI or IAB listings, as these are
-already in the files ieee-oui.txt and ieee-iab.txt, which are automatically
-used by arp-scan.  See get-oui(1) and get-iab(1) for details of how to
-update the OUI and IAB listings.
+Do not include entries from the IEEE OUI listings, as these are
+already in the file ieee-oui.txt, which is automatically
+used by arp-scan.  See get-oui(1) for details of how to
+update the OUI listings.
 .PP
 The order of entries in the file is not important.
 .PP
@@ -83,7 +81,5 @@ b0:c4:20        Bochs
 .BR arp-scan (1)
 .TP
 .BR get-oui (1)
-.TP
-.BR get-iab (1)
 .TP
 .BR arp-fingerprint (1)

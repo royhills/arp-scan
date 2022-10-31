@@ -296,7 +296,7 @@ Entry	IP Address
 
 Total of 256 host entries.
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt -v -v -v"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt -v -v -v"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 192.168.1.0/24 2>&1 | sed -n -e '/^Host List:/,/^Total of /p' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -579,7 +579,7 @@ Entry	IP Address
 
 Total of 256 host entries.
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt -v -v -v --random --randomseed=0xdeadbeef"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt -v -v -v --random --randomseed=0xdeadbeef"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 192.168.1.0/24 2>&1 | sed -n -e '/^Host List:/,/^Total of /p' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"

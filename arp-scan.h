@@ -156,7 +156,6 @@
 #define ETH_P_IP 0x0800			/* Internet Protocol packet */
 #define ETH_P_ARP 0x0806		/* Address Resolution packet */
 #define OUIFILENAME "ieee-oui.txt"	/* Default IEEE OUI filename */
-#define IABFILENAME "ieee-iab.txt"	/* Default IEEE IAB filename */
 #define MACFILENAME "mac-vendor.txt"	/* Default MAC/Vendor filename */
 #define DEFAULT_ARP_OP ARPOP_REQUEST	/* Default ARP operation */
 #define DEFAULT_ARP_HRD ARPHRD_ETHER	/* Default ARP hardware type */

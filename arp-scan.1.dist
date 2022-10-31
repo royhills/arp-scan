@@ -266,32 +266,26 @@ is not always the same order as the requests were sent because some
 hosts may respond faster than others.
 .PP
 The vendor decoding uses the files
-.IR ieee-oui.txt ,
-.I ieee-iab.txt
+.I ieee-oui.txt
 and
 .IR mac-vendor.txt ,
 which are supplied with
 .BR arp-scan .
 The
 .I ieee-oui.txt
-and
-.I ieee-iab.txt
-files are generated from the OUI and IAB data on the IEEE website at
-.I http://standards-oui.ieee.org/oui/oui.txt
-and
-.IR http://standards-oui.ieee.org/iab/iab.txt .
-The Perl scripts
+file is generated from the \fIMA-L\fP (OUI), \fIMA-M\fP, \fIMA-S\fP (OUI36) and \fIIAB\fP registries. See
+.I https://standards.ieee.org/products-programs/regauth/
+for details of these registries.
+The Perl script
 .B get-oui
-and
-.BR get-iab ,
-which are included in the
+which is included in the
 .B arp-scan
-package, can be used to update these
-files with the latest data from the IEEE website.
+package can be used to update this file with the latest data from the IEEE
+website.
 The
 .I mac-vendor.txt
 file contains other MAC to Vendor mappings that are not covered by
-the IEEE OUI and IAB files, and can be used to add custom mappings.
+the IEEE OUI file, and can be used to add custom mappings.
 .PP
 Almost all hosts that support IP will respond to
 .B arp-scan
@@ -481,13 +475,6 @@ If this option is not specified, the default filename
 is \fIieee-oui.txt\fP in the current directory. If that is
 not found, then the file
 \fI@PKGDATADIR@/ieee-oui.txt\fP is used.
-.TP
-\fB--iabfile\fP=\fI<s>\fP or \fB-O \fI<s>\fR
-Use IEEE Ethernet IAB to vendor mapping file \fI<s>\fP.
-If this option is not specified, the default filename
-is \fIieee-iab.txt\fP in the current directory. If that is
-not found, then the file
-\fI@PKGDATADIR@/ieee-iab.txt\fP is used.
 .TP
 \fB--macfile\fP=\fI<s>\fP or \fB-O \fI<s>\fR
 Use custom Ethernet MAC to vendor mapping file \fI<s>\fP.
@@ -687,9 +674,6 @@ Example: --format='${ip}\\t${mac}\\t${vendor}'
 .I @PKGDATADIR@/ieee-oui.txt
 List of IEEE OUI (Organisationally Unique Identifier) to vendor mappings.
 .TP
-.I @PKGDATADIR@/ieee-iab.txt
-List of IEEE IAB (Individual Address Block) to vendor mappings.
-.TP
 .I @PKGDATADIR@/mac-vendor.txt
 List of other Ethernet MAC to vendor mappings.
 .SH EXAMPLES
@@ -751,8 +735,6 @@ Ending arp-scan 1.4: 8 hosts scanned in 0.820 seconds (9.76 hosts/sec).  4 respo
 .fi
 .SH "SEE ALSO"
 .BR get-oui (1)
-.PP
-.BR get-iab (1)
 .PP
 .BR arp-fingerprint (1)
 .PP

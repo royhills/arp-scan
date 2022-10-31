@@ -6,7 +6,7 @@ Checks to perform on all supported platforms before release:
 
 3.  Localnet test: arp-scan [-I <if>] --localnet
 
-4.  get-oui/get-iab test
+4.  get-oui test
 
 5.  Fingerprint test: arp-fingerprint <IP>
 
