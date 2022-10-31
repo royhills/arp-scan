@@ -77,7 +77,7 @@ AC_LINK_IFELSE([AC_LANG_CALL([], [pcap_set_immediate_mode])],
    AC_MSG_ERROR([Check that the pcap library is at least version 1.5])
    ])
 
-# Check for POSIX capability support
+# Check for libcap POSIX.1e capability support
 CHECK_LIBCAP
 
 dnl Checks for header files.
@@ -108,12 +108,12 @@ dnl Determine link-layer implementation to use based on the $host_os variable
 dnl
 case $host_os in
    *linux* )
-      AC_MSG_NOTICE([Using packet socket link layer implementation.]);
+      AC_MSG_NOTICE([Using packet socket link layer implementation.])
       AC_CHECK_HEADERS([netpacket/packet.h net/if.h])
       AC_LIBOBJ([link-packet-socket])
       ;;
    *freebsd* | *darwin* | *openbsd* | *netbsd* | *dragonfly* )
-      AC_MSG_NOTICE([Using BPF link layer implementation.]);
+      AC_MSG_NOTICE([Using BPF link layer implementation.])
 dnl We need to specify additional headers to include here, because several
 dnl BSD variants require certain headers to be included before others will
 dnl work.
@@ -133,8 +133,8 @@ dnl OpenBSD 3.9 needs sys/param.h included for sys/sysctl.h
       AC_LIBOBJ([link-bpf])
       ;;
    *solaris* )
-      AC_MSG_NOTICE([Using DLPI link layer implementation.]);
-      AC_MSG_NOTICE([NOTE: This works on Solaris 8,9 and 10 but fails on Solaris 11.]);
+      AC_MSG_NOTICE([Using DLPI link layer implementation.])
+      AC_MSG_NOTICE([NOTE: This works on Solaris 8,9 and 10 but fails on Solaris 11.])
 dnl Solaris 9 needs sys/types.h and sys/socket.h included before net/if.h.
       AC_CHECK_HEADERS([sys/dlpi.h sys/dlpihdr.h stropts.h sys/ioctl.h sys/sockio.h net/if.h sys/bufmod.h],,,
       [

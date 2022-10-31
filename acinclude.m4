@@ -163,7 +163,9 @@ AC_DEFUN([CHECK_LIBCAP],
       AC_DEFINE(HAVE_SYS_CAPABILITY_H,1,[Define to 1 if you have the <sys/capability.h> header file])
       LIBS="-lcap $LIBS"
       AC_MSG_RESULT([yes])
+      AC_MSG_NOTICE([Including libcap POSIX.1e capability support])
   else
       AC_MSG_RESULT([no])
+      AC_MSG_NOTICE([POSIX.1e capabilities disabled or not supported])
   fi
 ])
