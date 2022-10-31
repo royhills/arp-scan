@@ -651,17 +651,17 @@ insensitive field name are recognised:
 .sp
 .TS
 L L .
-IP      Host IP address in dotted quad format
-Name    Host name if \fB--resolve\fP option given
-MAC     Host MAC address xx:xx:xx:xx:xx:xx
-HdrMAC  Ethernet source addr if different
-Vendor  Vendor details string
-Padding Padding after ARP packet in hex if nonzero
-Framing Framing type if not Ethernet_II
-VLAN    802.1Q VLAD ID if present
-Proto   ARP protocol if not 0x0800
-DUP     Packet number for duplicate packets (>1)
-RTT     Round trip time if \fB--rtt\fP option given
+IP	Host IP address in dotted quad format
+Name	Host name if \fB--resolve\fP option given
+MAC	Host MAC address xx:xx:xx:xx:xx:xx
+HdrMAC	Ethernet source addr if different
+Vendor	Vendor details string
+Padding	Padding after ARP packet in hex if nonzero
+Framing	Framing type if not Ethernet_II
+VLAN	802.1Q VLAN ID if present
+Proto	ARP protocol if not 0x0800
+DUP	Packet number for duplicate packets (>1)
+RTT	Round trip time if \fB--rtt\fP option given
 .TE
 .sp
 Only the "\fIip\fP" and "\fImac\fP" fields are available if the
