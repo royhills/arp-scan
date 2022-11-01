@@ -14,11 +14,8 @@ get-oui \- Fetch the arp-scan OUI file from the IEEE website
 .SH DESCRIPTION
 .B get-oui
 fetches the MAC/Vendor registry data from the IEEE website
-and converts it to the format used by arp-scan.
-.PP
-.B get-oui
-will fetch data from the following IEEE Ethernet MAC address
-registries:
+and converts it to the format used by arp-scan. The contents of
+the following registries are downloaded and processed:
 .sp
 .TS
 L L L .
@@ -28,16 +25,12 @@ MA-S	36-bit	Small address block registry (OUI-36)
 IAB	36-bit	The IAB registry (closed for new applications)
 .TE
 .PP
-The OUI file contains the MAC/Vendor mappings from all of these registries.
-.PP
-This script can be used to update the
-.B arp-scan
-OUI file from the latest data on the IEEE website.
+This script creates
+.I ieee-oui.txt
+from the latest data on the IEEE website.
 You can run
 .B get-oui
-occasionally to keep the
-.B arp-scan
-OUI file up to date.
+occasionally to keep the OUI file up to date.
 .PP
 The OUI data is fetched from the URLs specified in the \fBget-oui\fP script
 and the output file is saved to the file
@@ -77,19 +70,21 @@ The default output file.
 .nf
 $ ./get-oui -v
 Renaming ieee-oui.txt to ieee-oui.txt.bak
-Opening output file ieee-oui.txt
-Fetching IEEE IAB data from http://standards-oui.ieee.org/iab/iab.csv
-Fetched 381454 bytes
-4575 IAB entries written to ieee-oui.txt
-Fetching IEEE MAM data from http://standards-oui.ieee.org/oui28/mam.csv
-Fetched 492368 bytes
-4474 MAM entries written to ieee-oui.txt
-Fetching IEEE OUI data from http://standards-oui.ieee.org/oui/oui.csv
-Fetched 3051812 bytes
-32845 OUI entries written to ieee-oui.txt
-Fetching IEEE OUI36 data from http://standards-oui.ieee.org/oui36/oui36.csv
-Fetched 89060 bytes
-980 OUI36 entries written to ieee-oui.txt
+Opening ieee-oui.txt for output
+Processing IEEE IAB registry data from https://standards-oui.ieee.org/iab/iab.csv
+        Downloaded 381454 bytes
+        4575 IAB entries written to ieee-oui.txt
+Processing IEEE MAM registry data from https://standards-oui.ieee.org/oui28/mam.csv
+        Downloaded 492756 bytes
+        4477 MAM entries written to ieee-oui.txt
+Processing IEEE OUI registry data from https://standards-oui.ieee.org/oui/oui.csv
+        Downloaded 3051812 bytes
+        32845 OUI entries written to ieee-oui.txt
+Processing IEEE OUI36 registry data from https://standards-oui.ieee.org/oui36/oui36.csv
+        Downloaded 466151 bytes
+        5131 OUI36 entries written to ieee-oui.txt
+
+Total of 47028 MAC/Vendor mappings written to ieee-oui.txt
 .fi
 .SH NOTES
 .B get-oui

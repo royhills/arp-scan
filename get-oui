@@ -41,10 +41,10 @@ my %ieee_reg_urls = (
 #   MAM   => 'file:///usr/share/ieee-data/mam.csv',
 #   OUI36 => 'file:///usr/share/ieee-data/oui36.csv',
 #   IAB   => 'file:///usr/share/ieee-data/iab.csv',
-   OUI   => 'http://standards-oui.ieee.org/oui/oui.csv',
-   MAM   => 'http://standards-oui.ieee.org/oui28/mam.csv',
-   OUI36 => 'http://standards-oui.ieee.org/oui36/oui36.csv',
-   IAB   => 'http://standards-oui.ieee.org/iab/iab.csv'
+   OUI   => 'https://standards-oui.ieee.org/oui/oui.csv',
+   MAM   => 'https://standards-oui.ieee.org/oui28/mam.csv',
+   OUI36 => 'https://standards-oui.ieee.org/oui36/oui36.csv',
+   IAB   => 'https://standards-oui.ieee.org/iab/iab.csv'
 );
 my $default_filename='ieee-oui.txt';
 #
@@ -67,7 +67,7 @@ my $status;
 my $line;
 my @columns;
 my $lineno;
-my $longest_vendor=0;
+my $total_entries=0;
 #
 # Process options
 #
@@ -144,14 +144,14 @@ foreach $key (sort keys %ieee_reg_urls) {
 #
 # Fetch the content from the URL
 #
-   print "Fetching IEEE $key data from $url\n" if $verbose;
+   print "Processing IEEE $key registry data from $url\n" if $verbose;
    my $ua = LWP::UserAgent->new;
    my $res = $ua->get($url);
    die "Could not get $key data from $url\n" unless $res->is_success;
    my $content = $res->content;
    my $content_length = length($content);
    die "Zero-sized response from from $url\n" unless ($content_length > 0);
-   print "Fetched $content_length bytes\n" if $verbose;
+   print "\tDownloaded $content_length bytes\n" if $verbose;
 #
 # Parse content and write MAC and Vendor fields to output file.
 #
@@ -167,9 +167,11 @@ foreach $key (sort keys %ieee_reg_urls) {
       $lineno++;
    }
    print OUTPUT "#\n# End of IEEE $key registry data. $lineno entries.\n#\n";
-   print "$lineno $key entries written to $filename\n" if $verbose;
+   print "\t$lineno $key entries written to $filename\n" if $verbose;
+   $total_entries += $lineno;
 }
 #
 # All done.  Close the output file and print OUI entry count
 #
 close OUTPUT || die "Error closing output file\n";
+print "\nTotal of $total_entries MAC/Vendor mappings written to $filename\n";
