@@ -1,3 +1,10 @@
+2022-xx-xx Roy Hills <royhills@hotmail.com>
+
+	* strlcat.c: removed. arp-scan only uses strlcpy(), so we don't need
+	  to ship replacement source code for strcat() as well.
+
+	* configure.ac, strlcpy.h: Removed references to strlcat.
+
 2022-11-01 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.h: Increase HASH_TABLE_SIZE from 50,000 to 70,000 due to
