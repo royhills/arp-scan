@@ -1,3 +1,21 @@
+2022-11-01 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.h: Increase HASH_TABLE_SIZE from 50,000 to 70,000 due to
+	  addition of IEEE MA-M and MA-S registries.  ieee-oui.txt currently
+	  contains 47028 entries of 70000 (67.2%).
+
+	* get-oui.1: renamed to get-oui.1.dist with PKGDATADIR substitution.
+
+	* check-ieee-reg: New file to test IEEE registry lookup.
+
+	* Makefile.am: Build man page "get-oui.1" from "get-oui.dist", added
+	  check-ieee-reg test.
+
+	* get-oui: Changed IEEE URLs from http to https. This avoids an HTTP
+	  redirect from the http to https site.
+
+	* ieee-oui.txt: Updated from IEEE website.
+
 2022-10-31 Roy Hills <royhills@hotmail.com>
 
 	* get-oui: Changed to fetch registry data from all four IEEE registries
@@ -20,8 +38,7 @@
 	  variable that is set by configure. This ensures that the file
 	  paths in the manpage arp-scan.1 reflect the paths on the system
 	  where ./configure was run.
-	* arp-scan.1: removed
-	* arp-scan.1.dist: New file
+	* arp-scan.1: renamed to arp-scan.1.dist with PKGDATADIR substitution.
 
 2022-10-27 Roy Hills <royhills@hotmail.com>
 
