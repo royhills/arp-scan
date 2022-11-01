@@ -22,10 +22,9 @@
 # 01:23:45:6	matches 01:23:45:6x:xx:xx; and
 # 01:23:45:67	matches 01:23:45:67:xx:xx.
 #
-# Do not include entries from the IEEE OUI or IAB listings, as these are
-# already in the files ieee-oui.txt and ieee-iab.txt, which are automatically
-# used by arp-scan.  See get-oui(1) and get-iab(1) for details of how to
-# update the OUI and IAB listings.
+# Do not include entries from the IEEE OUI listings, as these are already in
+# the file ieee-oui.txt, which is automatically used by arp-scan.  See
+# get-oui(1) for details of how to update the OUI listings.
 #
 # The order of entries in this file are not important.
 #

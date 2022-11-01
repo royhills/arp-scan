@@ -1,14 +1,46 @@
-2021-10-30 Roy Hills <royhills@hotmail.com>
+2022-11-01 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.h: Increase HASH_TABLE_SIZE from 50,000 to 70,000 due to
+	  addition of IEEE MA-M and MA-S registries.  ieee-oui.txt currently
+	  contains 47028 entries of 70000 (67.2%).
+
+	* get-oui.1: renamed to get-oui.1.dist with PKGDATADIR substitution.
+
+	* check-ieee-reg: New file to test IEEE registry lookup.
+
+	* Makefile.am: Build man page "get-oui.1" from "get-oui.dist", added
+	  check-ieee-reg test.
+
+	* get-oui: Changed IEEE URLs from http to https. This avoids an HTTP
+	  redirect from the http to https site.
+
+	* ieee-oui.txt: Updated from IEEE website.
+
+2022-10-31 Roy Hills <royhills@hotmail.com>
+
+	* get-oui: Changed to fetch registry data from all four IEEE registries
+	  (MA-L, MA-M, MA-S and IAB), format appropriately for arp-scan, and
+	  concatenate into ieee-oui.
+	* get-iab: No longer needed. Replaced with stub script that calls die.
+	* Makefile.am, check-decode, check-host-list: Removed get-iab / iabfile
+	  references.
+	* arp-scan.c, arp-scan.h: Removed --iabfile option.
+	* README.md, arp-scan.1.dist, get-oui.1, mac-vendor.5, mac-vendor.txt:
+	  Update text to reflect changes.
+	* get-iab.1: Removed. No longer needed.
+	* ieee-iab.txt: Removed. No longer needed.
+	* ieee-oui.txt: Updated to new combined registry format.
+
+2022-10-30 Roy Hills <royhills@hotmail.com>
 
 	* Makefile.am: Build man page "arp-scan.1" from "arp-scan.dist"
 	  replacing all occurances of @pkgdatadir@ with the $pkgdatadir
 	  variable that is set by configure. This ensures that the file
 	  paths in the manpage arp-scan.1 reflect the paths on the system
 	  where ./configure was run.
-	* arp-scan.1: removed
-	* arp-scan.1.dist: New file
+	* arp-scan.1: renamed to arp-scan.1.dist with PKGDATADIR substitution.
 
-2021-10-27 Roy Hills <royhills@hotmail.com>
+2022-10-27 Roy Hills <royhills@hotmail.com>
 
 	* arp-fingerprint.1, arp-scan.1, get-iab.1, get-oui.1, mac-vendor.5:
 	  Standardised man page fonts, corrected some inaccuracies and removed
@@ -16,7 +48,7 @@
 
 	* Updated ieee-oui.txt and ieee-iab.txt files.
 
-2021-10-25 Roy Hills <royhills@hotmail.com>
+2022-10-25 Roy Hills <royhills@hotmail.com>
 
 	* format.c: New file containing output format functions.
 
@@ -27,7 +59,7 @@
 	* arp-scan.c, arp-scan.h, arp-scan.1: Add --format option and output
 	  fields processing code.
 
-2021-10-24 Roy Hills <royhills@hotmail.com>
+2022-10-24 Roy Hills <royhills@hotmail.com>
 
 	* Makefile.am, check-decode: Added checks to test output format with
 	  --rtt, --resolve, different ARP/header address, and locally
@@ -36,7 +68,7 @@
 	* pkt-diff-frame-addr.pcap, pkt-local-admin.pcap: New files for
 	  above tests.
 
-2021-10-23 Roy Hills <royhills@hotmail.com>
+2022-10-23 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c, error.c arp-scan.c, error.c: Changed most fixed-length
 	  strings to use dynamic length strings.
@@ -45,7 +77,7 @@
 	  according to POSIX. No need to accomodate bugs in ancient glibc
 	  versions.
 
-2021-10-09 Roy Hills <royhills@hotmail.com>
+2022-10-09 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Added POSIX.1e capabilities support.
 

@@ -156,7 +156,6 @@
 #define ETH_P_IP 0x0800			/* Internet Protocol packet */
 #define ETH_P_ARP 0x0806		/* Address Resolution packet */
 #define OUIFILENAME "ieee-oui.txt"	/* Default IEEE OUI filename */
-#define IABFILENAME "ieee-iab.txt"	/* Default IEEE IAB filename */
 #define MACFILENAME "mac-vendor.txt"	/* Default MAC/Vendor filename */
 #define DEFAULT_ARP_OP ARPOP_REQUEST	/* Default ARP operation */
 #define DEFAULT_ARP_HRD ARPHRD_ETHER	/* Default ARP hardware type */
@@ -169,7 +168,7 @@
 #define OPT_WRITEPKTTOFILE 256		/* --writepkttofile option */
 #define OPT_READPKTFROMFILE 257		/* --readpktfromfile option */
 #define OPT_RANDOMSEED 258		/* --randomseed option */
-#define HASH_TABLE_SIZE 50000		/* Max size of OUI/Vendor hash table */
+#define HASH_TABLE_SIZE 70000		/* Max size of MAC/Vendor hash table */
 #define DEFAULT_RETRY_SEND 20		/* Default no. of send packet retries */
 #define DEFAULT_RETRY_SEND_INTERVAL 5000  /* Default interval between send
                                         * packet retries in microseconds */

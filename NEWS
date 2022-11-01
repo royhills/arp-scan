@@ -6,7 +6,11 @@ YYYY-MM-DD arp-scan 1.9.9 (in progress)
 * New Features:
 
   - Added POSIX.1e capabilities support for systems with libcap (Linux only)
-  - --format option provides flexible output format (see manpage or help)
+  - New --format option provides flexible output format (see manpage or help)
+  - get-oui script now stores IEEE registries MA-L (OUI), MA-M, MA-S (OUI36)
+    and IAB in the single file ieee-oui.txt. The ieee-iab.txt file and the
+    --iabfiles option to arp-scan have been removed as they are no longer
+    required.
 
 2021-10-08 arp-scan 1.9.8 (git tag 1.9.8)
 

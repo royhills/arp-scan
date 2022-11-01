@@ -46,7 +46,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -71,7 +71,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION	Padding=55aa55aa55aa55aa55aa55aa55aa55aa55aa
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt --verbose"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --verbose"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE02" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -96,7 +96,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION (802.1Q VLAN=4095)
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE03" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -121,7 +121,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION (802.2 LLC/SNAP)
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE04" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -201,7 +201,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 192.168.1.251	00:04:27:6a:5d:a1	Cisco Systems, Inc
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE05" 192.168.1.0/24 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -226,7 +226,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1-127.0.0.9 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -253,7 +253,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.0:255.255.252.0 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -279,7 +279,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:12:34:56	DIGITAL EQUIPMENT CORPORATION (ARP Proto=0x1000) (DUP: 2)
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE06" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -304,7 +304,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION (802.2 LLC/SNAP) (802.1Q VLAN=100)
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE07" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -343,7 +343,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 192.168.14.254	00:50:56:ed:35:d5	VMware, Inc. (DUP: 5)
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE08" 192.168.14.1 192.168.14.2 192.168.14.135 192.168.14.136 192.168.14.254 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -372,7 +372,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 192.168.14.254	00:50:56:ed:35:d5	VMware, Inc.
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt --ignoredups"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --ignoredups"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE08" 192.168.14.1 192.168.14.2 192.168.14.135 192.168.14.136 192.168.14.254 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -398,7 +398,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION	RTT=999.999 ms
 
 _EOF_
-ARPARGS="--retry=1 --ignoredups --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt --rtt"
+ARPARGS="--retry=1 --ignoredups --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --rtt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' | sed 's/RTT=[0-9]*\.[0-9]* ms/RTT=999.999 ms/' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -424,7 +424,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 localhost	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt --resolve"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --resolve"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -449,7 +449,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	08:00:2b:06:07:08 (08:00:2b:08:07:06)	DIGITAL EQUIPMENT CORPORATION
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE09" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -474,7 +474,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
 127.0.0.1	02:00:00:00:00:00	(Unknown: locally administered)
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE10" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
@@ -499,7 +499,7 @@ cat >"$EXAMPLEOUTPUT" <<_EOF_
       127.0.0.1|08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION
 
 _EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --iabfile=$srcdir/ieee-iab.txt --macfile=$srcdir/mac-vendor.txt --format=\${ip;15}|\${mac}\\t\${vendor}"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --format=\${ip;15}|\${mac}\\t\${vendor}"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"

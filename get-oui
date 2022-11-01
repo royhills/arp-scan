@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright 2006-2016 Roy Hills
+# Copyright 2006-2022 Roy Hills
 #
 # This file is part of arp-scan.
 #
@@ -17,39 +17,57 @@
 # You should have received a copy of the GNU General Public License
 # along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
 #
-# get-oui -- Fetch the OUI file from the IEEE website
+# get-oui -- Fetch the MAC/Vendor registry data from the IEEE website
 #
 # Author: Roy Hills
 # Date: 16 March 2006
 #
-# This script downloads the Ethernet OUI file from the IEEE website, and
-# converts it to the format needed by arp-scan.
+# This script downloads the Ethernet MAC/Vendor registry data from the
+# IEEE website, and converts it to the format used by arp-scan.
 #
 use warnings;
 use strict;
 use Getopt::Std;
 use LWP::UserAgent;
+use Text::CSV;
 #
-my $default_url = 'http://standards-oui.ieee.org/oui/oui.txt';
+# Use the file:// URLs to use the data from the debian ieee-data package.
+# Use the http:// URLs to use the data from the IEEE website.
+#
+# The entries will be written to the output in alphabetical key order, not
+# the order they are listed in the hash.
+my %ieee_reg_urls = (
+#   OUI   => 'file:///usr/share/ieee-data/oui.csv',
+#   MAM   => 'file:///usr/share/ieee-data/mam.csv',
+#   OUI36 => 'file:///usr/share/ieee-data/oui36.csv',
+#   IAB   => 'file:///usr/share/ieee-data/iab.csv',
+   OUI   => 'https://standards-oui.ieee.org/oui/oui.csv',
+   MAM   => 'https://standards-oui.ieee.org/oui28/mam.csv',
+   OUI36 => 'https://standards-oui.ieee.org/oui36/oui36.csv',
+   IAB   => 'https://standards-oui.ieee.org/iab/iab.csv'
+);
 my $default_filename='ieee-oui.txt';
 #
 my $usage =
 qq/Usage: get-oui [options]
-Fetch the Ethernet OUI file from the IEEE website, and save it in the format
-used by arp-scan.
+Fetch the Ethernet MAC-Vendor registry data from the IEEE website
+and save it in the format used by arp-scan.
 
 'options' is one or more of:
         -h Display this usage message.
-        -f FILE Specify the output OUI file. Default=$default_filename
-        -u URL Specify the URL to fetch the OUI data from.
-           Default=$default_url
+        -f FILE Specify the output file. Default=$default_filename
         -v Give verbose progress messages.
 /;
 my %opts;
 my $verbose;
 my $filename;
 my $url;
-my $lineno = 0;
+my $key;
+my $status;
+my $line;
+my @columns;
+my $lineno;
+my $total_entries=0;
 #
 # Process options
 #
@@ -63,11 +81,6 @@ if (defined $opts{f}) {
 } else {
    $filename=$default_filename;
 }
-if (defined $opts{u}) {
-   $url=$opts{u};
-} else {
-   $url=$default_url;
-}
 $verbose=$opts{v} ? 1 : 0;
 #
 # If the output filename already exists, rename it to filename.bak before
@@ -78,21 +91,10 @@ if (-f $filename) {
    rename $filename, "$filename.bak" || die "Could not rename $filename to $filename.bak\n";
 }
 #
-# Fetch the content from the URL
-#
-print "Fetching OUI data from $url\n" if $verbose;
-my $ua = LWP::UserAgent->new;
-my $res = $ua->get($url);
-die "Could not get OUI data from $url\n" unless $res->is_success;
-my $content = $res->content;
-my $content_length = length($content);
-die "Zero-sized response from from $url\n" unless ($content_length > 0);
-print "Fetched $content_length bytes\n" if $verbose;
-#
 # Open the output file for writing.
 #
-print "Opening output file $filename\n" if $verbose;
-open OUTPUT, '>', $filename || die "Could not open $filename for writing";
+print "Opening $filename for output\n" if $verbose;
+open OUTPUT, '>:encoding(UTF-8)', $filename || die "Could not open $filename for writing";
 #
 # Write the header comments to the output file.
 #
@@ -102,22 +104,28 @@ $mon++;
 my $date_string = sprintf("%04d-%02d-%02d %02d:%02d:%02d", $year, $mon, $mday,
                           $hour, $min, $sec);
 my $header_comments =
-qq/# ieee-oui.txt -- Ethernet vendor OUI file for arp-scan
+qq/# ieee-oui.txt -- IEEE Ethernet OUI-Vendor mapping file for arp-scan
 #
-# This file contains the Ethernet vendor OUIs for arp-scan.  These are used
-# to determine the vendor for a give Ethernet interface given the MAC address.
+# This file contains the IEEE Ethernet MAC address registry entries that are
+# used to determine the Ethernet vendor for a given MAC address.
 #
 # Each line of this file contains an OUI-vendor mapping in the form:
 #
-# <OUI><TAB><Vendor>
+# <MAC-Prefix><TAB><Vendor>
 #
-# Where <OUI> is the first three bytes of the MAC address in hex, and <Vendor>
-# is the name of the vendor.
+# Where <MAC-Prefix> is the prefix of the MAC address in hex, and <Vendor>
+# is the name of the vendor.  The prefix can be of any length from two hex
+# digits (one octet) to twelve hex digits (six octets, the entire Ethernet
+# hardware address).
+#
+# The order of entries in this file are not important.
+#
+# arp-scan will attempt to match larger prefixes before trying to match
+# smaller ones, and will stop at the first match.
 #
 # Blank lines and lines beginning with "#" are ignored.
 #
 # This file was automatically generated by get-oui at $date_string
-# using data from $url
 #
 # Do not edit this file.  If you want to add additional MAC-Vendor mappings,
 # edit the file mac-vendor.txt instead.
@@ -125,18 +133,45 @@ qq/# ieee-oui.txt -- Ethernet vendor OUI file for arp-scan
 /;
 print OUTPUT $header_comments;
 #
-# Parse the content received from the URL, and write the OUI entries to the
-# output file.  Match lines that look like this:
-# 00-00-00   (hex)                XEROX CORPORATION
-# and write them to the output file looking like this:
-# 000000	XEROX CORPORATION
+# Initialise Text::CSV object interface
 #
-while ($content =~ m/^\s*(\w{2})-(\w{2})-(\w{2})\s+\(hex\)\s+(.*?)\s*$/gm) {
-   print OUTPUT "$1$2$3\t$4\n";
-   $lineno++;
+my $csv = Text::CSV->new ({ binary => 1, auto_diag => 1 });
+#
+# For each IEEE registry URL...
+#
+foreach $key (sort keys %ieee_reg_urls) {
+   $url = $ieee_reg_urls{$key};
+#
+# Fetch the content from the URL
+#
+   print "Processing IEEE $key registry data from $url\n" if $verbose;
+   my $ua = LWP::UserAgent->new;
+   my $res = $ua->get($url);
+   die "Could not get $key data from $url\n" unless $res->is_success;
+   my $content = $res->content;
+   my $content_length = length($content);
+   die "Zero-sized response from from $url\n" unless ($content_length > 0);
+   print "\tDownloaded $content_length bytes\n" if $verbose;
+#
+# Parse content and write MAC and Vendor fields to output file.
+#
+   open(my $fh, '<:encoding(UTF-8)', \$content) || die "Could not open handle to content";
+   $csv->header($fh);
+   print OUTPUT "\n#\n# Start of IEEE $key registry data\n#\n";
+   $lineno=0;
+   while (my $row = $csv->getline ($fh)) {
+      my $mac = ${$row}[1];
+      my $vendor = ${$row}[2];
+      $vendor =~ s/^\s+|\s+$//g;	# Remove leading and trailing whitespace
+      print OUTPUT "$mac\t$vendor\n";
+      $lineno++;
+   }
+   print OUTPUT "#\n# End of IEEE $key registry data. $lineno entries.\n#\n";
+   print "\t$lineno $key entries written to $filename\n" if $verbose;
+   $total_entries += $lineno;
 }
 #
 # All done.  Close the output file and print OUI entry count
 #
 close OUTPUT || die "Error closing output file\n";
-print "$lineno OUI entries written to file $filename\n" if $verbose;
+print "\nTotal of $total_entries MAC/Vendor mappings written to $filename\n";

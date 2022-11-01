@@ -1,0 +1,114 @@
+.\" Copyright (C) Roy Hills
+.\"
+.\" Copying and distribution of this file, with or without modification,
+.\" are permitted in any medium without royalty provided the copyright
+.\" notice and this notice are preserved.
+.\"
+.TH GET-OUI 1 "October 28, 2022"
+.\" Please adjust this date whenever revising the man page.
+.SH NAME
+get-oui \- Fetch the arp-scan OUI file from the IEEE website
+.SH SYNOPSIS
+.B get-oui
+.RI [ options ]
+.SH DESCRIPTION
+.B get-oui
+fetches the MAC/Vendor registry data from the IEEE website
+and converts it to the format used by arp-scan. The contents of
+the following registries are downloaded and processed:
+.sp
+.TS
+L L L .
+MA-L	24-bit	The original OUI registry
+MA-M	28-bit	Medium address block registry
+MA-S	36-bit	Small address block registry (OUI-36)
+IAB	36-bit	The IAB registry (closed for new applications)
+.TE
+.PP
+This script creates
+.I ieee-oui.txt
+from the latest data on the IEEE website.
+You can run
+.B get-oui
+occasionally to keep the OUI file up to date.
+.PP
+The OUI data is fetched from the URLs specified in the \fBget-oui\fP script
+and the output file is saved to the file
+.I ieee-oui.txt
+in the current directory.
+The output file name can be changed with the
+.B -f
+option.
+.PP
+The
+.I ieee-oui.txt
+file that is produced by this script is used by
+.B arp-scan
+to determine the Ethernet card vendor from its hardware address.
+.PP
+.B arp-scan
+will first look for
+.I ieee-oui.txt
+in the current directory.  If that fails, it will use the system wide file
+\fI@PKGDATADIR@/ieee-oui.txt\fP.
+.SH OPTIONS
+.TP
+.B -h
+Display a brief usage message and exit.
+.TP
+\fB-f \fI<fn>\fR
+Write the output to the specified file instead of the default
+.I ieee-oui.txt.
+.TP
+.B -v
+Display verbose progress messages.
+.SH FILES
+.TP
+.I ieee-oui.txt
+The default output file.
+.SH EXAMPLES
+.nf
+$ ./get-oui -v
+Renaming ieee-oui.txt to ieee-oui.txt.bak
+Opening ieee-oui.txt for output
+Processing IEEE IAB registry data from https://standards-oui.ieee.org/iab/iab.csv
+        Downloaded 381454 bytes
+        4575 IAB entries written to ieee-oui.txt
+Processing IEEE MAM registry data from https://standards-oui.ieee.org/oui28/mam.csv
+        Downloaded 492756 bytes
+        4477 MAM entries written to ieee-oui.txt
+Processing IEEE OUI registry data from https://standards-oui.ieee.org/oui/oui.csv
+        Downloaded 3051812 bytes
+        32845 OUI entries written to ieee-oui.txt
+Processing IEEE OUI36 registry data from https://standards-oui.ieee.org/oui36/oui36.csv
+        Downloaded 466151 bytes
+        5131 OUI36 entries written to ieee-oui.txt
+
+Total of 47028 MAC/Vendor mappings written to ieee-oui.txt
+.fi
+.SH NOTES
+.B get-oui
+is implemented in Perl, so you need to have the Perl interpreter installed on
+your system to use it.
+.PP
+.B get-oui
+uses the
+.I LWP::UserAgent
+and
+.I Text::CSV
+Perl modules to fetch and process the IEEE registry data. You must have
+these modules installed on your system for
+it to work. These modules are available on most distributions, often called
+.I libwww-perl
+and
+.IR libtext-csv-perl .
+They are also available in source form from CPAN.
+.PP
+You can use a proxy server by defining the
+.I http_proxy
+environment variable.
+.SH "SEE ALSO"
+.TP
+.BR arp-scan (1)
+.TP
+.BR arp-fingerprint (1)

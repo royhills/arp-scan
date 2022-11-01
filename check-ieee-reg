@@ -1,0 +1,59 @@
+#!/bin/sh
+# The ARP Scanner (arp-scan) is Copyright (C) 2005-2022 Roy Hills
+#
+# This file is part of arp-scan.
+#
+# arp-scan is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# arp-scan is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
+#
+# check-ieee-reg - Shell script to test IEEE registry lookup
+#
+# Author: Roy Hills
+# Date: 01 November 2022
+#
+# This script checks that arp-scan correctly decodes and displays the vendor
+# details for selected entries in each of the IEEE Ethernet registries.
+#
+
+ARPSCANOUTPUT=/tmp/arp-scan-output.$$.tmp
+EXAMPLEOUTPUT=/tmp/example-output.$$.tmp
+#
+SAMPLE01="$srcdir/pkt-ieee-regcheck.pcap"
+
+# Responses from one MAC address in each of IAB, MA-M, MA-L and MA-S registries
+echo "Checking IEEE registry decode using $SAMPLE01 ..."
+cat >"$EXAMPLEOUTPUT" <<_EOF_
+192.168.14.1,00:50:c2:7d:50:00,DEUTA-WERKE GmbH
+192.168.14.2,74:1a:e0:90:00:00,Private
+192.168.14.3,00:22:72:00:00:00,American Micro-Fuel Device Corp.
+192.168.14.4,70:b3:d5:f2:f0:00,TELEPLATFORMS
+
+_EOF_
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --format=\${ip},\${mac},\${vendor}"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 192.168.14.0/29 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   rm -f "$EXAMPLEOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+rm -f "$EXAMPLEOUTPUT"

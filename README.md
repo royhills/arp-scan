@@ -25,7 +25,7 @@ arp-scan uses the GNU automake and autoconf tools, so the typical installation p
 
 You will need GNU automake and autoconf, the make utility, an ANSI C compiler (tested with gcc and clang), the development header files and libraries, and libpcap version 1.5 or later. On Linux, it is recommended to install the libcap POSIX.1e capability support development header files and libraries (typically in a package called `libcap-dev`, `libcap-devel` or similar) so arp-scan can be made capabilities-aware.
 
-If you want to run the Perl scripts arp-fingerprint, get-oui and get-iab, you will need to have the Perl interpreter installed.  In addition, for get-oui and get-iab, you will need the LWP::UserAgent Perl module.
+If you want to run the Perl scripts arp-fingerprint and get-oui, you will need to have the Perl interpreter installed.  In addition, for get-oui, you will need the LWP::UserAgent and Text::CSV Perl modules.
 
 You can pass various options to "configure" to control the build and installation process. Run "./configure --help" to see a list of options. arp-scan has one package-specific configure option:
 
@@ -56,4 +56,4 @@ For usage information, including details of all the options, use:
 
 ```arp-scan --help```
 
-For more detailed documentation, see the manual pages: arp-scan(1), arp-fingerprint(1), get-iab(1), get-oui(1) and mac-vendor(5).
+For more detailed documentation, see the manual pages: arp-scan(1), arp-fingerprint(1), get-oui(1) and mac-vendor(5).
