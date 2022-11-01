@@ -93,7 +93,7 @@ if (-f $filename) {
 #
 # Open the output file for writing.
 #
-print "Opening output file $filename\n" if $verbose;
+print "Opening $filename for output\n" if $verbose;
 open OUTPUT, '>:encoding(UTF-8)', $filename || die "Could not open $filename for writing";
 #
 # Write the header comments to the output file.
