@@ -112,7 +112,7 @@
 /* Mersenne Twister random number generator prototypes */
 #include "mt19937ar.h"
 
-/* OpenBSD strlcat and strlcpy prototypes */
+/* OpenBSD strlcpy prototype */
 #ifndef HAVE_STRLCPY
 #include "strlcpy.h"
 #endif

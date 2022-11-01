@@ -157,13 +157,11 @@ AC_CHECK_FUNC([getopt_long_only],
               [ AC_LIBOBJ([my_getopt])
                 AC_LIBSOURCE([my_getopt.h]) ])
 
-dnl Check for strlcat and strlcpy.  If we don't have them, use the replacement
-dnl functions from OpenBSD.  Most modern C libraries have these functions,
-dnl but some such as as glibc don't.
+dnl Check for strlcpy.  If we don't have it, use the replacement function
+dnl from OpenBSD.  This is needed for systems using glibc.
 AC_CHECK_FUNC([strlcpy],
               [AC_DEFINE(HAVE_STRLCPY, 1, [Define to 1 if the C library includes the strlcpy function])],
-              [ AC_LIBOBJ([strlcat])
-                AC_LIBOBJ([strlcpy])
+              [ AC_LIBOBJ([strlcpy])
                 AC_LIBSOURCE([strlcpy.h]) ])
 
 AC_CONFIG_FILES([Makefile])

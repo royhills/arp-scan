@@ -2,10 +2,9 @@
 #define STRLCPY_H
 
 /*
- * Prototypes for OpenBSD strlcat() and strlcpy() functions.
+ * Prototype for OpenBSD strlcpy() function.
  */
 
-size_t strlcat(char *, const char *, size_t);
 size_t strlcpy(char *, const char *, size_t);
 
 #endif /* STRLCPY_H */
