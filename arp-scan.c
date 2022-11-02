@@ -1425,7 +1425,7 @@ usage(int status, int detailed) {
       fprintf(stdout, "\t\t\tspecified limit. This can be used in scripts to check\n");
       fprintf(stdout, "\t\t\tif fewer hosts respond without having to parse the\n");
       fprintf(stdout, "\t\t\tprogram output.\n");
-      fprintf(stdout, "\n--format=<s> or -k <s>\tSpecify the output format string.\n");
+      fprintf(stdout, "\n--format=<s> or -F <s>\tSpecify the output format string.\n");
       fprintf(stdout, "\t\t\tThis option specifies the output format. The format\n");
       fprintf(stdout, "\t\t\tstring consists of fields using the syntax\n");
       fprintf(stdout, "\t\t\t\"${field[;width]}\". Fields are displayed right-\n");
@@ -2073,14 +2073,14 @@ process_options(int argc, char *argv[]) {
       {"randomseed", required_argument, 0, OPT_RANDOMSEED},
       {"limit", required_argument, 0, 'M'},
       {"resolve", no_argument, 0, 'd'},
-      {"format", required_argument, 0, 'k'},
+      {"format", required_argument, 0, 'F'},
       {0, 0, 0, 0}
    };
 /*
  * available short option characters:
  *
- * lower:       --c-e----j---------------z
- * UPPER:       --C--FG--JK---------U--X-Z
+ * lower:       --c-e----jk--------------z
+ * UPPER:       --C---G--JK---------U--X-Z
  * Digits:      0123456789
  */
    const char *short_options =
@@ -2242,7 +2242,7 @@ process_options(int argc, char *argv[]) {
          case 'd':	/* --resolve */
             resolve_flag = 1;
             break;
-         case 'k':	/* --format */
+         case 'F':	/* --format */
             format=format_parse(optarg);
             break;
          default:	/* Unknown option */

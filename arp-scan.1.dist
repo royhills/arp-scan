@@ -627,7 +627,7 @@ the number of responding hosts is less then the specified
 limit. This can be used in scripts to check if fewer hosts
 respond without having to parse the program output.
 .TP
-\fB--format\fP=\fI<s>\fP or \fB-k \fI<s>\fR
+\fB--format\fP=\fI<s>\fP or \fB-F \fI<s>\fR
 Specify the output format string.
 This option specifies the output format. The format
 string consists of fields using the syntax

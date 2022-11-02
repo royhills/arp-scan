@@ -1,9 +1,9 @@
-2022-xx-xx Roy Hills <royhills@hotmail.com>
+2022-11-02 Roy Hills <royhills@hotmail.com>
 
-	* strlcat.c: removed. arp-scan only uses strlcpy(), so we don't need
-	  to ship replacement source code for strcat() as well.
+	* arp-scan.c, arp-scan.1.dist: Change --format short option character
+	  from -k to -F. The -F character became free when the --iabfile
+	  option was removed, and is a more logical choice.
 
-	* configure.ac, strlcpy.h: Removed references to strlcat.
 
 2022-11-01 Roy Hills <royhills@hotmail.com>
 
@@ -22,6 +22,11 @@
 	  redirect from the http to https site.
 
 	* ieee-oui.txt: Updated from IEEE website.
+
+	* strlcat.c: removed. arp-scan only uses strlcpy(), so we don't need
+	  to ship replacement source code for strcat() as well.
+
+	* configure.ac, strlcpy.h: Removed references to strlcat.
 
 2022-10-31 Roy Hills <royhills@hotmail.com>
 
