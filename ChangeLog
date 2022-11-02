@@ -4,6 +4,8 @@
 	  from -k to -F. The -F character became free when the --iabfile
 	  option was removed, and is a more logical choice.
 
+	* arp-scan.c, check-decode: Print warning message for unavailable
+	  --format fields in addition to unknown fields.  Updated test.
 
 2022-11-01 Roy Hills <royhills@hotmail.com>
 
