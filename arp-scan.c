@@ -701,7 +701,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       {8, "Proto"},
       {9, "DUP"},
       {10, "RTT"},
-      {-1, NULL}
+      {-1, NULL}	/* -1 marks the end of the list */
    };
    char *msg;
    char *cp;
@@ -879,11 +879,13 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
          free(cp);
       }
 /*
- *	Output Vendor field.
+ *	Output Vendor field if present.
  */
-      cp = msg;
-      msg = make_message("%s\t%s", cp, fields[4].value);
-      free(cp);
+      if (fields[4].value) {
+         cp = msg;
+         msg = make_message("%s\t%s", cp, fields[4].value);
+         free(cp);
+      }
 /*
  *	Output Padding field if present and --verbose is given
  */

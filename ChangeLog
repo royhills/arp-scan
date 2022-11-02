@@ -4,8 +4,15 @@
 	  from -k to -F. The -F character became free when the --iabfile
 	  option was removed, and is a more logical choice.
 
+	  *** This means anyone who has been using the old -k short option ***
+	  *** for --format will need to change to the new -F option.       ***
+
 	* arp-scan.c, check-decode: Print warning message for unavailable
 	  --format fields in addition to unknown fields.  Updated test.
+
+	* arp-scan.c, check-decode: Only print vendor field if present for
+	  the default output format.  Previously it printed NULL if --quiet
+	  was specified. Added test to check-decode to check --quiet output.
 
 2022-11-01 Roy Hills <royhills@hotmail.com>
 
