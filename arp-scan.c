@@ -941,12 +941,12 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       msg=dupstr("");	/* Set msg to empty string */
       for (fmt=format; fmt; fmt=fmt->next) {
          if (fmt->type == FORMAT_FIELD) {
-            if ((idx=name_to_id(fmt->data, fields_map)) != -1) {
+            if ((idx=name_to_id(fmt->data, fields_map)) != -1 && fields[idx].value) {
                cp = msg;
                msg = make_message("%s%*s", cp, fmt->width, fields[idx].value);
                free(cp);
             } else {	/* Field name not found in map */
-               warn_msg("WARNING: Field name ${%s} is not known", fmt->data);
+               warn_msg("WARNING: Field ${%s} unknown or not available", fmt->data);
             }
          } else if (fmt->type == FORMAT_STRING) {
             cp = msg;
