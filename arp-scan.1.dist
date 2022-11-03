@@ -23,13 +23,13 @@ interface IP address and netmask.
 .PP
 The target hosts can be specified as IP addresses or hostnames.  You can also
 specify the target as
-.B IPnetwork/bits
+.BR IPnetwork / bits
 (e.g. 192.168.1.0/24) to specify all
 hosts in the given network (network and broadcast addresses included),
-.B IPstart-IPend
+.BR IPstart - IPend
 (e.g. 192.168.1.3-192.168.1.27) to specify all hosts in the
 inclusive range, or
-.B IPnetwork:NetMask
+.BR IPnetwork : NetMask
 (e.g. 192.168.1.0:255.255.255.0) to specify all hosts in the given network
 and mask.
 .SH DESCRIPTION
@@ -52,11 +52,16 @@ on the operating system:
 .TP
 Linux with POSIX.1e capabilities support using libcap:
 .B arp-scan
-is capabilities aware and requires CAP_NET_RAW in the permitted set.
+is capabilities aware if it was built with libcap POSIX.1e capabilities support.
+It requires CAP_NET_RAW in the permitted set:
 It will automatically enable CAP_NET_RAW to open the network socket and drop
 the capability immediately after the open. You can use
 .I setcap cap_net_raw+p /path/to/arp-scan
 to add CAP_NET_RAW to the permitted set of the arp-scan executable.
+.sp
+Capabilities support also makes SUID root much safer because \fBarp-scan\fP
+will drop all capabilities except CAP_NET_RAW and will not run with full root
+privileges. See the SECURITY section for more details.
 .TP
 BSD and MacOS:
 You need read/write access to
@@ -325,9 +330,40 @@ upper or lower case. E.g. --padding=aaaaaaaaaaaa
 .TP
 .B <x>
 Something else. See the description of the option for details.
+.SS "General Options"
 .TP
 .BR --help " or " -h
 Display this usage message and exit.
+.TP
+.BR --verbose " or " -v
+Display verbose progress messages.
+Use more than once for greater effect:
+.IP ""
+1 - Display the network address and mask used when the
+\fB--localnet\fR option is specified, display any
+nonzero packet padding, display packets received
+from unknown hosts, and show when each pass through
+the list completes.
+.IP ""
+2 - Show each packet sent and received, when entries
+are removed from the list, the pcap filter string,
+and counts of MAC/Vendor mapping entries.
+.IP ""
+3 - Display the host list before scanning starts.
+.TP
+.BR --version " or " -V
+Display program version and exit.
+This displays the version, copyright information,
+license details, libpcap version, and whether POSIX.1e
+capability support is included.
+.TP
+\fB--interface\fP=\fI<s>\fP or \fB-I \fI<s>\fR
+Use network interface \fI<s>\fP.
+If this option is not specified, arp-scan will search
+the system interface list for the lowest numbered,
+configured up interface (excluding loopback).
+The interface specified must support ARP.
+.SS "Host Selection"
 .TP
 \fB--file\fP=\fI<s>\fP or \fB-f \fI<s>\fR
 Read hostnames or addresses from the specified file
@@ -347,10 +383,117 @@ option or specify any target hosts on the command line.
 The interface specifications are taken from the
 interface that arp-scan will use, which can be
 changed with the \fB--interface\fP option.
+.SS "MAC/Vendor Mapping Files"
+.TP
+\fB--ouifile\fP=\fI<s>\fP or \fB-O \fI<s>\fR
+Use IEEE Ethernet OUI to vendor mapping file \fI<s>\fP.
+If this option is not specified, the default filename
+is \fIieee-oui.txt\fP in the current directory. If that is
+not found, then the file
+\fI@PKGDATADIR@/ieee-oui.txt\fP is used.
+.TP
+\fB--macfile\fP=\fI<s>\fP or \fB-O \fI<s>\fR
+Use custom Ethernet MAC to vendor mapping file \fI<s>\fP.
+If this option is not specified, the default filename
+is \fImac-vendor.txt\fP in the current directory. If that is
+not found, then the file
+\fI@PKGDATADIR@/mac-vendor.txt\fP is used.
+.SS "Output Format Control"
+.TP
+.BR --quiet " or " -q
+Only display minimal output. No protocol decoding.
+If this option is specified, then only the IP address
+and MAC address are displayed for each responding host.
+No protocol decoding is performed and the OUI mapping
+files are not used.
+.TP
+.BR --plain " or " -x
+Display plain output showing only responding hosts.
+This option suppresses the printing of the header and
+footer text, and only displays one line for each
+responding host. Useful if the output will be
+parsed by a script.
+.TP
+.BR --ignoredups " or " -g
+Don't display duplicate packets.
+By default, duplicate packets are displayed and are
+flagged with \fI(DUP: n)\fP where \fIn\fP is the number of
+times this host has responded.
+.TP
+.BR --rtt " or " -D
+Display the packet round-trip time.
+.TP
+\fB--format\fP=\fI<s>\fP or \fB-F \fI<s>\fR
+Specify the output format string.
+This option specifies the output format. The format
+string consists of fields using the syntax
+"\fI${field[;width]}\fP". Fields are displayed right-
+aligned unless the width is negative in which case
+left alignment will be used. The following case-
+insensitive field name are recognised:
+.sp
+.TS
+L L .
+IP	Host IP address in dotted quad format
+Name	Host name if \fB--resolve\fP option given
+MAC	Host MAC address xx:xx:xx:xx:xx:xx
+HdrMAC	Ethernet source addr if different
+Vendor	Vendor details string
+Padding	Padding after ARP packet in hex if nonzero
+Framing	Framing type if not Ethernet_II
+VLAN	802.1Q VLAN ID if present
+Proto	ARP protocol if not 0x0800
+DUP	Packet number for duplicate packets (>1)
+RTT	Round trip time if \fB--rtt\fP option given
+.TE
+.sp
+Only the "\fIip\fP" and "\fImac\fP" fields are available if the
+\fB--quiet\fP option is specified.
+.sp
+Any characters that are not fields are output
+verbatim. "\\" introduces escapes:
+.sp
+.TS
+L L .
+\\n	newline
+\\r	carriage return
+\\t	tab
+\\	suppress special meaning for following character
+.TE
+.sp
+You should enclose the \fB--format\fP argument in 'single
+quotes' to protect special characters from the shell.
+.sp
+Example: --format='${ip}\\t${mac}\\t${vendor}'
+.SS "Host List Randomisation"
+.TP
+.BR --random " or " -R
+Randomise the host list.
+This option randomises the order of the hosts in the
+host list, so the ARP packets are sent to the hosts in
+a random order. It uses the Knuth shuffle algorithm.
+.TP
+\fB--randomseed\fP=\fI<i>\fR
+Use \fI<i>\fR to seed the pseudo random number generator.
+This option seeds the PRNG with the specified number,
+which can be useful if you want to ensure that the
+random host list is reproducible. By default, the PRNG
+is seeded with an unpredictable value. This option is
+only effective in conjunction with the \fI--random (-R)\fP
+option.
+.SS "Output Timing and Retry"
 .TP
 \fB--retry\fP=\fI<i>\fP or \fB-r \fI<i>\fR
 Set total number of attempts per host to \fI<i>\fP,
 default=2.
+.TP
+\fB--backoff\fP=\fI<f>\fP or \fB-b \fI<f>\fR
+Set timeout backoff factor to \fI<f>\fP, default=1.50.
+The per-host timeout is multiplied by this factor
+after each timeout. So, if the number of retries
+is 3, the initial per-host timeout is 500ms and the
+backoff factor is 1.5, then the first timeout will be
+500ms, the second 750ms and the third 1125ms.
 .TP
 \fB--timeout\fP=\fI<i>\fP or \fB-t \fI<i>\fR
 Set initial per host timeout to \fI<i>\fP ms, default=500.
@@ -379,51 +522,7 @@ binary, multiples. So 64K is 64000, not 65536.
 You cannot specify both \fB--interval\fP and \fB--bandwidth\fP
 because they are just different ways to change the
 same underlying parameter.
-.TP
-\fB--backoff\fP=\fI<f>\fP or \fB-b \fI<f>\fR
-Set timeout backoff factor to \fI<f>\fP, default=1.50.
-The per-host timeout is multiplied by this factor
-after each timeout. So, if the number of retries
-is 3, the initial per-host timeout is 500ms and the
-backoff factor is 1.5, then the first timeout will be
-500ms, the second 750ms and the third 1125ms.
-.TP
-.BR --verbose " or " -v
-Display verbose progress messages.
-Use more than once for greater effect:
-.IP ""
-1 - Display the network address and mask used when the
-\fB--localnet\fR option is specified, display any
-nonzero packet padding, display packets received
-from unknown hosts, and show when each pass through
-the list completes.
-.IP ""
-2 - Show each packet sent and received, when entries
-are removed from the list, the pcap filter string,
-and counts of MAC/Vendor mapping entries.
-.IP ""
-3 - Display the host list before scanning starts.
-.TP
-.BR --version " or " -V
-Display program version and exit.
-This displays the version, copyright information,
-license details, libpcap version, and whether POSIX.1e
-capability support is included.
-.TP
-.BR --random " or " -R
-Randomise the host list.
-This option randomises the order of the hosts in the
-host list, so the ARP packets are sent to the hosts in
-a random order. It uses the Knuth shuffle algorithm.
-.TP
-\fB--randomseed\fP=\fI<i>\fR
-Use \fI<i>\fR to seed the pseudo random number generator.
-This option seeds the PRNG with the specified number,
-which can be useful if you want to ensure that the
-random host list is reproducible. By default, the PRNG
-is seeded with an unpredictable value. This option is
-only effective in conjunction with the \fI--random (-R)\fP
-option.
+.SS "DNS Resolution"
 .TP
 .BR --numeric " or " -N
 IP addresses only, no hostnames.
@@ -431,75 +530,11 @@ With this option, all hosts must be specified as
 IP addresses. Hostnames are not permitted. No DNS
 lookups will be performed.
 .TP
-\fB--snap\fP=\fI<i>\fP or \fB-n \fI<i>\fR
-Set the pcap snap length to \fI<i>\fP. Default=64.
-This specifies the frame capture length. This
-length includes the data-link header.
-The default is normally sufficient.
-.TP
-\fB--interface\fP=\fI<s>\fP or \fB-I \fI<s>\fR
-Use network interface \fI<s>\fP.
-If this option is not specified, arp-scan will search
-the system interface list for the lowest numbered,
-configured up interface (excluding loopback).
-The interface specified must support ARP.
-.TP
-.BR --quiet " or " -q
-Only display minimal output. No protocol decoding.
-If this option is specified, then only the IP address
-and MAC address are displayed for each responding host.
-No protocol decoding is performed and the OUI mapping
-files are not used.
-.TP
-.BR --plain " or " -x
-Display plain output showing only responding hosts.
-This option suppresses the printing of the header and
-footer text, and only displays one line for each
-responding host. Useful if the output will be
-parsed by a script.
-.TP
 .BR --resolve " or " -d
 Resolve IP addresses to hostnames.
 Displays the hostname instead of IP address if name
 resolution succeeds.
-.TP
-.BR --ignoredups " or " -g
-Don't display duplicate packets.
-By default, duplicate packets are displayed and are
-flagged with \fI(DUP: n)\fP where \fIn\fP is the number of
-times this host has responded.
-.TP
-\fB--ouifile\fP=\fI<s>\fP or \fB-O \fI<s>\fR
-Use IEEE Ethernet OUI to vendor mapping file \fI<s>\fP.
-If this option is not specified, the default filename
-is \fIieee-oui.txt\fP in the current directory. If that is
-not found, then the file
-\fI@PKGDATADIR@/ieee-oui.txt\fP is used.
-.TP
-\fB--macfile\fP=\fI<s>\fP or \fB-O \fI<s>\fR
-Use custom Ethernet MAC to vendor mapping file \fI<s>\fP.
-If this option is not specified, the default filename
-is \fImac-vendor.txt\fP in the current directory. If that is
-not found, then the file
-\fI@PKGDATADIR@/mac-vendor.txt\fP is used.
-.TP
-\fB--srcaddr\fP=\fI<m>\fP or \fB-S \fI<m>\fR
-Set the source Ethernet MAC address to \fI<m>\fP.
-This sets the 48-bit hardware address in the Ethernet
-frame header for outgoing ARP packets. It does not
-change the hardware address in the ARP packet, see
---arpsha for details on how to change that address.
-The default is the Ethernet address of the outgoing
-interface.
-.TP
-\fB--destaddr\fP=\fI<m>\fP or \fB-T \fI<m>\fR
-Send the packets to Ethernet MAC address \fI<m>\fP
-This sets the 48-bit destination address in the
-Ethernet frame header.
-The default is the broadcast address \fIff:ff:ff:ff:ff:ff\fP.
-Most operating systems will also respond if the ARP
-request is sent to their MAC address, or to a
-multicast address that they are listening on.
+.SS "Output ARP Packet"
 .TP
 \fB--arpsha\fP=\fI<m>\fP or \fB-u \fI<m>\fR
 Use \fI<m>\fP as the ARP source Ethernet address
@@ -514,14 +549,6 @@ Use \fI<m>\fP as the ARP target Ethernet address
 This sets the 48-bit \fIar$tha\fP field in the ARP packet
 The default is zero, because this field is not used
 for ARP request packets.
-.TP
-\fB--prototype\fP=\fI<i>\fP or \fB-y \fI<i>\fR
-Set the Ethernet protocol type to \fI<i>\fP, default=\fI0x0806\fP.
-This sets the 16-bit protocol type field in the
-Ethernet frame header.
-Setting this to a non-default value will result in the
-packet being ignored by the target, or sent to the
-wrong protocol stack.
 .TP
 \fB--arphrd\fP=\fI<i>\fP or \fB-H \fI<i>\fR
 Use \fI<i>\fP for the ARP hardware type, default=\fI1\fP.
@@ -581,15 +608,34 @@ WARNING: Setting \fIar$spa\fP to the destination IP address
 can disrupt some operating systems, as they assume
 there is an IP address clash if they receive an ARP
 request for their own address.
+.SS "Output Ethernet Header"
 .TP
-\fB--padding\fP=\fI<h>\fP or \fB-A \fI<h>\fR
-Specify padding after packet data.
-Set the padding data to hex value \fI<h>\fP. This data is
-appended to the end of the ARP packet, after the data.
-Most, if not all, operating systems will ignore any
-padding. The default is no padding, although the
-Ethernet driver on the sending system may pad the
-packet to the minimum Ethernet frame length.
+\fB--srcaddr\fP=\fI<m>\fP or \fB-S \fI<m>\fR
+Set the source Ethernet MAC address to \fI<m>\fP.
+This sets the 48-bit hardware address in the Ethernet
+frame header for outgoing ARP packets. It does not
+change the hardware address in the ARP packet, see
+--arpsha for details on how to change that address.
+The default is the Ethernet address of the outgoing
+interface.
+.TP
+\fB--destaddr\fP=\fI<m>\fP or \fB-T \fI<m>\fR
+Send the packets to Ethernet MAC address \fI<m>\fP
+This sets the 48-bit destination address in the
+Ethernet frame header.
+The default is the broadcast address \fIff:ff:ff:ff:ff:ff\fP.
+Most operating systems will also respond if the ARP
+request is sent to their MAC address, or to a
+multicast address that they are listening on.
+.TP
+\fB--prototype\fP=\fI<i>\fP or \fB-y \fI<i>\fR
+Set the Ethernet protocol type to \fI<i>\fP, default=\fI0x0806\fP.
+This sets the 16-bit protocol type field in the
+Ethernet frame header.
+Setting this to a non-default value will result in the
+packet being ignored by the target, or sent to the
+wrong protocol stack.
+.TP
 .TP
 .BR --llc " or " -L
 Use RFC 1042 LLC framing with SNAP.
@@ -608,6 +654,14 @@ This option causes the outgoing ARP packets to use
 be in the range 0 to 4095 inclusive.
 arp-scan will always decode and display received ARP
 packets in 802.1Q format irrespective of this option.
+.SS "Misc Options"
+.TP
+\fB--limit\fP=\fI<i>\fP or \fB-M \fI<i>\fR
+Exit after the specified number of hosts have responded.
+When this option is used arp-scan will exit with status 1 if
+the number of responding hosts is less then the specified
+limit. This can be used in scripts to check if fewer hosts
+respond without having to parse the program output.
 .TP
 \fB--pcapsavefile\fP=\fI<s>\fP or \fB-W \fI<s>\fR
 Write received packets to pcap savefile \fI<s>\fP.
@@ -617,58 +671,35 @@ and displayed. This savefile can be analysed with
 programs that understand the pcap file format, such as
 "tcpdump" and "wireshark".
 .TP
-.BR --rtt " or " -D
-Display the packet round-trip time.
+\fB--snap\fP=\fI<i>\fP or \fB-n \fI<i>\fR
+Set the pcap snap length to \fI<i>\fP. Default=64.
+This specifies the frame capture length. This
+length includes the data-link header.
+The default is normally sufficient.
 .TP
-\fB--limit\fP=\fI<i>\fP or \fB-M \fI<i>\fR
-Exit after the specified number of hosts have responded.
-When this option is used arp-scan will exit with status 1 if
-the number of responding hosts is less then the specified
-limit. This can be used in scripts to check if fewer hosts
-respond without having to parse the program output.
+\fB--retry-send\fP=\fI<i>\fP or \fB-Y \fI<i>\fR
+Set total number of send packet attempts to <i>, default=20.
 .TP
-\fB--format\fP=\fI<s>\fP or \fB-F \fI<s>\fR
-Specify the output format string.
-This option specifies the output format. The format
-string consists of fields using the syntax
-"\fI${field[;width]}\fP". Fields are displayed right-
-aligned unless the width is negative in which case
-left alignment will be used. The following case-
-insensitive field name are recognised:
-.sp
-.TS
-L L .
-IP	Host IP address in dotted quad format
-Name	Host name if \fB--resolve\fP option given
-MAC	Host MAC address xx:xx:xx:xx:xx:xx
-HdrMAC	Ethernet source addr if different
-Vendor	Vendor details string
-Padding	Padding after ARP packet in hex if nonzero
-Framing	Framing type if not Ethernet_II
-VLAN	802.1Q VLAN ID if present
-Proto	ARP protocol if not 0x0800
-DUP	Packet number for duplicate packets (>1)
-RTT	Round trip time if \fB--rtt\fP option given
-.TE
-.sp
-Only the "\fIip\fP" and "\fImac\fP" fields are available if the
-\fB--quiet\fP option is specified.
-.sp
-Any characters that are not fields are output
-verbatim. "\\" introduces escapes:
-.sp
-.TS
-L L .
-\\n	newline
-\\r	carriage return
-\\t	tab
-\\	suppress special meaning for following character
-.TE
-.sp
-You should enclose the \fB--format\fP argument in 'single
-quotes' to protect special characters from the shell.
-.sp
-Example: --format='${ip}\\t${mac}\\t${vendor}'
+\fB--retry-send-interval\fP=\fI<i>\fP or \fB-E \fI<i>\fR
+Set interval between send packet attempts to <i>.
+The interval specified is in milliseconds by default.
+or in microseconds if "u" is appended to the value.
+default=5.
+.TP
+\fB--padding\fP=\fI<h>\fP or \fB-A \fI<h>\fR
+Specify padding after packet data.
+Set the padding data to hex value \fI<h>\fP. This data is
+appended to the end of the ARP packet, after the data.
+Most, if not all, operating systems will ignore any
+padding. The default is no padding, although the
+Ethernet driver on the sending system may pad the
+packet to the minimum Ethernet frame length.
+.SH "EXIT STATUS"
+\fBarp-scan\fP will exit with 0 on successful completion or >0 if an error was encountered.
+.PP
+If the \fI--limit\fP option is specified, \fBarp-scan\fP will also exit with
+a non-zero exit code if the number of responding hosts is less than the
+specified limit.
 .SH FILES
 .TP
 .I @PKGDATADIR@/ieee-oui.txt
