@@ -25,36 +25,72 @@
 # work.  These options don't use much of the arp-scan functionality, so if
 # they fail, then there is a fundamental problem with the program.
 #
-TMPFILE=/tmp/arp-scan-test.$$.tmp
-#
+ARPSCANOUTPUT=/tmp/arp-scan-test.$$.tmp
+
+# Check arp-scan --help
 echo "Checking arp-scan --help ..."
-./arp-scan --help > "$TMPFILE"
+./arp-scan --help > "$ARPSCANOUTPUT"
 if test $? -ne 0; then
-   rm -f "$TMPFILE"
+   rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
    exit 1
 fi
-grep '^Report bugs or send suggestions at ' "$TMPFILE" >/dev/null
+grep '^Report bugs or send suggestions at ' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
-   rm -f "$TMPFILE"
+   rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-#
+rm -f "$ARPSCANOUTPUT"
+
+# Check arp-scan --version
 echo "Checking arp-scan --version ..."
-./arp-scan --version > "$TMPFILE"
+./arp-scan --version > "$ARPSCANOUTPUT"
 if test $? -ne 0; then
-   rm -f "$TMPFILE"
+   rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
    exit 1
 fi
-grep '^Copyright (C) ' "$TMPFILE" >/dev/null
+grep '^Copyright (C) ' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
-   rm -f "$TMPFILE"
+   rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
-#
-rm -f "$TMPFILE"
+rm -f "$ARPSCANOUTPUT"
+
+# Check invalid option - should have non-zero exit status
+echo "Checking arp-scan --xyz (invalid option) ..."
+./arp-scan --xyz > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep 'arp-scan: unrecognized option ' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Check no target hosts - should have non-zero exit status
+echo "Checking arp-scan without target hosts ..."
+./arp-scan > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: No target hosts on command line ' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"

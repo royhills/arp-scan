@@ -1,3 +1,11 @@
+2022-11-03 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.c, arp-scan.h: Don't display long usage message for unrecognised
+	  options and other simple issues, but display brief message and exit instead.
+	  A brief error message is clearer than half a page of usage text.
+
+	* check-run1: Added tests for unrecognised option and no target hosts.
+
 2022-11-02 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c, arp-scan.1.dist: Change --format short option character
