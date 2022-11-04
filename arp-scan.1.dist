@@ -20,18 +20,6 @@ instead, or the
 .B --localnet
 option is used, in which case the targets are generated from the network
 interface IP address and netmask.
-.PP
-The target hosts can be specified as IP addresses or hostnames.  You can also
-specify the target as
-.BR IPnetwork / bits
-(e.g. 192.168.1.0/24) to specify all
-hosts in the given network (network and broadcast addresses included),
-.BR IPstart - IPend
-(e.g. 192.168.1.3-192.168.1.27) to specify all hosts in the
-inclusive range, or
-.BR IPnetwork : NetMask
-(e.g. 192.168.1.0:255.255.255.0) to specify all hosts in the given network
-and mask.
 .SH DESCRIPTION
 .B arp-scan
 sends ARP packets to hosts on the local network and displays any responses
@@ -40,10 +28,23 @@ that are received. The network interface to use can be specified with the
 option. If this option is not present,
 .B arp-scan
 will search the system interface list for the lowest numbered, configured up
-interface (excluding loopback).  By default, the ARP packets are sent to the
-Ethernet broadcast address, \fIff:ff:ff:ff:ff:ff\fP, but that can be changed with the
-.B --destaddr
-option.
+interface (excluding loopback).
+.PP
+Target hosts to scan may be given on the command line, in a file with the
+\fB--file\fP option, or determined automatically from the interface
+IP address and mask with the \fB--localnet\fP option.
+.PP
+Hosts may be specified as IP addresses or hostnames unless the \fB--numeric\fP
+option is given, in which case only IP addresses are permitted.
+You can also use network specifications
+.BR IPnetwork / bits
+(e.g. 10.0.0.0/24),
+.BR IPstart - IPend ,
+(e.g. 10.0.0.1-10.0.0.10)
+or
+.BR IPnetwork : NetMask .
+(e.g. 10.0.0.0:255.255.255.0).
+Network specifications include the network and broadcast addresses.
 .PP
 .B arp-scan
 needs privileges to send and receive raw packets. It can be run as root or be
@@ -67,49 +68,17 @@ BSD and MacOS:
 You need read/write access to
 .I /dev/bpf*
 .PP
-The target hosts to scan may be specified in one of three ways: by specifying
-the targets on the command line; by specifying a file containing the targets
-with the
-.B --file
-option; or by specifying the
-.B --localnet
-option which causes all possible hosts on the network attached to the interface
-(as defined by the interface address and mask) to be scanned. For hosts specified
-on the command line, or with the
-.B --file
-option, you can use either IP addresses or hostnames.  You can also use network
-specifications
-.BR IPnetwork/bits ,
-.BR IPstart-IPend ,
-or
-.BR IPnetwork:NetMask .
-.PP
-The list of target hosts is stored in memory.  Each host in this list uses 28
-bytes of memory, so scanning a Class-B network (65,536 hosts) requires about
-1.75MB of memory for the list, and scanning a Class-A (16,777,216 hosts)
-requires about 448MB.
-.PP
-.B arp-scan
-supports Ethernet and 802.11 wireless networks. It could also
-support token ring and FDDI, but they have not been tested. It does
-not support serial links such as PPP or SLIP, because ARP is not supported
-on them.
-.PP
 The ARP protocol is a layer-2 (datalink layer) protocol that is used to
 determine a host's layer-2 address given its layer-3 (network
 layer) address. ARP was designed to work with any layer-2 and
-layer-3 address format, but the most common use is to map IP addresses to
-Ethernet hardware addresses, and this is what
-.B arp-scan
-supports. ARP only operates on
+layer-3 address format, but the typical use is to map IPv4 addresses to
+Ethernet hardware addresses.
+.PP
+ARP only operates on
 the local network, and cannot be routed. Although the ARP protocol makes use
 of IP addresses, it is not an IP-based protocol and
 .B arp-scan
 can be used on an interface that is not configured for IP.
-.PP
-ARP is only used by IPv4 hosts. IPv6 uses NDP (neighbour discovery protocol)
-instead, which is a different protocol and is not supported by
-.BR arp-scan .
 .PP
 One ARP packet is sent for each for each target host, with the target protocol
 address (the \fIar$tpa\fP field) set to the IP address of this host. If a host does not
