@@ -1,4 +1,4 @@
-'\" t
+'\" te
 .\" Copyright (C) Roy Hills
 .\"
 .\" Copying and distribution of this file, with or without modification,
@@ -22,8 +22,8 @@ option is used, in which case the targets are generated from the network
 interface IP address and netmask.
 .SH DESCRIPTION
 .B arp-scan
-sends ARP packets to hosts on the local network and displays any responses
-that are received. The network interface to use can be specified with the
+sends ARP request packets to the specified hosts and displays any ARP
+response packets received. The network interface to use can be specified with the
 .B --interface
 option. If this option is not present,
 .B arp-scan
@@ -68,208 +68,135 @@ BSD and MacOS:
 You need read/write access to
 .I /dev/bpf*
 .PP
-The ARP protocol is a layer-2 (datalink layer) protocol that is used to
-determine a host's layer-2 address given its layer-3 (network
-layer) address. ARP was designed to work with any layer-2 and
-layer-3 address format, but the typical use is to map IPv4 addresses to
-Ethernet hardware addresses.
-.PP
-ARP only operates on
-the local network, and cannot be routed. Although the ARP protocol makes use
-of IP addresses, it is not an IP-based protocol and
-.B arp-scan
-can be used on an interface that is not configured for IP.
+ARP is a communication protocol for discovering the Ethernet MAC address
+associated with a given IPv4 address. It is defined by RFC 826.
+ARP only operates on the local network, and cannot be routed.
+Although the ARP protocol makes use of IPv4 addresses, it is not an
+IP protocol and \fBarp-scan\fP can be used on interfaces without an
+IPv4 address.
 .PP
 One ARP packet is sent for each for each target host, with the target protocol
-address (the \fIar$tpa\fP field) set to the IP address of this host. If a host does not
-respond, then the ARP packet will be re-sent once more.  The maximum
-number of retries can be changed with the
-.B --retry
-option.  Reducing the number of retries will reduce the scanning time at
+address (the \fIar$tpa\fP field) set to the IP address of the target. If a host does not
+respond, the ARP packet will be re-sent once more. The maximum
+number of retries can be changed with the \fB--retry\fP
+option. Reducing the number of retries will reduce the scanning time at
 the possible risk of missing some results due to packet loss.
 .PP
-You can specify the bandwidth that
-.B arp-scan
-will use for the outgoing ARP
-packets with the
-.B --bandwidth
-option.  By default, it uses a bandwidth of 256000 bits per second. Increasing
-the bandwidth will reduce the scanning time, but setting the bandwidth too high
-may disrupt network operations due to the high broadcast packet rate.
-Another way to specify the outgoing ARP packet rate is with the
-.B --interval
-option, which is an alternative way to modify the same underlying parameter.
+You can specify the bandwidth that \fBarp-scan\fP will use for the outgoing ARP
+packets with the \fB--bandwidth\fP option. By default, it uses a bandwidth of
+256000 bits per second. Increasing the bandwidth will reduce the scanning time,
+but setting the bandwidth too high may disrupt network operations due to the high
+broadcast packet rate. Another way to specify the outgoing ARP packet rate is with the
+\fB--interval\fP option, which is an alternative way to change the same underlying
+parameter.
 .PP
-The time taken to perform a single-pass scan (i.e. with
-.BR --retry=1 )
+The time taken to perform a single-pass scan (i.e. with \fB--retry\fP=1)
 is given by:
 .PP
-.nf
-time = n*i + t + o
-.fi
+.EQ
+time = n times i + t + o
+.EN
 .PP
-Where
-.I n
-is the number of hosts in the list,
-.I i
-is the time interval between packets (specified with
-.BR --interval ,
-or calculated from
-.BR --bandwidth ),
-.I t
-is the timeout value (specified with
-.BR --timeout )
-and
-.I o
-is the overhead time taken to load the targets into the list and read the
-MAC/Vendor mapping files.
+Where \fIn\fP is the number of hosts in the list, \fIi\fP is the interval
+between packets (specified with \fB--interval\fP or calculated from
+\fB--bandwidth\fP), \fIt\fP is the timeout (specified with
+\fB--timeout\fP) and \fIo\fP is the overhead time taken to load the target
+list and read the MAC/Vendor mapping files. The overhead is normally
+negligible (typically around 100ms) but can be reduced further by the
+\fB--quiet\fP option.
 For small lists of hosts, the timeout value will dominate, but for large lists
 the packet interval is the most important value.
 .PP
-With 65,536 hosts, the default bandwidth of 256,000 bits/second (which results in a packet
-interval of 2ms), the default timeout of 500ms, and a single pass (
-.BR --retry=1 ),
-and assuming an overhead of 1 second, the scan would take
-65536*0.002 + 0.5 + 1 = 132.57
-seconds, or about 2 minutes 13 seconds.
-.PP
 Any part of the outgoing ARP packet may be modified through the use of the
-various
-.B --arpXXX
-options.  The use of some of these options may make the outgoing ARP packet
-non RFC compliant. Different operating systems handle the various non standard
-ARP packets in different ways, and this may be used to fingerprint these
-systems.  See
-.BR arp-fingerprint (1)
-for information about a script which uses these options to fingerprint the
-target operating system.
+various \fB--arpXXX\fP options.
+The use of some of these options may make the outgoing ARP packet
+non RFC compliant. Different operating systems respond to non standard
+ARP requests in different ways, which can be used to fingerprint
+systems. See \fBarp-fingerprint\fP(1) for details.
 .PP
-The table below summarises the options that change the outgoing ARP
-packet. In this table, the
-.I Field
-column gives the ARP packet field name from RFC 826,
-.I Bits
+The table below summarises the options to change the outgoing ARP
+requests. \fIField\fP gives the field name from RFC 826, \fIBits\fP
 specifies the number of bits in the field,
-.I Option
-shows the
-.B arp-scan
-option to modify this field, and
-.I Notes
-gives the default value and any other notes.
+\fIOption\fP shows the \fBarp-scan\fP option to modify this field, and
+\fIDefault\fP shows the default value.
 .TS
 box;
 cB S S S
 LB | LB | LB | LB
 L | L | L | L.
-Outgoing ARP Packet Options
+ARP Request Packet Options
 =
-Field	Bits	Option	Notes
+Field	Bits	Option	Default
 =
-ar$hrd	16	--arphrd	Default is 1 (ARPHRD_ETHER)
-ar$pro	16	--arppro	Default is 0x0800
-ar$hln	8	--arphln	Default is 6 (ETH_ALEN)
-ar$pln	8	--arppln	Default is 4 (IPv4)
-ar$op	16	--arpop	Default is 1 (ARPOP_REQUEST)
-ar$sha	48	--arpsha	Default is interface h/w address
-ar$spa	32	--arpspa	Default is interface IP address
-ar$tha	48	--arptha	Default is zero (00:00:00:00:00:00)
-ar$tpa	32	None	Set to the target host IP address
+ar$hrd	16	--arphrd	1 (ARPHRD_ETHER)
+ar$pro	16	--arppro	0x0800
+ar$hln	8	--arphln	6 (ETH_ALEN)
+ar$pln	8	--arppln	4 (IPv4)
+ar$op	16	--arpop	1 (ARPOP_REQUEST)
+ar$sha	48	--arpsha	interface h/w address
+ar$spa	32	--arpspa	interface IPv4 address
+ar$tha	48	--arptha	00:00:00:00:00:00
+ar$tpa	32	None	target host IPv4 address
 .TE
 .\" We need two paragraphs under the table to get the correct spacing.
 .PP
 .PP
-The most commonly used outgoing ARP packet option is
-.BR --arpspa ,
-which sets the source IP address in the ARP packet.  This option allows
-the outgoing ARP packet to use a different source IP address from the
-outgoing interface address.  With this option it is possible to use
-.B arp-scan
-on an interface with no IP address configured, which can be useful if
-you want to ensure that the testing host does not interact with the
-network being tested.
+The most commonly used of these options is \fB--arpspa\fP,
+which sets the source IPv4 address in the ARP request. This allows
+the outgoing ARP packet to use a different IPv4 source address from the
+outgoing interface address. This allows the use of \fBarp-scan\fP
+on interfaces with no IPv4 address.
+Note: Setting \fIar$spa\fP to the target's IP address causes some operating
+systems to report IP address clash when they receive an ARP request for
+their own address.
 .PP
-.B Warning:
-Setting \fIar$spa\fP to the destination IP address can disrupt some
-operating systems, as they assume there is an IP address clash if they
-receive an ARP request for their own address.
-.PP
-It is also possible to change the values in the Ethernet frame header
-that precedes the ARP packet in the outgoing packets. The table below
-summarises the options that change values in the Ethernet frame header.
+You can also change the values in the Ethernet frame header as shown in
+the table below.
 .TS
 box;
 cB S S S
 LB | LB | LB | LB
 L | L | L | L.
-Outgoing Ethernet Frame Options
+Ethernet Header Options
 =
-Field	Bits	Option	Notes
+Field	Bits	Option	Default
 =
-Dest Address	48	--destaddr	Default is ff:ff:ff:ff:ff:ff
-Source Address	48	--srcaddr	Default is interface address
-Protocol Type	16	--prototype	Default is 0x0806
+Dest Address	48	--destaddr	ff:ff:ff:ff:ff:ff
+Source Address	48	--srcaddr	interface address
+Protocol Type	16	--prototype	0x0806 (ARP)
 .TE
 .\" We need two paragraphs under the table to get the correct spacing.
 .PP
 .PP
-The most commonly used outgoing Ethernet frame option is
-.BR --destaddr ,
-which sets the destination Ethernet address for the ARP packet.
-.B --prototype
-is not often used, because it will cause the packet to be interpreted
-as a different Ethernet protocol.
+The \fB--destaddr\fP option which sets the destination Ethernet address
+is the only one that is commonly used.
 .PP
 Any ARP responses that are received are displayed in the following format:
 .TS
 ;
 L L L.
-<IP Address>	<Hardware Address>	<Vendor Details>
+<IPv4 Address>	<MAC Address>	<Vendor Details>
 .TE
 .PP
-Where
-.B IP Address
-is the IP address of the responding target,
-.B Hardware Address
-is its Ethernet hardware address (also known as the MAC address) and
-.B Vendor Details
-are the vendor details, decoded from the hardware address.  The output
+Where \fIIPv4 Address\fP is the IP address of the responding target,
+\fIMAC Address\fP is its link-layer address and \fIVendor Details\fP
+are the vendor details decoded from the hardware address. The output
 fields are separated by a single tab character.
 .PP
 The responses are displayed in the order they are received, which
-is not always the same order as the requests were sent because some
-hosts may respond faster than others.
+can be different from the order the requests were sent because some
+hosts may respond quicker than others.
 .PP
-The vendor decoding uses the files
-.I ieee-oui.txt
-and
-.IR mac-vendor.txt ,
-which are supplied with
-.BR arp-scan .
-The
-.I ieee-oui.txt
-file is generated from the \fIMA-L\fP (OUI), \fIMA-M\fP, \fIMA-S\fP (OUI36) and \fIIAB\fP registries. See
-.I https://standards.ieee.org/products-programs/regauth/
-for details of these registries.
-The Perl script
-.B get-oui
-which is included in the
-.B arp-scan
-package can be used to update this file with the latest data from the IEEE
-website.
-The
-.I mac-vendor.txt
-file contains other MAC to Vendor mappings that are not covered by
-the IEEE OUI file, and can be used to add custom mappings.
+The vendor decoding uses the files \fIieee-oui.txt\fP and \fImac-vendor.txt\fP.
+\fIieee-oui.txt\fP is generated from the IEEE \fIMA-L\fP (OUI), \fIMA-M\fP,
+\fIMA-S\fP (OUI36) and \fIIAB\fP registries.
+\fImac-vendor.txt\fP contains additional MAC to Vendor mappings, and can be
+used to add custom mappings. \fBget-oui\fP can be used to update
+\fIieee-oui.txt\fP with the latest data from the IEEE registries.
 .PP
-Almost all hosts that support IP will respond to
-.B arp-scan
-if they receive an ARP packet with the target protocol address
-(\fIar$tpa\fP) set to their IP address.  This includes firewalls and
-other hosts with IP filtering that drop all IP traffic from
-the testing system. For this reason,
-.B arp-scan
-is a useful tool to quickly determine all the active IP hosts
-on a given Ethernet network segment.
+Almost all IPv4 hosts will respond to ARP request packets, including
+hosts with IP filtering such as firewalls. This makes \fBarp-scan\fP
+a useful tool to discover all active IPv4 hosts on the Ethernet network.
 .SH OPTIONS
 Where an option takes a value, that value is specified as a letter in
 angle brackets. The letter indicates the type of data that is expected:
