@@ -317,7 +317,10 @@ flagged with \fI(DUP: n)\fP where \fIn\fP is the number of
 times this host has responded.
 .TP
 .BR --rtt " or " -D
-Display the packet round-trip time.
+Calculate and display the packet round-trip time.
+The time is displayed in milliseconds and fractional
+microseconds. This option makes the ${rtt} field
+available for the \fB--format\fP option.
 .TP
 \fB--format\fP=\fI<s>\fP or \fB-F \fI<s>\fR
 Specify the output format string.
@@ -421,15 +424,17 @@ same underlying parameter.
 .SS "DNS Resolution"
 .TP
 .BR --numeric " or " -N
-IPv4 addresses only, no hostnames.
-With this option, all hosts must be specified as
-IP addresses. Hostnames are not permitted. No DNS
-lookups will be performed.
+Targets must be IP addresses, no hostnames.
+With this option, all hosts to be scanned must be
+specified as IPv4 addresses. Hostnames cannot be used.
+This can reduce the startup time if you have a very
+long list of targets which are all IP addresses.
 .TP
 .BR --resolve " or " -d
-Resolve IP addresses to hostnames.
-Displays the hostname instead of IP address if name
-resolution succeeds.
+Resolve responding IP addresses to hostnames.
+The default output format will display the hostname
+instead of the IPv4 address. This option makes the
+${name} field available for the --format option.
 .SS "Output ARP Packet"
 .TP
 \fB--arpsha\fP=\fI<m>\fP or \fB-u \fI<m>\fR
@@ -604,10 +609,9 @@ List of IEEE OUI (Organisationally Unique Identifier) to vendor mappings.
 .I @PKGDATADIR@/mac-vendor.txt
 List of other Ethernet MAC to vendor mappings, including local additions.
 .SH EXAMPLES
-This example shows \fBarp-scan\fP scanning the network on the
-first available interface (because no \fB--interface\fP option was given).
-The output shows that the interface \fIeth0\fP with IPv4 address 10.0.0.106
-was used.
+.SS "Simple Scan"
+Scan the default network using the interface IPv4 configuration to generate
+the list of hosts to scan.
 .PP
 .nf
 $ arp-scan --localnet
@@ -631,13 +635,8 @@ Starting arp-scan 1.9.9 with 256 hosts (https://github.com/royhills/arp-scan)
 15 packets received by filter, 0 packets dropped by kernel
 Ending arp-scan 1.9.9: 256 hosts scanned in 1.532 seconds (167.10 hosts/sec). 14 responded
 .fi
-.PP
-The next example shows the use of the \fB--format\fP option to customise the output
-format. Here we specify the interface with the \fB--interface\fP (\fB-I\fP) option and
-provide target network \fI10.0.0.0/24\fP as a command line argument.  The \fB--rtt\fP option
-calculates the packet round-trip time in milliseconds and fractional microseconds. Note
-the use of single quotes around the format specification to prevent the shell from
-interpreting special characters.
+.SS "Output Formatting"
+Scan all hosts in \fI10.0.0.0/24\fP using interface \fIeth0\fP. Calculate round-trip time and display in aligned columns using a custom format.
 .PP
 .nf
 $ arp-scan -I eth0 --rtt --format='|${ip;-15}|${mac}|${rtt;8}|' 10.0.0.0/24
@@ -661,10 +660,8 @@ Starting arp-scan 1.9.9 with 256 hosts (https://github.com/royhills/arp-scan)
 14 packets received by filter, 0 packets dropped by kernel
 Ending arp-scan 1.9.9: 256 hosts scanned in 2.032 seconds (125.98 hosts/sec). 14 responded
 .fi
-.PP
-This example shows CSV output using the \fB--format\fP option with the \fB--plain\fP option
-to supress extraneous output. Note the double quotes around the ${vendor} field that can
-contain spaces.
+.SS "CSV Output"
+\fB--plain\fP removes extraneous output.
 .PP
 .nf
 $ arp-scan -I eth0 --plain --format='${ip},${mac},"${vendor}"' 10.0.0.0/24
@@ -687,9 +684,6 @@ $ arp-scan -I eth0 --plain --format='${ip},${mac},"${vendor}"' 10.0.0.0/24
 .BR get-oui (1)
 .PP
 .BR arp-fingerprint (1)
-.PP
-.B RFC 826
-- An Ethernet Address Resolution Protocol
 .PP
 .I http://www.royhills.co.uk/wiki/
 The arp-scan wiki page.
