@@ -19,7 +19,7 @@ option is given, in which case the targets are read from the specified file
 instead, or the
 .B --localnet
 option is used, in which case the targets are generated from the network
-interface IP address and netmask.
+interface IPv4 address and netmask.
 .SH DESCRIPTION
 .B arp-scan
 sends ARP request packets to the specified hosts and displays any ARP
@@ -32,7 +32,7 @@ interface (excluding loopback).
 .PP
 Target hosts to scan may be given on the command line, in a file with the
 \fB--file\fP option, or determined automatically from the interface
-IP address and mask with the \fB--localnet\fP option.
+IPv4 address and mask with the \fB--localnet\fP option.
 .PP
 Hosts may be specified as IP addresses or hostnames unless the \fB--numeric\fP
 option is given, in which case only IP addresses are permitted.
@@ -64,7 +64,7 @@ Capabilities support also makes SUID root much safer because \fBarp-scan\fP
 will drop all capabilities except CAP_NET_RAW and will not run with full root
 privileges. See the SECURITY section for more details.
 .TP
-BSD and MacOS:
+BSD and macOS:
 You need read/write access to
 .I /dev/bpf*
 .PP
@@ -76,7 +76,7 @@ IP protocol and \fBarp-scan\fP can be used on interfaces without an
 IPv4 address.
 .PP
 One ARP packet is sent for each for each target host, with the target protocol
-address (the \fIar$tpa\fP field) set to the IP address of the target. If a host does not
+address (the \fIar$tpa\fP field) set to the IPv4 address of the target. If a host does not
 respond, the ARP packet will be re-sent once more. The maximum
 number of retries can be changed with the \fB--retry\fP
 option. Reducing the number of retries will reduce the scanning time at
@@ -147,7 +147,7 @@ the outgoing ARP packet to use a different IPv4 source address from the
 outgoing interface address. This allows the use of \fBarp-scan\fP
 on interfaces with no IPv4 address.
 Note: Setting \fIar$spa\fP to the target's IP address causes some operating
-systems to report IP address clash when they receive an ARP request for
+systems to report an address clash when they receive an ARP request for
 their own address.
 .PP
 You can also change the values in the Ethernet frame header as shown in
@@ -195,7 +195,7 @@ used to add custom mappings. \fBget-oui\fP can be used to update
 \fIieee-oui.txt\fP with the latest data from the IEEE registries.
 .PP
 Almost all IPv4 hosts will respond to ARP request packets, including
-hosts with IP filtering such as firewalls. This makes \fBarp-scan\fP
+hosts with packet filtering such as firewalls. This makes \fBarp-scan\fP
 a useful tool to discover all active IPv4 hosts on the Ethernet network.
 .SH OPTIONS
 Where an option takes a value, that value is specified as a letter in
@@ -206,7 +206,7 @@ A character string, e.g. --file=hostlist.txt.
 .TP
 .B <i>
 An integer, which can be specified as a decimal number or as a hexadecimal
-number if preceeded with 0x, e.g. --arppro=2048 or --arpro=0x0800.
+number if preceded with 0x, e.g. --arppro=2048 or --arpro=0x0800.
 .TP
 .B <f>
 A floating point decimal number, e.g. --backoff=1.5.
@@ -263,12 +263,12 @@ The interface specified must support ARP.
 .TP
 \fB--file\fP=\fI<s>\fP or \fB-f \fI<s>\fR
 Read hostnames or addresses from the specified file
-instead of from the command line. One name or IP
+instead of from the command line. One name or IPv4
 address per line. Use "-" for standard input.
 .TP
 .BR --localnet " or " -l
 Generate addresses from network interface configuration.
-Use the network interface IP address and network mask
+Use the network interface IPv4 address and netmask
 to generate the list of target host addresses.
 The list will include the network and broadcast
 addresses, so an interface address of 10.0.0.1 with
@@ -330,7 +330,7 @@ insensitive field name are recognised:
 .sp
 .TS
 L L .
-IP	Host IP address in dotted quad format
+IP	Host IPv4 address in dotted quad format
 Name	Host name if \fB--resolve\fP option given
 MAC	Host MAC address xx:xx:xx:xx:xx:xx
 HdrMAC	Ethernet source addr if different
@@ -421,7 +421,7 @@ same underlying parameter.
 .SS "DNS Resolution"
 .TP
 .BR --numeric " or " -N
-IP addresses only, no hostnames.
+IPv4 addresses only, no hostnames.
 With this option, all hosts must be specified as
 IP addresses. Hostnames are not permitted. No DNS
 lookups will be performed.
@@ -489,7 +489,7 @@ Most operating systems will only respond to the value 1
 to other values as well.
 .TP
 \fB--arpspa\fP=\fI<a>\fP or \fB-s \fI<a>\fR
-Use \fI<a>\fP as the source IP address.
+Use \fI<a>\fP as the source IPv4 address.
 The address should be specified in dotted quad format;
 or the literal string "\fIdest\fP", which sets the source
 address to be the same as the target host address.
@@ -602,63 +602,86 @@ specified limit.
 List of IEEE OUI (Organisationally Unique Identifier) to vendor mappings.
 .TP
 .I @PKGDATADIR@/mac-vendor.txt
-List of other Ethernet MAC to vendor mappings.
+List of other Ethernet MAC to vendor mappings, including local additions.
 .SH EXAMPLES
-The example below shows
-.B arp-scan
-being used to scan the network
-.I 192.168.0.0/24
-using the network interface
-.IR eth0 .
+This example shows \fBarp-scan\fP scanning the network on the
+first available interface (because no \fB--interface\fP option was given).
+The output shows that the interface \fIeth0\fP with IPv4 address 10.0.0.106
+was used.
 .PP
 .nf
-$ arp-scan --interface=eth0 192.168.0.0/24
-Interface: eth0, datalink type: EN10MB (Ethernet)
-Starting arp-scan 1.4 with 256 hosts (http://www.nta-monitor.com/tools-resources/security-tools/arp-scan/)
-192.168.0.1     00:c0:9f:09:b8:db       QUANTA COMPUTER, INC.
-192.168.0.3     00:02:b3:bb:66:98       Intel Corporation
-192.168.0.5     00:02:a5:90:c3:e6       Compaq Computer Corporation
-192.168.0.6     00:c0:9f:0b:91:d1       QUANTA COMPUTER, INC.
-192.168.0.12    00:02:b3:46:0d:4c       Intel Corporation
-192.168.0.13    00:02:a5:de:c2:17       Compaq Computer Corporation
-192.168.0.87    00:0b:db:b2:fa:60       Dell ESG PCBA Test
-192.168.0.90    00:02:b3:06:d7:9b       Intel Corporation
-192.168.0.105   00:13:72:09:ad:76       Dell Inc.
-192.168.0.153   00:10:db:26:4d:52       Juniper Networks, Inc.
-192.168.0.191   00:01:e6:57:8b:68       Hewlett-Packard Company
-192.168.0.251   00:04:27:6a:5d:a1       Cisco Systems, Inc.
-192.168.0.196   00:30:c1:5e:58:7d       HEWLETT-PACKARD
+$ arp-scan --localnet
+Interface: eth0, type: EN10MB, MAC: 50:65:f3:f0:6d:7c, IPv4: 10.0.0.106
+Starting arp-scan 1.9.9 with 256 hosts (https://github.com/royhills/arp-scan)
+10.0.0.14       a4:1f:72:7f:25:bb       Dell Inc.
+10.0.0.22       10:60:4b:73:43:de       Hewlett Packard
+10.0.0.74       00:0c:29:90:07:e9       VMware, Inc.
+10.0.0.75       00:0c:29:66:9e:c2       VMware, Inc.
+10.0.0.76       00:0c:29:d0:e1:ea       VMware, Inc.
+10.0.0.82       9c:b6:54:bb:f3:ec       Hewlett Packard
+10.0.0.84       00:21:9b:fd:b9:b3       Dell Inc.
+10.0.0.85       00:02:b3:eb:5a:f8       Intel Corporation
+10.0.0.91       00:9c:02:a5:7b:29       Hewlett Packard
+10.0.0.92       d4:ae:52:d0:07:6f       Dell Inc.
+10.0.0.93       d4:ae:52:d0:04:9b       Dell Inc.
+10.0.0.96       9c:b6:54:bb:f5:35       Hewlett Packard
+10.0.0.97       00:0c:29:0e:95:20       VMware, Inc.
+10.0.0.104      50:65:f3:f0:70:a4       Hewlett Packard
 
-13 packets received by filter, 0 packets dropped by kernel
-Ending arp-scan: 256 hosts scanned in 3.386 seconds (75.61 hosts/sec).  13 responded
+15 packets received by filter, 0 packets dropped by kernel
+Ending arp-scan 1.9.9: 256 hosts scanned in 1.532 seconds (167.10 hosts/sec). 14 responded
 .fi
 .PP
-This next example shows
-.B arp-scan
-being used to scan the local network after configuring the
-network interface with DHCP using
-.IR pump .
+The next example shows the use of the \fB--format\fP option to customise the output
+format. Here we specify the interface with the \fB--interface\fP (\fB-I\fP) option and
+provide target network \fI10.0.0.0/24\fP as a command line argument.  The \fB--rtt\fP option
+calculates the packet round-trip time in milliseconds and fractional microseconds. Note
+the use of single quotes around the format specification to prevent the shell from
+interpreting special characters.
 .PP
 .nf
-# pump
-# ifconfig eth0
-eth0      Link encap:Ethernet  HWaddr 00:D0:B7:0B:DD:C7
-          inet addr:10.0.84.178  Bcast:10.0.84.183  Mask:255.255.255.248
-          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-          RX packets:46335 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:1542776 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:1644 txqueuelen:1000
-          RX bytes:6184146 (5.8 MiB)  TX bytes:348887835 (332.7 MiB)
-# arp-scan --localnet
-Interface: eth0, datalink type: EN10MB (Ethernet)
-Starting arp-scan 1.4 with 8 hosts (http://www.nta-monitor.com/tools-resources/security-tools/arp-scan/)
-10.0.84.179     00:02:b3:63:c7:57       Intel Corporation
-10.0.84.177     00:d0:41:08:be:e8       AMIGO TECHNOLOGY CO., LTD.
-10.0.84.180     00:02:b3:bd:82:9b       Intel Corporation
-10.0.84.181     00:02:b3:1f:73:da       Intel Corporation
+$ arp-scan -I eth0 --rtt --format='|${ip;-15}|${mac}|${rtt;8}|' 10.0.0.0/24
+Interface: eth0, type: EN10MB, MAC: 50:65:f3:f0:6d:7c, IPv4: 10.0.0.106
+Starting arp-scan 1.9.9 with 256 hosts (https://github.com/royhills/arp-scan)
+|10.0.0.14      |a4:1f:72:7f:25:bb|   0.280|
+|10.0.0.22      |10:60:4b:73:43:de|   0.293|
+|10.0.0.74      |00:0c:29:90:07:e9|   0.380|
+|10.0.0.75      |00:0c:29:66:9e:c2|   0.311|
+|10.0.0.76      |00:0c:29:d0:e1:ea|   0.326|
+|10.0.0.82      |9c:b6:54:bb:f3:ec|   0.216|
+|10.0.0.84      |00:21:9b:fd:b9:b3|   0.244|
+|10.0.0.85      |00:02:b3:eb:5a:f8|   0.244|
+|10.0.0.91      |00:9c:02:a5:7b:29|   0.209|
+|10.0.0.92      |d4:ae:52:d0:07:6f|   0.289|
+|10.0.0.93      |d4:ae:52:d0:04:9b|   0.278|
+|10.0.0.96      |9c:b6:54:bb:f5:35|   0.255|
+|10.0.0.97      |00:0c:29:0e:95:20|   0.288|
+|10.0.0.104     |50:65:f3:f0:70:a4|   0.263|
 
-4 packets received by filter, 0 packets dropped by kernel
-Ending arp-scan 1.4: 8 hosts scanned in 0.820 seconds (9.76 hosts/sec).  4 responded
+14 packets received by filter, 0 packets dropped by kernel
+Ending arp-scan 1.9.9: 256 hosts scanned in 2.032 seconds (125.98 hosts/sec). 14 responded
+.fi
+.PP
+This example shows CSV output using the \fB--format\fP option with the \fB--plain\fP option
+to supress extraneous output. Note the double quotes around the ${vendor} field that can
+contain spaces.
+.PP
+.nf
+$ arp-scan -I eth0 --plain --format='${ip},${mac},"${vendor}"' 10.0.0.0/24
+10.0.0.14,a4:1f:72:7f:25:bb,"Dell Inc."
+10.0.0.22,10:60:4b:73:43:de,"Hewlett Packard"
+10.0.0.74,00:0c:29:90:07:e9,"VMware, Inc."
+10.0.0.75,00:0c:29:66:9e:c2,"VMware, Inc."
+10.0.0.76,00:0c:29:d0:e1:ea,"VMware, Inc."
+10.0.0.82,9c:b6:54:bb:f3:ec,"Hewlett Packard"
+10.0.0.84,00:21:9b:fd:b9:b3,"Dell Inc."
+10.0.0.85,00:02:b3:eb:5a:f8,"Intel Corporation"
+10.0.0.91,00:9c:02:a5:7b:29,"Hewlett Packard"
+10.0.0.92,d4:ae:52:d0:07:6f,"Dell Inc."
+10.0.0.93,d4:ae:52:d0:04:9b,"Dell Inc."
+10.0.0.96,9c:b6:54:bb:f5:35,"Hewlett Packard"
+10.0.0.97,00:0c:29:0e:95:20,"VMware, Inc."
+10.0.0.104,50:65:f3:f0:70:a4,"Hewlett Packard"
 .fi
 .SH "SEE ALSO"
 .BR get-oui (1)
