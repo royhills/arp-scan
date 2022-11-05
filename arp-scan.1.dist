@@ -262,7 +262,7 @@ configured up interface (excluding loopback).
 .TP
 \fB--file\fP=\fI<s>\fP or \fB-f \fI<s>\fR
 Read hostnames or addresses from the specified file.
-One name or IPv4 address per line. Use "-" for standard input.
+One name or IPv4 address per line. Use "-" for stdin.
 .TP
 .BR --localnet " or " -l
 Generate addresses from network interface configuration.
