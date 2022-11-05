@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/royhills/arp-scan/badge.svg?branch=master)](https://coveralls.io/github/royhills/arp-scan?branch=master)
 [![CodeQL](https://github.com/royhills/arp-scan/actions/workflows/codeql.yml/badge.svg)](https://github.com/royhills/arp-scan/actions/workflows/codeql.yml)
 
-The ARP scanner
+Send ARP requests to network hosts and display responses
 
 ## Table of Contents
 - [Installation](#installation)

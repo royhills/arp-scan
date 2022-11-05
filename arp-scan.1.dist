@@ -8,7 +8,7 @@
 .TH ARP-SCAN 1 "October 26, 2022"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
-arp-scan \- The ARP scanner
+arp-scan \- Send ARP requests to network hosts and display responses
 .SH SYNOPSIS
 .B arp-scan
 .RI [ options ] " " [ hosts ...]

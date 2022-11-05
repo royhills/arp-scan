@@ -1,5 +1,5 @@
 /*
- * The ARP Scanner (arp-scan) is Copyright (C) 2005-2022 Roy Hills
+ * arp-scan is Copyright (C) 2005-2022 Roy Hills
  *
  * This file is part of arp-scan.
  *
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
  *
- * arp-scan -- The ARP Scanner
+ * arp-scan -- Send ARP requests to network hosts and display responses
  *
  * Author:	Roy Hills
  * Date:	13 October 2005
