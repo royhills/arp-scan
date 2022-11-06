@@ -1,14 +1,20 @@
-# arp-scan
+# arp-scan - Send ARP requests to network hosts and display responses
 
 [![Build](https://github.com/royhills/arp-scan/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/royhills/arp-scan/actions/workflows/c-cpp.yml)
 [![Coverage Status](https://coveralls.io/repos/github/royhills/arp-scan/badge.svg?branch=master)](https://coveralls.io/github/royhills/arp-scan?branch=master)
 [![CodeQL](https://github.com/royhills/arp-scan/actions/workflows/codeql.yml/badge.svg)](https://github.com/royhills/arp-scan/actions/workflows/codeql.yml)
 
-The ARP scanner
+---
 
 ## Table of Contents
+- [About](#about)
 - [Installation](#installation)
 - [Documentation](#documentation)
+
+About
+-----
+
+arp-scan is a command-line tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network. It is available for Linux, BSD (including macOS)  and Solaris under the GPLv3 licence.
 
 Installation
 ------------
