@@ -1,18 +1,21 @@
 2022-11-06 Roy Hills <royhills@hotmail.com>
 
-	* Makefile.am: Install mac-vendor.txt to $(sysconfdir)/$(PACKAGE) instead
-	  of $(pkgdatadir). With a default ./configure this will be
+	* Makefile.am: Install mac-vendor.txt to $(sysconfdir)/$(PACKAGE)
+	  instead of $(pkgdatadir). With a default ./configure this will be
 	  /usr/local/etc/arp-scan.  For a binary package it will typically be
 	  /etc/arp-scan. This change is because users may add local entries to
 	  mac-vendor.txt that they want to preserve between package upgrades.
 
 	* arp-scan.c, arp-scan.1.dist: Update file paths for mac-vendor.txt.
 
+	* NEWS renamed to NEWS.md with NEWS symlink pointing to it.
+
 2022-11-03 Roy Hills <royhills@hotmail.com>
 
-	* arp-scan.c, arp-scan.h: Don't display long usage message for unrecognised
-	  options and other simple issues, but display brief message and exit instead.
-	  A brief error message is clearer than half a page of usage text.
+	* arp-scan.c, arp-scan.h: Don't display long usage message for
+	  unrecognised options and other simple issues, but display brief
+	  message and exit instead.  A brief error message is clearer than
+	  half a page of usage text.
 
 	* check-run1: Added tests for unrecognised option and no target hosts.
 
