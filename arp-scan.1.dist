@@ -283,7 +283,7 @@ If that is not found \fI@PKGDATADIR@/ieee-oui.txt\fP is used.
 \fB--macfile\fP=\fI<s>\fP or \fB-O \fI<s>\fR
 Use custom vendor mapping file \fI<s>\fP.
 Default is \fImac-vendor.txt\fP in the current directory.
-If that is not found \fI@PKGDATADIR@/mac-vendor.txt\fP is used.
+If that is not found \fI@PKGSYSCONFDIR@/mac-vendor.txt\fP is used.
 .SS "Output Format Control"
 .TP
 .BR --quiet " or " -q
@@ -569,7 +569,7 @@ specified limit.
 .I @PKGDATADIR@/ieee-oui.txt
 List of IEEE OUI (Organisationally Unique Identifier) to vendor mappings.
 .TP
-.I @PKGDATADIR@/mac-vendor.txt
+.I @PKGSYSCONFDIR@/mac-vendor.txt
 List of other Ethernet MAC to vendor mappings, including local additions.
 .SH EXAMPLES
 .SS "Simple Scan"
