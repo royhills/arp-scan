@@ -1,6 +1,7 @@
 # Process this file with automake to produce Makefile.in
 #
-AM_CPPFLAGS = -DPKGDATADIR=\"$(pkgdatadir)\"
+pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
+AM_CPPFLAGS = -DPKGDATADIR=\"$(pkgdatadir)\" -DPKGSYSCONFDIR=\"$(sysconfdir)\"
 #
 bin_PROGRAMS = arp-scan
 #
@@ -13,14 +14,15 @@ dist_man_MANS = arp-scan.1 get-oui.1 arp-fingerprint.1 mac-vendor.5
 arp_scan_SOURCES = arp-scan.c arp-scan.h error.c wrappers.c utils.c mt19937ar.c format.c mt19937ar.h
 arp_scan_LDADD = $(LIBOBJS)
 #
-dist_pkgdata_DATA = ieee-oui.txt mac-vendor.txt
+dist_pkgsysconf_DATA = mac-vendor.txt
+dist_pkgdata_DATA = ieee-oui.txt
 #
 TESTS = $(dist_check_SCRIPTS)
 EXTRA_DIST = arp-scan.1.dist get-oui.1.dist pkt-simple-request.dat pkt-custom-request.dat pkt-custom-request-padding.dat pkt-custom-request-llc.dat pkt-custom-request-vlan.dat pkt-simple-response.pcap pkt-padding-response.pcap pkt-vlan-response.pcap pkt-llc-response.pcap pkt-net1921681-response.pcap pkt-trailer-response.pcap pkt-vlan-llc-response.pcap pkt-custom-request-vlan-llc.dat pkt-dup-response.pcap pkt-diff-frame-addr.pcap pkt-local-admin.pcap pkt-ieee-regcheck.pcap
 #
 # Substitute autoconf pkgdatadir variable in arp-scan.1 manpage
 CLEANFILES = arp-scan.1 get-oui.1
-do_subst = sed -e 's,[@]PKGDATADIR[@],$(pkgdatadir),g'
+do_subst = sed -e 's,[@]PKGDATADIR[@],$(pkgdatadir),g;s,[@]PKGSYSCONFDIR[@],$(pkgsysconfdir),g'
 arp-scan.1: arp-scan.1.dist Makefile
 	$(do_subst) < $(srcdir)/arp-scan.1.dist > arp-scan.1
 get-oui.1: get-oui.1.dist Makefile

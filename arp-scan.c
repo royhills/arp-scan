@@ -376,7 +376,7 @@ main(int argc, char *argv[]) {
                   count, fn);
       free(fn);
 
-      fn = get_mac_vendor_filename(macfilename, PKGDATADIR, MACFILENAME);
+      fn = get_mac_vendor_filename(macfilename, PKGSYSCONFDIR, MACFILENAME);
       count = add_mac_vendor(fn);
       if (verbose > 1 && count > 0)
          warn_msg("DEBUG: Loaded %d MAC/Vendor entries from %s.",
@@ -1301,7 +1301,7 @@ usage(void) {
    fprintf(stdout, "\n--macfile=<s> or -O <s>\tUse custom vendor mapping file <s>.\n");
    fprintf(stdout, "\t\t\tDefault is %s in the current directory.\n", MACFILENAME);
    fprintf(stdout, "\t\t\tIf that is not found\n");
-   fprintf(stdout, "\t\t\t%s/%s is used.\n", PKGDATADIR, MACFILENAME);
+   fprintf(stdout, "\t\t\t%s/%s is used.\n", PKGSYSCONFDIR, MACFILENAME);
    fprintf(stdout, "\n--srcaddr=<m> or -S <m> Set the source Ethernet MAC address.\n");
    fprintf(stdout, "\t\t\tThe default is the Ethernet address of the outgoing\n");
    fprintf(stdout, "\t\t\tinterface. This sets the 48-bit hardware address in\n");

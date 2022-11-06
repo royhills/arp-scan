@@ -1,3 +1,13 @@
+2022-11-06 Roy Hills <royhills@hotmail.com>
+
+	* Makefile.am: Install mac-vendor.txt to $(sysconfdir)/$(PACKAGE) instead
+	  of $(pkgdatadir). With a default ./configure this will be
+	  /usr/local/etc/arp-scan.  For a binary package it will typically be
+	  /etc/arp-scan. This change is because users may add local entries to
+	  mac-vendor.txt that they want to preserve between package upgrades.
+
+	* arp-scan.c, arp-scan.1.dist: Update file paths for mac-vendor.txt.
+
 2022-11-03 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c, arp-scan.h: Don't display long usage message for unrecognised
