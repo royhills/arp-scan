@@ -1,0 +1,97 @@
+#!/bin/sh
+# arp-scan is Copyright (C) 2005-2022 Roy Hills
+#
+# This file is part of arp-scan.
+#
+# arp-scan is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# arp-scan is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
+#
+# check-run1 -- Shell script to test arp-scan basic functionality
+#
+# Author: Roy Hills
+# Date: 7 November 2022
+#
+# This shell script checks various error conditions.
+#
+ARPSCANOUTPUT=/tmp/arp-scan-output.$$.tmp
+SAMPLE01="$srcdir/pkt-simple-response.pcap"
+
+# Check invalid option - should have non-zero exit status
+echo "Checking arp-scan --xyz (invalid option) ..."
+./arp-scan --xyz > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^Use "arp-scan --help" for detailed information' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Check no target hosts - should have non-zero exit status
+echo "Checking arp-scan without target hosts ..."
+./arp-scan > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: No target hosts on command line ' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Try to use a host input file that doesn't exist - should have non-zero exit status
+echo "Checking arp-scan with non existent host file ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS -f xxxFUNNYxxx --readpktfromfile="$SAMPLE01" > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^Cannot open xxxFUNNYxxx:' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Try to use a non-existant mac/vendor mapping file - should warn and continue
+echo "Checking arp-scan with non existent mac/vendor file ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS -O xxxFUNNYxxx --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^WARNING: Cannot open MAC/Vendor file xxxFUNNYxxx:' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"

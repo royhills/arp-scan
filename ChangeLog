@@ -4,6 +4,12 @@
 	  "for (i=0..." format. This caused errors with old toolchain e.g.
 	  autoconf 2.69/gcc 4.9.2 on Debian Jessie.
 
+	* check-run1: Moved error checks to check-error.
+
+	* check-error: New file to check error conditions.
+
+	* Makefile.am: Updated list of test scripts.
+
 2022-11-06 Roy Hills <royhills@hotmail.com>
 
 	* Makefile.am: Install mac-vendor.txt to $(sysconfdir)/$(PACKAGE)

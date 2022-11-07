@@ -60,37 +60,3 @@ if test $? -ne 0; then
 fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
-
-# Check invalid option - should have non-zero exit status
-echo "Checking arp-scan --xyz (invalid option) ..."
-./arp-scan --xyz > "$ARPSCANOUTPUT" 2>&1
-if test $? -eq 0; then
-   rm -f "$ARPSCANOUTPUT"
-   echo "FAILED"
-   exit 1
-fi
-grep 'arp-scan: unrecognized option ' "$ARPSCANOUTPUT" >/dev/null
-if test $? -ne 0; then
-   rm -f "$ARPSCANOUTPUT"
-   echo "FAILED"
-   exit 1
-fi
-echo "ok"
-rm -f "$ARPSCANOUTPUT"
-
-# Check no target hosts - should have non-zero exit status
-echo "Checking arp-scan without target hosts ..."
-./arp-scan > "$ARPSCANOUTPUT" 2>&1
-if test $? -eq 0; then
-   rm -f "$ARPSCANOUTPUT"
-   echo "FAILED"
-   exit 1
-fi
-grep '^ERROR: No target hosts on command line ' "$ARPSCANOUTPUT" >/dev/null
-if test $? -ne 0; then
-   rm -f "$ARPSCANOUTPUT"
-   echo "FAILED"
-   exit 1
-fi
-echo "ok"
-rm -f "$ARPSCANOUTPUT"
