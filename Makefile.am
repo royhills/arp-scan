@@ -7,7 +7,7 @@ bin_PROGRAMS = arp-scan
 #
 dist_bin_SCRIPTS = get-oui get-iab arp-fingerprint
 #
-dist_check_SCRIPTS = check-run1 check-packet check-decode check-host-list check-ieee-reg
+dist_check_SCRIPTS = check-run1 check-packet check-decode check-host-list check-ieee-reg check-error
 #
 dist_man_MANS = arp-scan.1 get-oui.1 arp-fingerprint.1 mac-vendor.5
 #

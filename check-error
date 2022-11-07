@@ -19,23 +19,22 @@
 # check-run1 -- Shell script to test arp-scan basic functionality
 #
 # Author: Roy Hills
-# Date: 9 March 2006
+# Date: 7 November 2022
 #
-# This shell script checks that "arp-scan --help" and "arp-scan --version"
-# work.  These options don't use much of the arp-scan functionality, so if
-# they fail, then there is a fundamental problem with the program.
+# This shell script checks various error conditions.
 #
-ARPSCANOUTPUT=/tmp/arp-scan-test.$$.tmp
+ARPSCANOUTPUT=/tmp/arp-scan-output.$$.tmp
+SAMPLE01="$srcdir/pkt-simple-response.pcap"
 
-# Check arp-scan --help
-echo "Checking arp-scan --help ..."
-./arp-scan --help > "$ARPSCANOUTPUT"
-if test $? -ne 0; then
+# Check invalid option - should have non-zero exit status
+echo "Checking arp-scan --xyz (invalid option) ..."
+./arp-scan --xyz > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
    exit 1
 fi
-grep '^Report bugs or send suggestions at ' "$ARPSCANOUTPUT" >/dev/null
+grep '^Use "arp-scan --help" for detailed information' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -44,15 +43,15 @@ fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
 
-# Check arp-scan --version
-echo "Checking arp-scan --version ..."
-./arp-scan --version > "$ARPSCANOUTPUT"
-if test $? -ne 0; then
+# Check no target hosts - should have non-zero exit status
+echo "Checking arp-scan without target hosts ..."
+./arp-scan > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
    exit 1
 fi
-grep '^Copyright (C) ' "$ARPSCANOUTPUT" >/dev/null
+grep '^ERROR: No target hosts on command line ' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -60,3 +59,22 @@ if test $? -ne 0; then
 fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
+
+# Try to use a file that doesn't exist - should have non-zero exit status
+echo "Checking arp-scan with non existent file ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS -f xxxFUNNYxxx --readpktfromfile="$SAMPLE01" > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^Cannot open xxxFUNNYxxx:' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
