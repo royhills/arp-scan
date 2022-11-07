@@ -60,8 +60,8 @@ fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
 
-# Try to use a file that doesn't exist - should have non-zero exit status
-echo "Checking arp-scan with non existent file ..."
+# Try to use a host input file that doesn't exist - should have non-zero exit status
+echo "Checking arp-scan with non existent host file ..."
 ARPARGS="--retry=1"
 ./arp-scan $ARPARGS -f xxxFUNNYxxx --readpktfromfile="$SAMPLE01" > "$ARPSCANOUTPUT" 2>&1
 if test $? -eq 0; then
@@ -78,3 +78,20 @@ fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
 
+# Try to use a non-existant mac/vendor mapping file - should warn and continue
+echo "Checking arp-scan with non existent mac/vendor file ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS -O xxxFUNNYxxx --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^WARNING: Cannot open MAC/Vendor file xxxFUNNYxxx:' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
