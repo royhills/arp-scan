@@ -419,29 +419,23 @@ rm -f "$EXAMPLEOUTPUT"
 
 # Simple ARP response packet with --resolve
 echo "Checking simple ARP response with --resolve using $SAMPLE01 ..."
-echo "(this test will fail if 127.0.0.1 does not resolve to \"localhost\")"
-cat >"$EXAMPLEOUTPUT" <<_EOF_
-localhost	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION
-
-_EOF_
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --resolve"
-./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 | grep -v '^Starting arp-scan ' | grep -v '^Interface: ' | grep -v '^Ending arp-scan ' | grep -v '^[0-9]* packets received ' > "$ARPSCANOUTPUT" 2>&1
+echo "(this test will fail if 127.0.0.1 does not resolve to a hostname)"
+echo "(typically localhost but it does not matter what name it resolves to)"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --resolve --plain --format=\${name}"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
-   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
-cmp -s "$ARPSCANOUTPUT" "$EXAMPLEOUTPUT"
+grep -v '^127\.0\.0\.1$' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
-   rm -f "$EXAMPLEOUTPUT"
    echo "FAILED"
    exit 1
 fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
-rm -f "$EXAMPLEOUTPUT"
 
 # ARP response with Ethernet frame source address != ar$sha in the ARP packet
 echo "Checking ARP response with Ethernet frame source address != ar\$sha using $SAMPLE09 ..."
