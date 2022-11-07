@@ -1298,7 +1298,7 @@ usage(void) {
    fprintf(stdout, "\t\t\tDefault is %s in the current directory. If\n", OUIFILENAME);
    fprintf(stdout, "\t\t\tthat is not found %s/%s\n", PKGDATADIR, OUIFILENAME);
    fprintf(stdout, "\t\t\tis used.\n");
-   fprintf(stdout, "\n--macfile=<s> or -O <s>\tUse custom vendor mapping file <s>.\n");
+   fprintf(stdout, "\n--macfile=<s> or -m <s>\tUse custom vendor mapping file <s>.\n");
    fprintf(stdout, "\t\t\tDefault is %s in the current directory.\n", MACFILENAME);
    fprintf(stdout, "\t\t\tIf that is not found\n");
    fprintf(stdout, "\t\t\t%s/%s is used.\n", PKGSYSCONFDIR, MACFILENAME);
