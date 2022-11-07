@@ -22,7 +22,7 @@ EXTRA_DIST = arp-scan.1.dist get-oui.1.dist pkt-simple-request.dat pkt-custom-re
 #
 # Substitute autoconf pkgdatadir variable in arp-scan.1 manpage
 CLEANFILES = arp-scan.1 get-oui.1
-do_subst = sed -e 's,[@]PKGDATADIR[@],$(pkgdatadir),g;s,[@]PKGSYSCONFDIR[@],$(pkgsysconfdir),g'
+do_subst = $(SED) -e 's,[@]PKGDATADIR[@],$(pkgdatadir),g;s,[@]PKGSYSCONFDIR[@],$(pkgsysconfdir),g'
 arp-scan.1: arp-scan.1.dist Makefile
 	$(do_subst) < $(srcdir)/arp-scan.1.dist > arp-scan.1
 get-oui.1: get-oui.1.dist Makefile
