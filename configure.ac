@@ -1,9 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([arp-scan],[1.9.9],[https://github.com/royhills/arp-scan])
-AC_PREREQ([2.61])
-AC_REVISION($Revision$)
+AC_PREREQ([2.69])
 AC_CONFIG_SRCDIR([arp-scan.c])
+AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_HEADERS([config.h])
@@ -29,6 +29,7 @@ AC_ARG_ENABLE(gcov,
    ] )
 
 dnl Checks for programs.
+AC_PROG_SED
 AC_PROG_CC
 if test -n "$GCC"; then
    AC_DEFINE([ATTRIBUTE_UNUSED], [__attribute__ ((__unused__))],

@@ -10,6 +10,11 @@
 
 	* NEWS renamed to NEWS.md with NEWS symlink pointing to it.
 
+	* configure.ac, Makefile.am: use $(SED) variable, remove
+	  AC_REVISION($Revision$) because git doesn't expand keywords.
+	  Add AC_CONFIG_AUX_DIR([build-aux]) to declutter top level directory.
+	  Changed AC_PREREQ() from 2.61 to 2.69.
+
 2022-11-03 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c, arp-scan.h: Don't display long usage message for
