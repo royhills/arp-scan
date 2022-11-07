@@ -1,3 +1,9 @@
+2022-11-07 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.c: Changed C99 "for (int i=0..." syntax to C89
+	  "for (i=0..." format. This caused errors with old toolchain e.g.
+	  autoconf 2.69/gcc 4.9.2 on Debian Jessie.
+
 2022-11-06 Roy Hills <royhills@hotmail.com>
 
 	* Makefile.am: Install mac-vendor.txt to $(sysconfdir)/$(PACKAGE)

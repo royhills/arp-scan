@@ -707,6 +707,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
    char *cp;
    char *ga_err_msg;
    int nonzero=0;
+   unsigned i;
 /*
  *	Assign output fields based on response packet and options.
  */
@@ -794,7 +795,6 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
  *	field to the hex representation of the padding.
  */
       if (extra_data_len > 0) {
-         unsigned i;
          const unsigned char *ucp = extra_data;
 
          for (i=0; i<extra_data_len; i++) {
@@ -963,7 +963,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
    printf("%s\n", msg);
    free(msg);
 
-   for (int i=0; i<NUMFIELDS; i++)
+   for (i=0; i<NUMFIELDS; i++)
       if (fields[i].value) {
          free(fields[i].value);
          fields[i].value = NULL;
