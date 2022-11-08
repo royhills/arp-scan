@@ -42,7 +42,7 @@ jobs:
     - name: install libpcap
       run: |
         sudo apt-get update -qq
-        sudo apt-get install -qq libpcap0.8-dev
+        sudo apt-get install -qq libpcap0.8-dev libcap-dev
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL

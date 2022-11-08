@@ -17,7 +17,7 @@ jobs:
       - name: install libpcap and lcov
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -qq libpcap0.8-dev lcov
+          sudo apt-get install -qq libpcap0.8-dev libcap-dev lcov
       - name: autoreconf
         run: autoreconf --install
       - name: configure with gcov
