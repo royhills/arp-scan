@@ -34,7 +34,7 @@ jobs:
     - name: make distcheck
       run: make distcheck
     - name: localnet-run
-      run: sudo ./arp-scan --localnet
+      run: sudo ./arp-scan --localnet --limit=1 || true
     - name: print info
       run: |
         uname -a
