@@ -36,5 +36,9 @@ jobs:
     - name: print info
       run: |
         uname -a
+	lsb_release -a
+	sw_vers
         gcc --version
+	autoconf --version
+	automake --version
         ./arp-scan --version
