@@ -33,6 +33,8 @@ jobs:
       run: make check
     - name: make distcheck
       run: make distcheck
+    - name: localnet-run
+      run: sudo ./arp-scan --localnet
     - name: print info
       run: |
         uname -a
