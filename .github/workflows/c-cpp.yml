@@ -21,7 +21,7 @@ jobs:
     - name: install libpcap on linux
       run: |
         sudo apt-get update -qq
-        sudo apt-get install -qq libpcap0.8-dev
+        sudo apt-get install -qq libpcap0.8-dev libcap-dev
       if: matrix.os == 'ubuntu-latest'
     - name: autoreconf
       run: autoreconf --install
@@ -36,5 +36,9 @@ jobs:
     - name: print info
       run: |
         uname -a
+        lsb_release -a || true
+        sw_vers || true
         gcc --version
+        autoconf --version
+        automake --version
         ./arp-scan --version
