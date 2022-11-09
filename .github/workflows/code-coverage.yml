@@ -27,7 +27,7 @@ jobs:
       - name: make check
         run: make check
       - name: localnet-run
-        run:
+        run: |
           sudo setcap cap_net_raw+p ./arp-scan
           ./arp-scan --localnet --limit=1 || true
       - name: create lcov.info
