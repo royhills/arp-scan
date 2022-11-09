@@ -5,7 +5,7 @@ release.  For more details please read the ChangeLog file.**
 
 ## New Features
 
-* **Added POSIX.1e capabilities support for Linux systems with libcap.**
+* **POSIX.1e capabilities support for Linux systems with libcap.**
 
   - Uses `CAP_NET_RAW` capability instead of superuser (root) permissions.
   - May need to install `libcap-dev` or similar for \.configure to enable.
@@ -29,7 +29,7 @@ release.  For more details please read the ChangeLog file.**
   - --version displays `Built with libcap POSIX.1e capability support` (or not)
   - Adapted from the iputils-ping capabilities code.
 
-* **New --format option provides flexible output format.**
+* **--format option allows flexible output format.**
 
   - Fields and text with \ character escapes, e.g. `${ip}\t${mac}\t${vendor}`
   - Optional left/right aligned width, e.g. `|${ip;-15}|${mac}|`
@@ -65,16 +65,12 @@ release.  For more details please read the ChangeLog file.**
 ## Notes for package maintainers
 
 * If you are packaging for Linux please build with libcap POSIX.1e capability
-  support if possible because it greatly reduces the risk of running SUID root.
-  You should probably also add dependencies on the `libcap` shared library
-  package (e.g. `libcap2` on Debian) which is required for the program to run,
-  and the libpcap the user-space interfaces (e.g. `libcap2-bin`) for the
-  `getcap` and `setcap` commands.
+  support if possible.
 
 * If you are packaging for a Debian based system, the get-oui Perl script can
   easily be edited to use the ieee-data package.
 
-* Note that the `get-iab` Perl script and the `ieee-iab.txt` file have been
+* Note that the `get-iab` script and the `ieee-iab.txt` file have been
   removed from this version.
 
 * Note that the `mac-vendor.txt` file has been moved to
