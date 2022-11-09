@@ -5,10 +5,10 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "November 7, 2022"
+.TH ARP-SCAN 1 "November 9, 2022"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
-arp-scan \- Send ARP requests to network hosts and display responses
+arp-scan \- Send ARP requests to target hosts and display responses
 .SH SYNOPSIS
 .B arp-scan
 .RI [ options ] " " [ hosts ...]
@@ -32,8 +32,7 @@ Linux with POSIX.1e capabilities support using libcap:
 permitted set and only enables that capability for the required functions.
 use \fIsetcap cap_net_raw+p /path/to/arp-scan\fP to add CAP_NET_RAW to the
 permitted set of the arp-scan executable.
-.sp
-Capabilities support makes SUID root much safer because \fBarp-scan\fP
+Capabilities support also makes SUID root much safer because \fBarp-scan\fP
 will drop all capabilities except CAP_NET_RAW and will not run with full root
 privileges.
 .TP
@@ -130,7 +129,7 @@ Protocol Type	16	--prototype	0x0806 (ARP)
 The \fB--destaddr\fP option which sets the destination Ethernet address
 is the only one that is commonly used.
 .PP
-Any ARP responses that are received are displayed in the following format:
+By default, ARP responses are displayed in the following format:
 .TS
 ;
 L L L.
@@ -140,7 +139,8 @@ L L L.
 Where \fIIPv4 Address\fP is the IP address of the responding target,
 \fIMAC Address\fP is its link-layer address and \fIVendor Details\fP
 are the vendor details decoded from the hardware address. The output
-fields are separated by a single tab character.
+fields are separated by a single tab character. You can change the
+output format with the \fB--format\fP option.
 .PP
 The responses are displayed in the order they are received, which
 can be different from the order the requests were sent because some
@@ -153,7 +153,7 @@ The vendor decoding uses the files \fIieee-oui.txt\fP and \fImac-vendor.txt\fP.
 used to add custom mappings. \fBget-oui\fP can be used to update
 \fIieee-oui.txt\fP with the latest data from the IEEE registries.
 .PP
-Almost all IPv4 hosts will respond to ARP request packets, including
+All IPv4 hosts should respond to ARP request packets, including
 hosts with packet filtering such as firewalls. This makes \fBarp-scan\fP
 a useful tool to discover all active IPv4 hosts on the local network.
 .SH OPTIONS
@@ -220,7 +220,7 @@ If that is not found \fI@PKGSYSCONFDIR@/mac-vendor.txt\fP is used.
 .BR --quiet " or " -q
 Display minimal output for each responding host.
 Only the IP address and MAC address are displayed.
-Reduces memory usage and startup time because the
+Reduces memory usage by about 5MB because the
 vendor mapping files are not used.
 Only the \fI${ip}\fP and \fI${mac}\fP fields are available for the \fB--format\fP
 option if \fB--quiet\fP is specified.
@@ -266,7 +266,7 @@ DUP	Packet number for duplicate packets (>1)
 RTT	Round trip time if \fB--rtt\fP option given
 .TE
 .sp
-Only the "\fIip\fP" and "\fImac\fP" fields are available if the
+Only the \fI${ip}\fP and \fI${mac}\fP fields are available if the
 \fB--quiet\fP option is specified.
 .sp
 Any characters that are not fields are output

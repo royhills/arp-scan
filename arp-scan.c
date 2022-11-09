@@ -1212,7 +1212,7 @@ usage(void) {
    fprintf(stdout, "Output Format Control:\n");
    fprintf(stdout, "\n--quiet or -q\t\tDisplay minimal output for each responding host.\n");
    fprintf(stdout, "\t\t\tOnly the IP address and MAC address are displayed.\n");
-   fprintf(stdout, "\t\t\tReduces memory usage and startup time because the\n");
+   fprintf(stdout, "\t\t\tReduces memory usage by about 5MB because the\n");
    fprintf(stdout, "\t\t\tvendor mapping files are not used. Only the ${ip}\n");
    fprintf(stdout, "\t\t\tand ${mac} fields are available for the --format\n");
    fprintf(stdout, "\t\t\toption if --quiet is specified.\n");
