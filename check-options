@@ -28,7 +28,7 @@ SAMPLE01="$srcdir/pkt-simple-response.pcap"
 
 # Check --bandwidth with appended multiple character
 echo "Checking arp-scan --bandwidth ..."
-ARPARGS="--quiet --plain --retry=1 --bandwidth=256K --retry-send=1 --retry-send-interval=1 --timeout=100 --backoff=1.0 --snap=128 --limit=1"
+ARPARGS="--quiet --plain --retry=1 --bandwidth=256K --retry-send=1 --retry-send-interval=1000u --timeout=100 --backoff=1.0 --snap=128 --limit=1"
 ./arp-scan --readpktfromfile="$SAMPLE01" $ARPARGS 127.0.0.1 > "$ARPSCANOUTPUT"
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
