@@ -27,7 +27,9 @@ jobs:
       - name: make check
         run: make check
       - name: localnet-run
-        run: sudo ./arp-scan --localnet --limit=1 || true
+        run:
+          sudo setcap cap_net_raw+p ./arp-scan
+          ./arp-scan --localnet --limit=1 || true
       - name: create lcov.info
         run: lcov --directory . --capture --output-file lcov.info
       - name: Coveralls
