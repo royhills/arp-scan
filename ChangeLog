@@ -1,3 +1,12 @@
+2022-11-09 Roy Hills <royhills@hotmail.com>
+
+	* check-error, check-options, Makefile.am: Added new tests to check
+	  various options and error conditions.
+
+	* arp-scan.c, arp-scan.1.dist: Updated manpage and help text.
+
+	* pre-release-testing.txt: Removed unneeded and outdated file.
+
 2022-11-07 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Changed C99 "for (int i=0..." syntax to C89
