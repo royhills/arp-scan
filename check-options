@@ -1,0 +1,47 @@
+#!/bin/sh
+# arp-scan is Copyright (C) 2005-2022 Roy Hills
+#
+# This file is part of arp-scan.
+#
+# arp-scan is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# arp-scan is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with arp-scan.  If not, see <http://www.gnu.org/licenses/>.
+#
+# check-options -- Shell script to test arp-scan options
+#
+# Author: Roy Hills
+# Date: 9 November 2022
+#
+# This shell script checks various arp-scan options.
+#
+ARPSCANOUTPUT=/tmp/arp-scan-test.$$.tmp
+SAMPLE01="$srcdir/pkt-simple-response.pcap"
+
+# Check --bandwidth with appended multiple character
+echo "Checking arp-scan --bandwidth ..."
+ARPARGS="--retry=1 --bandwidth=256K --retry-send=1 --retry-send-interval=1 --timeout=100 --backoff=1.0 --snap=128 --limit=1"
+./arp-scan --readpktfromfile="$SAMPLE01" $ARPARGS 127.0.0.1 > "$ARPSCANOUTPUT"
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^127.0.0.1	08:00:2b:06:07:08	DIGITAL EQUIPMENT CORPORATION' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+
