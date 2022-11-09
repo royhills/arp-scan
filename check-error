@@ -95,3 +95,93 @@ if test $? -ne 0; then
 fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
+
+# Try to specify both --bandwidth and --interval - nonzero exit status.
+echo "Checking arp-scan with both --bandwidth and --interval ..."
+ARPARGS="--retry=1 --bandwidth=1 --interval=1"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: You cannot specify both --bandwidth and --interval' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Try to specify targets with the --localnet option - nonzero exit
+echo "Checking arp-scan with both targets and --localnet ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" --localnet 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: You can not specify targets with the --localnet option' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Try to specify --file with --localnet option - nonzero exit
+echo "Checking arp-scan with --file and --localnet ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" --localnet --file=- > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: You can not specify both --file and --localnet options' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Try to specify invalid IP address - nonzero exit
+echo "Checking arp-scan with invalid IP address ..."
+ARPARGS="--retry=1 --numeric"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 333.333.333.333 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^WARNING: "333.333.333.333" is not a valid IPv4 address - target ignored' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Try to specify invalid CIDR address - nonzero exit
+echo "Checking arp-scan with invalid CIDR address ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: Number of bits in 10.0.0.0/0 must be between 3 and 32' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
