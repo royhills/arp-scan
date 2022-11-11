@@ -76,6 +76,10 @@ release.  For more details please read the ChangeLog file.**
 * Note that the `get-iab` script and the `ieee-iab.txt` file have been
   removed from this version.
 
+* `Makefile.am` contains an `install-exec-hook` that will set `CAP_NET_RAW` on
+  the arp-scan executable if it can, otherwise it will install it SUID. you can
+  remove this install-exec-hook code if this behaviour is not desired.
+
 * Note that the `mac-vendor.txt` file has been moved to
   `$(sysconfdir)/$(PACKAGE)` as detailed above. Users may make local changes
   to this file and upstream changes should be infrequent. Please mark this
