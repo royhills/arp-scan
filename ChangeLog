@@ -1,3 +1,9 @@
+2022-11-11 Roy Hills <royhills@hotmail.com>
+
+	* Makefile.am: Added install-exec-hook to set the CAP_NET_RAW
+	  capability on the arp-scan executable if "setcap" exists and
+	  works.  Otherwise falls back to setting the SUID bit.
+
 2022-11-09 Roy Hills <royhills@hotmail.com>
 
 	* check-error, check-options, Makefile.am: Added new tests to check

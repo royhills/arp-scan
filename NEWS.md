@@ -1,7 +1,7 @@
 **This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.**
 
-# YYYY-MM-DD arp-scan 1.9.9 (in progress)
+# 2022-MM-DD arp-scan 1.10 (in progress)
 
 ## New Features
 
@@ -28,6 +28,9 @@ release.  For more details please read the ChangeLog file.**
     e.g. `--pcapsavefile` or `--ouifile` in user directories.
   - --version displays `Built with libcap POSIX.1e capability support` (or not)
   - Adapted from the iputils-ping capabilities code.
+  - `make install` will install the arp-scan executable with the `CAP_NET_RAW`
+     capability if `setcap` is available and works. Otherwise will fallback to
+     SUID.
 
 * **--format option allows flexible output format.**
 
@@ -62,19 +65,25 @@ release.  For more details please read the ChangeLog file.**
 * **arp-scan now prints a brief error message instead of half a page of usage
   text for unknown options.**
 
-## Notes for package maintainers
+## Package Maintainers Notes
 
 * If you are packaging for Linux please build with libcap POSIX.1e capability
-  support if possible.
+  support if your distribution allows it.
 
 * If you are packaging for a Debian based system, the get-oui Perl script can
-  easily be edited to use the ieee-data package.
+  easily be edited to use the Debian ieee-data package.
 
 * Note that the `get-iab` script and the `ieee-iab.txt` file have been
   removed from this version.
 
+* `Makefile.am` contains an `install-exec-hook` that will set `CAP_NET_RAW` on
+  the arp-scan executable if it can, otherwise it will install it SUID. you can
+  remove this install-exec-hook code if this behaviour is not desired.
+
 * Note that the `mac-vendor.txt` file has been moved to
-  `$(sysconfdir)/$(PACKAGE)` as detailed above.
+  `$(sysconfdir)/$(PACKAGE)` as detailed above. Users may make local changes
+  to this file and upstream changes should be infrequent. Please mark this
+  as a configuration file if possible so upgrades don't overwrite user changes.
 
 * If you have any problems packaging arp-scan, please open an issue on github.
 
