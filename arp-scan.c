@@ -120,7 +120,7 @@ main(int argc, char *argv[]) {
    int ret_status = 0;
    int pcap_fd;                 /* Pcap file descriptor */
    unsigned char interface_mac[ETH_ALEN];
-   pcap_t *pcap_handle;		/* pcap handle */
+   pcap_t *pcap_handle;         /* pcap handle */
    struct in_addr interface_ip_addr;
    /*
     * Limit process capabilities to the minimum necessary to run this program.
@@ -446,7 +446,7 @@ main(int argc, char *argv[]) {
    if (!num_hosts)
       err_msg("ERROR: No hosts to process.");
    /*
-    *	If --writepkttofile was specified, open the specified output file.
+    * If --writepkttofile was specified, open the specified output file.
     */
    if (pkt_write_file_flag) {
       write_pkt_to_file = open(pkt_filename, O_WRONLY|O_CREAT|O_TRUNC, 0666);
@@ -699,7 +699,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
     */
 
    /*
-    *	IP field, always present.
+    * IP field, always present.
     */
    fields[0].value = make_message("%s", my_ntoa(he->addr));
    /*
@@ -838,7 +838,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       }
    } /* End if (!quiet_flag) */
    /*
-    *	Output fields.
+    * Output fields.
     */
    if (!format) { /* If --format option not given */
       /*
@@ -946,7 +946,7 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       }
    }
    /*
-    *	Display the message on stdout.
+    * Display the message on stdout.
     */
    printf("%s\n", msg);
    free(msg);
@@ -1065,7 +1065,7 @@ send_packet(pcap_t *pcap_handle, host_entry *he,
           nsent = pcap_sendpacket(pcap_handle, buf, buflen);
           if (nsent >= 0) { /* Successfully sent packet */
               break;
-          } else if (errno != EAGAIN) {	/* Unrecoverable error */
+          } else if (errno != EAGAIN) { /* Unrecoverable error */
               err_sys("ERROR: failed to send packet");
           }
           if (retry_send_interval > 0) {
@@ -2336,7 +2336,7 @@ marshal_arp_pkt(unsigned char *buffer, ether_hdr *frame_hdr,
    memcpy(cp, &(frame_hdr->src_addr), sizeof(frame_hdr->src_addr));
    cp += sizeof(frame_hdr->src_addr);
    /*
-    *	Add 802.1Q tag if we are using VLAN tagging
+    * Add 802.1Q tag if we are using VLAN tagging
     */
    if (ieee_8021q_vlan != -1) {
       uint16_t tci;

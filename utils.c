@@ -220,7 +220,7 @@ hexstring(const unsigned char *data, size_t size) {
    const unsigned char *cp;
    unsigned i;
    /*
-    *	If the input data is NULL, return an empty string.
+    * If the input data is NULL, return an empty string.
     */
    if (data == NULL) {
       result = Malloc(1);
@@ -228,7 +228,7 @@ hexstring(const unsigned char *data, size_t size) {
       return result;
    }
    /*
-    *	Create and return hex string.
+    * Create and return hex string.
     */
    result = Malloc(2*size + 1);
    cp = data;
@@ -437,9 +437,9 @@ limit_capabilities(void) {
    cap_flag_value_t cap_ok;
    cap_value_t cap_list[] = {CAP_NET_RAW};
    /*
-    *	Create a new capability state in "cap_p" containing only those
-    *	capabilities that are required by the application and are present in the
-    *	permitted capability set.
+    * Create a new capability state in "cap_p" containing only those
+    * capabilities that are required by the application and are present in the
+    * permitted capability set.
     */
    if (!(cap_cur_p = cap_get_proc()))
       err_sys("cap_get_proc()");
@@ -452,13 +452,13 @@ limit_capabilities(void) {
       cap_set_flag(cap_p, CAP_PERMITTED, sizeof(cap_list)/sizeof(cap_list[0]),
                    cap_list, CAP_SET);
    /*
-    *	Set the process capabilities to the new capability state.
+    * Set the process capabilities to the new capability state.
     */
    if (cap_set_proc(cap_p) < 0)
       err_sys("cap_set_proc()");
    /*
-    *	Permanently drop SUID but retain capability state.
-    *	We don't need root UID if we have the required capabilities.
+    * Permanently drop SUID but retain capability state.
+    * We don't need root UID if we have the required capabilities.
     */
    if (prctl(PR_SET_KEEPCAPS, 1) < 0)
       err_sys("prctl()");
@@ -467,7 +467,7 @@ limit_capabilities(void) {
    if (prctl(PR_SET_KEEPCAPS, 0) < 0)
       err_sys("prctl()");
    /*
-    *	Free temporary capability state storage.
+    * Free temporary capability state storage.
     */
    cap_free(cap_p);
    cap_free(cap_cur_p);

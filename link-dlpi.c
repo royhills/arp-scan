@@ -71,8 +71,7 @@
 #define MAXDLBUF 8192*4
 
 /*
- *	Link layer handle structure for DLPI.
- *	This is typedef'ed as link_t.
+ * Link layer handle structure for DLPI.
  */
 typedef struct link_handle {
    int fd;

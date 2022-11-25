@@ -40,8 +40,7 @@
 #endif
 
 /*
- *	Link layer handle structure for packet socket.
- *	This is typedef'ed as link_t.
+ * Link layer handle structure for packet socket.
  */
 typedef struct link_handle {
    int fd; /* Socket file descriptor */
