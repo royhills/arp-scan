@@ -1,7 +1,7 @@
 # Process this file with automake to produce Makefile.in
 #
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
-AM_CPPFLAGS = -DPKGDATADIR=\"$(pkgdatadir)\" -DPKGSYSCONFDIR=\"$(sysconfdir)\"
+AM_CPPFLAGS = -DPKGDATADIR=\"$(pkgdatadir)\" -DPKGSYSCONFDIR=\"$(sysconfdir)/$(PACKAGE)\"
 #
 bin_PROGRAMS = arp-scan
 #

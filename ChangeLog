@@ -1,3 +1,9 @@
+2022-11-25 Roy Hills <royhills@hotmail.com>
+
+	* Makefile.am: Add $(PACKAGE) to the PKGSYSCONFDIR macro definition
+	  so arp-scan looks in the correct directory for the mac-vendor.txt
+	  file.  Thanks to Richard Hoyle for reporting this bug.
+
 2022-11-11 Roy Hills <royhills@hotmail.com>
 
 	* Makefile.am: Added install-exec-hook to set the CAP_NET_RAW
