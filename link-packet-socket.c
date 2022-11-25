@@ -44,7 +44,7 @@
  *	This is typedef'ed as link_t.
  */
 typedef struct link_handle {
-   int fd;		/* Socket file descriptor */
+   int fd; /* Socket file descriptor */
    struct ifreq ifr;
    struct sockaddr_ll sll;
 } link_t;
@@ -117,12 +117,12 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
    link_t *handle;
 
    handle = link_open(if_name);
-   if(!handle) {
-       err_sys("link_open");
-       return;
+   if (!handle) {
+      err_sys("link_open");
+      return;
    }
 
-/* Obtain hardware address for specified interface */
+   /* Obtain hardware address for specified interface */
    if ((ioctl(handle->fd, SIOCGIFHWADDR, &(handle->ifr))) != 0)
       err_sys("ioctl");
 

@@ -56,14 +56,14 @@ timeval_diff(const struct timeval *a, const struct timeval *b,
 
    /* Perform the carry for the later subtraction by updating b. */
    if (a->tv_usec < temp.tv_usec) {
-     int nsec = (temp.tv_usec - a->tv_usec) / 1000000 + 1;
-     temp.tv_usec -= 1000000 * nsec;
-     temp.tv_sec += nsec;
+      int nsec = (temp.tv_usec - a->tv_usec) / 1000000 + 1;
+      temp.tv_usec -= 1000000 * nsec;
+      temp.tv_sec += nsec;
    }
    if (a->tv_usec - temp.tv_usec > 1000000) {
-     int nsec = (a->tv_usec - temp.tv_usec) / 1000000;
-     temp.tv_usec += 1000000 * nsec;
-     temp.tv_sec -= nsec;
+      int nsec = (a->tv_usec - temp.tv_usec) / 1000000;
+      temp.tv_usec += 1000000 * nsec;
+      temp.tv_sec -= nsec;
    }
 
    /* Compute the time difference
@@ -90,20 +90,19 @@ timeval_diff(const struct timeval *a, const struct timeval *b,
  *	This function is a modified version of hstr_i at www.snippets.org.
  */
 unsigned int
-hstr_i(const char *cptr)
-{
-      unsigned int i;
-      unsigned int j = 0;
-      int k;
+hstr_i(const char *cptr) {
+   unsigned int i;
+   unsigned int j = 0;
+   int k;
 
-      for (k=0; k<2; k++) {
-            i = *cptr++ - '0';
-            if (9 < i)
-                  i -= 7;
-            j <<= 4;
-            j |= (i & 0x0f);
-      }
-      return j;
+   for (k=0; k<2; k++) {
+      i = *cptr++ - '0';
+      if (9 < i)
+         i -= 7;
+      j <<= 4;
+      j |= (i & 0x0f);
+   }
+   return j;
 }
 
 /*
@@ -130,7 +129,7 @@ hex2data(const char *string, size_t *data_len) {
    unsigned i;
    size_t len;
 
-   if (strlen(string) %2 ) {	/* Length is odd */
+   if (strlen(string) % 2) { /* Length is odd */
       *data_len = 0;
       return NULL;
    }
@@ -139,7 +138,7 @@ hex2data(const char *string, size_t *data_len) {
    data = Malloc(len);
    cp = data;
    for (i=0; i<len; i++)
-      *cp++=hstr_i(&string[i*2]);
+      *cp++ = hstr_i(&string[i*2]);
    *data_len = len;
    return data;
 }
@@ -168,21 +167,21 @@ make_message(const char *fmt, ...) {
    size_t size = 0;
    char *p = NULL;
    va_list ap;
-/*
- * Determine required size for the resultant string.
-*/
+   /*
+    * Determine required size for the resultant string.
+    */
    va_start(ap, fmt);
    n = vsnprintf(p, size, fmt, ap);
    va_end(ap);
 
    if (n < 0)
-      return NULL;	/* vsnprintf output error */
+      return NULL; /* vsnprintf output error */
 
-   size = (size_t) n + 1;      /* One extra byte for '\0' */
+   size = (size_t)n + 1; /* One extra byte for '\0' */
    p = Malloc(size);
-/*
- * Print into the allocated space.
- */
+   /*
+    * Print into the allocated space.
+    */
    va_start(ap, fmt);
    n = vsnprintf(p, size, fmt, ap);
    va_end(ap);
@@ -220,17 +219,17 @@ hexstring(const unsigned char *data, size_t size) {
    char *r;
    const unsigned char *cp;
    unsigned i;
-/*
- *	If the input data is NULL, return an empty string.
- */
+   /*
+    *	If the input data is NULL, return an empty string.
+    */
    if (data == NULL) {
       result = Malloc(1);
       result[0] = '\0';
       return result;
    }
-/*
- *	Create and return hex string.
- */
+   /*
+    *	Create and return hex string.
+    */
    result = Malloc(2*size + 1);
    cp = data;
    r = result;
@@ -270,11 +269,11 @@ get_ether_addr(const char *address_string, unsigned char *ether_addr) {
 
    result = sscanf(address_string, "%x:%x:%x:%x:%x:%x",
                    &mac_b0, &mac_b1, &mac_b2, &mac_b3, &mac_b4, &mac_b5);
-   if (result !=6 ) {
+   if (result != 6) {
       result = sscanf(address_string, "%x-%x-%x-%x-%x-%x",
                       &mac_b0, &mac_b1, &mac_b2, &mac_b3, &mac_b4, &mac_b5);
    }
-   if (result !=6 ) {
+   if (result != 6) {
       return -1;
    }
    ether_addr[0] = mac_b0;
@@ -303,14 +302,14 @@ str_to_bandwidth(const char *bandwidth_string) {
    char *bandwidth_str;
    size_t bandwidth_len;
    unsigned value;
-   int multiplier=1;
+   int multiplier = 1;
    int end_char;
 
-   bandwidth_str=dupstr(bandwidth_string);	/* Writable copy */
-   bandwidth_len=strlen(bandwidth_str);
+   bandwidth_str = dupstr(bandwidth_string); /* Writable copy */
+   bandwidth_len = strlen(bandwidth_str);
    end_char = bandwidth_str[bandwidth_len-1];
-   if (!isdigit(end_char)) {	/* End character is not a digit */
-      bandwidth_str[bandwidth_len-1] = '\0';	/* Remove last character */
+   if (!isdigit(end_char)) { /* End character is not a digit */
+      bandwidth_str[bandwidth_len-1] = '\0'; /* Remove last character */
       switch (end_char) {
          case 'M':
          case 'm':
@@ -326,7 +325,7 @@ str_to_bandwidth(const char *bandwidth_string) {
             break;
       }
    }
-   value=Strtoul(bandwidth_str, 10);
+   value = Strtoul(bandwidth_str, 10);
    free(bandwidth_str);
    return multiplier * value;
 }
@@ -347,14 +346,14 @@ str_to_interval(const char *interval_string) {
    char *interval_str;
    size_t interval_len;
    unsigned value;
-   int multiplier=1000;
+   int multiplier = 1000;
    int end_char;
 
-   interval_str=dupstr(interval_string);	/* Writable copy */
-   interval_len=strlen(interval_str);
+   interval_str = dupstr(interval_string); /* Writable copy */
+   interval_len = strlen(interval_str);
    end_char = interval_str[interval_len-1];
-   if (!isdigit(end_char)) {	/* End character is not a digit */
-      interval_str[interval_len-1] = '\0';	/* Remove last character */
+   if (!isdigit(end_char)) {               /* End character is not a digit */
+      interval_str[interval_len-1] = '\0'; /* Remove last character */
       switch (end_char) {
          case 'U':
          case 'u':
@@ -370,7 +369,7 @@ str_to_interval(const char *interval_string) {
             break;
       }
    }
-   value=Strtoul(interval_str, 10);
+   value = Strtoul(interval_str, 10);
    free(interval_str);
    return multiplier * value;
 }
@@ -397,7 +396,7 @@ dupstr(const char *str) {
    char *cp;
    size_t len;
 
-   len = strlen(str) + 1;	/* Allow space for terminating NULL */
+   len = strlen(str) + 1; /* Allow space for terminating NULL */
    cp = Malloc(len);
    strlcpy(cp, str, len);
    return cp;
@@ -437,11 +436,11 @@ limit_capabilities(void) {
    cap_t cap_p;
    cap_flag_value_t cap_ok;
    cap_value_t cap_list[] = {CAP_NET_RAW};
-/*
- *	Create a new capability state in "cap_p" containing only those
- *	capabilities that are required by the application and are present in the
- *	permitted capability set.
- */
+   /*
+    *	Create a new capability state in "cap_p" containing only those
+    *	capabilities that are required by the application and are present in the
+    *	permitted capability set.
+    */
    if (!(cap_cur_p = cap_get_proc()))
       err_sys("cap_get_proc()");
    if (!(cap_p = cap_init()))
@@ -452,32 +451,32 @@ limit_capabilities(void) {
    if (cap_ok != CAP_CLEAR)
       cap_set_flag(cap_p, CAP_PERMITTED, sizeof(cap_list)/sizeof(cap_list[0]),
                    cap_list, CAP_SET);
-/*
- *	Set the process capabilities to the new capability state.
- */
+   /*
+    *	Set the process capabilities to the new capability state.
+    */
    if (cap_set_proc(cap_p) < 0)
       err_sys("cap_set_proc()");
-/*
- *	Permanently drop SUID but retain capability state.
- *	We don't need root UID if we have the required capabilities.
- */
+   /*
+    *	Permanently drop SUID but retain capability state.
+    *	We don't need root UID if we have the required capabilities.
+    */
    if (prctl(PR_SET_KEEPCAPS, 1) < 0)
       err_sys("prctl()");
    if (setuid(getuid()) < 0)
       err_sys("setuid()");
    if (prctl(PR_SET_KEEPCAPS, 0) < 0)
       err_sys("prctl()");
-/*
- *	Free temporary capability state storage.
- */
+   /*
+    *	Free temporary capability state storage.
+    */
    cap_free(cap_p);
    cap_free(cap_cur_p);
 #else
-   euid = geteuid();	/* Save effective user ID for later restore */
+   euid = geteuid(); /* Save effective user ID for later restore */
 #endif
    uid = getuid();
 #ifndef HAVE_LIBCAP
-   if (seteuid(uid))	/* Drop SUID: Set effective user ID to real user ID */
+   if (seteuid(uid)) /* Drop SUID: Set effective user ID to real user ID */
       err_sys("seteuid()");
 #endif
 }
@@ -500,7 +499,8 @@ limit_capabilities(void) {
  *	to the saved euid to enable privs or set it to the real user ID to
  *	remove root privs.
  */
-void set_capability(cap_status enable) {
+void
+set_capability(cap_status enable) {
 #ifdef HAVE_LIBCAP
    cap_t cap_p;
    cap_flag_value_t cap_ok;
@@ -512,7 +512,7 @@ void set_capability(cap_status enable) {
    cap_ok = CAP_CLEAR;
    cap_get_flag(cap_p, cap_list[0], CAP_PERMITTED, &cap_ok);
    if (cap_ok == CAP_CLEAR && enable)
-      return;	/* Cannot enable cap if it's not in the permitted set */
+      return; /* Cannot enable cap if it's not in the permitted set */
    cap_set_flag(cap_p, CAP_EFFECTIVE, sizeof(cap_list)/sizeof(cap_list[0]),
                 cap_list, enable?CAP_SET:CAP_CLEAR);
    if (cap_set_proc(cap_p) < 0)
@@ -545,12 +545,12 @@ void set_capability(cap_status enable) {
  *	user ID in a way that makes it impossible for the program to regain
  *	root privs.
  */
-void drop_capabilities(void)
-{
+void
+drop_capabilities(void) {
 #ifdef HAVE_LIBCAP
    cap_t cap;
 
-   cap = cap_init();	/* Create capability state with all flags cleared */
+   cap = cap_init(); /* Create capability state with all flags cleared */
    if (cap_set_proc(cap) < 0)
       err_sys("cap_set_proc()");
    cap_free(cap);
@@ -589,7 +589,7 @@ name_to_id(const char *name, const id_name_map map[]) {
       return -1;
 
    while (map[i].id != -1) {
-      if ((str_ccmp(name,map[i].name)) == 0) {
+      if ((str_ccmp(name, map[i].name)) == 0) {
          found = 1;
          break;
       }
@@ -620,15 +620,18 @@ name_to_id(const char *name, const id_name_map map[]) {
  *      instead because strcasecmp is not portable.
  */
 int
-str_ccmp( const char *s1, const char *s2 ) {
+str_ccmp(const char *s1, const char *s2) {
    int c1, c2;
 
-   for( ; ; s1++, s2++ ){
-      c1 = tolower( (unsigned char) *s1 );
-      c2 = tolower( (unsigned char) *s2 );
+   for (;; s1++, s2++) {
+      c1 = tolower((unsigned char)*s1);
+      c2 = tolower((unsigned char)*s2);
 
-      if( c1 > c2            )  return   1;
-      if( c1 < c2            )  return  -1;
-      if( c1 == 0 && c2 == 0 )  return   0;
+      if (c1 > c2)
+         return 1;
+      if (c1 < c2)
+         return -1;
+      if (c1 == 0 && c2 == 0)
+         return 0;
    }
 }

@@ -37,7 +37,8 @@
  * We omit the timezone arg from this wrapper since it's obsolete and we never
  * use it.
  */
-int Gettimeofday(struct timeval *tv) {
+int
+Gettimeofday(struct timeval *tv) {
    int result;
 
    result = gettimeofday(tv, NULL);
@@ -48,7 +49,8 @@ int Gettimeofday(struct timeval *tv) {
    return result;
 }
 
-void *Malloc(size_t size) {
+void *
+Malloc(size_t size) {
    void *result;
 
    result = malloc(size);
@@ -59,10 +61,11 @@ void *Malloc(size_t size) {
    return result;
 }
 
-void *Realloc(void *ptr, size_t size) {
+void *
+Realloc(void *ptr, size_t size) {
    void *result;
 
-   result=realloc(ptr, size);
+   result = realloc(ptr, size);
 
    if (result == NULL)
       err_sys("realloc");
@@ -70,12 +73,13 @@ void *Realloc(void *ptr, size_t size) {
    return result;
 }
 
-unsigned long int Strtoul(const char *nptr, int base) {
+unsigned long int
+Strtoul(const char *nptr, int base) {
    char *endptr;
    unsigned long int result;
 
-   result=strtoul(nptr, &endptr, base);
-   if (endptr == nptr)	/* No digits converted */
+   result = strtoul(nptr, &endptr, base);
+   if (endptr == nptr) /* No digits converted */
       err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
    if (*endptr != '\0' && !isspace((unsigned char)*endptr))
       err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
@@ -83,12 +87,13 @@ unsigned long int Strtoul(const char *nptr, int base) {
    return result;
 }
 
-long int Strtol(const char *nptr, int base) {
+long int
+Strtol(const char *nptr, int base) {
    char *endptr;
    long int result;
 
-   result=strtol(nptr, &endptr, base);
-   if (endptr == nptr)	/* No digits converted */
+   result = strtol(nptr, &endptr, base);
+   if (endptr == nptr) /* No digits converted */
       err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
    if (*endptr != '\0' && !isspace((unsigned char)*endptr))
       err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
@@ -101,8 +106,7 @@ long int Strtol(const char *nptr, int base) {
  * in libpcap 1.9.0 and later.
  */
 char *
-my_lookupdev(char *errbuf)
-{
+my_lookupdev(char *errbuf) {
    pcap_if_t *alldevs;
 
 #ifndef IF_NAMESIZE
@@ -116,18 +120,18 @@ my_lookupdev(char *errbuf)
       return (NULL);
 
    if (alldevs == NULL || (alldevs->flags & PCAP_IF_LOOPBACK)) {
-   /*
-   * There are no devices on the list, or the first device
-   * on the list is a loopback device, which means there
-   * are no non-loopback devices on the list.  This means
-   * we can't return any device.
-   */
+      /*
+       * There are no devices on the list, or the first device
+       * on the list is a loopback device, which means there
+       * are no non-loopback devices on the list.  This means
+       * we can't return any device.
+       */
       (void)strlcpy(errbuf, "no suitable device found", PCAP_ERRBUF_SIZE);
       ret = NULL;
    } else {
-   /*
-   * Return the name of the first device on the list.
-   */
+      /*
+       * Return the name of the first device on the list.
+       */
       (void)strlcpy(device, alldevs->name, sizeof(device));
       ret = device;
    }

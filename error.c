@@ -24,10 +24,10 @@
 
 #include "arp-scan.h"
 
-int daemon_proc;	/* Non-zero if process is a daemon */
+int daemon_proc; /* Non-zero if process is a daemon */
 
 /*
- *	Function to handle fatal system call errors.
+ * Function to handle fatal system call errors.
  */
 void
 err_sys(const char *fmt,...) {
@@ -40,7 +40,7 @@ err_sys(const char *fmt,...) {
 }
 
 /*
- *	Function to handle non-fatal system call errors.
+ * Function to handle non-fatal system call errors.
  */
 void
 warn_sys(const char *fmt,...) {
@@ -52,7 +52,7 @@ warn_sys(const char *fmt,...) {
 }
 
 /*
- *	Function to handle fatal errors not from system calls.
+ * Function to handle fatal errors not from system calls.
  */
 void
 err_msg(const char *fmt,...) {
@@ -65,7 +65,7 @@ err_msg(const char *fmt,...) {
 }
 
 /*
- *	Function to handle non-fatal errors not from system calls.
+ * Function to handle non-fatal errors not from system calls.
  */
 void
 warn_msg(const char *fmt,...) {
@@ -77,8 +77,8 @@ warn_msg(const char *fmt,...) {
 }
 
 /*
- *	General error printing function used by all the above
- *	functions.
+ * General error printing function used by all the above
+ * functions.
  */
 void
 err_print (int errnoflag, const char *fmt, va_list ap) {
@@ -98,9 +98,9 @@ err_print (int errnoflag, const char *fmt, va_list ap) {
    n = vsnprintf(NULL, 0, fmt, ap_copy);
    va_end(ap_copy);
    if (n < 0)
-      return;	/* vsnprintf output error */
+      return; /* vsnprintf output error */
 
-   size = (size_t) n + 1;	/* One extra byte for '\0' */
+   size = (size_t) n + 1; /* One extra byte for '\0' */
 
    buf = Malloc(size);
 
@@ -114,7 +114,7 @@ err_print (int errnoflag, const char *fmt, va_list ap) {
    }
    free(cp);
 
-   fflush(stdout);	/* In case stdout and stderr are the same */
+   fflush(stdout); /* In case stdout and stderr are the same */
    fputs(buf, stderr);
    fflush(stderr);
 }
