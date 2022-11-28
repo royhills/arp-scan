@@ -71,8 +71,7 @@
 #define MAXDLBUF 8192*4
 
 /*
- *	Link layer handle structure for DLPI.
- *	This is typedef'ed as link_t.
+ * Link layer handle structure for DLPI.
  */
 typedef struct link_handle {
    int fd;
@@ -249,7 +248,7 @@ link_open(const char *device) {
    memset(&dlp->bind_req, 0, DL_BIND_REQ_SIZE);
    dlp->bind_req.dl_primitive = DL_BIND_REQ;
 #ifdef DL_HP_RAWDLS
-   dlp->bind_req.dl_sap = 24;      /* from HP-UX DLPI programmers guide */
+   dlp->bind_req.dl_sap = 24; /* from HP-UX DLPI programmers guide */
    dlp->bind_req.dl_service_mode = DL_HP_RAWDLS;
 #else
    dlp->bind_req.dl_sap = DL_ETHER;

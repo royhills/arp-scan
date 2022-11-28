@@ -67,17 +67,17 @@
 void
 get_hardware_address(const char *if_name, unsigned char hw_address[]) {
    struct if_msghdr *ifm;
-   struct sockaddr_dl *sdl=NULL;
+   struct sockaddr_dl *sdl = NULL;
    unsigned char *p;
    unsigned char *buf;
    size_t len;
-   int mib[] = { CTL_NET, PF_ROUTE, 0, AF_LINK, NET_RT_IFLIST, 0 };
-/*
- *	Use sysctl to obtain interface list.
- *	We first call sysctl with the 3rd arg set to NULL to obtain the
- *	required length, then malloc the buffer and call sysctl again to get
- *	the data.
- */
+   int mib[] = {CTL_NET, PF_ROUTE, 0, AF_LINK, NET_RT_IFLIST, 0};
+   /*
+    * Use sysctl to obtain interface list.
+    * We first call sysctl with the 3rd arg set to NULL to obtain the
+    * required length, then malloc the buffer and call sysctl again to get
+    * the data.
+    */
    if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
       err_sys("sysctl");
 
@@ -85,10 +85,10 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
 
    if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
       err_sys("sysctl");
-/*
- *	Go through all the interfaces in the list until	we find the one that
- *	corresponds to the device we are using.
- */
+   /*
+    * Go through all the interfaces in the list until we find the one that
+    * corresponds to the device we are using.
+    */
    for (p = buf; p < buf + len; p += ifm->ifm_msglen) {
       ifm = (struct if_msghdr *)p;
       sdl = (struct sockaddr_dl *)(ifm + 1);
@@ -104,8 +104,7 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
    }
 
    if (p >= buf + len)
-      err_msg("Could not get hardware address for interface %s",
-              if_name);
+      err_msg("Could not get hardware address for interface %s", if_name);
 
    memcpy(hw_address, sdl->sdl_data + sdl->sdl_nlen, ETH_ALEN);
    free(buf);

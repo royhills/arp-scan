@@ -57,7 +57,8 @@ parsefield(format_element *node, const char *fmt, const char *fmtend) {
       errno = 0;
       w = strtol(ws + 1, &endptr, 0);
       if (endptr[0] != '}') {
-         err_msg("ERROR: incorrect show format: invalid character '%c' in field width", *endptr);
+         err_msg("ERROR: incorrect show format: invalid character '%c' in "
+                 "field width", *endptr);
       }
       if (w < INT_MIN || w > INT_MAX || errno == ERANGE) {
          err_msg("ERROR: incorrect show format: field width is out of range");
@@ -126,13 +127,13 @@ format_parse(const char *fmt) {
       else
          head = node = format_element_new();
 
-      if (fmt[0] == '$' && fmt[1] == '{') {	/* Field starting ${ */
-         fmtend = strchr(fmt, '}');	/* Check for closing brace */
+      if (fmt[0] == '$' && fmt[1] == '{') { /* Field starting ${ */
+         fmtend = strchr(fmt, '}');         /* Check for closing brace */
          if (!fmtend)
             err_msg("ERROR: incorrect show format: missing closing brace");
          parsefield(node, fmt + 2, fmtend - 1);
          fmt = fmtend + 1;
-      } else {	/* Not a field so presumably a string */
+      } else { /* Not a field so presumably a string */
          fmtend = fmt;
          do {
             fmtend += 1;
