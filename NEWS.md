@@ -1,16 +1,15 @@
 **This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.**
 
-# 2022-MM-DD arp-scan 1.10 (in progress)
+# 2022-MM-DD arp-scan 1.10.0 (in progress)
 
 ## New Features
 
 * **POSIX.1e capabilities support for Linux systems with libcap.**
 
   - Uses `CAP_NET_RAW` capability instead of superuser (root) permissions.
-  - May need to install `libcap-dev` or similar to build.
-  - *Note that `libcap` (capabilities) and `libpcap` (packet capture) are
-    different libraries.*
+  - May need `libcap-dev` or similar package to build. *Note that `libcap`
+    (capabilities) and `libpcap` (packet capture) are different libraries.*
   - configure option `--with-libcap`, defaults to auto.
   - Can set capability on exe with: `setcap cap_net_raw+p /path/to/arp-scan`
   - Initially clears effective set completely and clears everything except
@@ -26,12 +25,11 @@ release.  For more details please read the ChangeLog file.**
     except CAP_NET_RAW and proceed as previously, but will remain as UID 0
     and may encounter file permissions issues if it tries to open files with
     e.g. `--pcapsavefile` or `--ouifile` in user directories.
-  - --version displays `Built with libcap POSIX.1e capability support` if
+  - `--version` displays `Built with libcap POSIX.1e capability support` if
     enabled.
-  - Adapted from the iputils-ping capabilities code.
   - `make install` installs the arp-scan executable with the `CAP_NET_RAW`
-     capability if `setcap` is available and works. Otherwise will fallback to
-     SUID.
+    capability if `setcap` is available and works. Otherwise will fallback to
+    SUID. See `install-exec-hook` in `Makefile.am` for details.
 
 * **--format option allows flexible output format.**
 
@@ -40,7 +38,6 @@ release.  For more details please read the ChangeLog file.**
   - XML: `<host><ip>${ip}</ip><mac>${mac}</mac><vendor>${vendor}</vendor></host>`
   - JSON: `{"ipAddress":"${ip}", "macAddress":"${mac}", "vendor":"${vendor}"},`
   - See the arp-scan manpage for details of field names and more examples.
-  - Fields code adapted from the Debian dpkg-query showformat option.
 
 * **Mac/Vendor mapping file changes.**
 
@@ -66,29 +63,12 @@ release.  For more details please read the ChangeLog file.**
 * arp-scan now prints a brief error message instead of half a page of usage
   text for unknown options.
 
-## Package Maintainers Notes
-
-* If you are packaging for Linux please build with libcap POSIX.1e capability
-  support if your distribution allows it.
-
-* If you are packaging for a Debian based system, the `get-oui` Perl script can
-  easily be patched to use the Debian `ieee-data` package.
-
-* The `get-iab` script and the `ieee-iab.txt` file have been removed from this
-  version.
-
-* The `mac-vendor.txt` file has been moved to `$(sysconfdir)/$(PACKAGE)` as
-  detailed above. Users may make local changes to this file and upstream
-  changes should be infrequent.
-
-* If you have any problems packaging arp-scan, please open an issue on github.
-
 # 2022-10-08 arp-scan 1.9.8 (git tag 1.9.8)
 
 * New Features:
 
-  - Allow the use of Linux IP aliases such as eth0:0 for the interface name.
-  - Permit regular MAC addresses e.g. 00:0c:29:b9:43:1b in mac-vendor.txt.
+  - Allow the use of Linux IP aliases such as `eth0:0` for the interface name.
+  - Permit regular MAC addresses e.g. `00:0c:29:b9:43:1b` in `mac-vendor.txt`.
   - `--limit=n` option exits after n of hosts have responded, exit 1 for <n
   - `--resolve` option to resolve responding IP addresses to hostnames
 
@@ -148,7 +128,7 @@ release.  For more details please read the ChangeLog file.**
   reception of packets with spoofed MAC source address. Thanks to tissieres
   for the pull request.
 
-* Use the libpcap 1.0 API functions pcap_create() instead of pcap_open_live().
+* Use the libpcap 1.0 API functions `pcap_create()` instead of `pcap_open_live()`.
   This means that arp-scan now requires libpcap 1.0 or later and will not work
   with earlier libpcap versions.
 
@@ -159,11 +139,11 @@ release.  For more details please read the ChangeLog file.**
 
 # 2013-11-24 arp-scan 1.9.2
 
-* Added new --plain (-x) option to suppress printing of header and footer text,
+* Added new `--plain` `(-x)` option to suppress printing of header and footer text,
   and only display one output line for each responding host. Idea from Stefan
   Tomanek's arp-scan fork on github at https://github.com/wertarbyte/arp-scan.
 
-* Use LWP::UserAgent instead of LWP::Simple in get-oui and get-iab to enable
+* Use `LWP::UserAgent` instead of `LWP::Simple` in get-oui and get-iab to enable
   the raw content to be obtained, which avoids Unicode/UTF-8 issues.
 
 * Added arp-fingerprint patterns for WIZnet W5100 and Cisco IOS 15.0.
