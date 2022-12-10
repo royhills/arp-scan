@@ -1,3 +1,12 @@
+2022-12-10 Roy Hills <royhills@hotmail.com>
+
+	* configure.ac: Set version to 1.10.0.
+
+	* Git: Tagged as 1.10.0
+
+	* ieee-oui.txt: Updated from IEEE website. Total of 47345 MAC/Vendor
+	  mappings.
+
 2022-12-01 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.h: Make cap_status enum values explicit.
@@ -44,8 +53,8 @@
 	  because not all distros use that name.
 
 	* arp-scan.c, arp-scan.1.dist: Correct the short option letter
-	  for the --macfile option.  It was incorectly showsn as "O"
-	  whan it should be "m".
+	  for the --macfile option.  It was incorectly shown as "O"
+	  when it should be "m".
 
 2022-11-06 Roy Hills <royhills@hotmail.com>
 
