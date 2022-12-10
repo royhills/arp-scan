@@ -1,7 +1,7 @@
 **This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.**
 
-# 2022-MM-DD arp-scan 1.10.0 (in progress)
+# 2022-12-10 arp-scan 1.10.0
 
 ## New Features
 
