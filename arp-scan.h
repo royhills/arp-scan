@@ -227,7 +227,7 @@ typedef struct format_element {
 
 /* POSIX.1e Capability status */
 typedef enum {
-   DISABLE,
+   DISABLE = 0,
    ENABLE
 } cap_status;
 

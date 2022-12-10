@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([arp-scan],[1.9.9],[https://github.com/royhills/arp-scan])
+AC_INIT([arp-scan],[1.10-rc1],[https://github.com/royhills/arp-scan])
 AC_PREREQ([2.69])
 AC_CONFIG_SRCDIR([arp-scan.c])
 AC_CONFIG_AUX_DIR([build-aux])

@@ -8,7 +8,7 @@ release.  For more details please read the ChangeLog file.**
 * **POSIX.1e capabilities support for Linux systems with libcap.**
 
   - Uses `CAP_NET_RAW` capability instead of superuser (root) permissions.
-  - May need to install `libcap-dev` or similar for \.configure to enable.
+  - May need to install `libcap-dev` or similar to build.
   - *Note that `libcap` (capabilities) and `libpcap` (packet capture) are
     different libraries.*
   - configure option `--with-libcap`, defaults to auto.
@@ -26,9 +26,10 @@ release.  For more details please read the ChangeLog file.**
     except CAP_NET_RAW and proceed as previously, but will remain as UID 0
     and may encounter file permissions issues if it tries to open files with
     e.g. `--pcapsavefile` or `--ouifile` in user directories.
-  - --version displays `Built with libcap POSIX.1e capability support` (or not)
+  - --version displays `Built with libcap POSIX.1e capability support` if
+    enabled.
   - Adapted from the iputils-ping capabilities code.
-  - `make install` will install the arp-scan executable with the `CAP_NET_RAW`
+  - `make install` installs the arp-scan executable with the `CAP_NET_RAW`
      capability if `setcap` is available and works. Otherwise will fallback to
      SUID.
 
@@ -58,32 +59,27 @@ release.  For more details please read the ChangeLog file.**
 
 ## General improvements
 
-* **Put man pages and --help output on a diet. Updated for new options.**
-* **Option value length is now limited only by the maximum command line
+* Put man pages and --help output on a diet. Updated for new options.
+* Option value length is now limited only by the maximum command line
   length (normally around 100K). This allows for complex `--format` options,
-  long `--padding` lengths etc.**
-* **arp-scan now prints a brief error message instead of half a page of usage
-  text for unknown options.**
+  long `--padding` lengths etc.
+* arp-scan now prints a brief error message instead of half a page of usage
+  text for unknown options.
 
 ## Package Maintainers Notes
 
 * If you are packaging for Linux please build with libcap POSIX.1e capability
   support if your distribution allows it.
 
-* If you are packaging for a Debian based system, the get-oui Perl script can
-  easily be edited to use the Debian ieee-data package.
+* If you are packaging for a Debian based system, the `get-oui` Perl script can
+  easily be patched to use the Debian `ieee-data` package.
 
-* Note that the `get-iab` script and the `ieee-iab.txt` file have been
-  removed from this version.
+* The `get-iab` script and the `ieee-iab.txt` file have been removed from this
+  version.
 
-* `Makefile.am` contains an `install-exec-hook` that will set `CAP_NET_RAW` on
-  the arp-scan executable if it can, otherwise it will install it SUID. you can
-  remove this install-exec-hook code if this behaviour is not desired.
-
-* Note that the `mac-vendor.txt` file has been moved to
-  `$(sysconfdir)/$(PACKAGE)` as detailed above. Users may make local changes
-  to this file and upstream changes should be infrequent. Please mark this
-  as a configuration file if possible so upgrades don't overwrite user changes.
+* The `mac-vendor.txt` file has been moved to `$(sysconfdir)/$(PACKAGE)` as
+  detailed above. Users may make local changes to this file and upstream
+  changes should be infrequent.
 
 * If you have any problems packaging arp-scan, please open an issue on github.
 
@@ -93,13 +89,13 @@ release.  For more details please read the ChangeLog file.**
 
   - Allow the use of Linux IP aliases such as eth0:0 for the interface name.
   - Permit regular MAC addresses e.g. 00:0c:29:b9:43:1b in mac-vendor.txt.
-  - --limit=n option exits after n of hosts have responded, exit 1 for <n
-  - --resolve option to resolve responding IP addresses to hostnames
+  - `--limit=n` option exits after n of hosts have responded, exit 1 for <n
+  - `--resolve` option to resolve responding IP addresses to hostnames
 
 * Fixed bugs:
 
-  - Potential buffer overrun in unmarshal_arp_pkt().
-  - arp-scan aborts with EAGAIN on busy network or using high bandwidth
+  - Potential buffer overrun in `unmarshal_arp_pkt()`.
+  - arp-scan aborts with `EAGAIN` on busy network or using high bandwidth
   - late ARP responses could sometimes be incorrectly flagged as duplicate
 
 * General improvements:
@@ -107,14 +103,14 @@ release.  For more details please read the ChangeLog file.**
   - Updated IEEE URLs in download perl scripts.
   - Updated source for Mersenne RNG and replacement strlcat/strlcpy & getopt.
   - Updated for compatability with autoconf 2.71
-  - "make distcheck" works now
+  - `make distcheck` works now
   - Number of responding hosts reported no longer counts duplicate packets.
   - Many typos corrected and edge cases fixed.
 
 * Misc Changes:
 
   - CI framework migrated from travis-ci to github actions.
-  - Several new tests for "make check"
+  - Several new tests for `make check`
 
 # 2019-11-10 arp-scan 1.9.7
 
@@ -125,21 +121,21 @@ release.  For more details please read the ChangeLog file.**
 
 # 2019-10-13 arp-scan 1.9.6
 
-* Use libpcap function pcap_set_immediate_mode() instead of ioctl calls to
+* Use libpcap function `pcap_set_immediate_mode()` instead of ioctl calls to
   ensure packets are delivered immediately. This fixes the bug which caused
   arp-scan on linux to not report any hosts with libpcap 1.9.1. This change
   means arp-scan now requires libpcap 1.5.0 or later and will not work with
   earlier versions.
 
-* Fix compiler warnings caused by the depreciated function pcap_lookupdev()
+* Fix compiler warnings caused by the depreciated function `pcap_lookupdev()`
   in libpcap 1.9.0 and later.
 
 # 2016-09-03 arp-scan 1.9.5
 
-* Use posix hash table functions hcreate(), hsearch() and hdestroy() instead
-  of the gas hash table code. Thanks to nihilus for the suggestion.
+* Use posix hash table functions `hcreate()`, `hsearch()` and `hdestroy()`
+  instead of the gas hash table code. Thanks to nihilus for the suggestion.
 
-* Remove function replacement for inet_aton, as this was only required for
+* Remove function replacement for `inet_aton()`, as this was only required for
   Solaris 8, which is now considered obsolete.
 
 * Added arp-fingerprint patterns for FreeBSD 10.3, DragonflyBSD 4.6, Windows10,
@@ -148,7 +144,7 @@ release.  For more details please read the ChangeLog file.**
 * Added "-l" option to arp-fingerprint to support fingerprinting all hosts on
   the local network. Thanks to Rhig for the pull request.
 
-* Use the source_mac rather than interface_mac in the pcap filter, to permit
+* Use the `source_mac` rather than `interface_mac` in the pcap filter, to permit
   reception of packets with spoofed MAC source address. Thanks to tissieres
   for the pull request.
 

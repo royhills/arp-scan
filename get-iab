@@ -4,7 +4,7 @@ use warnings;
 use strict;
 #
 my $message =
-qq/$0 is no longer needed and was depreciated in arp-scan 1.99
+qq/$0 is no longer needed and was depreciated in arp-scan 1.10
 get-oui is now used to fetch all of the Ethernet MAC-Vendor
 mappings from the various IEEE registries.  See get-oui(1) for
 details.

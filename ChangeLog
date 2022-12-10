@@ -1,3 +1,9 @@
+2022-12-01 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.h: Make cap_status enum values explicit.
+
+	* configure.ac: Set version to 1.10-rc1.
+
 2022-11-25 Roy Hills <royhills@hotmail.com>
 
 	* Makefile.am: Add $(PACKAGE) to the PKGSYSCONFDIR macro definition
