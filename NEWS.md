@@ -41,22 +41,22 @@ release.  For more details please read the ChangeLog file.**
 
 * **Mac/Vendor mapping file changes.**
 
-  - ieee-oui.txt now holds data for all IEEE registries: MA-L (OUI), MA-M,
+  - `ieee-oui.txt` now holds data for all IEEE registries: MA-L (OUI), MA-M,
     MA-S (OUI36) and IAB.
-  - ieee-iab.txt file and --iabfiles option have been removed.
-  - get-oui now updates ieee-oui.txt from all registries. get-iab has been
+  - `ieee-iab.txt` file and `--iabfile` option have been removed.
+  - `get-oui` now updates `ieee-oui.txt` from all registries. `get-iab` has been
     removed.
-  - get-oui requires Perl module Text::CSV as it now uses the IEEE .csv files
-    instead of the .txt files.
-  - get-oui can be edited to use the data from the Debian ieee-data package.
-  - mac-vendor.txt is now installed to `$(sysconfdir)/$(PACKAGE)` instead of
+  - `get-oui` requires Perl module `Text::CSV` as it now uses the IEEE .csv
+    files instead of the .txt files.
+  - `get-oui` can be edited to use the data from the Debian `ieee-data` package.
+  - `mac-vendor.txt` is now installed to `$(sysconfdir)/$(PACKAGE)` instead of
     `$(pkgdatadir)`. E.g. `/usr/local/etc/arp-scan` if ./configured with no
     directory options, or `/etc/arp-scan` with `--sysconfdir=/etc`. This is to
     permit local changes to persist across upgrades.
 
 ## General improvements
 
-* Put man pages and --help output on a diet. Updated for new options.
+* Put man pages and `--help` output on a diet. Updated for new options.
 * Option value length is now limited only by the maximum command line
   length (normally around 100K). This allows for complex `--format` options,
   long `--padding` lengths etc.
