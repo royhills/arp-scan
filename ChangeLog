@@ -1,3 +1,14 @@
+2022-12-18 Roy Hills <royhills@hotmail.com>
+
+	* configure.ac: Increment version to 1.10.1 in preparation for
+          post-1.10.0 changes.
+
+	* get-oui: Display the underlying error message instead of giving a
+	  generic error if the web download fails.
+
+	* ieee-oui.txt: Updated with latest IEEE registry data using modified
+	  get-oui script. Total of 47430 MAC/Vendor mappings.
+
 2022-12-10 Roy Hills <royhills@hotmail.com>
 
 	* configure.ac: Set version to 1.10.0.
