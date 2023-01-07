@@ -239,7 +239,7 @@ for $target (@targets) {
 # Check that the system responds to an arp-scan with no options.
 # If it does, then fingerprint the target.
 #
-   $mac_address = &fp("","$target","getmac");
+   $mac_address = &fp("","$target");
    if ($mac_address ne "0") {
 # 1: source protocol address = localhost
       $fingerprint .= &fp("--arpspa=127.0.0.1","$target");
@@ -280,19 +280,19 @@ for $target (@targets) {
 }
 #
 # Scan the specified IP address with arp-scan using the given options.
-# Return "1" if the target responds, or "0" if it does not respond.
+# If the options are empty, return the MAC address of the target, otherwise
+# return "1" if the target responds, or "0" if it does not respond.
 #
-sub fp ($$;$) {
+sub fp ($$) {
    my $ip;
    my $options;
-   my $getmac;
    my $response = "0";
-   ($options, $ip, $getmac) = @_;
+   ($options, $ip) = @_;
 
    open(ARPSCAN, "$arpscan $user_opts $options $ip |") || die "arp-scan failed";
    while (<ARPSCAN>) {
       if (/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\t([0-9a-f:]+)$/) {
-         if (defined $getmac) {
+         if ($options eq "") {
             $response = $1;	# MAC address from arp-scan output
          } else {
             $response = "1";
