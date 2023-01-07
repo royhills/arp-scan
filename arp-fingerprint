@@ -189,6 +189,7 @@ Fingerprint the target system using arp-scan.
         -v Give verbose progress messages.
 	-o <option-string> Pass specified options to arp-scan
 	-l Fingerprint all targets in the local net.
+	-m Include the MAC address of the target in the output
 /;
 my %opts;
 my $user_opts="";
@@ -197,11 +198,12 @@ my $fingerprint="";
 my $fp_name;
 my @targets;
 my $target;
+my $show_mac;
 my $mac_address;
 #
 # Process options
 #
-die "$usage\n" unless getopts('hlvo:',\%opts);
+die "$usage\n" unless getopts('hlvmo:',\%opts);
 if ($opts{h}) {
    print "$usage\n";
    exit(0);
@@ -210,6 +212,7 @@ $verbose=$opts{v} ? 1 : 0;
 if ($opts{o}) {
    $user_opts = $opts{o};
 }
+$show_mac=$opts{m} ? 1 : 0;
 
 #If we're working in localnet mode, we don't need arguments
 if ($#ARGV != 0 && !$opts{l}) {
@@ -266,7 +269,11 @@ for $target (@targets) {
       } else {
          $fp_name = "UNKNOWN";
       }
-      print "$target\t$mac_address\t$fingerprint\t$fp_name\n";
+      if ($show_mac) {
+         print "$target\t$mac_address\t$fingerprint\t$fp_name\n";
+      } else {
+         print "$target\t$fingerprint\t$fp_name\n";
+      }
    } else {
       print "$target\tNo Response\n";
    }

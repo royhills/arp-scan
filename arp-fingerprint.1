@@ -4,7 +4,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-FINGERPRINT 1 "October 27, 2022"
+.TH ARP-FINGERPRINT 1 "January 07, 2023"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-fingerprint \- Fingerprint a system using ARP
@@ -93,6 +93,9 @@ string in quotes if it contains spaces. e.g.
 .B -l
 Fingerprint all hosts on the local network. You do not need to specify any
 target hosts if this option is given.
+.TP
+.B -m
+Include the MAC address of the target in the output.
 .SH EXAMPLES
 .nf
 $ arp-fingerprint 192.168.0.1
