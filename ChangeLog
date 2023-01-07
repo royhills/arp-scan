@@ -1,3 +1,9 @@
+2023-01-07 Roy Hills <royhills@hotmail.com>
+
+	* arp-fingerprint, arp-fingerprint.1: Added arp-fingerprint -m option
+	  to include the target's MAC address in the output. Thanks to
+	  Bogdan107 for the suggestion.
+
 2022-12-18 Roy Hills <royhills@hotmail.com>
 
 	* configure.ac: Increment version to 1.10.1 in preparation for
