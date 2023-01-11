@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright 2006-2016 Roy Hills
+# Copyright 2006-2023 Roy Hills
 #
 # This file is part of arp-scan.
 #
@@ -35,7 +35,7 @@ use Getopt::Std;
 #
 sub get_localnet($);
 #
-my $arpscan="arp-scan -q -r 1";
+my $arpscan="arp-scan -q -r 1 -x";
 #
 # Hash of known fingerprints
 #
@@ -189,6 +189,7 @@ Fingerprint the target system using arp-scan.
         -v Give verbose progress messages.
 	-o <option-string> Pass specified options to arp-scan
 	-l Fingerprint all targets in the local net.
+	-m Include the MAC address of the target in the output
 /;
 my %opts;
 my $user_opts="";
@@ -197,10 +198,12 @@ my $fingerprint="";
 my $fp_name;
 my @targets;
 my $target;
+my $show_mac;
+my $mac_address;
 #
 # Process options
 #
-die "$usage\n" unless getopts('hlvo:',\%opts);
+die "$usage\n" unless getopts('hlvmo:',\%opts);
 if ($opts{h}) {
    print "$usage\n";
    exit(0);
@@ -209,6 +212,7 @@ $verbose=$opts{v} ? 1 : 0;
 if ($opts{o}) {
    $user_opts = $opts{o};
 }
+$show_mac=$opts{m} ? 1 : 0;
 
 #If we're working in localnet mode, we don't need arguments
 if ($#ARGV != 0 && !$opts{l}) {
@@ -235,7 +239,8 @@ for $target (@targets) {
 # Check that the system responds to an arp-scan with no options.
 # If it does, then fingerprint the target.
 #
-   if (&fp("","$target") eq "1") {
+   $mac_address = &fp("","$target");
+   if ($mac_address ne "0") {
 # 1: source protocol address = localhost
       $fingerprint .= &fp("--arpspa=127.0.0.1","$target");
 # 2: source protocol address = zero
@@ -264,14 +269,19 @@ for $target (@targets) {
       } else {
          $fp_name = "UNKNOWN";
       }
-      print "$target\t$fingerprint\t$fp_name\n";
+      if ($show_mac) {
+         print "$target\t$mac_address\t$fingerprint\t$fp_name\n";
+      } else {
+         print "$target\t$fingerprint\t$fp_name\n";
+      }
    } else {
       print "$target\tNo Response\n";
    }
 }
 #
 # Scan the specified IP address with arp-scan using the given options.
-# Return "1" if the target responds, or "0" if it does not respond.
+# If the options are empty, return the MAC address of the target, otherwise
+# return "1" if the target responds, or "0" if it does not respond.
 #
 sub fp ($$) {
    my $ip;
@@ -281,8 +291,12 @@ sub fp ($$) {
 
    open(ARPSCAN, "$arpscan $user_opts $options $ip |") || die "arp-scan failed";
    while (<ARPSCAN>) {
-      if (/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\t/) {
-         $response = "1";
+      if (/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\t([0-9a-f:]+)$/) {
+         if ($options eq "") {
+            $response = $1;	# MAC address from arp-scan output
+         } else {
+            $response = "1";
+         }
          last;
       }
    }
