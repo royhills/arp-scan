@@ -5,7 +5,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "November 9, 2022"
+.TH ARP-SCAN 1 "January 14, 2023"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- Send ARP requests to target hosts and display responses
@@ -209,12 +209,12 @@ Use \fB--interface\fP to specify the interface.
 \fB--ouifile\fP=\fI<s>\fP or \fB-O \fI<s>\fR
 Use IEEE registry vendor mapping file \fI<s>\fP.
 Default is \fIieee-oui.txt\fP in the current directory.
-If that is not found \fI@PKGDATADIR@/ieee-oui.txt\fP is used.
+If that is not found or cannot be opened \fI@PKGDATADIR@/ieee-oui.txt\fP is used.
 .TP
 \fB--macfile\fP=\fI<s>\fP or \fB-m \fI<s>\fR
 Use custom vendor mapping file \fI<s>\fP.
 Default is \fImac-vendor.txt\fP in the current directory.
-If that is not found \fI@PKGSYSCONFDIR@/mac-vendor.txt\fP is used.
+If that is not found or cannot be opened \fI@PKGSYSCONFDIR@/mac-vendor.txt\fP is used.
 .SS "Output Format Control"
 .TP
 .BR --quiet " or " -q
