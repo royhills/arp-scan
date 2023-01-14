@@ -2642,7 +2642,7 @@ get_mac_vendor_filename(const char *specified_filename,
    if (!specified_filename) { /* No filename specified */
       file_name = make_message("%s", default_filename);
       status = stat(file_name, &statbuf);
-      if (status == -1 && errno == ENOENT) {
+      if (status == -1 && (errno == ENOENT || errno == EACCES)) {
          free(file_name);
          file_name = make_message("%s/%s", default_datadir, default_filename);
       }

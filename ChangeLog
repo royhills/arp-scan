@@ -1,3 +1,12 @@
+2023-01-14 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.c, arp-scan.1: Do not attempt to open ieee-oui.txt or
+	  mac-vendor.txt in the current directory if stat() fails with EACCES
+	  (permission denied). This can happen if the user does not have
+	  execute (search) permission in the current directory due to running
+	  a capabilities aware arp-scan build as root. Thanks to jaskij for
+	  reporting this bug.
+
 2023-01-07 Roy Hills <royhills@hotmail.com>
 
 	* arp-fingerprint, arp-fingerprint.1: Added arp-fingerprint -m option
