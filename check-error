@@ -293,3 +293,39 @@ if test $? -ne 0; then
 fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
+
+# Invalid format string: missing closing brace
+echo "Checking arp-scan with --format field missing closing brace ..."
+ARPARGS="--retry=1 --format=\${ip"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: incorrect format string: missing closing brace' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# output format may not be empty string
+echo "Checking arp-scan with --format field empty string ..."
+ARPARGS="--retry=1 --format="
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: output format may not be empty string' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"

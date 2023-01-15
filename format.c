@@ -130,7 +130,7 @@ format_parse(const char *fmt) {
       if (fmt[0] == '$' && fmt[1] == '{') { /* Field starting ${ */
          fmtend = strchr(fmt, '}');         /* Check for closing brace */
          if (!fmtend)
-            err_msg("ERROR: incorrect show format: missing closing brace");
+            err_msg("ERROR: incorrect format string: missing closing brace");
          parsefield(node, fmt + 2, fmtend - 1);
          fmt = fmtend + 1;
       } else { /* Not a field so presumably a string */
