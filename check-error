@@ -221,3 +221,39 @@ if test $? -ne 0; then
 fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
+
+# Invalid bandwidth multiplier - nonzero exit
+echo "Checking arp-scan with invalid bandwidth multiple ..."
+ARPARGS="--retry=1 --bandwidth=1x"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep 'ERROR: Unknown bandwidth multiplier character: "x"' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Invalid interval multiplier - nonzero exit
+echo "Checking arp-scan with invalid interval multiple ..."
+ARPARGS="--retry=1 --interval=1x"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep 'ERROR: Unknown interval multiplier character: "x"' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
