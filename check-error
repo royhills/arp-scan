@@ -231,7 +231,7 @@ if test $? -eq 0; then
    echo "FAILED"
    exit 1
 fi
-grep 'ERROR: Unknown bandwidth multiplier character: "x"' "$ARPSCANOUTPUT" >/dev/null
+grep '^ERROR: Unknown bandwidth multiplier character: "x"' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -249,7 +249,43 @@ if test $? -eq 0; then
    echo "FAILED"
    exit 1
 fi
-grep 'ERROR: Unknown interval multiplier character: "x"' "$ARPSCANOUTPUT" >/dev/null
+grep '^ERROR: Unknown interval multiplier character: "x"' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Invalid --format string: invalid field width
+echo "Checking arp-scan with invalid --format field width ..."
+ARPARGS="--retry=1 --format=\${ip;X}"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: incorrect format string: invalid character \"X\" in field width' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Invalid --format string: field width out of range
+echo "Checking arp-scan with --format field width out of range ..."
+ARPARGS="--retry=1 --format=\${ip;5000000000}"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: incorrect format string: field width out of range' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"

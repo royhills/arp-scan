@@ -492,8 +492,9 @@ echo "Checking custom formatting using $SAMPLE01 ..."
 cat >"$EXAMPLEOUTPUT" <<_EOF_
 WARNING: Field \${xyz} unknown or not available
       127.0.0.1|08:00:2b:06:07:08\	DIGITAL EQUIPMENT CORPORATION,
+XXXX
 _EOF_
-ARPARGS="--plain --retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --format=\${ip;15}|\${mac}\\\\\t\${vendor},\${xyz}"
+ARPARGS="--plain --retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --format=\${ip;15}|\${mac}\\\\\t\${vendor},\${xyz}\nXXXX"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"

@@ -57,11 +57,11 @@ parsefield(format_element *node, const char *fmt, const char *fmtend) {
       errno = 0;
       w = strtol(ws + 1, &endptr, 0);
       if (endptr[0] != '}') {
-         err_msg("ERROR: incorrect show format: invalid character '%c' in "
+         err_msg("ERROR: incorrect format string: invalid character \"%c\" in "
                  "field width", *endptr);
       }
       if (w < INT_MIN || w > INT_MAX || errno == ERANGE) {
-         err_msg("ERROR: incorrect show format: field width is out of range");
+         err_msg("ERROR: incorrect format string: field width out of range");
       }
 
       node->width = w;
