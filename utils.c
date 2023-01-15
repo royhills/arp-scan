@@ -222,11 +222,8 @@ hexstring(const unsigned char *data, size_t size) {
    /*
     * If the input data is NULL, return an empty string.
     */
-   if (data == NULL) {
-      result = Malloc(1);
-      result[0] = '\0';
-      return result;
-   }
+   if (data == NULL)
+      return dupstr("");
    /*
     * Create and return hex string.
     */
