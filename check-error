@@ -329,3 +329,21 @@ if test $? -ne 0; then
 fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
+
+# Invalid target MAC address
+echo "Checking arp-scan with invalid target MAC address ..."
+ARPARGS="--retry=1 --destaddr=XX"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^Invalid target MAC address: XX' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
