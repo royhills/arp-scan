@@ -421,14 +421,14 @@ rm -f "$EXAMPLEOUTPUT"
 echo "Checking simple ARP response with --resolve using $SAMPLE01 ..."
 echo "(this test will fail if 127.0.0.1 does not resolve to a hostname)"
 echo "(typically localhost but it does not matter what name it resolves to)"
-ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --resolve --plain --format=\${name}"
+ARPARGS="--retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --resolve --plain --quiet"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
    exit 1
 fi
-grep -v '^127\.0\.0\.1$' "$ARPSCANOUTPUT" >/dev/null
+grep -v '^127\.0\.0\.1' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -492,8 +492,9 @@ echo "Checking custom formatting using $SAMPLE01 ..."
 cat >"$EXAMPLEOUTPUT" <<_EOF_
 WARNING: Field \${xyz} unknown or not available
       127.0.0.1|08:00:2b:06:07:08\	DIGITAL EQUIPMENT CORPORATION,
+XXXX
 _EOF_
-ARPARGS="--plain --retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --format=\${ip;15}|\${mac}\\\\\t\${vendor},\${xyz}"
+ARPARGS="--plain --retry=1 --ouifile=$srcdir/ieee-oui.txt --macfile=$srcdir/mac-vendor.txt --format=\${ip;15}|\${mac}\\\\\t\${vendor},\${xyz}\nXXXX"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"

@@ -188,7 +188,7 @@ make_message(const char *fmt, ...) {
 
    if (n < 0) {
       free(p);
-      return NULL;
+      return NULL; /* vsnprintf output error */
    }
 
    return p;
@@ -222,11 +222,8 @@ hexstring(const unsigned char *data, size_t size) {
    /*
     * If the input data is NULL, return an empty string.
     */
-   if (data == NULL) {
-      result = Malloc(1);
-      result[0] = '\0';
-      return result;
-   }
+   if (data == NULL)
+      return dupstr("");
    /*
     * Create and return hex string.
     */
@@ -267,15 +264,12 @@ get_ether_addr(const char *address_string, unsigned char *ether_addr) {
    unsigned mac_b0, mac_b1, mac_b2, mac_b3, mac_b4, mac_b5;
    int result;
 
-   result = sscanf(address_string, "%x:%x:%x:%x:%x:%x",
+   result = sscanf(address_string,
+                   "%2x%*[:-]%2x%*[:-]%2x%*[:-]%2x%*[:-]%2x%*[:-]%2x",
                    &mac_b0, &mac_b1, &mac_b2, &mac_b3, &mac_b4, &mac_b5);
-   if (result != 6) {
-      result = sscanf(address_string, "%x-%x-%x-%x-%x-%x",
-                      &mac_b0, &mac_b1, &mac_b2, &mac_b3, &mac_b4, &mac_b5);
-   }
-   if (result != 6) {
+   if (result != 6)
       return -1;
-   }
+
    ether_addr[0] = mac_b0;
    ether_addr[1] = mac_b1;
    ether_addr[2] = mac_b2;
@@ -322,7 +316,7 @@ str_to_bandwidth(const char *bandwidth_string) {
          default:
             err_msg("ERROR: Unknown bandwidth multiplier character: \"%c\"",
                     end_char);
-            break;
+            break; /* NOTREACHED */
       }
    }
    value = Strtoul(bandwidth_str, 10);
@@ -366,7 +360,7 @@ str_to_interval(const char *interval_string) {
          default:
             err_msg("ERROR: Unknown interval multiplier character: \"%c\"",
                     end_char);
-            break;
+            break; /* NOTREACHED */
       }
    }
    value = Strtoul(interval_str, 10);

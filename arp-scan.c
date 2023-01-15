@@ -155,10 +155,10 @@ main(int argc, char *argv[]) {
     * file, then set pcap_handle to NULL as we don't need to read packets in
     * this case.
     */
-   if (pkt_read_file_flag) {
+   if (pkt_read_file_flag) {	/* Reading packets from pcap file */
       if (!(pcap_handle = pcap_open_offline(pkt_filename, errbuf)))
          err_msg("pcap_open_offline: %s", errbuf);
-   } else if (!pkt_write_file_flag) {
+   } else if (!pkt_write_file_flag) {	/* Reading packets from network */
       /*
        * enable CAP_NET_RAW in the effective set if we have POSIX.1e capability
        * support. If we don't have capability support then restore SUID root
@@ -267,7 +267,7 @@ main(int argc, char *argv[]) {
          }
          memcpy(&arp_spa, &(interface_ip_addr.s_addr), sizeof(arp_spa));
       }
-   } else {
+   } else {	/* Not reading packets because we are writing to pcap file */
       pcap_handle = NULL;
    }
    /*
@@ -2076,7 +2076,7 @@ process_options(int argc, char *argv[]) {
          case 'T': /* --destaddr */
             result = get_ether_addr(optarg, target_mac);
             if (result != 0)
-               err_msg("Invalid target MAC address: %s", optarg);
+               err_msg("Invalid MAC address: %s", optarg);
             break;
          case 'P': /* --arppln */
             arp_pln = Strtol(optarg, 0);
@@ -2095,18 +2095,18 @@ process_options(int argc, char *argv[]) {
          case 'u': /* --arpsha */
             result = get_ether_addr(optarg, arp_sha);
             if (result != 0)
-               err_msg("Invalid source MAC address: %s", optarg);
+               err_msg("Invalid MAC address: %s", optarg);
             arp_sha_flag = 1;
             break;
          case 'w': /* --arptha */
             result = get_ether_addr(optarg, arp_tha);
             if (result != 0)
-               err_msg("Invalid target MAC address: %s", optarg);
+               err_msg("Invalid MAC address: %s", optarg);
             break;
          case 'S': /* --srcaddr */
             result = get_ether_addr(optarg, source_mac);
             if (result != 0)
-               err_msg("Invalid target MAC address: %s", optarg);
+               err_msg("Invalid MAC address: %s", optarg);
             source_mac_flag = 1;
             break;
          case 'l': /* --localnet */

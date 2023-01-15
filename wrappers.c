@@ -78,10 +78,8 @@ Strtoul(const char *nptr, int base) {
    char *endptr;
    unsigned long int result;
 
-   result = strtoul(nptr, &endptr, base);
-   if (endptr == nptr) /* No digits converted */
-      err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
-   if (*endptr != '\0' && !isspace((unsigned char)*endptr))
+   result=strtoul(nptr, &endptr, base);
+   if (endptr == nptr || (*endptr != '\0' && !isspace((unsigned char)*endptr)))
       err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
 
    return result;
@@ -92,10 +90,8 @@ Strtol(const char *nptr, int base) {
    char *endptr;
    long int result;
 
-   result = strtol(nptr, &endptr, base);
-   if (endptr == nptr) /* No digits converted */
-      err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
-   if (*endptr != '\0' && !isspace((unsigned char)*endptr))
+   result=strtol(nptr, &endptr, base);
+   if (endptr == nptr || (*endptr != '\0' && !isspace((unsigned char)*endptr)))
       err_msg("ERROR: \"%s\" is not a valid numeric value", nptr);
 
    return result;
@@ -117,7 +113,7 @@ my_lookupdev(char *errbuf) {
    char *ret;
 
    if (pcap_findalldevs(&alldevs, errbuf) == -1)
-      return (NULL);
+      return NULL;
 
    if (alldevs == NULL || (alldevs->flags & PCAP_IF_LOOPBACK)) {
       /*
@@ -137,5 +133,5 @@ my_lookupdev(char *errbuf) {
    }
 
    pcap_freealldevs(alldevs);
-   return (ret);
+   return ret;
 }

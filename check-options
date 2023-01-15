@@ -26,7 +26,8 @@
 ARPSCANOUTPUT=/tmp/arp-scan-test.$$.tmp
 SAMPLE01="$srcdir/pkt-simple-response.pcap"
 
-# Check --bandwidth with appended multiple character
+# Check --bandwidth with multiple character "K" and --retry-send-interval with
+# appended multiple character "u".
 echo "Checking arp-scan --bandwidth ..."
 ARPARGS="--quiet --plain --retry=1 --bandwidth=256K --retry-send=1 --retry-send-interval=1000u --timeout=100 --backoff=1.0 --snap=128 --limit=1"
 ./arp-scan --readpktfromfile="$SAMPLE01" $ARPARGS 127.0.0.1 > "$ARPSCANOUTPUT"
@@ -44,4 +45,38 @@ fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
 
+# Check --bandwidth with appended multiple character "M"
+echo "Checking arp-scan --bandwidth with M multiple..."
+ARPARGS="--quiet --plain --retry=1 --bandwidth=1M"
+./arp-scan --readpktfromfile="$SAMPLE01" $ARPARGS 127.0.0.1 > "$ARPSCANOUTPUT"
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^127.0.0.1	08:00:2b:06:07:08' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
 
+# Check --interval with appended multiple character "S"
+echo "Checking arp-scan --interval ..."
+ARPARGS="--quiet --plain --retry=1 --interval=1S"
+./arp-scan --readpktfromfile="$SAMPLE01" $ARPARGS 127.0.0.1 > "$ARPSCANOUTPUT"
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^127.0.0.1	08:00:2b:06:07:08' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
