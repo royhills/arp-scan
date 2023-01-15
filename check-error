@@ -78,7 +78,7 @@ fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
 
-# Try to use a non-existant mac/vendor mapping file - should warn and continue
+# Try to use a non-existent mac/vendor mapping file - should warn and continue
 echo "Checking arp-scan with non existent mac/vendor file ..."
 ARPARGS="--retry=1"
 ./arp-scan $ARPARGS -O xxxFUNNYxxx --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
@@ -189,7 +189,7 @@ rm -f "$ARPSCANOUTPUT"
 # Invalid signed long int input - nonzero exit
 echo "Checking arp-scan with invalid CIDR address ..."
 ARPARGS="--retry=1 --retry-send=xyz"
-./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -eq 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -207,7 +207,7 @@ rm -f "$ARPSCANOUTPUT"
 # Invalid unsigned long int input - nonzero exit
 echo "Checking arp-scan with invalid CIDR address ..."
 ARPARGS="--retry=1 --snap=xyz"
-./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -eq 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -225,7 +225,7 @@ rm -f "$ARPSCANOUTPUT"
 # Invalid bandwidth multiplier - nonzero exit
 echo "Checking arp-scan with invalid bandwidth multiple ..."
 ARPARGS="--retry=1 --bandwidth=1x"
-./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -eq 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -243,7 +243,7 @@ rm -f "$ARPSCANOUTPUT"
 # Invalid interval multiplier - nonzero exit
 echo "Checking arp-scan with invalid interval multiple ..."
 ARPARGS="--retry=1 --interval=1x"
-./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -eq 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -261,7 +261,7 @@ rm -f "$ARPSCANOUTPUT"
 # Invalid --format string: invalid field width
 echo "Checking arp-scan with invalid --format field width ..."
 ARPARGS="--retry=1 --format=\${ip;X}"
-./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -eq 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -279,7 +279,7 @@ rm -f "$ARPSCANOUTPUT"
 # Invalid --format string: field width out of range
 echo "Checking arp-scan with --format field width out of range ..."
 ARPARGS="--retry=1 --format=\${ip;5000000000}"
-./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -eq 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -297,7 +297,7 @@ rm -f "$ARPSCANOUTPUT"
 # Invalid format string: missing closing brace
 echo "Checking arp-scan with --format field missing closing brace ..."
 ARPARGS="--retry=1 --format=\${ip"
-./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -eq 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -315,7 +315,7 @@ rm -f "$ARPSCANOUTPUT"
 # output format may not be empty string
 echo "Checking arp-scan with --format field empty string ..."
 ARPARGS="--retry=1 --format="
-./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -eq 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -333,13 +333,31 @@ rm -f "$ARPSCANOUTPUT"
 # Invalid target MAC address
 echo "Checking arp-scan with invalid target MAC address ..."
 ARPARGS="--retry=1 --destaddr=XX"
-./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -eq 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
    exit 1
 fi
 grep '^Invalid target MAC address: XX' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Non-existent pcap file for --readpktfromfile
+echo "Checking arp-scan with nonexistent --readpktfromfile file ..."
+ARPARGS="--retry=1 --readpktfromfile=xxxFUNNYxxx"
+./arp-scan $ARPARGS 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^pcap_open_offline: xxxFUNNYxxx: No such file or directory' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"

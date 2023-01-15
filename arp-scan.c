@@ -155,10 +155,10 @@ main(int argc, char *argv[]) {
     * file, then set pcap_handle to NULL as we don't need to read packets in
     * this case.
     */
-   if (pkt_read_file_flag) {
+   if (pkt_read_file_flag) {	/* Reading packets from pcap file */
       if (!(pcap_handle = pcap_open_offline(pkt_filename, errbuf)))
          err_msg("pcap_open_offline: %s", errbuf);
-   } else if (!pkt_write_file_flag) {
+   } else if (!pkt_write_file_flag) {	/* Reading packets from network */
       /*
        * enable CAP_NET_RAW in the effective set if we have POSIX.1e capability
        * support. If we don't have capability support then restore SUID root
@@ -267,7 +267,7 @@ main(int argc, char *argv[]) {
          }
          memcpy(&arp_spa, &(interface_ip_addr.s_addr), sizeof(arp_spa));
       }
-   } else {
+   } else {	/* Not reading packets because we are writing to pcap file */
       pcap_handle = NULL;
    }
    /*
