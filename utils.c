@@ -188,7 +188,7 @@ make_message(const char *fmt, ...) {
 
    if (n < 0) {
       free(p);
-      return NULL;
+      return NULL; /* vsnprintf output error */
    }
 
    return p;
@@ -316,7 +316,7 @@ str_to_bandwidth(const char *bandwidth_string) {
          default:
             err_msg("ERROR: Unknown bandwidth multiplier character: \"%c\"",
                     end_char);
-            break;
+            break; /* NOTREACHED */
       }
    }
    value = Strtoul(bandwidth_str, 10);
@@ -360,7 +360,7 @@ str_to_interval(const char *interval_string) {
          default:
             err_msg("ERROR: Unknown interval multiplier character: \"%c\"",
                     end_char);
-            break;
+            break; /* NOTREACHED */
       }
    }
    value = Strtoul(interval_str, 10);
