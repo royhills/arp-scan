@@ -1,6 +1,24 @@
 **This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.**
 
+# 2023-01-15 arp-scan 1.10.1-git (in development)
+
+* New Features:
+
+  - New `-m` option for `arp-fingerprint` to display the host MAC addresses.
+
+* Fixed bugs:
+
+  - Fall back to system mapping files if the user lacks execute permission for
+    the current directory.
+
+* General improvements:
+
+  - `get-oui` now displays the underlying system error if the download fails
+    instead of a generic "download failed" message.
+
+  - Version numbers now have `-git` appended for development versions.
+
 # 2022-12-10 arp-scan 1.10.0 (git tag 1.10.0)
 
 ## New Features
