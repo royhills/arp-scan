@@ -2076,7 +2076,7 @@ process_options(int argc, char *argv[]) {
          case 'T': /* --destaddr */
             result = get_ether_addr(optarg, target_mac);
             if (result != 0)
-               err_msg("Invalid target MAC address: %s", optarg);
+               err_msg("Invalid MAC address: %s", optarg);
             break;
          case 'P': /* --arppln */
             arp_pln = Strtol(optarg, 0);
@@ -2095,18 +2095,18 @@ process_options(int argc, char *argv[]) {
          case 'u': /* --arpsha */
             result = get_ether_addr(optarg, arp_sha);
             if (result != 0)
-               err_msg("Invalid source MAC address: %s", optarg);
+               err_msg("Invalid MAC address: %s", optarg);
             arp_sha_flag = 1;
             break;
          case 'w': /* --arptha */
             result = get_ether_addr(optarg, arp_tha);
             if (result != 0)
-               err_msg("Invalid target MAC address: %s", optarg);
+               err_msg("Invalid MAC address: %s", optarg);
             break;
          case 'S': /* --srcaddr */
             result = get_ether_addr(optarg, source_mac);
             if (result != 0)
-               err_msg("Invalid target MAC address: %s", optarg);
+               err_msg("Invalid MAC address: %s", optarg);
             source_mac_flag = 1;
             break;
          case 'l': /* --localnet */

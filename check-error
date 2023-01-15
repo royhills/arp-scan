@@ -330,8 +330,8 @@ fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
 
-# Invalid target MAC address
-echo "Checking arp-scan with invalid target MAC address ..."
+# --destaddr invalid MAC address
+echo "Checking arp-scan with --destaddr invalid MAC address ..."
 ARPARGS="--retry=1 --destaddr=XX"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
 if test $? -eq 0; then
@@ -339,7 +339,61 @@ if test $? -eq 0; then
    echo "FAILED"
    exit 1
 fi
-grep '^Invalid target MAC address: XX' "$ARPSCANOUTPUT" >/dev/null
+grep '^Invalid MAC address: XX' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# --arpsha invalid MAC address
+echo "Checking arp-scan with --arpsha invalid MAC address ..."
+ARPARGS="--retry=1 --arpsha=XX"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^Invalid MAC address: XX' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# --arptha invalid MAC address
+echo "Checking arp-scan with --arptha invalid MAC address ..."
+ARPARGS="--retry=1 --arptha=XX"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^Invalid MAC address: XX' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# --srcaddr invalid MAC address
+echo "Checking arp-scan with --srcaddr invalid MAC address ..."
+ARPARGS="--retry=1 --srcaddr=XX"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^Invalid MAC address: XX' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
