@@ -1,5 +1,12 @@
 2023-01-14 Roy Hills <royhills@hotmail.com>
 
+	* configure.ac: Change version number from 10.0.1 to 10.0.1-git.
+	  From now on development versions will have "-git" appended to the
+	  version number. So 10.0.0 is a release version, 10.0.1-git is the
+	  development version, and 10.0.1 will be the next release version.
+
+2023-01-14 Roy Hills <royhills@hotmail.com>
+
 	* arp-scan.c, arp-scan.1: Do not attempt to open ieee-oui.txt or
 	  mac-vendor.txt in the current directory if stat() fails with EACCES
 	  (permission denied). This can happen if the user does not have
