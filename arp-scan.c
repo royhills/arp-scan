@@ -258,12 +258,12 @@ main(int argc, char *argv[]) {
       ret_status = get_source_ip(if_name, &interface_ip_addr);
       if (arp_spa_flag == 0) {
          if (ret_status == -1) {
-            warn_msg("WARNING: Could not obtain IP address for interface %s. "
-                     "Using 0.0.0.0 for", if_name);
-            warn_msg("the source address, which may not be what you want.");
-            warn_msg("Either configure %s with an IP address, or manually "
-                     "specify the address", if_name);
-            warn_msg("with the --arpspa option.");
+            warn_msg(
+               "WARNING: Could not obtain IP address for interface %s. "
+               "Using 0.0.0.0 for\nthe source address, which may not be "
+               "what you want. Either configure\n"
+               "%s with an IP address, or specify the address "
+               "with the --arpspa option.",if_name, if_name);
          }
          memcpy(&arp_spa, &(interface_ip_addr.s_addr), sizeof(arp_spa));
       }
@@ -310,8 +310,8 @@ main(int argc, char *argv[]) {
          memset(&localnet, '\0', sizeof(localnet));
          memset(&netmask, '\0', sizeof(netmask));
          if (localnet_flag) {
-            warn_msg("ERROR: Could not obtain interface IP address and netmask");
-            err_msg("ERROR: pcap_lookupnet: %s", errbuf);
+            err_msg("ERROR: Could not obtain interface IP address and "
+                    "netmask: pcap_lookupnet: %s", errbuf);
          }
       }
       /*
@@ -2149,7 +2149,8 @@ process_options(int argc, char *argv[]) {
             break;
          default: /* Unknown option */
             err_msg("Usage: arp-scan [options] [hosts...]\n"
-                    "Use \"arp-scan --help\" for detailed information on the available options.");
+                    "Use \"arp-scan --help\" for detailed information on "
+                    "the available options.");
             break; /* NOTREACHED */
       }
    }
