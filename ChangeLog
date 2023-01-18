@@ -1,3 +1,9 @@
+2023-01-18 Roy Hills <royhills@hotmail.com>
+
+	* mac-vendor.txt: Change the naming of the VRRP protocol to
+	  include OpenBSD's CARP. Should remove the need for the OpenBSD
+	  arp-scan patch "patch-mac-vendor_txt".
+
 2023-01-14 Roy Hills <royhills@hotmail.com>
 
 	* configure.ac: Change version number from 10.0.1 to 10.0.1-git.

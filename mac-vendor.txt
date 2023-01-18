@@ -42,7 +42,11 @@
 b0:c4:20	Bochs
 
 # From RFC 2338: 00-00-5E-00-01-{VRID}
-00:00:5e:00:01	VRRP (last octet is VRID)
+# OpenBSD's CARP protocol uses VRRP's MAC addresses.
+00:00:5e:00:01	VRRP/CARP (last octet is VRID/VHID)
+
+# OpenBSD ether_fakeaddr()
+FEE1BAD	OpenBSD randomly generated MAC address
 
 # Microsoft WLBS (Windows NT Load Balancing Service)
 # http://www.microsoft.com/technet/prodtechnol/acs/reskit/acrkappb.mspx
