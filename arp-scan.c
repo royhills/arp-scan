@@ -1722,13 +1722,8 @@ find_host(host_entry **he, struct in_addr *addr) {
    host_entry **p;
    int found = 0;
    unsigned iterations = 0; /* Used for debugging */
-   /*
-    * Don't try to match if host ptr is NULL.
-    * This should never happen, but we check just in case.
-    */
-   if (*he == NULL) {
-      return NULL;
-   }
+
+   assert (*he != NULL);
    /*
     * Try to match against our host list.
     */
