@@ -1722,13 +1722,8 @@ find_host(host_entry **he, struct in_addr *addr) {
    host_entry **p;
    int found = 0;
    unsigned iterations = 0; /* Used for debugging */
-   /*
-    * Don't try to match if host ptr is NULL.
-    * This should never happen, but we check just in case.
-    */
-   if (*he == NULL) {
-      return NULL;
-   }
+
+   assert (*he != NULL);
    /*
     * Try to match against our host list.
     */
@@ -2201,15 +2196,13 @@ arp_scan_version(void) {
 struct in_addr *
 get_host_address(const char *name, struct in_addr *addr, char **error_msg) {
    static char err[MAXLINE];
-   static struct in_addr ipa;
 
    struct addrinfo *res;
    struct addrinfo hints;
    struct sockaddr_in sa_in;
    int result;
 
-   if (addr == NULL) /* Use static storage if no buffer specified */
-      addr = &ipa;
+   assert (addr != NULL);
 
    memset(&hints, '\0', sizeof(hints));
    hints.ai_family = AF_INET;
