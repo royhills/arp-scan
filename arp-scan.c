@@ -2056,7 +2056,7 @@ process_options(int argc, char *argv[]) {
                arp_spa_is_tpa = 1;
             } else {
                if ((inet_pton(AF_INET, optarg, &source_ip_address)) <= 0)
-                  err_sys("inet_pton failed for %s", optarg);
+                  err_msg("ERROR: Invalid IPv4 address: %s", optarg);
                memcpy(&arp_spa, &(source_ip_address.s_addr), sizeof(arp_spa));
             }
             break;
