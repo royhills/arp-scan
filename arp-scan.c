@@ -2028,7 +2028,6 @@ process_options(int argc, char *argv[]) {
          case 'V': /* --version */
             arp_scan_version();
             exit(EXIT_SUCCESS);
-            break; /* NOTREACHED */
          case 'n': /* --snap */
             snaplen = Strtol(optarg, 0);
             break;
@@ -2152,8 +2151,7 @@ process_options(int argc, char *argv[]) {
          default: /* Unknown option */
             err_msg("Usage: arp-scan [options] [hosts...]\n"
                     "Use \"arp-scan --help\" for detailed information on "
-                    "the available options.");
-            break; /* NOTREACHED */
+                    "the available options.");	/* Never returns */
       }
    }
 }

@@ -311,8 +311,7 @@ str_to_bandwidth(const char *bandwidth_string) {
             break;
          default:
             err_msg("ERROR: Unknown bandwidth multiplier character: \"%c\"",
-                    end_char);
-            break; /* NOTREACHED */
+                    end_char);	/* Never returns */
       }
    }
    value = Strtoul(bandwidth_str, 10);
@@ -355,8 +354,7 @@ str_to_interval(const char *interval_string) {
             break;
          default:
             err_msg("ERROR: Unknown interval multiplier character: \"%c\"",
-                    end_char);
-            break; /* NOTREACHED */
+                    end_char);	/* Never returns */
       }
    }
    value = Strtoul(interval_str, 10);
