@@ -207,6 +207,8 @@ make_message(const char *fmt, ...) {
  *	in the output string.  Therefore the output string will be twice
  *	as long as the input data plus one extra byte for the trailing NULL.
  *
+ *	The input data "string" must not be NULL.
+ *
  *	The pointer returned points to malloc'ed storage which should be
  *	free'ed by the caller when it's no longer needed.
  */
@@ -216,11 +218,8 @@ hexstring(const unsigned char *data, size_t size) {
    char *r;
    const unsigned char *cp;
    unsigned i;
-   /*
-    * If the input data is NULL, return an empty string.
-    */
-   if (data == NULL)
-      return dupstr("");
+
+   assert (data != NULL);	/* Input data must not be NULL */
    /*
     * Create and return hex string.
     */
