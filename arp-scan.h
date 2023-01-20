@@ -35,6 +35,7 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <limits.h>
+#include <assert.h>
 
 #include <sys/types.h>
 

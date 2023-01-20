@@ -129,10 +129,7 @@ hex2data(const char *string, size_t *data_len) {
    unsigned i;
    size_t len;
 
-   if (strlen(string) % 2) { /* Length is odd */
-      *data_len = 0;
-      return NULL;
-   }
+   assert(strlen(string) % 2 == 0);	/* Length must be even */
 
    len = strlen(string) / 2;
    data = Malloc(len);
@@ -579,8 +576,7 @@ name_to_id(const char *name, const id_name_map map[]) {
    int found = 0;
    int i = 0;
 
-   if (map == NULL)
-      return -1;
+   assert (map != NULL);
 
    while (map[i].id != -1) {
       if ((str_ccmp(name, map[i].name)) == 0) {
