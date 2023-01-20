@@ -150,7 +150,7 @@ fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
 
-# Try to specify invalid IP address - nonzero exit
+# Specify invalid IP address - warning followed by nonzero exit
 echo "Checking arp-scan with invalid IP address ..."
 ARPARGS="--retry=1 --numeric"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 333.333.333.333 > "$ARPSCANOUTPUT" 2>&1
@@ -168,7 +168,25 @@ fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
 
-# Try to specify invalid CIDR address - nonzero exit
+# Specify invalid IP network in CIDR notation - nonzero exit
+echo "Checking arp-scan with invalid IP network in CIDR notation ..."
+ARPARGS="--retry=1 --numeric"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 333.0.0.0/24 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: 333.0.0.0 is not a valid IPv4 network' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Specify invalid CIDR mask - nonzero exit
 echo "Checking arp-scan with invalid CIDR address ..."
 ARPARGS="--retry=1"
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0/0 > "$ARPSCANOUTPUT" 2>&1
@@ -178,6 +196,114 @@ if test $? -eq 0; then
    exit 1
 fi
 grep '^ERROR: Number of bits in 10.0.0.0/0 must be between 3 and 32' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Specify CIDR address with non-zero host part: warning
+echo "Checking arp-scan with nonzero host in CIDR address ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.1/30 > "$ARPSCANOUTPUT" 2>&1
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^WARNING: host part of 10.0.0.1/30 is non-zero' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Specify invalid IP network in net:mask notation - nonzero exit
+echo "Checking arp-scan with invalid IP network in net:mask notation ..."
+ARPARGS="--retry=1 --numeric"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 333.0.0.0:255.255.255.0 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: 333.0.0.0 is not a valid IPv4 network' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Specify invalid netmask - nonzero exit
+echo "Checking arp-scan with invalid netmask ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.0:333.0.0.0 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: 333.0.0.0 is not a valid netmask' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Specify net:mask address with non-zero host part: warning
+echo "Checking arp-scan with nonzero host in net:mask address ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.1:255.255.255.252 > "$ARPSCANOUTPUT" 2>&1
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^WARNING: host part of 10.0.0.1:255.255.255.252 is non-zero' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Specify invalid starting IP address in range notation - nonzero exit
+echo "Checking arp-scan with invalid starting IP network in range notation ..."
+ARPARGS="--retry=1 --numeric"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 333.0.0.0-10.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: Invalid range specification: 333.0.0.0 is not a valid IPv4 address' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Specify invalid ending IP address in range notation - nonzero exit
+echo "Checking arp-scan with invalid ending IP network in range notation ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 10.0.0.1-333.0.0.0 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: Invalid range specification: 333.0.0.0 is not a valid IPv4 address' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"
@@ -312,7 +438,7 @@ fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
 
-# output format may not be empty string
+# Invalid format string: empty string
 echo "Checking arp-scan with --format field empty string ..."
 ARPARGS="--retry=1 --format="
 ./arp-scan $ARPARGS --readpktfromfile="$SAMPLE01" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
