@@ -1457,7 +1457,7 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
       cp = strchr(patcopy, '/');
       *(cp++) = '\0'; /* patcopy points to IPnet, cp points to bits */
       if (!(inet_aton(patcopy, &in_val)))
-         err_msg("ERROR: %s is not a valid IP address", patcopy);
+         err_msg("ERROR: %s is not a valid IPv4 network", patcopy);
       ipnet_val = ntohl(in_val.s_addr); /* We need host byte order */
       numbits = Strtoul(cp, 10);
       if (numbits<3 || numbits>32)
@@ -1506,10 +1506,10 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
       cp = strchr(patcopy, ':');
       *(cp++) = '\0'; /* patcopy points to IPnet, cp points to netmask */
       if (!(inet_aton(patcopy, &in_val)))
-         err_msg("ERROR: %s is not a valid IP address", patcopy);
+         err_msg("ERROR: %s is not a valid IPv4 network", patcopy);
       ipnet_val = ntohl(in_val.s_addr); /* We need host byte order */
       if (!(inet_aton(cp, &mask_val)))
-         err_msg("ERROR: %s is not a valid netmask", patcopy);
+         err_msg("ERROR: %s is not a valid netmask", cp);
       mask = ntohl(mask_val.s_addr); /* We need host byte order */
       /*
        * Calculate the number of bits in the network.
@@ -1556,10 +1556,12 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
       cp = strchr(patcopy, '-');
       *(cp++) = '\0'; /* patcopy points to IPstart, cp points to IPend */
       if (!(inet_aton(patcopy, &in_val)))
-         err_msg("ERROR: %s is not a valid IP address", patcopy);
+         err_msg("ERROR: Invalid range specification: %s is not a valid IPv4 "
+                 "address", patcopy);
       hoststart = ntohl(in_val.s_addr); /* We need host byte order */
       if (!(inet_aton(cp, &in_val)))
-         err_msg("ERROR: %s is not a valid IP address", cp);
+         err_msg("ERROR: Invalid range specification: %s is not a valid IPv4 "
+                 "address", cp);
       hostend = ntohl(in_val.s_addr); /* We need host byte order */
       /*
        * Calculate all host addresses in the range and feed to add_host()
