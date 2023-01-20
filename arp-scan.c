@@ -2196,15 +2196,13 @@ arp_scan_version(void) {
 struct in_addr *
 get_host_address(const char *name, struct in_addr *addr, char **error_msg) {
    static char err[MAXLINE];
-   static struct in_addr ipa;
 
    struct addrinfo *res;
    struct addrinfo hints;
    struct sockaddr_in sa_in;
    int result;
 
-   if (addr == NULL) /* Use static storage if no buffer specified */
-      addr = &ipa;
+   assert (addr != NULL);
 
    memset(&hints, '\0', sizeof(hints));
    hints.ai_family = AF_INET;
