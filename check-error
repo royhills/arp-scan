@@ -545,3 +545,39 @@ if test $? -ne 0; then
 fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
+
+# Invalid IP address for --arpspa option
+echo "Checking arp-scan with invalid --arpspa option ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS --arpspa=333.0.0.1 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: Invalid IPv4 address: 333.0.0.1' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Odd --padding length
+echo "Checking arp-scan with odd --padding length ..."
+ARPARGS="--retry=1"
+./arp-scan $ARPARGS --padding=a 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -eq 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^ERROR: Length of --padding argument must be even (multiple of 2).' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
