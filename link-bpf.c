@@ -91,6 +91,11 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
     */
    for (p = buf; p < buf + len; p += ifm->ifm_msglen) {
       ifm = (struct if_msghdr *)p;
+   /*
+    * Skip this message if the version isn't what we expect.
+    */
+      if (ifm->ifm_version != RTM_VERSION)
+         continue;
       sdl = (struct sockaddr_dl *)(ifm + 1);
 
       if (ifm->ifm_type != RTM_IFINFO || (ifm->ifm_addrs & RTA_IFP) == 0)
