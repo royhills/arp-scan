@@ -102,7 +102,7 @@ dnl Checks for library functions.
 dnl All of these are defined by POSIX
 AC_CHECK_FUNCS([malloc gethostbyname gettimeofday inet_ntoa memset select socket strerror])
 dnl These functions might not be present on all systems
-AC_CHECK_FUNCS([getifaddrs])
+AC_CHECK_FUNCS([getifaddrs pledge])
 
 dnl
 dnl Determine link-layer implementation to use based on the $host_os variable

@@ -454,6 +454,14 @@ main(int argc, char *argv[]) {
          err_sys("open %s", pkt_filename);
    }
    /*
+    * If we have the OpenBSD pledge(2) system call, use it to restrict
+    * system operations from this point.
+    */
+#ifdef HAVE_PLEDGE
+   if (pledge("stdio dns bpf", NULL) == -1)
+      err_sys("pledge");
+#endif
+   /*
     * Create and initialise array of pointers to host entries.
     */
    helistptr = Malloc(num_hosts * sizeof(host_entry *));
