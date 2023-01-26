@@ -35,6 +35,7 @@ jobs:
       run: |
         sudo make install
         arp-scan -vv --localnet --limit=1
+      if: matrix.os == 'ubuntu-latest'
     - name: print info
       run: |
         uname -a
