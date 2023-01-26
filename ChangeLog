@@ -1,7 +1,12 @@
 2023-01-26 Roy Hills <royhills@hotmail.com>
 
-	* mac-vendor.txt: Incorporate latest OpenBSD patch changes for version
-	  1.10.0 to this file.  Thanks to @sthen for the patch.
+	* mac-vendor.txt: Incorporate OpenBSD patch for version 1.10.0 to this
+	  file to add CARP, IPv6 VRRPv3 and OpenBSD random MAC addresses.
+	  Thanks to @sthen for the patch.
+
+	* link-bpf.c: Incorporate OpenBSD patch for version 1.10.0 to this
+	  file to skip messages with incorrect version. Thanks to @sthen for
+	  this patch.
 
 	* .github/workflows/c-cpp.yml, .github/workflows/code-coverage.yml:
           Added "sudo make install" and "arp-scan -vv --localnet --limit=1"

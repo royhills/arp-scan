@@ -94,9 +94,8 @@ get_hardware_address(const char *if_name, unsigned char hw_address[]) {
    /*
     * Skip this message if the version isn't what we expect.
     */
-      assert(ifm->ifm_version == RTM_VERSION);	// Check for macOS
- //     if (ifm->ifm_version != RTM_VERSION)
- //        continue;
+      if (ifm->ifm_version != RTM_VERSION)
+         continue;
       sdl = (struct sockaddr_dl *)(ifm + 1);
 
       if (ifm->ifm_type != RTM_IFINFO || (ifm->ifm_addrs & RTA_IFP) == 0)
