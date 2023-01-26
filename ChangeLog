@@ -3,6 +3,21 @@
 	* mac-vendor.txt: Incorporate latest OpenBSD patch changes for version
 	  1.10.0 to this file.  Thanks to @sthen for the patch.
 
+	* .github/workflows/c-cpp.yml, .github/workflows/code-coverage.yml:
+          Added "sudo make install" and "arp-scan -vv --localnet --limit=1"
+          to Ubuntu and macOS builds and coveralls coverage run. This increases
+	  code coverage by 7.4% on Linux and makes the commit checks more
+	  robust.
+
+	* arp-scan.c, format.c, mt19937ar.c, utils.c, wrappers.c, check-error,
+          check-options, check-decode: Various checks and minor code changes
+	  to increase code test coverage: Use assert() for things that should
+	  never fail. Added various tests. Remove switch break statements that
+	  obviously won't ever be reached (one left that's obvious to me but
+	  not to gcc 12.2). Removed unneeded code lines. Together with the
+	  "arp-scan --localnet" option mentioned above, Linux code coverage
+	  has increased to 90.1%.
+
 2023-01-18 Roy Hills <royhills@hotmail.com>
 
 	* mac-vendor.txt: Change the naming of the VRRP protocol to
