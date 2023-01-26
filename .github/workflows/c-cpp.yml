@@ -29,10 +29,12 @@ jobs:
       run: ./configure
     - name: make
       run: make
-    - name: make check
-      run: make check
     - name: make distcheck
       run: make distcheck
+    - name: localnet run
+      run: |
+        sudo make install
+        arp-scan -vv --localnet --limit=1
     - name: print info
       run: |
         uname -a
