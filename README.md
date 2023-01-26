@@ -16,7 +16,7 @@
 
 ## About
 
-`arp-scan` is a command-line tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network. It is available for Linux, BSD (including macOS) and Solaris under the GPLv3 licence.
+`arp-scan` is a command-line tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network. It is available for Linux, BSD (including macOS) and Solaris under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) licence.
 
 ## Installation
 
@@ -32,19 +32,19 @@ arp-scan uses the GNU automake and autoconf tools, so the typical installation p
 
 You will need:
 
-- GNU `automake` and `autoconf` (if you don't have these, download the latest tarball which includes `configure`: [arp-scan-1.10.0.tar.gz](https://github.com/royhills/arp-scan/releases/download/1.10.0/arp-scan-1.10.0.tar.gz)).
+- GNU `automake` and `autoconf` (if you don't have these, you can download the latest tarball which includes `configure` instead: [arp-scan-1.10.0.tar.gz](https://github.com/royhills/arp-scan/releases/download/1.10.0/arp-scan-1.10.0.tar.gz)). That won't be as up to date as github, but it will be better tested.
 - The `make` utility (works with BSD make and GNU make).
 - An ANSI C compiler (tested on `gcc` and `clang`, probably works on others).
 - `libpcap` version 1.5 or later (any modern distro should have this as a binary package).
-- `libcap` to build with POSIX.1e capabilities support on Linux. Most Linux distros should come with runtime support by default and have a binary development package available. Capabilities support has been in the Linux kernel since `2.6.24` released in January 2008, and all distros I'm aware of enable support in their kernel.
+- `libcap` to build with [POSIX.1e capabilities](https://sites.google.com/site/fullycapable/) support on Linux. Most Linux distros should come with runtime support by default and have a binary development package available. Capabilities support has been in the Linux kernel since `2.6.24` released in January 2008, and all distros I'm aware of enable support in their kernel.
 
-To run the Perl scripts arp-fingerprint and get-oui, you will also need `perl` and the perl modules `LWP::UserAgent` and `Text::CSV`.
+To run the Perl scripts `arp-fingerprint` and `get-oui`, you will also need `perl` and the perl modules `LWP::UserAgent` and `Text::CSV`.
 
 You can pass options to `configure` to control the build process. Run `./configure --help` for a list of options. `arp-scan` has one package-specific configure option:
 
 - `--with-libcap[=auto/yes/no]` Build with libcap POSIX.1e capabilities support [default=`auto`]
 
-    By default, configure will enable capability support if the `libcap` library and headers are installed. Specifying `--with-libcap` will enable support and `--without-libpcap` will disable it.
+    With `auto`, configure will enable capability support if the `libcap` library and headers are installed. Specifying `--with-libcap` will enable support and `--without-libpcap` will disable it.
 
 arp-scan runs on:
 
@@ -77,9 +77,9 @@ Most of the changes and improvements to arp-scan came from the community. So con
 
 Please read these guidelines if you're submitting a pull request:
 
- - Must run on all supported platforms (possible exception for Solaris because it's moribund now). I can help with porting, autoconf checks, unit tests etc.
- - Must compile without warnings with the GCC/Clang options that `arp-scan` builds with.
- - Formatting like `clang-format` with the following options (with a few exceptions):
+ - It must build and run on all supported platforms (possible exception for Solaris because it's moribund now). I can help with porting, autoconf checks, unit tests etc.
+ - It must compile without warnings with the GCC/Clang options that `arp-scan` builds with.
+ - Source formatting style is `clang-format` with the following options (with a few exceptions):
    - `BasedOnStyle: LLVM`
    - `IndentWidth: 3`
    - `AlwaysBreakAfterDefinitionReturnType: All`
@@ -90,4 +90,4 @@ Please read these guidelines if you're submitting a pull request:
 Code on the `master` branch has been tested, so that is what the vast majority of people should use. If you use github branches from a pull request, please note that:
 
  - The code is experimental until it gets merged into `master` (but there's still pretty good checks so if it says `All checks have passed`/`This branch has no conflicts with the base branch` then you're fairly safe providing you've read the pull request comments).
- - I may rebase the branch to master if there are no other contributors (if it's my PR and no one else has contributed to it. That's what `royhills forced-pushed ...` means if you see it.
+ - I may rebase the branch to master if there are no other contributors (if it's my PR and no one else has contributed to it). That's what `royhills forced-pushed ...` means if you see it.
