@@ -1,3 +1,8 @@
+2023-01-26 Roy Hills <royhills@hotmail.com>
+
+	* mac-vendor.txt: Incorporate latest OpenBSD patch changes for version
+	  1.10.0 to this file.  Thanks to @sthen for the patch.
+
 2023-01-18 Roy Hills <royhills@hotmail.com>
 
 	* mac-vendor.txt: Change the naming of the VRRP protocol to
