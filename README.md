@@ -7,17 +7,18 @@
 ---
 
 ## Table of Contents
+
 - [About](#about)
 - [Installation](#installation)
 - [Documentation](#documentation)
+- [Notes for Contributors](#Notes for Contributors)
+- [Coding Guidelines](#Coding Guidelines)
 
-About
------
+## About
 
 arp-scan is a command-line tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network. It is available for Linux, BSD (including macOS) and Solaris under the GPLv3 licence.
 
-Installation
-------------
+## Installation
 
 arp-scan uses the GNU automake and autoconf tools, so the typical installation process is:
 
@@ -31,8 +32,8 @@ arp-scan uses the GNU automake and autoconf tools, so the typical installation p
 
 You will need:
 
-- GNU `automake` and `autoconf`.
-- The `make` utility.
+- GNU `automake` and `autoconf` (if you don't have these, download the latest tarball which includes `configure`: [arp-scan-1.10.0.tar.gz](https://github.com/royhills/arp-scan/releases/download/1.10.0/arp-scan-1.10.0.tar.gz).
+- The `make` utility (works with BSD make and GNU make).
 - An ANSI C compiler (works with `gcc` and `clang`).
 - `libpcap` version 1.5 or later.
 - `libcap` to build with POSIX.1e capabilities support on Linux.
@@ -52,11 +53,10 @@ arp-scan runs on:
  - OpenBSD
  - NetBSD
  - DragonflyBSD
- - macOS X
- - Solaris 10 (there are known problems with Solaris 11)
+ - macOS
+ - Solaris 10 (there are known problems with Solaris 11 but I doubt anyone cares)
 
-Documentation
--------------
+## Documentation
 
 For usage information use:
 
@@ -64,4 +64,33 @@ For usage information use:
 
 For detailed information, see the manual pages: arp-scan(1), arp-fingerprint(1), get-oui(1) and mac-vendor(5).
 
-See the arp-scan wiki at http://www.royhills.co.uk/wiki/
+See the arp-scan wiki at http://www.royhills.co.uk/wiki/ (it's a bit outdated now, but I plan to update it).
+
+## Notes for Contributors
+
+Most of the changes and improvements came from the community. So contributions are very welcome, and I always credit the contributors in the ChangeLog.
+
+ - [Pull Requests](https://github.com/royhills/arp-scan/pulls) If you are able to write C code. I accept most pull requests, normally after a short discussion. Please see the coding guidelines below.
+ - [Issues](https://github.com/royhills/arp-scan/issues) For bug reports, feature requests, build problems, packaging issues, ideas, strange things you can't explain (I've found interesting bugs and the occasional vulnerability from weird results) etc. Please check existing issues (including closed issues - click on "[number] closed" to view them) and the appropriate manual page before reporting, thanks.
+
+## Coding Guidelines
+
+Please read these guidelines if you're submitting a pull request:
+
+ - It's C, not C++. Nothing against C++ but this is a C project. Plus Perl maybe, but not for anything "serious" (`arp-fingerprint` is a specialist tool, and `get-oui` is only Perl because C is such a pain for grabbing a file from a website and parsing the contents).
+ - Needs to run on all supported platforms (I might make an exception for Solaris because it's moribund now). I can generally help with porting, autoconf checks, unit tests etc.
+ - Must compile without warnings with the GCC/Clang options that `arp-scan` builds with.
+ - Formatting like `clang-format` with the following options (with a few exceptions):
+   - BasedOnStyle: LLVM
+   - IndentWidth: 3
+   - AlwaysBreakAfterDefinitionReturnType: All
+   - IndentCaseLabels: true
+
+## Using github branches other than `master`
+
+Generally only contributors will do this, but anyone is welcome to.  However most people will want to use the code from the `master` branch. If you don't know what that means then you don't need to read this section.
+
+If you use github branches from a pull request, note that:
+
+ - The code is experimental until it gets merged into `master` (but there's pretty good checks so if it says `All checks have passed / This branch has no conflicts with the base branch` then you're fairly safe).
+ - I may rebase the branch to master if there are no other contributors (if it's my PR and noone else has contributed to it. That's what `royhills forced-pushed ...` means if you see it.
