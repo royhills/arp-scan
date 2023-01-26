@@ -31,7 +31,7 @@ jobs:
       run: make
     - name: make distcheck
       run: make distcheck
-    - name: localnet run on Linux
+    - name: localnet run
       run: |
         sudo make install
         arp-scan -vv --localnet --limit=1
