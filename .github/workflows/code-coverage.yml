@@ -28,8 +28,8 @@ jobs:
         run: make check
       - name: localnet-run
         run: |
-          sudo setcap cap_net_raw+p ./arp-scan
-          ./arp-scan -vv --localnet --limit=1 || true
+          sudo make install
+          arp-scan -vv --localnet --limit=1
       - name: create lcov.info
         run: lcov --directory . --capture --output-file lcov.info
       - name: Coveralls
