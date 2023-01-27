@@ -123,6 +123,19 @@ main(int argc, char *argv[]) {
    pcap_t *pcap_handle;         /* pcap handle */
    struct in_addr interface_ip_addr;
    /*
+    * If we have `pledge(2)` then restrict system operations to only those
+    * needed as the very first operation in main(). When we have completed
+    * initial setup (parsed options, opened files and sockets etc), we will
+    * call pledge() again to further reduce this set of permitted operations.
+    */
+#ifdef HAVE_PLEDGE
+   if (pledge("stdio rpath wpath cpath dpath tmppath inet mcast fattr chown "
+              "flock unix dns getpw sendfd recvfd tape tty proc exec "
+              "prot_exec settime ps vminfo id pf route wroute audio video "
+              "bpf unveil", NULL) == -1)
+      err_sys("pledge");
+#endif
+   /*
     * Limit process capabilities to the minimum necessary to run this program.
     *
     * If we have POSIX.1e capability support, this removes all capabilities
