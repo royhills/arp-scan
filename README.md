@@ -10,13 +10,13 @@
 
 - [About](#about)
 - [Installation](#installation)
-- [Building and Installing from Source](#building-and-installing-from-source)
-- [Installing from a Binary Package](#installing-from-a-binary-package)
-- [Installing from a BSD Port](#installing-from-a-BSD-port)
+- [Building and Installing from Source](##building-and-installing-from-source)
+- [Installing from a Binary Package](##installing-from-a-binary-package)
+- [Installing from a BSD Port](##installing-from-a-BSD-port)
 - [Documentation](#documentation)
 - [Notes for Contributors](#notes-for-contributors)
-- [Coding Guidelines](#coding-guidelines)
-- [Using github branches other than master](#using-github-branches-other-than-master)
+- [Coding Guidelines](##coding-guidelines)
+- [Using github branches other than master](##using-github-branches-other-than-master)
 - [Notes for Package Maintainers](#notes-for-package-maintainers)
 
 # About
@@ -118,5 +118,5 @@ Code on the `master` branch has been tested, so that is what the vast majority o
 # Notes for Package Maintainers
 
  - Please raise a github issue or create a pull request if you have any local patches that could be applicable upstream.
- - If you are building on Linux, please build with `libcap` POSIX.1e capabilities support if you can. You may need to install the `libcap` development headers before running `configure`.
+ - If you are building on Linux, please build with `libcap` POSIX.1e capabilities support if you can. You may need to install the `libcap` development headers as well as the `libpcap` development headers before running `configure`.
  - Note that `Makefile.am` contains an `install-exec-hook` that will install `arp-scan` with `CAP_NET_RAW` capabilities if it can, and failing that it will install it suid root.
