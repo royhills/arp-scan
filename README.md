@@ -9,16 +9,21 @@
 ## Table of Contents
 
 - [About](#about)
+- [Installation](#installation)
 - [Building and Installing from Source](#building-and-installing-from-source)
 - [Installing from a Binary Package](#installing-from-a-binary-package)
-- [Installing from a BSD Source Ports Collection](#installing-from-a-BSD-source-ports-collection)
+- [Installing from a BSD Port](#installing-from-a-BSD-port)
 - [Documentation](#documentation)
 - [Notes for Contributors](#notes-for-contributors)
 - [Coding Guidelines](#coding-guidelines)
+- [Using github branches other than master](#using-github-branches-other-than-master)
+- [Notes for Package Maintainers](#notes-for-package-maintainers)
 
-## About
+# About
 
 `arp-scan` is a command-line tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network. It is available for Linux, BSD (including macOS) and Solaris under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) licence.
+
+# Installation
 
 ## Building and Installing from Source
 
@@ -60,23 +65,21 @@ arp-scan is known to build and run on:
 
 ## Installing from a Binary Package
 
-Many distributions provide binary packages for `arp-scan`. These won't be as up to date as the latest source on github and may not even be as up to date as the latest release, but they are more convenient and they will be managed by the package manager which will keep them up to date. So using a binary package is often a good choice if you don't need the latest features.
+Many distributions provide binary packages for `arp-scan`. These won't be as up to date as the latest source on github and may not be as up to date as the latest release, but they are more convenient and will be kept up to date by the package manager. So using a binary package is often a good choice if you don't need the latest features.
 
 If you have installed a binary package and wonder if there are useful new features on github, use `arp-scan --version` to check the version you have then see the [NEWS](NEWS.md) and [ChangeLog](ChangeLog) files on github for details of what's changed.
 
 The details on how to install an `arp-scan` binary package depend on your distribution.
 
-## Installing from a BSD Source Ports Collection
+## Installing from a BSD Port
 
 If you are using a BSD operating system you may have the option of installing from a source ports collection as well as from a binary package.
 
-Ports automate the building and installation of source code and manage updates like a binary package. They also give the flexibility of installing from source.
-
-A source port won't be as up to date as the latest github though, but it might sometimes be more up to date than the corresponding binary package.
+Ports automate the building and installation of source code and manage updates like a binary package. They also give the flexibility of installing from source. A source port won't be as up to date as the latest github though, but it might sometimes be more up to date than the corresponding binary package.
 
 The details on how to install an `arp-scan` source port depend on your distribution.
 
-## Documentation
+# Documentation
 
 For usage information use:
 
@@ -86,7 +89,7 @@ For detailed information, see the manual pages: `arp-scan(1)`, `arp-fingerprint(
 
 See the arp-scan wiki at http://www.royhills.co.uk/wiki/ (it's a bit outdated now, but I plan to update it soon).
 
-## Notes for Contributors
+# Notes for Contributors
 
 Most of the changes and improvements to arp-scan came from the community. So contributions are very welcome, and I always credit the contributors in the ChangeLog.
 
@@ -105,9 +108,15 @@ Please read these guidelines if you're submitting a pull request:
    - `AlwaysBreakAfterDefinitionReturnType: All`
    - `IndentCaseLabels: true`
 
-## Using github branches other than `master`
+## Using github branches other than master
 
 Code on the `master` branch has been tested, so that is what the vast majority of people should use. If you use github branches from a pull request, please note that:
 
  - The code is experimental until it gets merged into `master` (but there's still pretty good checks so if it says `All checks have passed`/`This branch has no conflicts with the base branch` then you're fairly safe providing you've read the pull request comments).
  - I may rebase the branch to master if there are no other contributors (if it's my PR and no one else has contributed to it). That's what `royhills forced-pushed ...` means if you see it.
+
+# Notes for Package Maintainers
+
+ - Please raise a github issue or create a pull request if you have any local patches that could be applicable upstream.
+ - If you are building on Linux, please build with `libcap` POSIX.1e capabilities support if you can. You may need to install the `libcap` development headers before running `configure`.
+ - Note that `Makefile.am` contains an `install-exec-hook` that will install `arp-scan` with `CAP_NET_RAW` capabilities if it can, and failing that it will install it suid root.
