@@ -6,22 +6,9 @@
 
 ---
 
-## Table of Contents
-
-- [About](#about)
-- [Installation](#installation)
-- [Building and Installing from Source](##building-and-installing-from-source)
-- [Installing from a Binary Package](##installing-from-a-binary-package)
-- [Installing from a BSD Port](##installing-from-a-BSD-port)
-- [Documentation](#documentation)
-- [Notes for Contributors](#notes-for-contributors)
-- [Coding Guidelines](##coding-guidelines)
-- [Using github branches other than master](##using-github-branches-other-than-master)
-- [Notes for Package Maintainers](#notes-for-package-maintainers)
-
 # About
 
-`arp-scan` is a command-line tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network. It is available for Linux, BSD (including macOS) and Solaris under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) licence.
+`arp-scan` is a network scanning tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network. It is available for Linux, BSD (including macOS) and Solaris under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) licence.
 
 # Installation
 
@@ -75,7 +62,7 @@ The details on how to install an `arp-scan` binary package depend on your distri
 
 If you are using a BSD operating system you may have the option of installing from a source ports collection as well as from a binary package.
 
-Ports automate the building and installation of source code and manage updates like a binary package. They also give the flexibility of installing from source. A source port won't be as up to date as the latest github though, but it might sometimes be more up to date than the corresponding binary package. I consider ports to be aimed at more advanced users than binary packages.
+Ports automate the building and installation of source code and manage updates like a binary package. They also give the flexibility of installing from source. A source port won't be as up to date as the latest github though, but it might sometimes be more up to date than the corresponding binary package.
 
 The details on how to install an `arp-scan` source port depend on your distribution.
 
@@ -119,4 +106,4 @@ Code on the `master` branch has been tested, so that is what the vast majority o
 
  - Please raise a github issue or create a pull request if you have any local patches that could be applicable upstream.
  - If you are building on Linux, please build with `libcap` POSIX.1e capabilities support if you can. You may need to install the `libcap` development headers as well as the `libpcap` development headers before running `configure`.
- - Note that `Makefile.am` contains an `install-exec-hook` that will install `arp-scan` with `CAP_NET_RAW` capabilities if it can, and failing that it will install it suid root. For a Linux system I consider both `setcap` and `suid` to be safe if the `arp-scan` binary is capabilities aware. On OpenBSD it will use `pledge(2)` to restrict system calls, which provides some level of protection. Otherwise you should consider whether you trust the code running SUID.
+ - Note that `Makefile.am` contains an `install-exec-hook` that will install `arp-scan` with `CAP_NET_RAW` capabilities if it can, and failing that it will install it suid root.
