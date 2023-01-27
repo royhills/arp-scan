@@ -11,6 +11,7 @@
 - [About](#about)
 - [Building and Installing from Source](#building-and-installing-from-source)
 - [Installing from a Binary Package](#installing-from-a-binary-package)
+- [Installing from a BSD Source Ports Collection](#installing-from-a-BSD-source-ports-collection)
 - [Documentation](#documentation)
 - [Notes for Contributors](#notes-for-contributors)
 - [Coding Guidelines](#coding-guidelines)
@@ -59,7 +60,7 @@ arp-scan is known to build and run on:
 
 ## Installing from a Binary Package
 
-Many distributions provide binary packages for `arp-scan`. These won't be as up to date as the latest source on github and may not even be as up to date as the latest release, but they are more convenient and they will be managed by the package manager which will keep them up to date. For this reasons using a binary package is often a good choice if you don't need the latest features.
+Many distributions provide binary packages for `arp-scan`. These won't be as up to date as the latest source on github and may not even be as up to date as the latest release, but they are more convenient and they will be managed by the package manager which will keep them up to date. So using a binary package is often a good choice if you don't need the latest features.
 
 If you have installed a binary package and wonder if there are useful new features on github, use `arp-scan --version` to check the version you have then see the [NEWS](NEWS.md) and [ChangeLog](ChangeLog) files on github for details of what's changed.
 
@@ -89,7 +90,7 @@ See the arp-scan wiki at http://www.royhills.co.uk/wiki/ (it's a bit outdated no
 
 Most of the changes and improvements to arp-scan came from the community. So contributions are very welcome, and I always credit the contributors in the ChangeLog.
 
- - [Pull Requests](https://github.com/royhills/arp-scan/pulls): Statistically I accept most pull requests but obviously no guarantees. Please see the coding guidelines below.
+ - [Pull Requests](https://github.com/royhills/arp-scan/pulls): I accept most pull requests but obviously no guarantees. Please see the coding guidelines below.
  - [Issues](https://github.com/royhills/arp-scan/issues): For bug reports, feature requests, build problems, packaging issues, ideas, strange things you can't explain (I've found interesting bugs and the occasional vulnerability from weird results) etc. Please check existing issues (both [open](https://github.com/royhills/arp-scan/issues?q=is%3Aopen+is%3Aissue) and [closed](https://github.com/royhills/arp-scan/issues?q=is%3Aissue+is%3Aclosed)) and the appropriate manual page before reporting, thanks.
 
 ## Coding Guidelines
