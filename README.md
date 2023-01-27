@@ -9,7 +9,8 @@
 ## Table of Contents
 
 - [About](#about)
-- [Installation](#installation)
+- [Building and Installing from Source](#building-and-installing-from-source)
+- [Installing from a Binary Package](#installing-from-a-binary-package)
 - [Documentation](#documentation)
 - [Notes for Contributors](#notes-for-contributors)
 - [Coding Guidelines](#coding-guidelines)
@@ -18,7 +19,7 @@
 
 `arp-scan` is a command-line tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network. It is available for Linux, BSD (including macOS) and Solaris under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) licence.
 
-## Installation
+## Building and Installing from Source
 
 arp-scan uses the GNU automake and autoconf tools, so the typical installation process is:
 
@@ -46,7 +47,7 @@ You can pass options to `configure` to control the build process. Run `./configu
 
     With `auto`, configure will enable capability support if the `libcap` library and headers are installed. Specifying `--with-libcap` will enable support and `--without-libpcap` will disable it.
 
-arp-scan runs on:
+arp-scan is known to build and run on:
 
  - Linux
  - FreeBSD
@@ -55,6 +56,24 @@ arp-scan runs on:
  - DragonflyBSD
  - macOS
  - Solaris 10 (there are known problems with Solaris 11 but I doubt anyone cares. Please comment on [this issue](https://github.com/royhills/arp-scan/issues/31) if you do).
+
+## Installing from a Binary Package
+
+Many distributions provide binary packages for `arp-scan`. These won't be as up to date as the latest source on github and may not even be as up to date as the latest release, but they are more convenient and they will be managed by the package manager which will keep them up to date. For this reasons using a binary package is often a good choice if you don't need the latest features.
+
+If you have installed a binary package and wonder if there are useful new features on github, use `arp-scan --version` to check the version you have then see the [NEWS](NEWS.md) and [ChangeLog](ChangeLog) files on github for details of what's changed.
+
+The details on how to install an `arp-scan` binary package depend on your distribution.
+
+## Installing from a BSD Source Ports Collection
+
+If you are using a BSD operating system you may have the option of installing from a source ports collection as well as from a binary package.
+
+Ports automate the building and installation of source code and manage updates like a binary package. They also give the flexibility of installing from source.
+
+A source port won't be as up to date as the latest github though, but it might sometimes be more up to date than the corresponding binary package.
+
+The details on how to install an `arp-scan` source port depend on your distribution.
 
 ## Documentation
 
