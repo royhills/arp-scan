@@ -8,7 +8,9 @@
 
 # About
 
-`arp-scan` is a network scanning tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network. It is available for Linux, BSD (including macOS) and Solaris under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) licence.
+`arp-scan` is a network scanning tool that uses the ARP protocol to discover and fingerprint IPv4 hosts on the local network. It is available for Linux, BSD, macOS and Solaris under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) licence.
+
+This is `README.md` for `arp-scan` version `1.10.1-git`.
 
 # Installation
 
