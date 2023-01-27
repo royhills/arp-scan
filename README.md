@@ -75,7 +75,7 @@ The details on how to install an `arp-scan` binary package depend on your distri
 
 If you are using a BSD operating system you may have the option of installing from a source ports collection as well as from a binary package.
 
-Ports automate the building and installation of source code and manage updates like a binary package. They also give the flexibility of installing from source. A source port won't be as up to date as the latest github though, but it might sometimes be more up to date than the corresponding binary package.
+Ports automate the building and installation of source code and manage updates like a binary package. They also give the flexibility of installing from source. A source port won't be as up to date as the latest github though, but it might sometimes be more up to date than the corresponding binary package. I consider ports to be aimed at more advanced users than binary packages.
 
 The details on how to install an `arp-scan` source port depend on your distribution.
 
@@ -119,4 +119,4 @@ Code on the `master` branch has been tested, so that is what the vast majority o
 
  - Please raise a github issue or create a pull request if you have any local patches that could be applicable upstream.
  - If you are building on Linux, please build with `libcap` POSIX.1e capabilities support if you can. You may need to install the `libcap` development headers as well as the `libpcap` development headers before running `configure`.
- - Note that `Makefile.am` contains an `install-exec-hook` that will install `arp-scan` with `CAP_NET_RAW` capabilities if it can, and failing that it will install it suid root.
+ - Note that `Makefile.am` contains an `install-exec-hook` that will install `arp-scan` with `CAP_NET_RAW` capabilities if it can, and failing that it will install it suid root. For a Linux system I consider both `setcap` and `suid` to be safe if the `arp-scan` binary is capabilities aware. On OpenBSD it will use `pledge(2)` to restrict system calls, which provides some level of protection. Otherwise you should consider whether you trust the code running SUID.
