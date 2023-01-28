@@ -6,8 +6,9 @@ release.  For more details please read the ChangeLog file.**
 * New Features:
 
   - New `-m` option for `arp-fingerprint` to display the host MAC addresses.
-  - OpenBSD: Call `pledge(2)` once initial setup is complete. `--version`
-    output includes `Built with OpenBSD pledge(2) support` if applicable.
+  - OpenBSD: Call `pledge(2)` to enter restricted service mode once initial
+    setup is complete. `arp-scan --version` output includes `Built with
+    OpenBSD pledge(2) support` if applicable.
 
 * Fixed bugs:
 
