@@ -2184,6 +2184,9 @@ arp_scan_version(void) {
 #ifdef HAVE_LIBCAP
    printf("Built with libcap POSIX.1e capability support.\n");
 #endif
+#ifdef HAVE_PLEDGE
+   printf("Built with OpenBSD pledge(2) support.\n");
+#endif
 }
 
 /*
