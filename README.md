@@ -97,13 +97,6 @@ Please read these guidelines if you're submitting a pull request:
    - `AlwaysBreakAfterDefinitionReturnType: All`
    - `IndentCaseLabels: true`
 
-## Using github branches other than master
-
-Code on the `master` branch has been tested, so that is what the vast majority of people should use. If you use github branches from a pull request, please note that:
-
- - The code is experimental until it gets merged into `master` (but there's still pretty good checks so if it says `All checks have passed`/`This branch has no conflicts with the base branch` then you're fairly safe providing you've read the pull request comments).
- - I may rebase the branch to master if there are no other contributors (if it's my PR and no one else has contributed to it). That's what `royhills forced-pushed ...` means if you see it.
-
 # Notes for Package Maintainers
 
  - Please raise a github issue or create a pull request if you have any local patches that could be applicable upstream.
