@@ -76,7 +76,7 @@ For usage information use:
 
 For detailed information, see the manual pages: `arp-scan(1)`, `arp-fingerprint(1)`, `get-oui(1)` and `mac-vendor(5)`.
 
-See the arp-scan wiki at http://www.royhills.co.uk/wiki/ (it's a bit outdated now, but I plan to update it soon).
+See the arp-scan wiki at [https://github.com/royhills/arp-scan/wiki](https://github.com/royhills/arp-scan/wiki)
 
 # Notes for Contributors
 
