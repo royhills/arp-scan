@@ -1,3 +1,8 @@
+2023-02-03 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.c: Call pcap_freecode() to free the BPF program after
+	  calling pcap_setfilter().  Thanks to @icy17 for the issue report.
+
 2023-01-28 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c, configure.ac: Call pledge(2) to force the process into
