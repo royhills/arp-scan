@@ -337,6 +337,7 @@ main(int argc, char *argv[]) {
       free(filter_string);
       if ((pcap_setfilter(pcap_handle, &filter)) < 0)
          err_msg("pcap_setfilter: %s", pcap_geterr(pcap_handle));
+      pcap_freecode(&filter);
    } else { /* Reading packets from file */
       pcap_fd = -1;
    }
