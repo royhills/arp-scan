@@ -87,6 +87,7 @@ static int rtt_flag = 0;                /* Display round-trip time */
 static pcap_dumper_t *pcap_dump_handle = NULL; /* pcap savefile handle */
 static int plain_flag = 0;              /* Only show host information */
 static int resolve_flag = 0;            /* Resolve IP addresses to hostnames */
+static int promisc = PROMISC;		/* Promiscuous mode status */
 unsigned int random_seed = 0;
 static unsigned retry_send = DEFAULT_RETRY_SEND; /* Number of send packet retries */
 static unsigned retry_send_interval = DEFAULT_RETRY_SEND_INTERVAL; /* Interval in seconds between send packet retries */
@@ -180,7 +181,8 @@ main(int argc, char *argv[]) {
          err_msg("pcap_create: %s", errbuf);
       if ((pcap_set_snaplen(pcap_handle, snaplen)) < 0)
          err_msg("pcap_set_snaplen: %s", pcap_geterr(pcap_handle));
-      if ((pcap_set_promisc(pcap_handle, PROMISC)) < 0)
+      warn_msg("DEBUG: pcap_set_promisc(pcap_handle, %d)", promisc);
+      if ((pcap_set_promisc(pcap_handle, promisc)) < 0)
          err_msg("pcap_set_promisc: %s", pcap_geterr(pcap_handle));
       if ((pcap_set_immediate_mode(pcap_handle, 1)) < 0)
          err_msg("pcap_set_immediate_mode: %s", pcap_geterr(pcap_handle));
@@ -1981,17 +1983,18 @@ process_options(int argc, char *argv[]) {
       {"limit", required_argument, 0, 'M'},
       {"resolve", no_argument, 0, 'd'},
       {"format", required_argument, 0, 'F'},
+      {"no-promiscuous-mode", no_argument, 0, 'X'},
       {0, 0, 0, 0}
    };
    /*
     * available short option characters:
     *
     * lower:       --c-e----jk--------------z
-    * UPPER:       --C---G--JK---------U--X-Z
+    * UPPER:       --C---G--JK---------U----Z
     * Digits:      0123456789
     */
    const char *short_options =
-      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:DxM:dk:";
+      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:DxM:dk:X";
    int arg;
    int options_index = 0;
 
@@ -2151,6 +2154,10 @@ process_options(int argc, char *argv[]) {
             break;
          case 'F': /* --format */
             format = format_parse(optarg);
+            break;
+         case 'X': /* --no-promiscuous-mode */
+            promisc = 0;
+            warn_msg("DEBUG: Promiscuous mode disabled");
             break;
          default: /* Unknown option */
             err_msg("Usage: arp-scan [options] [hosts...]\n"
