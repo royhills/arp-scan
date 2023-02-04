@@ -1,7 +1,7 @@
 **This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.**
 
-# 2023-01-28 arp-scan 1.10.1-git (in development)
+# 2023-02-04 arp-scan 1.10.1-git (in development)
 
 * New Features:
 
