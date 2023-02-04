@@ -14,6 +14,7 @@ release.  For more details please read the ChangeLog file.**
   - Fall back to system mapping files if user lacks execute permission in
     current directory.
   - Add `pcap_freecode()` to free BPF program memory when no longer needed.
+  - Do not enable promiscuous mode on the network interface.
 
 * General improvements:
 
