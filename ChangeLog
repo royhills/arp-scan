@@ -3,6 +3,7 @@
 	* arp-scan.h: Disable promiscuous mode on the network interface.
 	  Promiscuous mode is not required to receive ARP response packets
 	  because they are unicast packets directed to the scanning host.
+	  Thanks to @annube for reporting this issue.
 
 2023-02-03 Roy Hills <royhills@hotmail.com>
 

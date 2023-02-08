@@ -1,13 +1,14 @@
 **This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.**
 
-# 2023-01-28 arp-scan 1.10.1-git (in development)
+# 2023-02-04 arp-scan 1.10.1-git (in development)
 
 * New Features:
 
   - New `-m` option for `arp-fingerprint` to display the host MAC addresses.
-  - OpenBSD: Call `pledge(2)` once initial setup is complete. `--version`
-    output includes `Built with OpenBSD pledge(2) support` if applicable.
+  - OpenBSD: Call `pledge(2)` to enter restricted service mode once initial
+    setup is complete. `arp-scan --version` output includes `Built with
+    OpenBSD pledge(2) support` if applicable.
 
 * Fixed bugs:
 
