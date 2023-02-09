@@ -1,7 +1,7 @@
 **This file gives a brief overview of the major changes between each arp-scan
 release.  For more details please read the ChangeLog file.**
 
-# 2023-02-04 arp-scan 1.10.1-git (in development)
+# 2023-02-09 arp-scan 1.10.1-git (in development)
 
 * New Features:
 
@@ -10,19 +10,20 @@ release.  For more details please read the ChangeLog file.**
     setup is complete. `arp-scan --version` output includes `Built with
     OpenBSD pledge(2) support` if applicable.
 
-* Fixed bugs:
+* Fixed Bugs:
 
   - Fall back to system mapping files if user lacks execute permission in
     current directory.
   - Add `pcap_freecode()` to free BPF program memory when no longer needed.
-  - Do not enable promiscuous mode on the network interface.
+  - Do not enable promiscuous mode on the network interface as it is not needed.
 
-* General improvements:
+* General Improvements and Changes:
 
   - `get-oui` displays the underlying system error if the download fails
     instead of a generic "download failed" message.
   - CARP and IPv6 VRRP addresses added to mac-vendor.txt.
   - Version numbers have `-git` appended for development versions.
+  - Move `arp-scan` wiki from aws hosted mediawiki to github wiki.
 
 # 2022-12-10 arp-scan 1.10.0 (git tag 1.10.0)
 
