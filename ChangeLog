@@ -1,3 +1,9 @@
+2023-02-09 Roy Hills <royhills@hotmail.com>
+
+	* README.md, arp-fingerprint.1, arp-scan.1.dist, mac-vendor.txt:
+	  Updated references to the arp-scan wiki URL to use the github
+	  wiki at https://github.com/royhills/arp-scan/wiki.
+
 2023-02-04 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.h: Disable promiscuous mode on the network interface.

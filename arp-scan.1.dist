@@ -545,7 +545,7 @@ $ arp-scan -I eth0 --plain --format='${ip},${mac},"${vendor}"' 10.0.0.0/24
 .PP
 .BR arp-fingerprint (1)
 .PP
-.I http://www.royhills.co.uk/wiki/
+.I https://github.com/royhills/arp-scan/wiki
 The arp-scan wiki page.
 .PP
 .I https://github.com/royhills/arp-scan
