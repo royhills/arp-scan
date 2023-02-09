@@ -1,8 +1,20 @@
-2023-02-02 Roy Hills <royhills@hotmail.com>
+2023-02-09 Roy Hills <royhills@hotmail.com>
 
 	* README.md, arp-fingerprint.1, arp-scan.1.dist, mac-vendor.txt:
 	  Updated references to the arp-scan wiki URL to use the github
 	  wiki at https://github.com/royhills/arp-scan/wiki.
+
+2023-02-04 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.h: Disable promiscuous mode on the network interface.
+	  Promiscuous mode is not required to receive ARP response packets
+	  because they are unicast packets directed to the scanning host.
+	  Thanks to @annube for reporting this issue.
+
+2023-02-03 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.c: Call pcap_freecode() to free the BPF program after
+	  calling pcap_setfilter().  Thanks to @icy17 for the issue report.
 
 2023-01-28 Roy Hills <royhills@hotmail.com>
 
