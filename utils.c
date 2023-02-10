@@ -49,27 +49,12 @@ static uid_t euid;
 void
 timeval_diff(const struct timeval *a, const struct timeval *b,
              struct timeval *diff) {
-   struct timeval temp;
-
-   temp.tv_sec = b->tv_sec;
-   temp.tv_usec = b->tv_usec;
-
-   /* Perform the carry for the later subtraction by updating b. */
-   if (a->tv_usec < temp.tv_usec) {
-      int nsec = (temp.tv_usec - a->tv_usec) / 1000000 + 1;
-      temp.tv_usec -= 1000000 * nsec;
-      temp.tv_sec += nsec;
+   diff->tv_sec = a->tv_sec - b->tv_sec;
+   diff->tv_usec = a->tv_usec - b->tv_usec;
+   if (diff->tv_usec < 0) {
+      diff->tv_sec--;
+      diff->tv_usec += 1000000;
    }
-   if (a->tv_usec - temp.tv_usec > 1000000) {
-      int nsec = (a->tv_usec - temp.tv_usec) / 1000000;
-      temp.tv_usec += 1000000 * nsec;
-      temp.tv_sec -= nsec;
-   }
-
-   /* Compute the time difference
-      tv_usec is certainly positive. */
-   diff->tv_sec = a->tv_sec - temp.tv_sec;
-   diff->tv_usec = a->tv_usec - temp.tv_usec;
 }
 
 /*
