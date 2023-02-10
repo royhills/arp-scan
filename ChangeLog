@@ -1,3 +1,7 @@
+2023-02-10 Roy Hills <royhills@hotmail.com>
+
+	* utils.c: Simplify the timeval_diff() function.
+
 2023-02-09 Roy Hills <royhills@hotmail.com>
 
 	* README.md, arp-fingerprint.1, arp-scan.1.dist, mac-vendor.txt:
