@@ -1,3 +1,8 @@
+2023-02-11 Roy Hills <royhills@hotmail.com>
+
+	* configure.ac: Use "#" instead of "dnl" for comments so they appear
+	  in the generated "configure" file.
+
 2023-02-10 Roy Hills <royhills@hotmail.com>
 
 	* utils.c: Simplify the timeval_diff() function.
