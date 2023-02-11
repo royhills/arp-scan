@@ -568,7 +568,6 @@ main(int argc, char *argv[]) {
                reset_cum_err = 0;
             } else {
                cum_err += loop_timediff - interval;
-               printf("%d,%d\n", req_interval, cum_err);	// XXXX
                req_interval = (req_interval>=cum_err) ? req_interval-cum_err : 0;
             }
             select_timeout = req_interval;
