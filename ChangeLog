@@ -1,5 +1,10 @@
 2023-02-11 Roy Hills <royhills@hotmail.com>
 
+	* Makefile.am, check-error, check-options, arp-scan.c: Add some
+	  additional checks and hopefully stabilise the coverage percentage.
+
+	* pkt-too-short.pcap: New file.
+
 	* configure.ac: Use "#" instead of "dnl" for comments so they appear
 	  in the generated "configure" file.
 
