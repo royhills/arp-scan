@@ -25,6 +25,7 @@
 #
 ARPSCANOUTPUT=/tmp/arp-scan-output.$$.tmp
 SAMPLE01="$srcdir/pkt-simple-response.pcap"
+SAMPLE02="$srcdir/pkt-too-short.pcap"
 
 # Check invalid option - should have non-zero exit status
 echo "Checking arp-scan --xyz (invalid option) ..."
@@ -574,6 +575,24 @@ if test $? -eq 0; then
    exit 1
 fi
 grep '^ERROR: Length of --padding argument must be even (multiple of 2).' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
+
+# Packet too short to decode
+echo "Checking arp-scan with packet too short to decode ..."
+ARPARGS="--retry=1 --plain --quiet"
+./arp-scan $ARPARGS --readpktfromfile="$SAMPLE02" 127.0.0.1 > "$ARPSCANOUTPUT" 2>&1
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^WARNING: 22 byte packet too short to decode.' "$ARPSCANOUTPUT" >/dev/null
 if test $? -ne 0; then
    rm -f "$ARPSCANOUTPUT"
    echo "FAILED"

@@ -1848,7 +1848,7 @@ callback(u_char *args ATTRIBUTE_UNUSED,
     * Check that the packet is large enough to decode.
     */
    if (n < ETHER_HDR_SIZE + ARP_PKT_SIZE) {
-      printf("%d byte packet too short to decode\n", n);
+      warn_msg("WARNING: %d byte packet too short to decode.", n);
       return;
    }
    /*
