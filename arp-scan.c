@@ -568,11 +568,7 @@ main(int argc, char *argv[]) {
                reset_cum_err = 0;
             } else {
                cum_err += loop_timediff - interval;
-               if (req_interval >= cum_err) {
-                  req_interval = req_interval - cum_err;
-               } else {
-                  req_interval = 0;
-               }
+               req_interval = (req_interval>=cum_err) ? req_interval-cum_err : 0;
             }
             select_timeout = req_interval;
             /*
@@ -1852,7 +1848,7 @@ callback(u_char *args ATTRIBUTE_UNUSED,
     * Check that the packet is large enough to decode.
     */
    if (n < ETHER_HDR_SIZE + ARP_PKT_SIZE) {
-      printf("%d byte packet too short to decode\n", n);
+      warn_msg("WARNING: %d byte packet too short to decode.", n);
       return;
    }
    /*
