@@ -98,3 +98,21 @@ if test $? -ne 0; then
 fi
 echo "ok"
 rm -f "$ARPSCANOUTPUT"
+
+# Check --random without explicit --randomseed value
+echo "Checking arp-scan --random ..."
+ARPARGS="--quiet --plain --retry=1 --random"
+./arp-scan --readpktfromfile="$SAMPLE01" $ARPARGS 127.0.0.1 > "$ARPSCANOUTPUT"
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+grep '^127.0.0.1	08:00:2b:06:07:08' "$ARPSCANOUTPUT" >/dev/null
+if test $? -ne 0; then
+   rm -f "$ARPSCANOUTPUT"
+   echo "FAILED"
+   exit 1
+fi
+echo "ok"
+rm -f "$ARPSCANOUTPUT"
