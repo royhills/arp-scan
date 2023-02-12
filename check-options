@@ -24,7 +24,7 @@
 # This shell script checks various arp-scan options.
 #
 ARPSCANOUTPUT=/tmp/arp-scan-test.$$.tmp
-SAMPLE01="$srcdir/pkt-simple-response.pcap"
+SAMPLE01="$srcdir/testdata/pkt-simple-response.pcap"
 
 # Check --bandwidth with multiple character "K" and --retry-send-interval with
 # appended multiple character "u".

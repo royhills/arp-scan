@@ -28,12 +28,12 @@
 
 TMPFILE=/tmp/arp-scan-test.$$.tmp
 #
-SAMPLE01="$srcdir/pkt-simple-request.dat"
-SAMPLE02="$srcdir/pkt-custom-request.dat"
-SAMPLE03="$srcdir/pkt-custom-request-padding.dat"
-SAMPLE04="$srcdir/pkt-custom-request-llc.dat"
-SAMPLE05="$srcdir/pkt-custom-request-vlan.dat"
-SAMPLE06="$srcdir/pkt-custom-request-vlan-llc.dat"
+SAMPLE01="$srcdir/testdata/pkt-simple-request.dat"
+SAMPLE02="$srcdir/testdata/pkt-custom-request.dat"
+SAMPLE03="$srcdir/testdata/pkt-custom-request-padding.dat"
+SAMPLE04="$srcdir/testdata/pkt-custom-request-llc.dat"
+SAMPLE05="$srcdir/testdata/pkt-custom-request-vlan.dat"
+SAMPLE06="$srcdir/testdata/pkt-custom-request-vlan-llc.dat"
 
 echo "Checking simple ARP request packet against $SAMPLE01 ..."
 ARPARGS="--retry=1 --file=- --srcaddr=00:01:02:03:04:05 --arpsha=00:01:02:03:04:05 --arpspa=127.0.0.1"

@@ -29,7 +29,7 @@
 ARPSCANOUTPUT=/tmp/arp-scan-output.$$.tmp
 EXAMPLEOUTPUT=/tmp/example-output.$$.tmp
 #
-SAMPLE01="$srcdir/pkt-net1921681-response.pcap"
+SAMPLE01="$srcdir/testdata/pkt-net1921681-response.pcap"
 
 # 56 ARP responses from a Class-C sized network with various vendors
 echo "Checking host list creation using $SAMPLE01 ..."

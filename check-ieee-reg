@@ -28,7 +28,7 @@
 ARPSCANOUTPUT=/tmp/arp-scan-output.$$.tmp
 EXAMPLEOUTPUT=/tmp/example-output.$$.tmp
 #
-SAMPLE01="$srcdir/pkt-ieee-regcheck.pcap"
+SAMPLE01="$srcdir/testdata/pkt-ieee-regcheck.pcap"
 
 # Responses from one MAC address in each of IAB, MA-M, MA-L and MA-S registries
 echo "Checking IEEE registry decode using $SAMPLE01 ..."
