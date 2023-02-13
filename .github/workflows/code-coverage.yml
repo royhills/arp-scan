@@ -29,7 +29,7 @@ jobs:
       - name: localnet-run
         run: |
           sudo make install
-          arp-scan -vv --localnet --limit=1
+          arp-scan -vv --localnet --limit=10
       - name: create lcov.info
         run: lcov --directory . --capture --output-file lcov.info
       - name: Coveralls

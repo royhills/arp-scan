@@ -20,7 +20,7 @@ dist_pkgsysconf_DATA = mac-vendor.txt
 dist_pkgdata_DATA = ieee-oui.txt
 #
 TESTS = $(dist_check_SCRIPTS)
-EXTRA_DIST = arp-scan.1.dist get-oui.1.dist pkt-simple-request.dat pkt-custom-request.dat pkt-custom-request-padding.dat pkt-custom-request-llc.dat pkt-custom-request-vlan.dat pkt-simple-response.pcap pkt-padding-response.pcap pkt-vlan-response.pcap pkt-llc-response.pcap pkt-net1921681-response.pcap pkt-trailer-response.pcap pkt-vlan-llc-response.pcap pkt-custom-request-vlan-llc.dat pkt-dup-response.pcap pkt-diff-frame-addr.pcap pkt-local-admin.pcap pkt-ieee-regcheck.pcap pkt-too-short.pcap
+EXTRA_DIST = arp-scan.1.dist get-oui.1.dist testdata/pkt-simple-request.dat testdata/pkt-custom-request.dat testdata/pkt-custom-request-padding.dat testdata/pkt-custom-request-llc.dat testdata/pkt-custom-request-vlan.dat testdata/pkt-simple-response.pcap testdata/pkt-padding-response.pcap testdata/pkt-vlan-response.pcap testdata/pkt-llc-response.pcap testdata/pkt-net1921681-response.pcap testdata/pkt-trailer-response.pcap testdata/pkt-vlan-llc-response.pcap testdata/pkt-custom-request-vlan-llc.dat testdata/pkt-dup-response.pcap testdata/pkt-diff-frame-addr.pcap testdata/pkt-local-admin.pcap testdata/pkt-ieee-regcheck.pcap testdata/pkt-too-short.pcap
 #
 # Substitute autoconf pkgdatadir variable in arp-scan.1 manpage
 CLEANFILES = arp-scan.1 get-oui.1

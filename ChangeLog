@@ -1,5 +1,19 @@
 2023-02-11 Roy Hills <royhills@hotmail.com>
 
+	* *.pcap, *.dat: Moved pcap data files and raw data files into
+	  testdata subdirectory.
+
+	* Makefile.am, check-decode, check-error, check-host-list,
+	  check-ieee-reg, check-options, check-packet: Modify paths of data
+	  files to use new testdata subdirectory.
+
+	* testdata/README.md: new file describing the files in this directory.
+
+	* .github/workflows/code-coverage.yml: Increase --limit value from
+	  1 to 10 to ensure consistent coverage.
+
+2023-02-11 Roy Hills <royhills@hotmail.com>
+
 	* Makefile.am, check-error, check-options, arp-scan.c: Add some
 	  additional checks and hopefully stabilise the coverage percentage.
 

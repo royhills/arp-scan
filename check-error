@@ -24,8 +24,8 @@
 # This shell script checks various error conditions.
 #
 ARPSCANOUTPUT=/tmp/arp-scan-output.$$.tmp
-SAMPLE01="$srcdir/pkt-simple-response.pcap"
-SAMPLE02="$srcdir/pkt-too-short.pcap"
+SAMPLE01="$srcdir/testdata/pkt-simple-response.pcap"
+SAMPLE02="$srcdir/testdata/pkt-too-short.pcap"
 
 # Check invalid option - should have non-zero exit status
 echo "Checking arp-scan --xyz (invalid option) ..."

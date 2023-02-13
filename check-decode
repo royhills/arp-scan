@@ -29,16 +29,16 @@
 ARPSCANOUTPUT=/tmp/arp-scan-output.$$.tmp
 EXAMPLEOUTPUT=/tmp/example-output.$$.tmp
 #
-SAMPLE01="$srcdir/pkt-simple-response.pcap"
-SAMPLE02="$srcdir/pkt-padding-response.pcap"
-SAMPLE03="$srcdir/pkt-vlan-response.pcap"
-SAMPLE04="$srcdir/pkt-llc-response.pcap"
-SAMPLE05="$srcdir/pkt-net1921681-response.pcap"
-SAMPLE06="$srcdir/pkt-trailer-response.pcap"
-SAMPLE07="$srcdir/pkt-vlan-llc-response.pcap"
-SAMPLE08="$srcdir/pkt-dup-response.pcap"
-SAMPLE09="$srcdir/pkt-diff-frame-addr.pcap"
-SAMPLE10="$srcdir/pkt-local-admin.pcap"
+SAMPLE01="$srcdir/testdata/pkt-simple-response.pcap"
+SAMPLE02="$srcdir/testdata/pkt-padding-response.pcap"
+SAMPLE03="$srcdir/testdata/pkt-vlan-response.pcap"
+SAMPLE04="$srcdir/testdata/pkt-llc-response.pcap"
+SAMPLE05="$srcdir/testdata/pkt-net1921681-response.pcap"
+SAMPLE06="$srcdir/testdata/pkt-trailer-response.pcap"
+SAMPLE07="$srcdir/testdata/pkt-vlan-llc-response.pcap"
+SAMPLE08="$srcdir/testdata/pkt-dup-response.pcap"
+SAMPLE09="$srcdir/testdata/pkt-diff-frame-addr.pcap"
+SAMPLE10="$srcdir/testdata/pkt-local-admin.pcap"
 
 # Simple ARP response packet
 echo "Checking simple ARP response packet decode using $SAMPLE01 ..."
