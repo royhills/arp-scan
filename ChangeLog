@@ -1,4 +1,10 @@
-2023-02-11 Roy Hills <royhills@hotmail.com>
+2023-02-13 Roy Hills <royhills@hotmail.com>
+
+	* README.md: Moved the Notes for Contributors section to new file
+	  CONTRIBUTING.md.
+	* CONTRIBUTING.md: New file.
+
+2023-02-12 Roy Hills <royhills@hotmail.com>
 
 	* *.pcap, *.dat: Moved pcap data files and raw data files into
 	  testdata subdirectory.
@@ -15,7 +21,7 @@
 2023-02-11 Roy Hills <royhills@hotmail.com>
 
 	* Makefile.am, check-error, check-options, arp-scan.c: Add some
-	  additional checks and hopefully stabilise the coverage percentage.
+	  additional checks and stabilise the coverage percentage.
 
 	* pkt-too-short.pcap: New file.
 
