@@ -50,7 +50,7 @@ arp-scan is known to build and run on:
  - NetBSD
  - DragonflyBSD
  - macOS
- - Solaris 10 (there are known problems with Solaris 11 but I doubt anyone cares. Please comment on [this issue](https://github.com/royhills/arp-scan/issues/31) if you do).
+ - Solaris 10 (there are known problems with Solaris 11. If anyone cares please comment on [issue #31](https://github.com/royhills/arp-scan/issues/31).
 
 ## Installing from a Binary Package
 
@@ -77,6 +77,8 @@ For usage information use:
 For detailed information, see the manual pages: `arp-scan(1)`, `arp-fingerprint(1)`, `get-oui(1)` and `mac-vendor(5)`.
 
 See the arp-scan wiki at [https://github.com/royhills/arp-scan/wiki](https://github.com/royhills/arp-scan/wiki)
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) if you are interested in contributing to `arp-scan`.
 
 # Notes for Package Maintainers
 

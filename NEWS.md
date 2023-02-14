@@ -1,7 +1,7 @@
 **This file gives a brief overview of the major changes between each arp-scan
-release.  For more details please read the ChangeLog file.**
+release.  For more details please read the `ChangeLog` file.**
 
-# 2023-02-09 arp-scan 1.10.1-git (in development)
+# 2023-02-14 arp-scan 1.10.1-git (in development)
 
 * New Features:
 
@@ -24,6 +24,8 @@ release.  For more details please read the ChangeLog file.**
   - CARP and IPv6 VRRP addresses added to mac-vendor.txt.
   - Version numbers have `-git` appended for development versions.
   - Move `arp-scan` wiki from aws hosted mediawiki to github wiki.
+  - Self-test code coverage increased to 91.2%.
+  - CONTRIBUTING.md file added.
 
 # 2022-12-10 arp-scan 1.10.0 (git tag 1.10.0)
 
