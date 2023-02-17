@@ -45,3 +45,9 @@ jobs:
         autoconf --version
         automake --version
         ./arp-scan --version
+    - name: test-findalldevs
+      run: |
+        gcc -g -O0 -o test-findalldevs test-findalldevs.c -lpcap
+        ./test-findalldevs
+        sudo ./test-findalldevs
+      if: matrix.os == 'macos-latest'
