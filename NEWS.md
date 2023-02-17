@@ -21,8 +21,8 @@
   - CARP and IPv6 VRRP addresses added to mac-vendor.txt.
   - Append `-git` to version number for pre release git development versions.
   - *arp-scan* wiki moved from website using mediawiki to github wiki using markdown.
-  - Self-test code coverage increased to 91.2% (see [code-coverage.yml](.github/workflows/code-coverage.yml) for details of the code coverage tests).
-  - CONTRIBUTING.md file containing notes for contributors added.
+  - Self-test code coverage increased to 91.2% (see [code-coverage.yml](/.github/workflows/code-coverage.yml) for details of the code coverage tests).
+  - `CONTRIBUTING.md` file containing notes for contributors added.
   - Various minor improvements to the code and documentation.
 
 # 2022-12-10 arp-scan 1.10.0 (git tag 1.10.0)
