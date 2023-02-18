@@ -1,3 +1,12 @@
+2023-02-18 Roy Hills <royhills@hotmail.com>
+
+	* SECURITY.md: New file containing the security policy for reporting
+	  potential security vulnerabilities.
+
+	* README.md, Makefile.am: Added references to SECURITY.md.
+
+	* README.md, NEWS.md, code-coverage.yml: Documentation updates.
+
 2023-02-13 Roy Hills <royhills@hotmail.com>
 
 	* README.md: Moved the Notes for Contributors section to new file

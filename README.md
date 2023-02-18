@@ -44,7 +44,7 @@ You can pass options to `configure` to control the build process. Run `./configu
 
 *arp-scan* is known to build and run on:
 
- - **Linux** (should work on any distribution on any architecture).
+ - **Linux** (should work on any distribution and all architectures).
  - **FreeBSD**
  - **OpenBSD**
  - **NetBSD**
@@ -80,7 +80,7 @@ For detailed information, see the manual pages: `arp-scan(1)`, `arp-fingerprint(
 
 See the *arp-scan* wiki at [https://github.com/royhills/arp-scan/wiki](https://github.com/royhills/arp-scan/wiki)
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) if you are interested in contributing to *arp-scan*.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) if you are interested in contributing to *arp-scan*. If you think you have found a security vulnerability, please see [`SECURITY.md`](SECURITY.md).
 
 # Notes for Package Maintainers
 
