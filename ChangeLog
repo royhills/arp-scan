@@ -4,6 +4,9 @@
 	  host. This should never happen since the changes detailed in
 	  github issue #67.
 
+	* wrappers.c, utils.c: Move my_lookupdev() function from wrappers.c
+	  to utils.c where it belongs.
+
 2023-02-18 Roy Hills <royhills@hotmail.com>
 
 	* SECURITY.md: New file containing the security policy for reporting
