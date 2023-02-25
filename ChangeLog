@@ -1,3 +1,9 @@
+2023-02-25 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.c: Always warn if remove_host() is called on a non-live
+	  host. This should never happen since the changes detailed in
+	  github issue #67.
+
 2023-02-18 Roy Hills <royhills@hotmail.com>
 
 	* SECURITY.md: New file containing the security policy for reporting

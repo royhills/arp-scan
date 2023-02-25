@@ -1677,8 +1677,7 @@ remove_host(host_entry **he) {
       if (*he == *cursor)
          advance_cursor();
    } else {
-      if (verbose > 1)
-         warn_msg("***\tremove_host called on non-live host: SHOULDN'T HAPPEN");
+      warn_msg("***\tremove_host called on non-live host: SHOULDN'T HAPPEN");
    }
 }
 
