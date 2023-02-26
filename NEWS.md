@@ -21,7 +21,7 @@
   - CARP and IPv6 VRRP addresses added to mac-vendor.txt.
   - Append `-git` to version number for pre release git development versions.
   - wiki moved from mediawiki to [github wiki](https://github.com/royhills/arp-scan/wiki).
-  - Self-test code coverage increased to 91.2% (see [code-coverage.yml](/.github/workflows/code-coverage.yml) for details of the code coverage tests).
+  - Self-test code coverage increased to 91.2% (see [code-coverage.yml](https://github.com/royhills/arp-scan/.github/workflows/code-coverage.yml) for details of the code coverage tests).
   - `CONTRIBUTING.md` and `SECURITY.md` files added.
   - Change message about interface network and mask used for --localnet, and don't require --verbose to display it.
   - Various minor improvements to the code and documentation.
