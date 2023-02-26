@@ -1,3 +1,10 @@
+2023-02-26 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.c: Change the informational message about the interface
+	  network and netmask used to generate the target list when
+	  --localnet is used, and always display this message (previously
+	  it was only displayed if --verbose was given).
+
 2023-02-25 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Always warn if remove_host() is called on a non-live

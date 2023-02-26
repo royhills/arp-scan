@@ -1,6 +1,6 @@
 **This file gives a brief overview of the major changes between each *arp-scan* release.  For more details please read the `ChangeLog` file.**
 
-# 2023-02-17 arp-scan 1.10.1-git (in development)
+# 2023-02-26 arp-scan 1.10.1-git (in development)
 
 * New Features:
 
@@ -20,9 +20,10 @@
   - `get-oui` displays the underlying system error if the download fails instead of a generic "download failed" message.
   - CARP and IPv6 VRRP addresses added to mac-vendor.txt.
   - Append `-git` to version number for pre release git development versions.
-  - *arp-scan* wiki moved from website using mediawiki to github wiki using markdown.
+  - wiki moved from mediawiki to [github wiki](https://github.com/royhills/arp-scan/wiki).
   - Self-test code coverage increased to 91.2% (see [code-coverage.yml](/.github/workflows/code-coverage.yml) for details of the code coverage tests).
   - `CONTRIBUTING.md` and `SECURITY.md` files added.
+  - Change message about interface network and mask used for --localnet, and don't require --verbose to display it.
   - Various minor improvements to the code and documentation.
 
 # 2022-12-10 arp-scan 1.10.0 (git tag 1.10.0)
