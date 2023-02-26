@@ -427,12 +427,10 @@ main(int argc, char *argv[]) {
       cp = my_ntoa(if_netmask);
       c_netmask = make_message("%s", cp);
       snprintf(localnet_descr, 32, "%s:%s", c_network, c_netmask);
+      warn_msg("Target list from interface network %s netmask %s",
+               c_network, c_netmask);
       free(c_network);
       free(c_netmask);
-
-      if (verbose) {
-         warn_msg("Using %s for localnet", localnet_descr);
-      }
       add_host_pattern(localnet_descr, timeout);
    } else { /* Populate list from command line arguments */
       argv = &argv[optind];
