@@ -1,5 +1,5 @@
 /*
- * arp-scan is Copyright (C) 2005-2022 Roy Hills
+ * arp-scan is Copyright (C) 2005-2023 Roy Hills
  *
  * This file is part of arp-scan.
  *
@@ -2171,7 +2171,7 @@ process_options(int argc, char *argv[]) {
 void
 arp_scan_version(void) {
    printf("%s\n\n", PACKAGE_STRING);
-   printf("Copyright (C) 2005-2022 Roy Hills\n");
+   printf("Copyright (C) 2005-2023 Roy Hills\n");
    printf("License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\n");
    printf("This is free software: you are free to change and redistribute it.\n");
    printf("There is NO WARRANTY, to the extent permitted by law.\n");
