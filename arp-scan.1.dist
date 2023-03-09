@@ -5,7 +5,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "January 14, 2023"
+.TH ARP-SCAN 1 "March 09, 2023"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- Send ARP requests to target hosts and display responses
@@ -264,6 +264,7 @@ VLAN	802.1Q VLAN ID if present
 Proto	ARP protocol if not 0x0800
 DUP	Packet number for duplicate packets (>1)
 RTT	Round trip time if \fB--rtt\fP option given
+IPnum	Host IPv4 address as a 32-bit integer
 .TE
 .sp
 Only the \fI${ip}\fP and \fI${mac}\fP fields are available if the
