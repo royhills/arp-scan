@@ -427,8 +427,10 @@ main(int argc, char *argv[]) {
       cp = my_ntoa(if_netmask);
       c_netmask = make_message("%s", cp);
       snprintf(localnet_descr, 32, "%s:%s", c_network, c_netmask);
-      warn_msg("Target list from interface network %s netmask %s",
-               c_network, c_netmask);
+      if (!plain_flag) {
+         warn_msg("Target list from interface: network %s netmask %s",
+                  c_network, c_netmask);
+      }
       free(c_network);
       free(c_netmask);
       add_host_pattern(localnet_descr, timeout);
