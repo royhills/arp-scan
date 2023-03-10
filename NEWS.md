@@ -5,9 +5,9 @@
 * New Features:
 
   - New `-m` option for `arp-fingerprint` to display the host MAC addresses.
-  - OpenBSD: Call `pledge(2)` to enter restricted service mode once initial
-    setup is complete. `arp-scan --version` output includes `Built with
+  - OpenBSD: Call `pledge(2)` to enter restricted service mode once initial setup is complete. `arp-scan --version` output includes `Built with
     OpenBSD pledge(2) support` if applicable.
+  - New `${IPnum}` field name for the `--format` option which displays the host IP address as a 32-bit unsigned integer. This allows sorting by IP address by numeric sort on the `${IPnum}` column.
 
 * Fixed Bugs:
 

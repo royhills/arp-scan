@@ -684,13 +684,14 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
    static field fields[NUMFIELDS] = {
       {"IP",NULL},     {"Name",NULL},    {"MAC",NULL},     {"HdrMAC",NULL},
       {"Vendor",NULL}, {"Padding",NULL}, {"Framing",NULL}, {"VLAN",NULL},
-      {"Proto",NULL},  {"DUP",NULL},     {"RTT",NULL}
+      {"Proto",NULL},  {"DUP",NULL},     {"RTT",NULL},     {"IPnum",NULL},
    };
    static const id_name_map fields_map[] = {
       {0, "IP"},      {1, "Name"},   {2, "MAC"},
       {3, "HdrMAC"},  {4, "Vendor"}, {5, "Padding"},
       {6, "Framing"}, {7, "VLAN"},   {8, "Proto"},
-      {9, "DUP"},     {10, "RTT"},   {-1, NULL} /* -1 marks end of list */
+      {9, "DUP"},     {10, "RTT"},   {11, "IPnum"},
+      {-1, NULL} /* -1 marks end of list */
    };
    char *msg;
    char *cp;
@@ -840,6 +841,10 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
          fields[10].value=make_message("%lu.%03lu", rtt_us/1000, rtt_us%1000);
       }
    } /* End if (!quiet_flag) */
+   /*
+    * IPnum field, always present
+    */
+   fields[11].value=make_message("%lu", ntohl(he->addr.s_addr));
    /*
     * Output fields.
     */
@@ -1238,6 +1243,7 @@ usage(void) {
    printf("\t\t\tProto\tARP protocol if not 0x0800\n");
    printf("\t\t\tDUP\tPacket number for duplicate packets (>1)\n");
    printf("\t\t\tRTT\tRound trip time if --rtt option given\n");
+   printf("\t\t\tIPnum\tHost IPv4 address as a 32-bit integer\n");
    printf("\t\t\t\n");
    printf("\t\t\tOnly the \"ip\" and \"mac\" fields are available if the\n");
    printf("\t\t\t--quiet option is specified.\n");
