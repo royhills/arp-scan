@@ -1,9 +1,16 @@
 2023-03-09 Roy Hills <royhills@hotmail.com>
 
+	* arp-scan.c: Don't display the localnet info ("Target list from
+	  interface: network X netmask Y") if the --plain option is given.
+	  https://github.com/royhills/arp-scan/issues/158
+
+2023-03-09 Roy Hills <royhills@hotmail.com>
+
 	* arp-scan.c, arp-scan.h, arp-scan.1.dist: Added the ${IPnum} output
 	  field, which displays the host IPv4 address as a 32-bit integer.
 	  This permits sorting by IP address using simple numeric comparison.
 	  Thanks to @gspannu for the feature request.
+	  https://github.com/royhills/arp-scan/issues/156
 
 2023-02-26 Roy Hills <royhills@hotmail.com>
 
