@@ -87,6 +87,7 @@ static int rtt_flag = 0;                /* Display round-trip time */
 static pcap_dumper_t *pcap_dump_handle = NULL; /* pcap savefile handle */
 static int plain_flag = 0;              /* Only show host information */
 static int resolve_flag = 0;            /* Resolve IP addresses to hostnames */
+static int includeself_flag = 0;        /* Include own IP and MAC in output */
 unsigned int random_seed = 0;
 static unsigned retry_send = DEFAULT_RETRY_SEND; /* Number of send packet retries */
 static unsigned retry_send_interval = DEFAULT_RETRY_SEND_INTERVAL; /* Interval in seconds between send packet retries */
@@ -1984,17 +1985,18 @@ process_options(int argc, char *argv[]) {
       {"limit", required_argument, 0, 'M'},
       {"resolve", no_argument, 0, 'd'},
       {"format", required_argument, 0, 'F'},
+      {"includeself", no_argument, 0, 'c'},
       {0, 0, 0, 0}
    };
    /*
     * available short option characters:
     *
-    * lower:       --c-e----jk--------------z
+    * lower:       ----e----jk--------------z
     * UPPER:       --C---G--JK---------U--X-Z
     * Digits:      0123456789
     */
    const char *short_options =
-      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:DxM:dk:";
+      "f:hr:Y:E:t:i:b:vVn:I:qgRNB:O:s:o:H:p:T:P:a:A:y:u:w:S:F:m:lLQ:W:DxM:dc";
    int arg;
    int options_index = 0;
 
@@ -2154,6 +2156,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'F': /* --format */
             format = format_parse(optarg);
+            break;
+         case 'c': /* --includeself */
+            includeself_flag = 1;
             break;
          default: /* Unknown option */
             err_msg("Usage: arp-scan [options] [hosts...]\n"
