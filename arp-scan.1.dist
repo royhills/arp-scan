@@ -5,7 +5,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "March 09, 2023"
+.TH ARP-SCAN 1 "May 11, 2023"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- Send ARP requests to target hosts and display responses
