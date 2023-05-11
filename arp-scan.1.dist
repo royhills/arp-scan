@@ -284,7 +284,14 @@ L L .
 You should enclose the \fB--format\fP argument in 'single
 quotes' to protect special characters from the shell.
 .sp
-Example: --format='${ip}\\t${mac}\\t${vendor}'
+Examples:
+.sp
+.TS
+L .
+--format='${ip}\\t${mac}\\t${vendor}'\n
+--resolve --format='${ip}\\t${mac}\\t${name;20}\\t${vendor}'
+.TE
+.TP
 .SS "Host List Randomisation"
 .TP
 .BR --random " or " -R
