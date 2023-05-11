@@ -5,7 +5,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "March 09, 2023"
+.TH ARP-SCAN 1 "May 11, 2023"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- Send ARP requests to target hosts and display responses
@@ -284,7 +284,14 @@ L L .
 You should enclose the \fB--format\fP argument in 'single
 quotes' to protect special characters from the shell.
 .sp
-Example: --format='${ip}\\t${mac}\\t${vendor}'
+Examples:
+.sp
+.TS
+L .
+--format='${ip}\\t${mac}\\t${vendor}'\n
+--resolve --format='${ip}\\t${mac}\\t${name;20}\\t${vendor}'
+.TE
+.TP
 .SS "Host List Randomisation"
 .TP
 .BR --random " or " -R
