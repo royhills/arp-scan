@@ -5,6 +5,10 @@
 	  to indicate that the file is no longer used.
 	  https://github.com/royhills/arp-scan/pull/169
 
+	* ieee-oui.txt: Updated from IEEE registry. Total of 49762 MAC/Vendor
+	  mappings.
+	  https://github.com/royhills/arp-scan/pull/170
+
 2023-03-09 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Don't display the localnet info ("Target list from
