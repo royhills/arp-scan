@@ -1,4 +1,3 @@
-Investigate response packets >60 bytes long, e.g. Windows 2003 Server and
-some Cisco.
-
-MPLS tag support (Label Distribution Using ARP: draft-kompella-mpls-larp-11).
+This file is no longer used by arp-scan.
+All valid items were moved from this file to github issues with the
+"From TODO file"
