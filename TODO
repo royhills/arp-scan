@@ -1,11 +1,4 @@
-Add support for win32 link-layer send and receive.
-
-Find portable function to get interface MAC address.
-
 Investigate response packets >60 bytes long, e.g. Windows 2003 Server and
 some Cisco.
 
 MPLS tag support (Label Distribution Using ARP: draft-kompella-mpls-larp-11).
-
-Add support for Cisco ISL VLANs in addition to 802.1Q VLANs. Suggested by
-Daniel at commonexploits.
