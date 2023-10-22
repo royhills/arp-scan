@@ -1,3 +1,10 @@
+2023-10-22 Roy Hills <royhills@hotmail.com>
+
+	* TODO: Moved all valid items from TODO to github issue with the
+	  "From TODO file" label. Obsolete items removed. Note added
+	  to indicate that the file is no longer used.
+	  https://github.com/royhills/arp-scan/pull/169
+
 2023-03-09 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Don't display the localnet info ("Target list from
