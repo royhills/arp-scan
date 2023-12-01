@@ -31,6 +31,9 @@ AC_ARG_ENABLE(gcov,
 # Checks for programs.
 AC_PROG_SED
 AC_PROG_CC
+if test "x$ac_cv_prog_cc_c99" = "xno"; then
+   AC_MSG_ERROR([C compiler does not support C99 standard])
+fi
 if test -n "$GCC"; then
    AC_DEFINE([ATTRIBUTE_UNUSED], [__attribute__ ((__unused__))],
              [Define to the compiler's unused pragma])
