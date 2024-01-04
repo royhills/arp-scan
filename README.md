@@ -20,7 +20,7 @@ This is `README.md` for *arp-scan* version `1.10.1-git`.
 
 - `git clone https://github.com/royhills/arp-scan.git` to obtain the latest source code.
 - `cd arp-scan` to enter the source code directory.
-- `autoreconf --install` to generate a configure file (but you can download a tarball for the latest release instead of cloning from github if you don't have `autoreconf` - see below for details).
+- `autoreconf --install` to generate a configure file (if you don't have `autoreconf` you can download a tarball instead as detailed below).
 - `./configure` to create a makefile for your system (see configuration options below).
 - `make` to build the project.
 - Optionally `make check` to verify that everything works as expected.
@@ -29,9 +29,9 @@ This is `README.md` for *arp-scan* version `1.10.1-git`.
 You will need these development tools and libraries:
 
 - GNU *automake* and *autoconf* (if you don't have these, you can download the latest tarball which includes `configure` instead: [arp-scan-1.10.0.tar.gz](https://github.com/royhills/arp-scan/releases/download/1.10.0/arp-scan-1.10.0.tar.gz)). Note that this might not be as up to date as the latest *github* development version.
-- The *make* utility (works with BSD make and GNU make).
-- A C compiler (tested on *gcc* and *clang*, probably works on others).
-- Libraries and include files for *libpcap* version 1.5 or later. All modern distros have a binary package, some split the package into seperate `libpcap` runtime and `libpcap-dev` or `libpcap-devel` development packages, in which case you need to install both to build and run.
+- The *make* utility (tested with BSD make and GNU make).
+- A C compiler (tested on *gcc* and *clang*, should work on any C compiler that supports C99).
+- Libraries and include files for *libpcap* version 1.5 or later. All modern distros have a binary package, some split the package into `libpcap` runtime and `libpcap-dev` or `libpcap-devel` development packages, in which case you need to install the development version to build.
 - *libcap* to build with [POSIX.1e capabilities](https://sites.google.com/site/fullycapable/) support on Linux. Most Linux distros come with runtime support by default and have a development package available. Linux has capabilities support since kernel version `2.6.24`.
 
 To run the Perl scripts `arp-fingerprint` and `get-oui`, you will also need the *perl* interpreter and the perl modules `LWP::UserAgent` and `Text::CSV`.
