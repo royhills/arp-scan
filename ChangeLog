@@ -1,3 +1,11 @@
+2024-01-04 Roy Hills <royhills@hotmail.com>
+
+	* configure.ac, README.md: Require C compiler with C99 language support.
+	  configure will exit with the error message "C compiler does not
+	  support C99 standard" if C99 support is not present.
+	  arp-scan currently uses C89 but use of C99 features is planned for
+	  the next release.
+
 2023-10-22 Roy Hills <royhills@hotmail.com>
 
 	* TODO: Moved all valid items from TODO to github issue with the
