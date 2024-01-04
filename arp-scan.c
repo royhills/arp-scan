@@ -956,11 +956,14 @@ display_packet(host_entry *he, arp_ether_ipv4 *arpei,
       }
    }
    /*
-    * Display the message on stdout.
+    * Display the message on stdout and flush output buffer.
     */
    printf("%s\n", msg);
+   fflush(stdout);
+   /*
+    * Free the message and any field values.
+    */
    free(msg);
-
    for (i=0; i<NUMFIELDS; i++)
       if (fields[i].value) {
          free(fields[i].value);
