@@ -92,11 +92,6 @@ AC_CHECK_HEADERS([getopt.h pcap.h sys/ioctl.h ifaddrs.h])
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
 
-AC_TYPE_UINT8_T
-AC_TYPE_UINT16_T
-AC_TYPE_UINT32_T
-AC_TYPE_UINT64_T
-
 # Checks for library functions.
 # All of these are defined by POSIX
 AC_CHECK_FUNCS([malloc gethostbyname gettimeofday inet_ntoa memset select socket strerror])
