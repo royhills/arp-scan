@@ -36,17 +36,8 @@
 #include <errno.h>
 #include <limits.h>
 #include <assert.h>
-
-#include <sys/types.h>
-
-/* Integer types (C99) */
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#else
-#ifdef HAVE_STDINT_H
+/* C99 standard headers */
 #include <stdint.h>
-#endif
-#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
