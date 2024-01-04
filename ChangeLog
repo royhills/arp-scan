@@ -5,11 +5,20 @@
 	  support C99 standard" if C99 support is not present.
 	  arp-scan currently uses C89 but use of C99 features is planned for
 	  the next release.
+	  https://github.com/royhills/arp-scan/pull/171
 
 	* arp-scan.c: flush stdout output buffer after displaying each response.
 	  This ensures that responding hosts are seen immediately when reading
 	  from a pipeline rather than having to wait until the output buffer
 	  is filled.
+	  https://github.com/royhills/arp-scan/pull/172
+
+	* Update copyright date for applicable files.
+	  https://github.com/royhills/arp-scan/pull/173
+
+	* ieee-oui.txt: Updated from IEEE registry. Total of 50366 MAC/Vendor
+	  mappings (4575 IAB + 5121 MAM + 34879 OUI + 5791 OUI36).
+	  https://github.com/royhills/arp-scan/pull/174
 
 2023-10-22 Roy Hills <royhills@hotmail.com>
 
