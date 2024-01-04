@@ -20,6 +20,12 @@
 	  mappings (4575 IAB + 5121 MAM + 34879 OUI + 5791 OUI36).
 	  https://github.com/royhills/arp-scan/pull/174
 
+	* configure.ac, arp-scan.h: include <stdint.h> unconditionally and
+	  remove autoconf checks for fixed width integer types now we can
+	  assume C99 support. Removed include <sys/types.h> because <unistd.h>
+	  makes it unnecessary.
+	  https://github.com/royhills/arp-scan/pull/175
+
 2023-10-22 Roy Hills <royhills@hotmail.com>
 
 	* TODO: Moved all valid items from TODO to github issue with the
