@@ -6,6 +6,11 @@
 	  arp-scan currently uses C89 but use of C99 features is planned for
 	  the next release.
 
+	* arp-scan.c: flush stdout output buffer after displaying each response.
+	  This ensures that responding hosts are seen immediately when reading
+	  from a pipeline rather than having to wait until the output buffer
+	  is filled.
+
 2023-10-22 Roy Hills <royhills@hotmail.com>
 
 	* TODO: Moved all valid items from TODO to github issue with the
