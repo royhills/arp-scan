@@ -1,3 +1,9 @@
+2024-01-10 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.c: Use printf() instead of warn_msg() for the "Target list
+	  from interface" message so the output is sent to stdout instead of
+	  stderr.
+
 2024-01-04 Roy Hills <royhills@hotmail.com>
 
 	* configure.ac, README.md: Require C compiler with C99 language support.
