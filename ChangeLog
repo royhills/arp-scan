@@ -1,3 +1,7 @@
+2024-03-29 Roy Hills <royhills@hotmail.com>
+
+	* arp-fingerprint: Added recent Windows and FreeBSD patterns.
+
 2024-01-10 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Use printf() instead of warn_msg() for the "Target list
