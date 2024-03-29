@@ -41,6 +41,10 @@ my $arpscan="arp-scan -q -r 1 -x";
 #
 # These fingerprints were observed on:
 #
+# FreeBSD 14.0	FreeBSD 14.0-RELEASE-p3 amd64 on VMware
+# FreeBSD 13.1	FreeBSD 13.1-RELEASE-p9 amd64 on VMware
+# FreeBSD 12.0	FreeBSD 12.0-RELEASE amd64 on VMware
+# FreeBSD 11.2	FreeBSD 11.2-RELEASE amd64 on VMware
 # FreeBSD 10.3	FreeBSD 10.3 amd64 on VMware
 # FreeBSD 9.1	FreeBSD 9.1 i386 on VMware
 # FreeBSD 8.2	FreeBSD 8.2 i386 on VMware
@@ -58,6 +62,7 @@ my $arpscan="arp-scan -q -r 1 -x";
 # Windows7	Windows 7 Professional 6.1.7600 Build 7600 on Dell Vostro 220
 # Windows8	Windows 8 Pro x64 6.2.9200 Build 9200 on VMware
 # Windows10	Windows 10 Pro 10.0.14393 Build 14393 on VMware
+# Windows11	Windows 11 Pro 10.0.22621 on VMware
 # NT 3.51	Windows NT Server 3.51 SP0 on VMware
 # NT4		Windows NT Workstation 4.0 SP6a on Pentium
 # 2000		Windows 2000
@@ -66,6 +71,8 @@ my $arpscan="arp-scan -q -r 1 -x";
 # Vista		Windows Vista Beta 2 Build 5384 on VMware
 # Vista		Windows Vista SP1 Build 6001 on Dell Inspiron
 # 2008		Windows 2008 Server Beta on i386
+# 2012R2	Windows Server 2012R2 x64 on HP proliant server
+# 2022		Windows Server 2022 x64 on VMware
 # Linux 2.0	Linux 2.0.29 on VMware (debian 1.3.1)
 # Linux 2.2	Linux 2.2.19 on VMware (debian potato)
 # Linux 2.4	Linux 2.4.29 on Intel P3 (debian sarge)
@@ -157,13 +164,13 @@ my $arpscan="arp-scan -q -r 1 -x";
 # Android 4.4	Android 4.4.2 on Google Nexus 7 (wifi)
 #
 my %fp_hash = (
-   '11110100000' => 'FreeBSD 5.3, 7.0, 8.2, 9.1, 10.3, DragonflyBSD 2.0, 3.0, 3.2, 4.6, Win98, WinME, NT4, 2000, XP, 2003, Catalyst IOS 12.0, 12.1, 12.2, FortiOS 3.00',
+   '11110100000' => 'FreeBSD 5.3, 7.0, 8.2, 9.1, 10.3, 11.2, DragonflyBSD 2.0, 3.0, 3.2, 4.6, Win98, WinME, NT4, 2000, XP, 2003, Catalyst IOS 12.0, 12.1, 12.2, FortiOS 3.00',
    '01000100000' => 'Linux 2.2, 2.4, 2.6',
-   '01010100000' => 'Linux 2.2, 2.4, 2.6, 3.2, 3.8, 4.0, 4.6, Vista, 2008, Windows7, Windows8, Windows10', # Linux only if non-local IP is routed
+   '01010100000' => 'Linux 2.2, 2.4, 2.6, 3.2, 3.8, 4.0, 4.6, Vista, 2008, 2012R2, 2022, Windows7, Windows8, Windows10, Windows11', # Linux only if non-local IP is routed
    '00000100000' => 'Cisco IOS 11.2, 11.3, 12.0, 12.1, 12.2, 12.3, 12.4, 15.0',
    '11110110000' => 'Solaris 2.5.1, 2.6, 7, 8, 9, 10, HP-UX 11, NetBSD 6.0, 7.0',
    '01000111111' => 'ScreenOS 5.0, 5.1, 5.3, 5.4, 6.2',
-   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1, Minix 3, Cisco VPN Concentrator 4.7, Catalyst 1900, BeOS, WIZnet W5100',
+   '11110000000' => 'Linux 2.0, MacOS 10.4, IPSO 3.2.1, Minix 3, Cisco VPN Concentrator 4.7, Catalyst 1900, BeOS, WIZnet W5100, FreeBSD 12.0, FreeBSD 13.1, FreeBSD 14.0',
    '11110100011' => 'MacOS 10.3, FreeBSD 4.3, IRIX 6.5, AIX 4.3, AIX 5.3',
    '10010100011' => 'SCO OS 5.0.7',
    '10110100000' => 'Win 3.11, 95, NT 3.51',
