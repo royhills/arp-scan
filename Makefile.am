@@ -5,7 +5,7 @@ AM_CPPFLAGS = -DPKGDATADIR=\"$(pkgdatadir)\" -DPKGSYSCONFDIR=\"$(sysconfdir)/$(P
 #
 bin_PROGRAMS = arp-scan
 #
-dist_bin_SCRIPTS = get-oui get-iab arp-fingerprint
+dist_bin_SCRIPTS = get-oui arp-fingerprint
 #
 dist_check_SCRIPTS = check-run1 check-packet check-decode check-host-list check-ieee-reg check-error check-options check-prng
 check_PROGRAMS = mt19937ar-test
