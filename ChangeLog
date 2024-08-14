@@ -1,3 +1,8 @@
+2024-08-14 Roy Hills <royhills@hotmail.com>
+
+	* get-iab: removed. This script is no longer needed and was depreciated
+	  in arp-scan 1.10.
+
 2024-03-29 Roy Hills <royhills@hotmail.com>
 
 	* arp-fingerprint: Added recent Windows and FreeBSD patterns.
