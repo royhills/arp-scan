@@ -8,6 +8,11 @@
 	  mappings (4575 IAB + 5461 MAM + 35971 OUI + 6112 OUI36).
 	  https://github.com/royhills/arp-scan/pull/185
 
+	* configure.ac, m4/*: Move local autoconf macros from acinclude.m4
+	  to seperate files under m4/, which is specified with
+	  AC_CONFIG_MACRO_DIRS in configure.ac. configure.ac now requires
+	  at least autoconf 2.70 (was previously 2.69).
+
 2024-03-29 Roy Hills <royhills@hotmail.com>
 
 	* arp-fingerprint: Added recent Windows and FreeBSD patterns.
