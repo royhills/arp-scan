@@ -2,6 +2,11 @@
 
 	* get-iab: removed. This script is no longer needed and was depreciated
 	  in arp-scan 1.10.
+	  https://github.com/royhills/arp-scan/pull/184
+
+	* ieee-oui.txt: Updated from IEEE registry. Total of 52119 MAC/Vendor
+	  mappings (4575 IAB + 5461 MAM + 35971 OUI + 6112 OUI36).
+	  https://github.com/royhills/arp-scan/pull/185
 
 2024-03-29 Roy Hills <royhills@hotmail.com>
 
