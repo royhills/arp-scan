@@ -36,23 +36,43 @@
 #include <errno.h>
 #include <limits.h>
 #include <assert.h>
+
 /* C99 standard headers */
 #include <stdint.h>
 
+/* headers first defined in POSIX-1 issue 1 */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+
+#ifdef HAVE_SEARCH_H
+#include <search.h>
+#endif
+
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+
+/* headers first defined in POSIX.1 issue 4 */
+#ifdef HAVE_REGEX_H
+#include <regex.h>
+#endif
+
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+
+/* headers first defined in POSIX.1 issue 6 */
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
 #endif
 
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
-#endif
-
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
 #endif
 
 #ifdef HAVE_SYS_SOCKET_H
@@ -63,20 +83,10 @@
 #include <arpa/inet.h>
 #endif
 
-#ifdef HAVE_REGEX_H
-#include <regex.h>		/* Posix regular expression functions */
-#endif
-
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
+/* Other system headers */
 
 #ifdef HAVE_PCAP_H
-#include <pcap.h>
+#include <pcap.h>	/* libpcap */
 #endif
 
 #ifdef HAVE_SYS_IOCTL_H
@@ -89,16 +99,8 @@
 #endif
 #endif
 
-#ifdef HAVE_SEARCH_H
-#include <search.h>
-#endif
-
 #ifdef HAVE_IFADDRS_H
 #include <ifaddrs.h>
-#endif
-
-#ifdef __CYGWIN__
-#include <windows.h>	/* Include windows.h if compiling under Cygwin */
 #endif
 
 /* Mersenne Twister random number generator prototypes */
@@ -119,6 +121,7 @@
 #include "my_getopt.h"
 #endif
 
+/* libpcap POSIX-1e capabilities support */
 #ifdef HAVE_SYS_CAPABILITY_H
 #include <sys/prctl.h>
 #include <sys/capability.h>
@@ -223,59 +226,69 @@ typedef enum {
    ENABLE
 } cap_status;
 
-/* Functions */
+/* Functions - grouped by source file and listed in alphabetical order */
 
-void err_sys(const char *, ...);
-void warn_sys(const char *, ...);
-void err_msg(const char *, ...);
-void warn_msg(const char *, ...);
-void err_print(int, const char *, va_list);
-void usage(void);
-void add_host_pattern(const char *, unsigned);
+/* arp-scan.c */
 void add_host(const char *, unsigned, int);
-int send_packet(pcap_t *, host_entry *, struct timeval *);
-void recvfrom_wto(int, int, pcap_t *);
-void remove_host(host_entry **);
-void timeval_diff(const struct timeval *, const struct timeval *,
-                  struct timeval *);
-host_entry *find_host(host_entry **, struct in_addr *);
+void add_host_pattern(const char *, unsigned);
+int add_mac_vendor(const char *);
+void advance_cursor(void);
+void arp_scan_version(void);
+void callback(u_char *, const struct pcap_pkthdr *, const u_char *);
+void clean_up(pcap_t *);
 void display_packet(host_entry *, arp_ether_ipv4 *, const unsigned char *,
                     size_t, int, int, ether_hdr *, const struct pcap_pkthdr *);
-void advance_cursor(void);
 void dump_list(void);
-void clean_up(pcap_t *);
-void arp_scan_version(void);
-char *make_message(const char *, ...);
-void callback(u_char *, const struct pcap_pkthdr *, const u_char *);
-void process_options(int, char *[]);
+host_entry *find_host(host_entry **, struct in_addr *);
 struct in_addr *get_host_address(const char *, struct in_addr *, char **);
 char *get_host_name(const struct in_addr, char **);
-const char *my_ntoa(struct in_addr);
+char *get_mac_vendor_filename(const char *, const char *, const char *);
 int get_source_ip(const char *, struct in_addr *);
-void get_hardware_address(const char *, unsigned char []);
 void marshal_arp_pkt(unsigned char *, ether_hdr *, arp_ether_ipv4 *, size_t *,
                      const unsigned char *, size_t);
+const char *my_ntoa(struct in_addr);
+void process_options(int, char *[]);
+void recvfrom_wto(int, int, pcap_t *);
+void remove_host(host_entry **);
+int send_packet(pcap_t *, host_entry *, struct timeval *);
 int unmarshal_arp_pkt(const unsigned char *, size_t, ether_hdr *,
                       arp_ether_ipv4 *, unsigned char *, size_t *, int *);
-unsigned char *hex2data(const char *, size_t *);
-unsigned int hstr_i(const char *);
-char *hexstring(const unsigned char *, size_t);
+void usage(void);
+
+/* error.c */
+void err_msg(const char *, ...);
+void err_print(int, const char *, va_list);
+void err_sys(const char *, ...);
+void warn_msg(const char *, ...);
+void warn_sys(const char *, ...);
+
+/* format.c */
+format_element *format_parse(const char *);
+
+/* link-{bpf,packet-socket,dlpi}.c */
+void get_hardware_address(const char *, unsigned char []);
+
+/* utils.c */
+void drop_capabilities(void);
+char *dupstr(const char *);
 int get_ether_addr(const char *, unsigned char *);
-int add_mac_vendor(const char *);
-char *get_mac_vendor_filename(const char *, const char *, const char *);
-/* Wrappers */
+unsigned char *hex2data(const char *, size_t *);
+char *hexstring(const unsigned char *, size_t);
+unsigned int hstr_i(const char *);
+void limit_capabilities(void);
+char *make_message(const char *, ...);
+char *my_lookupdev(char *);
+int name_to_id(const char *, const id_name_map[]);
+void set_capability(cap_status);
+int str_ccmp(const char *, const char *);
+unsigned str_to_bandwidth(const char *);
+unsigned str_to_interval(const char *);
+void timeval_diff(const struct timeval *, const struct timeval *,
+                  struct timeval *);
+
+/* wrappers.c */
 int Gettimeofday(struct timeval *);
 void *Malloc(size_t);
 void *Realloc(void *, size_t);
-unsigned long int Strtoul(const char *, int);
 long int Strtol(const char *, int);
-char *my_lookupdev(char *);
-unsigned str_to_bandwidth(const char *);
-unsigned str_to_interval(const char *);
-char *dupstr(const char *);
-void limit_capabilities(void);
-void set_capability(cap_status);
-void drop_capabilities(void);
-int name_to_id(const char *, const id_name_map[]);
-int str_ccmp(const char *, const char *);
-format_element *format_parse(const char *);
+unsigned long int Strtoul(const char *, int);
