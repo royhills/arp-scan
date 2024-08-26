@@ -8,6 +8,7 @@
 
 	* configure.ac: Unconditionally add -Wformat-security to GCC/Clang
 	  compiler options instead of using the GCC_FORMAT_SECURITY macro.
+	  https://github.com/royhills/arp-scan/pull/191
 
 	* m4/gcc-wextra.m4: Removed.
 
