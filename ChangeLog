@@ -4,6 +4,7 @@
 	  options instead of using the GCC_WEXTRA macro. -Wextra was added in
 	  GCC 3.4.0, which is 20 years old now, and has always been supported
 	  by Clang. There are no supported systems with earlier GCC versions.
+	  https://github.com/royhills/arp-scan/pull/190
 
 	* m4/gcc-wextra.m4: Removed.
 
