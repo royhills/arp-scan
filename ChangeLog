@@ -6,7 +6,12 @@
 	  by Clang. There are no supported systems with earlier GCC versions.
 	  https://github.com/royhills/arp-scan/pull/190
 
+	* configure.ac: Unconditionally add -Wformat-security to GCC/Clang
+	  compiler options instead of using the GCC_FORMAT_SECURITY macro.
+
 	* m4/gcc-wextra.m4: Removed.
+
+	* m4/gcc-format-security.m4: Removed.
 
 2024-08-14 Roy Hills <royhills@hotmail.com>
 
