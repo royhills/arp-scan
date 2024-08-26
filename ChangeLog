@@ -1,3 +1,13 @@
+2024-08-26 Roy Hills <royhills@hotmail.com>
+
+	* configure.ac: Unconditionally add -Wextra to GCC and Clang compiler
+	  options instead of using the GCC_WEXTRA macro. -Wextra was added in
+	  GCC 3.4.0, which is 20 years old now, and has always been supported
+	  by Clang. There are no supported systems with earlier GCC versions.
+	  https://github.com/royhills/arp-scan/pull/190
+
+	* m4/gcc-wextra.m4: Removed.
+
 2024-08-14 Roy Hills <royhills@hotmail.com>
 
 	* get-iab: removed. This script is no longer needed and was depreciated
