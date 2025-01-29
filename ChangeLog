@@ -1,3 +1,13 @@
+2025-01-29 Roy Hills <royhills@hotmail.com>
+
+	* get-oui: Change HTTP user agent string to mimic Chrome on Windows
+	  10/x64 because the IEEE site rejects requests with the default
+	  libwww-perl user agent. Thanks to sonikbhoom for pointing this out.
+	  https://github.com/royhills/arp-scan/pull/195
+
+	* ieee-oui.txt: Updated from IEEE registry. Total of 53441 MAC/Vendor
+	  mappings (4575 IAB + 5683 MAM + 36857 OUI + 6326 OUI36).
+
 2024-08-26 Roy Hills <royhills@hotmail.com>
 
 	* configure.ac: Unconditionally add -Wextra to GCC and Clang compiler

@@ -146,6 +146,10 @@ foreach $key (sort keys %ieee_reg_urls) {
 #
    print "Processing IEEE $key registry data from $url\n" if $verbose;
    my $ua = LWP::UserAgent->new;
+# Set the HTTP User Agent to mimic Chrome on Windows 10/X64 because the IEEE
+# site rejects requests with the default libwww-perl UA string.
+# See https://github.com/royhills/arp-scan/issues/165
+   $ua->agent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36');
    my $res = $ua->get($url);
    die $res->status_line unless $res->is_success;
    my $content = $res->content;
