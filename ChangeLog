@@ -1,5 +1,10 @@
 2025-01-29 Roy Hills <royhills@hotmail.com>
 
+	* Update copyright date on all files.
+	  https://github.com/royhills/arp-scan/pull/196
+
+2025-01-29 Roy Hills <royhills@hotmail.com>
+
 	* get-oui: Change HTTP user agent string to mimic Chrome on Windows
 	  10/x64 because the IEEE site rejects requests with the default
 	  libwww-perl user agent. Thanks to sonikbhoom for pointing this out.
