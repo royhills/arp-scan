@@ -5,6 +5,9 @@
 	  libwww-perl user agent. Thanks to sonikbhoom for pointing this out.
 	  https://github.com/royhills/arp-scan/pull/195
 
+	* ieee-oui.txt: Updated from IEEE registry. Total of 53441 MAC/Vendor
+	  mappings (4575 IAB + 5683 MAM + 36857 OUI + 6326 OUI36).
+
 2024-08-26 Roy Hills <royhills@hotmail.com>
 
 	* configure.ac: Unconditionally add -Wextra to GCC and Clang compiler
