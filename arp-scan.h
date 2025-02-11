@@ -163,6 +163,7 @@
 #define OPT_WRITEPKTTOFILE 256		/* --writepkttofile option */
 #define OPT_READPKTFROMFILE 257		/* --readpktfromfile option */
 #define OPT_RANDOMSEED 258		/* --randomseed option */
+#define OPT_EXCLUDEBROADCAST 259	/* --exclude-broadcast option */
 #define HASH_TABLE_SIZE 70000		/* Max size of MAC/Vendor hash table */
 #define DEFAULT_RETRY_SEND 20		/* Default no. of send packet retries */
 #define DEFAULT_RETRY_SEND_INTERVAL 5000  /* Default interval between send

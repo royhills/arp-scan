@@ -92,6 +92,7 @@ static unsigned retry_send = DEFAULT_RETRY_SEND; /* Number of send packet retrie
 static unsigned retry_send_interval = DEFAULT_RETRY_SEND_INTERVAL; /* Interval in seconds between send packet retries */
 static unsigned int host_limit = 0;     /* Exit after n responders if nonzero */
 static format_element *format = NULL;   /* Output format linked list */
+static int exclude_broadcast = 0;	/* Exclude network & broadcast address */
 
 int
 main(int argc, char *argv[]) {
@@ -1495,8 +1496,8 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
        * Determine maximum and minimum host values including network
        * and broadcast addresses.
        */
-      hoststart = 0;
-      hostend = (1<<(32-numbits))-1;
+      hoststart = exclude_broadcast==1 ? 1 : 0;
+      hostend = (1<<(32-numbits)) - (exclude_broadcast==1 ? 2 : 1);
       /*
        * Calculate all host addresses in the range and feed to add_host()
        * in dotted-quad format.
@@ -1545,8 +1546,8 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
        * Determine maximum and minimum host values including the network
        * and broadcast addresses.
        */
-      hoststart = 0;
-      hostend = (1<<(32-numbits))-1;
+      hoststart = exclude_broadcast==1 ? 1 : 0;
+      hostend = (1<<(32-numbits)) - (exclude_broadcast==1 ? 2 : 1);
       /*
        * Calculate all host addresses in the range and feed to add_host()
        * in dotted-quad format.
@@ -1987,6 +1988,7 @@ process_options(int argc, char *argv[]) {
       {"limit", required_argument, 0, 'M'},
       {"resolve", no_argument, 0, 'd'},
       {"format", required_argument, 0, 'F'},
+      {"exclude-broadcast", no_argument, 0, OPT_EXCLUDEBROADCAST},
       {0, 0, 0, 0}
    };
    /*
@@ -2154,6 +2156,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'd': /* --resolve */
             resolve_flag = 1;
+            break;
+         case OPT_EXCLUDEBROADCAST:	/* --exclude-broadcast */
+            exclude_broadcast = 1;
             break;
          case 'F': /* --format */
             format = format_parse(optarg);
