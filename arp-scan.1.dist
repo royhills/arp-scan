@@ -5,7 +5,7 @@
 .\" are permitted in any medium without royalty provided the copyright
 .\" notice and this notice are preserved.
 .\"
-.TH ARP-SCAN 1 "May 11, 2023"
+.TH ARP-SCAN 1 "February 12, 2025"
 .\" Please adjust this date whenever revising the man page.
 .SH NAME
 arp-scan \- Send ARP requests to target hosts and display responses
@@ -17,8 +17,10 @@ Target hosts must be specified on the command line unless the \fB--file\fP or
 \fB--localnet\fP option is used.
 .PP
 Targets can be IPv4 addresses or hostnames. You can also use CIDR notation
-(10.0.0.0/24) (network and broadcast included), ranges (10.0.0.1-10.0.0.10),
-and network:mask (10.0.0.0:255.255.255.0).
+(e.g. 10.0.0.0/24), network:mask notation (e.g. 10.0.0.0:255.255.255.0) and IP
+ranges (e.g. 10.0.0.1-10.0.0.10). CIDR and network:netmask notation include the
+IP network and broadcast addresses by default unless the --exclude-broadcast
+option is specified.
 .SH DESCRIPTION
 \fBarp-scan\fP sends ARP request packets to the specified hosts and displays
 any responses received. The network interface can be specified with the
@@ -201,9 +203,17 @@ One name or address pattern per line. Use "-" for stdin.
 .BR --localnet " or " -l
 Generate addresses from interface configuration.
 Generates list from interface address and netmask
-(network and broadcast included). You cannot use the
-\fB--file\fP option or give targets on the command line.
-Use \fB--interface\fP to specify the interface.
+(network and broadcast included unless the --exclude-broadcast
+option is specified). You cannot use the \fB--file\fP option or
+give targets on the command line with this option.
+Use \fB--interface\fP to specify the interface if you are not
+using the first adapter.
+.TP
+.B --exclude-broadcast
+Exclude the IP network and broadcast addresses from
+ranges generated with network/bits and network:netmask
+address patterns as well as the range generated from the
+interface configuration with the --localnet option.
 .SS "MAC/Vendor Mapping Files"
 .TP
 \fB--ouifile\fP=\fI<s>\fP or \fB-O \fI<s>\fR

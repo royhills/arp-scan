@@ -1,3 +1,12 @@
+2025-02-12 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.c, arp-scan.h, arp-scan.1.dist: Add --exclude-broadcast option
+	  to allow IP lists to be generated either with or without network and
+	  broadcast addresses.
+
+	  https://github.com/royhills/arp-scan/issues/197
+	  https://github.com/royhills/arp-scan/pull/198
+
 2025-01-29 Roy Hills <royhills@hotmail.com>
 
 	* Update copyright date on all files.
