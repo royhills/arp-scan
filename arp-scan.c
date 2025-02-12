@@ -92,6 +92,7 @@ static unsigned retry_send = DEFAULT_RETRY_SEND; /* Number of send packet retrie
 static unsigned retry_send_interval = DEFAULT_RETRY_SEND_INTERVAL; /* Interval in seconds between send packet retries */
 static unsigned int host_limit = 0;     /* Exit after n responders if nonzero */
 static format_element *format = NULL;   /* Output format linked list */
+static int exclude_broadcast = 0;	/* Exclude network & broadcast address */
 
 int
 main(int argc, char *argv[]) {
@@ -1164,8 +1165,10 @@ usage(void) {
    printf("       are preferable where possible.\n");
    printf("\n");
    printf("Targets can be IPv4 addresses or hostnames. You can also use CIDR notation\n");
-   printf("(10.0.0.0/24) (network and broadcast included), ranges (10.0.0.1-10.0.0.10),\n");
-   printf("and network:mask (10.0.0.0:255.255.255.0).\n");
+   printf("(e.g. 10.0.0.0/24), network:mask notation (e.g. 10.0.0.0:255.255.255.0) and IP\n");
+   printf("ranges (e.g. 10.0.0.1-10.0.0.10). CIDR and network:netmask notation include the\n");
+   printf("IP network and broadcast addresses by default unless the --exclude-broadcast\n");
+   printf("option is specified.\n");
    printf("\n");
    printf("Options:\n");
    printf("\n");
@@ -1196,9 +1199,15 @@ usage(void) {
    printf("\t\t\tOne name or address pattern per line. Use \"-\" for stdin.\n");
    printf("\n--localnet or -l\tGenerate addresses from interface configuration.\n");
    printf("\t\t\tGenerates list from interface address and netmask\n");
-   printf("\t\t\t(network and broadcast included). You cannot use the\n");
-   printf("\t\t\t--file option or give targets on the command line.\n");
-   printf("\t\t\tUse --interface to specify the interface.\n");
+   printf("\t\t\t(network and broadcast included unless the\n");
+   printf("\t\t\t--exclude-broadcast option is specified). You cannot use\n");
+   printf("\t\t\tthe --file option or give targets on the command line\n");
+   printf("\t\t\twith this option. Use the --interface option to specify\n");
+   printf("\t\t\tthe interface if you are not using the first adapter.\n");
+   printf("\n--exclude-broadcast\tExclude the IP network and broadcast addresses from\n");
+   printf("\t\t\tranges generated with network/bits and network:netmask\n");
+   printf("\t\t\taddress patterns as well as the range generated from the\n");
+   printf("\t\t\tinterface configuration with the --localnet option.\n");
    printf("\n");
    printf("MAC/Vendor Mapping Files:\n");
    printf("\n--ouifile=<s> or -O <s>\tUse IEEE registry vendor mapping file <s>.\n");
@@ -1495,8 +1504,8 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
        * Determine maximum and minimum host values including network
        * and broadcast addresses.
        */
-      hoststart = 0;
-      hostend = (1<<(32-numbits))-1;
+      hoststart = exclude_broadcast==1 ? 1 : 0;
+      hostend = (1<<(32-numbits)) - (exclude_broadcast==1 ? 2 : 1);
       /*
        * Calculate all host addresses in the range and feed to add_host()
        * in dotted-quad format.
@@ -1545,8 +1554,8 @@ add_host_pattern(const char *pattern, unsigned host_timeout) {
        * Determine maximum and minimum host values including the network
        * and broadcast addresses.
        */
-      hoststart = 0;
-      hostend = (1<<(32-numbits))-1;
+      hoststart = exclude_broadcast==1 ? 1 : 0;
+      hostend = (1<<(32-numbits)) - (exclude_broadcast==1 ? 2 : 1);
       /*
        * Calculate all host addresses in the range and feed to add_host()
        * in dotted-quad format.
@@ -1987,6 +1996,7 @@ process_options(int argc, char *argv[]) {
       {"limit", required_argument, 0, 'M'},
       {"resolve", no_argument, 0, 'd'},
       {"format", required_argument, 0, 'F'},
+      {"exclude-broadcast", no_argument, 0, OPT_EXCLUDEBROADCAST},
       {0, 0, 0, 0}
    };
    /*
@@ -2154,6 +2164,9 @@ process_options(int argc, char *argv[]) {
             break;
          case 'd': /* --resolve */
             resolve_flag = 1;
+            break;
+         case OPT_EXCLUDEBROADCAST:	/* --exclude-broadcast */
+            exclude_broadcast = 1;
             break;
          case 'F': /* --format */
             format = format_parse(optarg);
