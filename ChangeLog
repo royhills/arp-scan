@@ -1,3 +1,9 @@
+2025-03-07 Roy Hills <royhills@hotmail.com>
+
+	* arp-scan.c: Removed unused variable _iterations_ from find_host(). Detected by Apple Clang version 16.0.0 (clang-1600.0.26.6).
+
+	* NEWS: Updated to 2025-02-12.
+
 2025-02-12 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c, arp-scan.h, arp-scan.1.dist: Add --exclude-broadcast option
