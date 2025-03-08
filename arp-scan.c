@@ -1745,7 +1745,6 @@ host_entry *
 find_host(host_entry **he, struct in_addr *addr) {
    host_entry **p;
    int found = 0;
-   unsigned iterations = 0; /* Used for debugging */
 
    assert (*he != NULL);
    /*
@@ -1754,7 +1753,6 @@ find_host(host_entry **he, struct in_addr *addr) {
    p = he;
 
    do {
-      iterations++;
       if ((*p)->addr.s_addr == addr->s_addr) {
          found = 1;
       } else {
