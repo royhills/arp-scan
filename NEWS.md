@@ -28,6 +28,7 @@
   - Source tree tidy-up: move test data files into separate _testdata_ directory; moved local autoconf macros to seperate files under _m4_ (requires autoconf >= 2.70 to build - v1.10.0 required autoconf >= 2.69).
   - Require a compiler with C99 support.
   - Change the HTTP user agent string used by the _get_oui_ script to mimic Chrome on Windows 10/x64 because the IEEE site rejects requests with the default libwww-perl user agent.
+  - Removed "Ununsed variable" reported by Clang 16.0.
   - Various minor improvements to the code and documentation.
 
 # 2022-12-10 arp-scan 1.10.0 (git tag 1.10.0)
