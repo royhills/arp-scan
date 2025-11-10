@@ -236,7 +236,7 @@ Only the \fI${ip}\fP and \fI${mac}\fP fields are available for the \fB--format\f
 option if \fB--quiet\fP is specified.
 .TP
 .BR --plain " or " -x
-Supress header and footer text.  Only display the responding host details.
+Suppress header and footer text.  Only display the responding host details.
 Useful if the output will be parsed by a script.
 .TP
 .BR --ignoredups " or " -g

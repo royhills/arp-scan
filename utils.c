@@ -392,7 +392,7 @@ dupstr(const char *str) {
  *	If we have POSIX.1e capability support (e.g. Linux with libcap) then
  *	remove all capabilities from the effective set and also remove all
  *	capabilities except those required by the program from the permitted
- *	set.  It will also permanantly drop SUID because SUID is not needed
+ *	set.  It will also permanently drop SUID because SUID is not needed
  *	if capability support is present.
  *
  *	If we do not have capability support, we drop SUID by saving the
