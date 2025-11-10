@@ -56,7 +56,7 @@
 	  https://github.com/royhills/arp-scan/pull/185
 
 	* configure.ac, m4/*: Move local autoconf macros from acinclude.m4
-	  to seperate files under m4/, which is specified with
+	  to separate files under m4/, which is specified with
 	  AC_CONFIG_MACRO_DIRS in configure.ac. configure.ac now requires
 	  at least autoconf 2.70 (was previously 2.69).
 
@@ -322,7 +322,7 @@
 	  because not all distros use that name.
 
 	* arp-scan.c, arp-scan.1.dist: Correct the short option letter
-	  for the --macfile option.  It was incorectly shown as "O"
+	  for the --macfile option.  It was incorrectly shown as "O"
 	  when it should be "m".
 
 2022-11-06 Roy Hills <royhills@hotmail.com>
@@ -408,7 +408,7 @@
 2022-10-30 Roy Hills <royhills@hotmail.com>
 
 	* Makefile.am: Build man page "arp-scan.1" from "arp-scan.dist"
-	  replacing all occurances of @pkgdatadir@ with the $pkgdatadir
+	  replacing all occurrences of @pkgdatadir@ with the $pkgdatadir
 	  variable that is set by configure. This ensures that the file
 	  paths in the manpage arp-scan.1 reflect the paths on the system
 	  where ./configure was run.
@@ -448,7 +448,7 @@
 	  strings to use dynamic length strings.
 
 	* utils.c: Changed make_message() to assume vsnprintf() behaves
-	  according to POSIX. No need to accomodate bugs in ancient glibc
+	  according to POSIX. No need to accommodate bugs in ancient glibc
 	  versions.
 
 2022-10-09 Roy Hills <royhills@hotmail.com>
@@ -563,7 +563,7 @@
 2022-09-03 Roy Hills <royhills@hotmail.com>
 
 	* arp-scan.c: Allow MAC addresses in mac-vendor.txt to use either lower
-	  or uppercase hex digits and ignore any seperator characters e.g. ":"
+	  or uppercase hex digits and ignore any separator characters e.g. ":"
 	  or "-". This allows normal format MAC addresses such as those output
 	  by arp-scan to be used directly in the mac-vendor.txt file.
 
@@ -794,7 +794,7 @@
 2013-12-02 Roy Hills <Roy.Hills@nta-monitor.com>
 
 	* arp-scan.c, arp-scan.h arp-scan.1: Added new --randomseed option,
-	  which allows the random numer generator to be seeded with a specific
+	  which allows the random number generator to be seeded with a specific
 	  value.
 
 	* arp-scan.c, arp-scan.h, utils.c: Removed --debug (-d) option. This
@@ -814,7 +814,7 @@
 
 2013-11-02 Roy Hills <Roy.Hills@nta-monitor.com>
 
-	* arp-scan.c, arp-scan.1: Added new --plain (-x) option to supress
+	* arp-scan.c, arp-scan.1: Added new --plain (-x) option to suppress
 	  printing of header and footer text, and only display one output
 	  line for each responding host. Idea from Stefan Tomanek's arp-scan
 	  fork on github at https://github.com/wertarbyte/arp-scan.
@@ -851,7 +851,7 @@
 	  git.
 
 	* check-run1: Added GPL licence text, which had been accidentally
-	  ommitted when the script was written.
+	  omitted when the script was written.
 
 	* configure.ac: Incremented version to 1.9.2 to distinguish new
 	  version under git revision control.
@@ -1368,7 +1368,7 @@
 
 2007-04-08 Roy Hills <Roy.Hills@nta-monitor.com>
 
-	* utils.c: Removed ununsed function printable().
+	* utils.c: Removed unused function printable().
 
 	* arp-scan.c: Added /* NOTREACHED */ comments in appropriate places.
 	  Removed unneeded max_iter global variable.

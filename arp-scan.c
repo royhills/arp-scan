@@ -2604,7 +2604,7 @@ add_mac_vendor(const char *map_filename) {
          key = Malloc(key_len+1);
          data = Malloc(data_len+1);
          /*
-          * Copy MAC address from line into key, ommitting non-hex characters
+          * Copy MAC address from line into key, omitting non-hex characters
           * and folding lowercase alphabetic characters to uppercase.
           */
          linep = line+pmatch[1].rm_so;

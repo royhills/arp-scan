@@ -13,7 +13,7 @@
 # hardware address).
 #
 # Alphabetic hex characters [A-F] may use either upper or lower case, and
-# seperator symbols such as ":", "-" and "." are ignored. This permits the
+# separator symbols such as ":", "-" and "." are ignored. This permits the
 # use of standard format MAC addresses in this file.
 #
 # For example:
