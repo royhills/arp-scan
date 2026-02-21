@@ -1880,6 +1880,10 @@ callback(u_char *args ATTRIBUTE_UNUSED,
     */
    framing = unmarshal_arp_pkt(packet_in, n, &frame_hdr, &arpei, extra_data,
                                &extra_data_len, &vlan_id);
+   if (framing < 0) {
+      warn_msg("WARNING: %d byte packet too short for detected framing.", n);
+      return;
+   }
    /*
     * Determine source IP address.
     */
@@ -2475,6 +2479,8 @@ unmarshal_arp_pkt(const unsigned char *buffer, size_t buf_len,
     */
    if (*cp == 0x81 && *(cp+1) == 0x00) {
       uint16_t tci;
+      if ((size_t)(buf_len - (cp - buffer)) < 4 + 2 + ARP_PKT_SIZE)
+         return -1;
       cp += 2; /* Skip TPID */
       memcpy(&tci, cp, sizeof(tci));
       cp += 2; /* Skip TCI */
@@ -2491,6 +2497,8 @@ unmarshal_arp_pkt(const unsigned char *buffer, size_t buf_len,
     * If this 802.2 LLC header is present, skip it and the SNAP header
     */
    if (*cp == 0xAA && *(cp+1) == 0xAA && *(cp+2) == 0x03) {
+      if ((size_t)(buf_len - (cp - buffer)) < 8 + ARP_PKT_SIZE)
+         return -1;
       cp += 8; /* Skip eight bytes */
       framing = FRAMING_LLC_SNAP;
    }
